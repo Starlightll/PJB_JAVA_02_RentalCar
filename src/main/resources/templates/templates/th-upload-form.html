@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<body>
+<!-- Insert content into the layouts/layout.html -->
+<th:block layout:fragment="content">
+    <h3 class="mb-3">Thymeleaf File Upload example</h3>
+    <form id="uploadForm" method="post" th:action="@{/files/uploadFilePF}" enctype="multipart/form-data">
+        <input id="input-file" type="file" name="file" />
+        <button class="btn btn-sm btn-outline-success float-right" type="submit"> Upload </button>
+    </form>
+    <div th:if="${message != null}">
+        <h5 style="color: Red;" th:text="${message}"></h5>
+    </div>
+<!--    <div th:if="${message != null}" class="alert alert-secondary alert-dismissible fade show text-center-->
+<!--message mt-3" role="alert"> [[${message}]]-->
+<!--        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">-->
+<!--            <span aria-hidden="true">×</span>-->
+<!--        </button>-->
+<!--    </div>-->
+    </div>
+</th:block>
+</body>
+</html>
