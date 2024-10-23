@@ -81,6 +81,11 @@
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
