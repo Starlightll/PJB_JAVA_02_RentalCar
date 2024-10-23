@@ -13,7 +13,7 @@ public class HelloController {
 
     @GetMapping ("/")
     public String sayIndex() {
-        return "HomepageForCustomer";
+        return "HomepageForGuest";
     }
 
     @GetMapping ("/login1")
