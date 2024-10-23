@@ -16,6 +16,11 @@ public class HelloController {
         return "HomepageForGuest";
     }
 
+    @GetMapping ("/homeforcustomer")
+    public String sayHome() {
+        return "HomepageForCustomer";
+    }
+
     @GetMapping ("/login1")
     public String sayLogin() {
         return "Login";
