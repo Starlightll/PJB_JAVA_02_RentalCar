@@ -45,6 +45,16 @@ public class homeController {
     }
 
 
+    @GetMapping("/forgotPass")
+    public String forgotPassWord() {
+        return "password/ForgotPassword";
+    }
+
+    @GetMapping("/resetPass")
+    public String resetPassWord() {
+        return "password/ResetPassword";
+    }
+
     @GetMapping("/carowner")
     public String carOwner() {
         return "HomePageForCarOwner";
