@@ -14,5 +14,7 @@ public class Role {
     private Integer id;
 
     private String roleName;
-
+    public String toString() {
+        return this.roleName;
+    }
 }

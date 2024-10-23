@@ -38,11 +38,17 @@ public class homeController {
 
         if(user != null) {
             session.setAttribute("user", user);
+
         }
 
         return "redirect:/";
     }
 
+
+    @GetMapping("/carowner")
+    public String carOwner() {
+        return "HomePageForCarOwner";
+    }
 
     @GetMapping("/logout")
     public String logoutPage(HttpSession session) {
