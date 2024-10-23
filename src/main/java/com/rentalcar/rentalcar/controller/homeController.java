@@ -55,4 +55,9 @@ public class homeController {
         return "login/forgotpassword";
     }
 
+
+    @GetMapping("/addcar")
+    public String addCar() {
+        return "carowner/AddCar";
+    }
 }
