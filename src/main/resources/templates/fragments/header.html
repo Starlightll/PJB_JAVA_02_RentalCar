@@ -26,24 +26,24 @@
         </button>
 
         <div class="collapse navbar-collapse" id="ftco-nav">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto align-items-center">
                 <li class="nav-item active"><a href="index.html" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
                 <li class="nav-item"><a href="car.html" class="nav-link">Cars</a></li>
 
                 <th:block th:if="${session.user != null}">
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button"
+                        <a href="#" class="nav-link dropdown-toggle" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <!-- Hiển thị Avatar -->
-                            <img src="/images/avt.jpg" class="rounded-circle"
+                            <img src="/images/avt.png" class="rounded-circle"
                                  style="width: 40px; height: 40px; object-fit: cover;" alt="Avatar">
-                            <span th:text="|Welcome, ${session.user.username}|"></span>
-
+                            <!-- Hiển thị thông tin người dùng -->
+                            <span th:text="'Welcome ' + ${session.user.username}"></span>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdown">
                             <!-- Nếu người dùng là Customer -->
-                            <th:block th:if="${#lists.contains(session.user.roles, 'Customer')}">
+                            <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
                                 <a class="dropdown-item" href="/profile">My Profile</a>
                                 <a class="dropdown-item" href="/my-bookings">My Booking</a>
                                 <a class="dropdown-item" href="/wallet">My Wallet</a>
@@ -52,7 +52,7 @@
                             </th:block>
 
                             <!-- Nếu người dùng là Car Owner -->
-                            <th:block th:if="${#lists.contains(session.user.roles, 'Car Owner')}">
+                            <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Car Owner')}">
                                 <a class="dropdown-item" href="/profile">My Profile</a>
                                 <a class="dropdown-item" href="/my-cars">My Cars</a>
                                 <a class="dropdown-item" href="/wallet">My Wallet</a>
@@ -60,8 +60,8 @@
                                 <a class="dropdown-item" href="/logout">Logout</a>
                             </th:block>
                         </div>
-
                     </li>
+
                 </th:block>
 
                 <th:block th:if="${session.user == null}">
@@ -75,19 +75,7 @@
     </div>
 </nav>
 
-<script>
-    $(document).ready(function() {
-        $('.dropdown-toggle').on('click', function() {
-            $(this).next('.dropdown-menu').toggle();
-        });
-    });
 
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('.dropdown').length) {
-            $('.dropdown-menu').hide();
-        }
-    });
-</script>
 
 </body>
 </html>
