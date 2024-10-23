@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Active page</title>
+</head>
+<body>
+
+<h1>Account Activation Status</h1>
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}"></p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+
+<!-- Nếu token hết hạn, hiển thị form để yêu cầu gửi lại email kích hoạt -->
+<div th:if="${showResendLink}">
+    <form method="post" th:action="@{/register/resendToken}">
+        <input type="hidden" name="email" th:value="${email}" />
+        <button type="submit">Resend Activation Link</button>
+    </form>
+</div>
+</body>
+</html>
