@@ -41,6 +41,7 @@
                             <img src="/images/avt.jpg" class="rounded-circle"
                                  style="width: 40px; height: 40px; object-fit: cover;" alt="Avatar">
                             <span th:text="|Welcome, ${session.user.username}|"></span>
+
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdown">
                             <!-- Nếu người dùng là Customer -->
@@ -53,14 +54,15 @@
                             </th:block>
 
                             <!-- Nếu người dùng là Car Owner -->
-                            <th:block th:if="${#lists.contains(session.user.roles, 'CarOwner')}">
+                            <th:block th:if="${#lists.contains(session.user.roles, 'Car Owner')}">
                                 <a class="dropdown-item" href="/profile">My Profile</a>
-                                <a class="dropdown-item" href="/my-cars">My Car</a>
+                                <a class="dropdown-item" href="/my-cars">My Cars</a>
                                 <a class="dropdown-item" href="/wallet">My Wallet</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/logout">Logout</a>
                             </th:block>
                         </div>
+
                     </li>
                 </th:block>
 
