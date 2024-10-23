@@ -6,7 +6,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+    <!-- Link jQuery (cần thiết cho Bootstrap dropdown) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Link Popper.js (cần thiết cho Bootstrap dropdown) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <!-- Link Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar" th:fragment="header">
@@ -20,25 +29,65 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active"><a href="index.html" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-                <li class="nav-item"><a href="services.html" class="nav-link">Services</a></li>
-                <li class="nav-item"><a href="pricing.html" class="nav-link">Pricing</a></li>
                 <li class="nav-item"><a href="car.html" class="nav-link">Cars</a></li>
-                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
 
                 <th:block th:if="${session.user != null}">
-                    <p th:text="|Hello ${session.user.username}|"></p>
-                    <li class="nav-item" style="display: flex; align-items: center">
-                        <a href="logout" class="login-btn nav-link" style="padding: 2px 30px; width: 100px; height: 40px; display: flex; align-items: center">Logout</a>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <!-- Hiển thị Avatar -->
+                            <img src="/images/avt.jpg" class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover;" alt="Avatar">
+                            <span th:text="|Welcome, ${session.user.username}|"></span>
+
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="userDropdown">
+                            <!-- Nếu người dùng là Customer -->
+                            <th:block th:if="${#lists.contains(session.user.roles, 'Customer')}">
+                                <a class="dropdown-item" href="/profile">My Profile</a>
+                                <a class="dropdown-item" href="/my-bookings">My Booking</a>
+                                <a class="dropdown-item" href="/wallet">My Wallet</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/logout">Logout</a>
+                            </th:block>
+
+                            <!-- Nếu người dùng là Car Owner -->
+                            <th:block th:if="${#lists.contains(session.user.roles, 'Car Owner')}">
+                                <a class="dropdown-item" href="/profile">My Profile</a>
+                                <a class="dropdown-item" href="/my-cars">My Cars</a>
+                                <a class="dropdown-item" href="/wallet">My Wallet</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/logout">Logout</a>
+                            </th:block>
+                        </div>
+
                     </li>
                 </th:block>
 
                 <th:block th:if="${session.user == null}">
                     <li class="nav-item" style="display: flex; align-items: center">
-                        <a href="/login" class="login-btn nav-link" style="padding: 2px 30px; width: 100px; height: 40px; display: flex; align-items: center">Login</a>
+                        <a href="/login" class="login-btn nav-link"
+                           style="padding: 2px 30px; width: 100px; height: 40px; display: flex; align-items: center">Login</a>
                     </li>
                 </th:block>
             </ul>
         </div>
     </div>
-</nav></body>
+</nav>
+
+<script>
+    $(document).ready(function() {
+        $('.dropdown-toggle').on('click', function() {
+            $(this).next('.dropdown-menu').toggle();
+        });
+    });
+
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown').length) {
+            $('.dropdown-menu').hide();
+        }
+    });
+</script>
+
+</body>
 </html>

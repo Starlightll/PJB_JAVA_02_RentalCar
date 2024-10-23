@@ -13,5 +13,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String roleName;
-
+    public String toString() {
+        return this.roleName;
+    }
 }
