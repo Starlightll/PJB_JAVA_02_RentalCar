@@ -590,3 +590,19 @@ label.valid {
     margin-bottom: 10px; } }
 
 /*# sourceMappingURL=style.css.map */
+
+/* Home btn */
+.home-btn {
+  background-color: #01d28e;
+  cursor: pointer;
+  margin: 50px 10px;
+  border: none;
+  border-radius: 0.4rem;
+  color: white;
+  font-size: 20px;
+  font-weight: 1000;
+}
+
+.home-btn:hover {
+  background-color: #2b80ff;
+}
