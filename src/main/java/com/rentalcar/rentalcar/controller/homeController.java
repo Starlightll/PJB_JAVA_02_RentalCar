@@ -38,11 +38,27 @@ public class homeController {
 
         if(user != null) {
             session.setAttribute("user", user);
+
         }
 
         return "redirect:/";
     }
 
+
+    @GetMapping("/forgotPass")
+    public String forgotPassWord() {
+        return "password/ForgotPassword";
+    }
+
+    @GetMapping("/resetPass")
+    public String resetPassWord() {
+        return "password/ResetPassword";
+    }
+
+    @GetMapping("/carowner")
+    public String carOwner() {
+        return "HomePageForCarOwner";
+    }
 
     @GetMapping("/logout")
     public String logoutPage(HttpSession session) {
@@ -55,4 +71,9 @@ public class homeController {
         return "login/forgotpassword";
     }
 
+
+    @GetMapping("/addcar")
+    public String addCar() {
+        return "carowner/AddCar";
+    }
 }
