@@ -45,8 +45,9 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdown">
                             <!-- Nếu người dùng là Customer -->
-                            <th:block th:if="${#lists.contains(session.user.roles, 'Customer')}">
-                                <a class="dropdown-item" href="/profile">My Profile</a>
+                            <th:block th:if="${session.user.getRoles().equals('Customer')}">
+
+                            <a class="dropdown-item" href="/profile">My Profile</a>
                                 <a class="dropdown-item" href="/my-bookings">My Booking</a>
                                 <a class="dropdown-item" href="/wallet">My Wallet</a>
                                 <div class="dropdown-divider"></div>
@@ -54,7 +55,7 @@
                             </th:block>
 
                             <!-- Nếu người dùng là Car Owner -->
-                            <th:block th:if="${#lists.contains(session.user.roles, 'Car Owner')}">
+                            <th:block th:if="${session.user.getRoles().equals('Car Owner')}">
                                 <a class="dropdown-item" href="/profile">My Profile</a>
                                 <a class="dropdown-item" href="/my-cars">My Cars</a>
                                 <a class="dropdown-item" href="/wallet">My Wallet</a>

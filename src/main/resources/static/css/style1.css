@@ -606,3 +606,19 @@ label.valid {
 .home-btn:hover {
   background-color: #2b80ff;
 }
+
+.forgot-pass {
+  text-align: left; /* Căn giữa nội dung */
+  margin-top: 20px; /* Thêm khoảng cách phía trên */
+}
+
+.forgot-pass a {
+  color: #3498db; /* Đổi màu chữ cho đẹp */
+  text-decoration: none; /* Bỏ gạch chân */
+  font-weight: bold; /* Làm cho chữ đậm */
+  transition: color 0.3s; /* Hiệu ứng chuyển màu khi hover */
+}
+
+.forgot-pass a:hover {
+  color: #2980b9; /* Đổi màu khi di chuột */
+}
