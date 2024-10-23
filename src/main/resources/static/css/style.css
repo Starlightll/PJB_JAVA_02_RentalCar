@@ -11471,7 +11471,7 @@ h1, h2, h3, h4, h5,
 }
 
 .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
-    font-size: 15px;
+    font-size: 17px;
     padding-top: .9rem;
     padding-bottom: .9rem;
     padding-left: 20px;
@@ -11683,7 +11683,7 @@ h1, h2, h3, h4, h5,
 
 .navbar-brand {
     font-weight: 800;
-    font-size: 20px;
+    font-size: 35px;
     text-transform: uppercase;
 }
 
