@@ -23,18 +23,21 @@
                 <button onclick="location.href='/'" class="home-btn"><</button>
                 <div class="signin-image">
                     <figure><img src="images/signin-image.jpg" alt="sing up image"></figure>
-                    <a href="register" class="signup-image-link">Create an account</a>
+                    <a href="/register" class="signup-image-link">Create an account</a>
                 </div>
                 <div class="signin-form">
                     <h2 class="form-title">Sign in</h2>
-                    <form method="POST" class="register-form" id="login-form">
+                    <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
+                        <div th:if="${param.error}" style="color: red" th:text="${param.message}">
+                            <!-- Thông báo lỗi sẽ được chèn ở đây -->
+                        </div>
                         <div class="form-group">
                             <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" name="your_name" id="your_name" placeholder="Your Name"/>
+                            <input type="text" name="username" id="your_name" placeholder="Your Email" required/>
                         </div>
                         <div class="form-group">
                             <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="your_pass" id="your_pass" placeholder="Password"/>
+                            <input type="password" name="password" id="your_pass" placeholder="Password" required/>
                         </div>
                         <div class="form-group">
                             <input type="checkbox" name="remember-me" id="remember-me" class="agree-term"/>
