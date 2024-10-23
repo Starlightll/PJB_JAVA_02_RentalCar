@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up Form by Colorlib</title>
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="css/style1.css">
+</head>
+<body>
+
+<div class="main">
+
+    <!-- Sign up form -->
+    <section class="signup">
+        <div class="container">
+            <div class="signup-content">
+                <button onclick="location.href='/'" class="home-btn"><</button>
+                <div class="signup-form">
+                    <h2 class="form-title">Sign up</h2>
+                    <form method="post" class="register-form" id="register-form" th:action="@{/register}" th:object="${registerDto}">
+                        <div class="form-group">
+                            <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                            <input type="text" th:field="*{username}"  name="username" id="name" placeholder="Your Name" required/>
+                        </div>
+                        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
+
+                        <div class="form-group">
+                            <label for="email"><i class="zmdi zmdi-email"></i></label>
+                            <input type="email" name="email" id="email" th:field="*{email}" placeholder="Your Email" required/>
+                        </div>
+                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+
+                        <div class="form-group">
+                            <label for="phoneNumber"><i class="zmdi zmdi-phone"></i></label>
+                            <input type="number"  name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}" placeholder="Your Phone" required/>
+                        </div>
+                        <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" style="color: red"></div>
+
+                        <div class="form-group">
+                            <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+                            <input type="password" name="password"  id="pass" th:field="*{password}" placeholder="Password"  pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$" title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number." required/>
+                        </div>
+                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></div>
+
+                        <div class="form-group">
+                            <label for="re_pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                            <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"  placeholder="Repeat your password"  pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$" title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number." required/>
+                        </div>
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" style="color: red"></div>
+
+                        <div class="accounttype">
+                            <input type="radio" value="2" id="radioOne" name="role" checked/>
+                            <label for="radioOne" class="radio" >I want to rent a car</label>
+                            <input type="radio" value="3" id="radioTwo" name="role" />
+                            <label for="radioTwo" class="radio">I am a car owner</label>
+                        </div>
+
+
+                        <div class="form-group">
+                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term"/>
+                            <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all
+                                statements in <a href="#" class="term-service">Terms of service</a></label>
+                        </div>
+                        <div class="form-group form-button">
+                            <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="signup-image">
+                    <figure><img src="images/signup-image.jpg" alt="sing up image"></figure>
+                    <a href="/login" class="signup-image-link">I am already member</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- JS -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="js/main.js"></script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>
