@@ -9946,3 +9946,16 @@ textarea.form-control {
   100% {
     stroke-dasharray: 89, 200;
     stroke-dashoffset: -136px; } }
+
+
+/*Login*/
+.login-btn{
+  background-color: #01d28e;
+  border-radius: 2rem;
+  padding: 10px;
+}
+
+.login-btn:hover{
+  background-color: #1089ff;
+  font-weight: bold;
+}
