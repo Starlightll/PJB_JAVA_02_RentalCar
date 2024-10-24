@@ -18,33 +18,37 @@ public class homeController {
 
     @Autowired UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping("/")
+    @GetMapping({"/", "/homepage-guest"})
     public String homePage() {
-        return "HomepageForCustomer";
+        return "HomepageForGuest";
     }
+
+
+    @GetMapping("/homepage-customer")
+    public String customerHomepage() {
+        return "HomepageForCustomer"; // Return the view for customer
+    }
+
+    @GetMapping("/homepage-carowner")
+    public String carOwnerHomepage() {
+        return "HomepageForCarOwner"; // Return the view for car owner
+    }
+
 
     @GetMapping("/login")
     public String loginPage() {
         return "UserManagement/Login";
     }
-    @GetMapping("/home")
-    public String Home() {
-        return "UserManagement/home";
+
+
+    @GetMapping("/forgotPass")
+    public String forgotPassWord() {
+        return "password/ForgotPassword";
     }
 
-    @GetMapping("/login-success")
-    public String loginSuccessPage(HttpSession session) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        //Tìm người dùng thep email
-        User user =  userDetailsService.loadUserByEmail(email);
-
-        if(user != null) {
-            session.setAttribute("user", user);
-        }
-
-        return "redirect:/";
+    @GetMapping("/resetPass")
+    public String resetPassWord() {
+        return "password/ResetPassword";
     }
 
 
@@ -53,10 +57,10 @@ public class homeController {
         session.removeAttribute("user");
         return "redirect:/";
     }
-    
-    @GetMapping("/forgotpassword")
-    public String forgotpasswordPage() {
-        return "login/forgotpassword";
-    }
 
+
+    @GetMapping("/addcar")
+    public String addCar() {
+        return "carowner/AddCar";
+    }
 }

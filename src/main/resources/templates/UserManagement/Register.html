@@ -11,6 +11,33 @@
 
     <!-- Main css -->
     <link rel="stylesheet" href="css/style1.css">
+    <style>
+        .no-absolute-label {
+            position: static;
+        }
+        .role {
+            display: flex;
+            align-items: center;
+        }
+
+        .role input[type="radio"] {
+            margin-right: 5px;
+            cursor: pointer;
+            width: 20px;
+
+        }
+
+        .role label {
+            color: #333;
+            font-size: 12px;
+            display: inline-flex;
+            margin-top: 25px;
+            margin-right: 10px;
+            position: relative; /* Đảm bảo label không bị ảnh hưởng bởi CSS bên ngoài */
+        }
+
+
+    </style>
 </head>
 <body>
 
@@ -23,44 +50,56 @@
                 <button onclick="location.href='/'" class="home-btn"><</button>
                 <div class="signup-form">
                     <h2 class="form-title">Sign up</h2>
-                    <form method="post" class="register-form" id="register-form" th:action="@{/register}" th:object="${registerDto}">
+                    <form method="post" class="register-form" id="register-form" th:action="@{/register}"
+                          th:object="${registerDto}">
                         <div class="form-group">
                             <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" th:field="*{username}"  name="username" id="name" placeholder="Your Name" required/>
+                            <input type="text" th:field="*{username}" name="username" id="name" placeholder="Your Name"
+                                   required/>
                         </div>
                         <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
 
                         <div class="form-group">
                             <label for="email"><i class="zmdi zmdi-email"></i></label>
-                            <input type="email" name="email" id="email" th:field="*{email}" placeholder="Your Email" required/>
+                            <input type="email" name="email" id="email" th:field="*{email}" placeholder="Your Email"
+                                   required/>
                         </div>
                         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
 
                         <div class="form-group">
                             <label for="phoneNumber"><i class="zmdi zmdi-phone"></i></label>
-                            <input type="number"  name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}" placeholder="Your Phone" required/>
+                            <input type="number" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
+                                   placeholder="Your Phone" required/>
                         </div>
-                        <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" style="color: red"></div>
+                        <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+                             style="color: red"></div>
 
                         <div class="form-group">
                             <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="password"  id="pass" th:field="*{password}" placeholder="Password"  pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$" title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number." required/>
+                            <input type="password" name="password" id="pass" th:field="*{password}"
+                                   placeholder="Password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
+                                   title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number."
+                                   required/>
                         </div>
                         <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></div>
 
                         <div class="form-group">
                             <label for="re_pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                            <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"  placeholder="Repeat your password"  pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$" title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number." required/>
+                            <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"
+                                   placeholder="Repeat your password"
+                                   pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
+                                   title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number."
+                                   required/>
                         </div>
-                        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" style="color: red"></div>
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                             style="color: red"></div>
 
-                        <div class="accounttype">
-                            <input type="radio" value="2" id="radioOne" name="role" checked/>
-                            <label for="radioOne" class="radio" >I want to rent a car</label>
-                            <input type="radio" value="3" id="radioTwo" name="role" />
-                            <label for="radioTwo" class="radio">I am a car owner</label>
+                        <div class="role">
+                            <input type="radio" value=3 id="radioOne" name="role" checked/>
+                            <label for="radioOne" class="radio no-absolute-label">Customer</label>
+                            <input type="radio" value="2" id="radioTwo" name="role"/>
+                            <label for="radioTwo" class="radio no-absolute-label">Car Owner</label>
                         </div>
-
 
                         <div class="form-group">
                             <input type="checkbox" name="agree-term" id="agree-term" class="agree-term"/>
@@ -73,7 +112,7 @@
                     </form>
                 </div>
                 <div class="signup-image">
-                    <figure><img src="images/signup-image.jpg" alt="sing up image"></figure>
+                    <figure><img src="images/signup-image.jpg" alt="sign up image"></figure>
                     <a href="/login" class="signup-image-link">I am already member</a>
                 </div>
             </div>
@@ -85,5 +124,5 @@
 <!-- JS -->
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="js/main.js"></script>
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</body>
 </html>
