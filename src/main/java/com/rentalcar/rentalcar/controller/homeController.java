@@ -41,17 +41,6 @@ public class homeController {
     }
 
 
-    @GetMapping("/forgotPass")
-    public String forgotPassWord() {
-        return "password/ForgotPassword";
-    }
-
-    @GetMapping("/resetPass")
-    public String resetPassWord() {
-        return "password/ResetPassword";
-    }
-
-
     @GetMapping("/logout")
     public String logoutPage(HttpSession session) {
         session.removeAttribute("user");
