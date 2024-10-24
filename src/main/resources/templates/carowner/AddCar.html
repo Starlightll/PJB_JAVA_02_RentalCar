@@ -223,12 +223,18 @@
                 <input type="button" name="next" class="next action-button" value="Next Step"/>
               </fieldset>
               <fieldset>
-                <div class="form-card">
-                  <h2 class="fs-title">Personal Information</h2>
-                  <input type="text" name="fname" placeholder="First Name"/>
-                  <input type="text" name="lname" placeholder="Last Name"/>
-                  <input type="text" name="phno" placeholder="Contact No."/>
-                  <input type="text" name="phno_2" placeholder="Alternate Contact No."/>
+                <div class="d-flex justify-content-center">
+                  <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body text-left">
+                      <h5 class="card-title">Basic information</h5>
+                      <h6 class="card-subtitle mb-2" style="color: #ff6f61;">Note: Please check your information carefully, you'll not be able to change the basic details of your car, which is based on the registration
+                        information</h6>
+                      <div>
+                        <div class="row">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
                 <input type="button" name="next" class="next action-button" value="Next Step"/>
@@ -307,12 +313,8 @@
   </div>
 </div>
   <script>
-    const dropArea = document.getElementById("drop-area1");
-    const inputFile = document.getElementById("input-file1");
-    const imageView = document.getElementById("img-view1");
-
-    inputFile.addEventListener("change", function(event) {
-      const file = event.target.files[0];
+    function uploadfile(imageView, inputFile) {
+      const file = inputFile.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -330,7 +332,86 @@
         reader.readAsDataURL(file);
         console.log("added");
       }
+    }
+
+    const dropArea1 = document.getElementById("drop-area1");
+    const inputFile1 = document.getElementById("input-file1");
+    const imageView1 = document.getElementById("img-view1");
+
+    inputFile1.addEventListener("change", function() {
+      uploadfile(imageView1, inputFile1);
     });
+
+    dropArea1.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropArea1.style.background = "rgba(0, 0, 0, 0.1)";
+    });
+
+    dropArea1.addEventListener("dragleave", function(e) {
+      e.preventDefault();
+      if (!dropArea1.contains(e.relatedTarget)) {
+        dropArea1.style.background = "#d1d5d9";
+      }
+    });
+
+    dropArea1.addEventListener("drop", function(e) {
+      e.preventDefault();
+      inputFile1.files = e.dataTransfer.files;
+      uploadfile(imageView1, inputFile1);
+    });
+
+    const dropArea2 = document.getElementById("drop-area2");
+    const inputFile2 = document.getElementById("input-file2");
+    const imageView2 = document.getElementById("img-view2");
+
+    inputFile2.addEventListener("change", function() {
+      uploadfile(imageView2, inputFile2);
+    });
+
+    dropArea2.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropArea2.style.background = "rgba(0, 0, 0, 0.1)";
+    });
+
+    dropArea2.addEventListener("dragleave", function(e) {
+      e.preventDefault();
+      if (!dropArea2.contains(e.relatedTarget)) {
+        dropArea2.style.background = "#d1d5d9";
+      }
+    });
+
+    dropArea2.addEventListener("drop", function(e) {
+      e.preventDefault();
+      inputFile2.files = e.dataTransfer.files;
+      uploadfile(imageView2, inputFile2);
+    });
+
+    const dropArea3 = document.getElementById("drop-area3");
+    const inputFile3 = document.getElementById("input-file3");
+    const imageView3 = document.getElementById("img-view3");
+
+    inputFile3.addEventListener("change", function() {
+      uploadfile(imageView3, inputFile3);
+    });
+
+    dropArea3.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropArea3.style.background = "rgba(0, 0, 0, 0.1)";
+    });
+
+    dropArea3.addEventListener("dragleave", function(e) {
+      e.preventDefault();
+      if (!dropArea3.contains(e.relatedTarget)) {
+        dropArea3.style.background = "#d1d5d9";
+      }
+    });
+
+    dropArea3.addEventListener("drop", function(e) {
+      e.preventDefault();
+      inputFile3.files = e.dataTransfer.files;
+      uploadfile(imageView3, inputFile3);
+    });
+
 
     $(document).ready(function(){
 
