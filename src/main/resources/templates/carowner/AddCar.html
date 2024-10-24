@@ -3,38 +3,222 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-  <link rel="stylesheet" href="css/addcar.css">
-</head>
+
 <th:block layout:fragment="content">
+    <head>
+        <style>
+           .drop-area {
+             width: 100%;
+             height: 200px;
+             padding: 30px;
+             background: #d1d5d9;
+             text-align: center;
+             border-radius: 10px;
+           }
+
+           .img-view{
+             width: 100%;
+             height: 100%;
+             border-radius: 10px;
+             border: dashed 2px #86ffcf;
+             background: rgb(229 251 255 / 38%);
+             padding: 20px;
+           }
+
+           .document p{
+             font-size: 10px;
+             margin: 0;
+           }
+
+           .document span{
+             font-size: 10px;
+           }
+        </style>
+    </head>
 <body>
+
 <!-- MultiStep Form -->
 <div class="container-fluid" id="grad1">
   <div class="row justify-content-center mt-0">
     <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
       <div class="card px-0 pt-4 pb-0 mt-3 mb-3 mt-lg-5">
-        <h2><strong>Sign Up Your User Account</strong></h2>
+        <h2><strong>Add Car</strong></h2>
         <p>Fill all form field to go to next step</p>
         <div class="row">
           <div class="col-md-12 mx-0">
             <form id="msform">
               <!-- progressbar -->
               <ul id="progressbar">
-                <li class="active" id="account"><strong>Step1. Basic</strong></li>
-                <li id="personal"><strong>Step2. Detail</strong></li>
-                <li id="payment"><strong>Step3. Pricing</strong></li>
-                <li id="confirm"><strong>Step4. Finish</strong></li>
+                <li class="active" id="basic"><strong>Step1. Basic</strong></li>
+                <li id="detail"><strong>Step2. Detail</strong></li>
+                <li id="pricing"><strong>Step3. Pricing</strong></li>
+                <li id="finish"><strong>Step4. Finish</strong></li>
               </ul>
               <!-- fieldsets -->
               <fieldset>
-                <div class="form-card">
-                  <h2 class="fs-title">Account Information</h2>
-                  <input type="email" name="email" placeholder="Email Id"/>
-                  <input type="text" name="uname" placeholder="UserName"/>
-                  <input type="password" name="pwd" placeholder="Password"/>
-                  <input type="password" name="cpwd" placeholder="Confirm Password"/>
+                <div class="d-flex justify-content-center">
+                  <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body text-left">
+                      <h5 class="card-title">Basic information</h5>
+                      <h6 class="card-subtitle mb-2" style="color: #ff6f61;">Note: Please check your information carefully, you'll not be able to change the basic details of your car, which is based on the registration
+                        information</h6>
+                      <div>
+                        <div class="row">
+                          <div class="input-group mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing-default">License plate</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                          </div>
+                          <div class="input-group mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <label class="input-group-text" for="inputGroupSelect01">Color</label>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect01">
+                              <option selected>Choose...</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                            </select>
+                          </div>
+                          <div class="input-group mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <label class="input-group-text" for="inputGroupSelect02">Brand Name</label>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect02">
+                              <option selected>Choose...</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                            </select>
+                          </div>
+                          <div class="input-group mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <label class="input-group-text" for="inputGroupSelect03">Model</label>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect03">
+                              <option selected>Choose...</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                            </select>
+                          </div>
+                          <div class="input-group mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <label class="input-group-text" for="inputGroupSelect04">Production year</label>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect04">
+                              <option selected>Choose...</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                            </select>
+                          </div>
+                          <div class="input-group mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <label class="input-group-text" for="inputGroupSelect05">No of seats</label>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect05">
+                              <option selected>Choose...</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                            </select>
+                          </div>
+                          <div class="col-lg-12 row">
+                            <div class="col-lg-6">
+                              <p>Transmission</p>
+                              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-secondary">
+                                  <input type="radio" name="options" id="option1"> Automatic
+                                </label>
+                                <label class="btn btn-secondary">
+                                  <input type="radio" name="options" id="option2"> Manual
+                                </label>
+                              </div>
+                            </div>
+                            <div class="col-lg-6">
+                              <p>Fuel</p>
+                              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-secondary">
+                                  <input type="radio" name="options" id="option3"> Gasoline
+                                </label>
+                                <label class="btn btn-secondary">
+                                  <input type="radio" name="options" id="option4"> Diesel
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <h5 class="card-title">Documents</h5>
+                      <div class="document">
+                        <div class="row">
+                          <div class="col-lg-4">
+                            <label for="input-file1" class="drop-area" id="drop-area1">
+                              <input type="file" id="input-file1" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
+                              <div class="img-view" id="img-view1">
+                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                <p>Drag or drop or click here<br>to upload file</p>
+                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                              </div>
+                            </label>
+                          </div>
+
+                          <div class="col-lg-4">
+                            <label for="input-file2" class="drop-area" id="drop-area2">
+                              <input type="file" id="input-file2" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
+                              <div class="img-view" id="img-view2">
+                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                <p>Drag or drop or click here<br>to upload file</p>
+                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                              </div>
+                            </label>
+                          </div>
+
+                          <div class="col-lg-4">
+                            <label for="input-file3" class="drop-area" id="drop-area3">
+                              <input type="file" id="input-file3" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
+                              <div class="img-view" id="img-view3">
+                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                <p>Drag or drop or click here<br>to upload file</p>
+                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                              </div>
+                            </label>
+                          </div>
+
+<!--                          <div class="input-group mb-3 input-group mb-3 overflow-hidden col-lg-4">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                              <span class="input-group-text" id="inputGroupFileAddon01">Registration</span>-->
+<!--                            </div>-->
+<!--                            <div class="custom-file">-->
+<!--                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">-->
+<!--                              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                          <div class="input-group mb-3 input-group mb-3 overflow-hidden col-lg-4">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                              <span class="input-group-text" id="inputGroupFileAddon02">Certificate o inspection</span>-->
+<!--                            </div>-->
+<!--                            <div class="custom-file">-->
+<!--                              <input type="file" class="custom-file-input" id="inputGroupFile02" aria-describedby="inputGroupFileAddon01">-->
+<!--                              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                          <div class="input-group mb-3 input-group mb-3 overflow-hidden col-lg-4">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                              <span class="input-group-text" id="inputGroupFileAddon03">Insurance</span>-->
+<!--                            </div>-->
+<!--                            <div class="custom-file">-->
+<!--                              <input type="file" class="custom-file-input" id="inputGroupFile03" aria-describedby="inputGroupFileAddon01">-->
+<!--                              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>-->
+<!--                            </div>-->
+<!--                          </div>-->
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
                 </div>
                 <input type="button" name="next" class="next action-button" value="Next Step"/>
               </fieldset>
@@ -123,6 +307,31 @@
   </div>
 </div>
   <script>
+    const dropArea = document.getElementById("drop-area1");
+    const inputFile = document.getElementById("input-file1");
+    const imageView = document.getElementById("img-view1");
+
+    inputFile.addEventListener("change", function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          if (file.type.match("image.*")) {
+            imageView.style.backgroundImage = `url(${e.target.result})`;
+            imageView.style.backgroundSize = "cover";
+            imageView.style.backgroundPosition = "center";
+            imageView.innerHTML = `<p>${file.name}</p>`;
+          } else {
+            imageView.style.backgroundImage = "none";
+            imageView.innerHTML = `<p>${file.name}</p>`;
+          }
+          imageView.style.border = "none";
+        };
+        reader.readAsDataURL(file);
+        console.log("added");
+      }
+    });
+
     $(document).ready(function(){
 
       var current_fs, next_fs, previous_fs; //fieldsets
@@ -191,6 +400,7 @@
       })
 
     });
+
   </script>
 </body>
 </th:block>

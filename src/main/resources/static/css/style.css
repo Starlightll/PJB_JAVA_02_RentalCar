@@ -3836,6 +3836,7 @@ input[type="button"].btn-block {
     flex: 1 1 auto;
     width: 1%;
     margin-bottom: 0;
+    height: 100%;
 }
 
 .input-group > .form-control + .form-control,
@@ -12083,6 +12084,7 @@ h1, h2, h3, h4, h5,
 
 .btn:hover, .btn:active, .btn:focus {
     outline: none;
+    background: #13b580 !important;
 }
 
 .btn.btn-primary {
@@ -12110,13 +12112,13 @@ h1, h2, h3, h4, h5,
 }
 
 .btn.btn-secondary {
-    background: #01d28e !important;
+    background: #01d28e;
     border: 1px solid #01d28e !important;
     color: #fff !important;
 }
 
 .btn.btn-secondary:hover {
-    border: 1px solid #01d28e;
+    border: 1px solid #13b580;
     background: transparent;
     color: #01d28e;
 }
