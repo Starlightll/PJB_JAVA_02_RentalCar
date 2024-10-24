@@ -41,23 +41,18 @@
                                 <h6 class="dropdown-header">Hello, <span th:text="${session.user.username}"></span></h6>
                             </div>
                             <!-- Nếu người dùng là Customer -->
-                            <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/myProfile">My Profile</a>
-                                <a class="dropdown-item" href="/my-bookings">My Booking</a>
-                                <a class="dropdown-item" href="/wallet">My Wallet</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/logout">Logout</a>
-                            </th:block>
 
-                            <!-- Nếu người dùng là Car Owner -->
-                            <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Car Owner')}">
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/myProfile">My Profile</a>
+                            <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
+                                <a class="dropdown-item" href="/my-bookings">My Booking</a>
+                            </th:block>
+                            <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Car Owner')}">
                                 <a class="dropdown-item" href="/my-cars">My Cars</a>
+                            </th:block>
                                 <a class="dropdown-item" href="/wallet">My Wallet</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/logout">Logout</a>
-                            </th:block>
                         </div>
                     </li>
 
