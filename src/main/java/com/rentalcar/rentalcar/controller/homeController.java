@@ -51,6 +51,12 @@ public class homeController {
         return "password/ResetPassword";
     }
 
+    @GetMapping("/myProfile")
+    public String myProfile_changPass() {
+        return "MyProfile_ChangPassword";
+    }
+
+
 
     @GetMapping("/logout")
     public String logoutPage(HttpSession session) {
