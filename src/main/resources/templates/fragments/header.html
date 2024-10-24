@@ -36,12 +36,9 @@
                                  style="width: 40px; height: 40px; object-fit: cover;" alt="Avatar">
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdown">
-                            <!-- Hiển thị thông tin người dùng -->
                             <div class="menu-title">
                                 <h6 class="dropdown-header">Hello, <span th:text="${session.user.username}"></span></h6>
                             </div>
-                            <!-- Nếu người dùng là Customer -->
-
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/myProfile">My Profile</a>
                             <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
