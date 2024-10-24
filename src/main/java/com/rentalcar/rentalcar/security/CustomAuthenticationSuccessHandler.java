@@ -49,7 +49,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 redirectUrl = "/homepage-carowner";
                 break;
             } else if (role.equals("Admin")) {
-                redirectUrl = "/homepage-admin";
+                redirectUrl = "/addcar";
                 break;
             }
         }

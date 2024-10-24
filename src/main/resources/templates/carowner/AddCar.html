@@ -3,40 +3,40 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    .drop-area {
+      width: 100%;
+      height: 200px;
+      padding: 30px;
+      background: #d1d5d9;
+      text-align: center;
+      border-radius: 10px;
+    }
 
-<th:block layout:fragment="content">
-    <head>
-        <style>
-           .drop-area {
-             width: 100%;
-             height: 200px;
-             padding: 30px;
-             background: #d1d5d9;
-             text-align: center;
-             border-radius: 10px;
-           }
+    .img-view{
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      border: dashed 2px #86ffcf;
+      background: rgb(229 251 255 / 38%);
+      padding: 20px;
+      overflow: hidden;
+    }
 
-           .img-view{
-             width: 100%;
-             height: 100%;
-             border-radius: 10px;
-             border: dashed 2px #86ffcf;
-             background: rgb(229 251 255 / 38%);
-             padding: 20px;
-           }
+    .document p{
+      font-size: 10px;
+      margin: 0;
+    }
 
-           .document p{
-             font-size: 10px;
-             margin: 0;
-           }
-
-           .document span{
-             font-size: 10px;
-           }
-        </style>
-    </head>
+    .document span{
+      font-size: 10px;
+    }
+  </style>
+</head>
 <body>
-
+<th:block layout:fragment="content">
 <!-- MultiStep Form -->
 <div class="container-fluid" id="grad1">
   <div class="row justify-content-center mt-0">
@@ -58,19 +58,19 @@
               <fieldset>
                 <div class="d-flex justify-content-center">
                   <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <div class="card-body text-left">
+                    <div class="card-body text-left w-100">
                       <h5 class="card-title">Basic information</h5>
                       <h6 class="card-subtitle mb-2" style="color: #ff6f61;">Note: Please check your information carefully, you'll not be able to change the basic details of your car, which is based on the registration
                         information</h6>
                       <div>
                         <div class="row">
-                          <div class="input-group mb-3 col-lg-6">
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
                             <div class="input-group-prepend">
                               <span class="input-group-text" id="inputGroup-sizing-default">License plate</span>
                             </div>
                             <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                           </div>
-                          <div class="input-group mb-3 col-lg-6">
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
                             <div class="input-group-prepend">
                               <label class="input-group-text" for="inputGroupSelect01">Color</label>
                             </div>
@@ -81,7 +81,7 @@
                               <option value="3">Three</option>
                             </select>
                           </div>
-                          <div class="input-group mb-3 col-lg-6">
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
                             <div class="input-group-prepend">
                               <label class="input-group-text" for="inputGroupSelect02">Brand Name</label>
                             </div>
@@ -92,7 +92,7 @@
                               <option value="3">Three</option>
                             </select>
                           </div>
-                          <div class="input-group mb-3 col-lg-6">
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
                             <div class="input-group-prepend">
                               <label class="input-group-text" for="inputGroupSelect03">Model</label>
                             </div>
@@ -103,7 +103,7 @@
                               <option value="3">Three</option>
                             </select>
                           </div>
-                          <div class="input-group mb-3 col-lg-6">
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
                             <div class="input-group-prepend">
                               <label class="input-group-text" for="inputGroupSelect04">Production year</label>
                             </div>
@@ -114,7 +114,7 @@
                               <option value="3">Three</option>
                             </select>
                           </div>
-                          <div class="input-group mb-3 col-lg-6">
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
                             <div class="input-group-prepend">
                               <label class="input-group-text" for="inputGroupSelect05">No of seats</label>
                             </div>
@@ -186,34 +186,6 @@
                               </div>
                             </label>
                           </div>
-
-<!--                          <div class="input-group mb-3 input-group mb-3 overflow-hidden col-lg-4">-->
-<!--                            <div class="input-group-prepend">-->
-<!--                              <span class="input-group-text" id="inputGroupFileAddon01">Registration</span>-->
-<!--                            </div>-->
-<!--                            <div class="custom-file">-->
-<!--                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">-->
-<!--                              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>-->
-<!--                            </div>-->
-<!--                          </div>-->
-<!--                          <div class="input-group mb-3 input-group mb-3 overflow-hidden col-lg-4">-->
-<!--                            <div class="input-group-prepend">-->
-<!--                              <span class="input-group-text" id="inputGroupFileAddon02">Certificate o inspection</span>-->
-<!--                            </div>-->
-<!--                            <div class="custom-file">-->
-<!--                              <input type="file" class="custom-file-input" id="inputGroupFile02" aria-describedby="inputGroupFileAddon01">-->
-<!--                              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>-->
-<!--                            </div>-->
-<!--                          </div>-->
-<!--                          <div class="input-group mb-3 input-group mb-3 overflow-hidden col-lg-4">-->
-<!--                            <div class="input-group-prepend">-->
-<!--                              <span class="input-group-text" id="inputGroupFileAddon03">Insurance</span>-->
-<!--                            </div>-->
-<!--                            <div class="custom-file">-->
-<!--                              <input type="file" class="custom-file-input" id="inputGroupFile03" aria-describedby="inputGroupFileAddon01">-->
-<!--                              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>-->
-<!--                            </div>-->
-<!--                          </div>-->
                         </div>
                       </div>
 
@@ -225,12 +197,142 @@
               <fieldset>
                 <div class="d-flex justify-content-center">
                   <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <div class="card-body text-left">
-                      <h5 class="card-title">Basic information</h5>
-                      <h6 class="card-subtitle mb-2" style="color: #ff6f61;">Note: Please check your information carefully, you'll not be able to change the basic details of your car, which is based on the registration
-                        information</h6>
+                    <div class="card-body text-left w-100">
+                        <h5 class="card-title">Car details</h5>
                       <div>
                         <div class="row">
+                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Mileage</span>
+                              </div>
+                              <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                            </div>
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Fuel consumption</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                          </div>
+                        </div>
+                      </div>
+                        <h5 class="card-title">Car address</h5>
+                        <div>
+                            <div class="row">
+                                <div class="input-group input-group-sm mb-3 col-lg-6">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="province">Province</label>
+                                    </div>
+                                    <select class="custom-select" id="province">
+                                    </select>
+                                </div>
+                                <div class="input-group input-group-sm mb-3 col-lg-6">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="district">District</label>
+                                    </div>
+                                    <select class="custom-select" id="district">
+                                       <option selected>Select</option>
+                                    </select>
+                                </div>
+                                <div class="input-group input-group-sm mb-3 col-lg-6">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="ward">Ward</label>
+                                    </div>
+                                    <select class="custom-select" id="ward">
+                                        <option selected>Select</option>
+                                    </select>
+                                </div>
+                                <div class="input-group input-group-sm mb-3 col-lg-6 h-25">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">Home</span>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                </div>
+                            </div>
+                        </div>
+                      <h5 class="card-title">Additional functions</h5>
+                      <div>
+                        <div class="row">
+                          <div class="form-check col-lg-3 col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction1">
+                            <label class="form-check-label" for="additionalFunction1">
+                              Bluetooth
+                            </label>
+                          </div>
+                          <div class="form-check col-lg-3 col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction2">
+                            <label class="form-check-label" for="additionalFunction2">
+                              Sun roof
+                            </label>
+                          </div>
+                          <div class="form-check col-lg-3 col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction3">
+                            <label class="form-check-label" for="additionalFunction3">
+                              DVD
+                            </label>
+                          </div>
+                          <div class="form-check col-lg-3 col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction4">
+                            <label class="form-check-label" for="additionalFunction4">
+                              GPS
+                            </label>
+                          </div>
+                          <div class="form-check col-lg-3 col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction5">
+                            <label class="form-check-label" for="additionalFunction5">
+                              Child lock
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <h5 class="card-title">Additional functions</h5>
+                      <div class="document">
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <p>Front</p>
+                            <label for="input-file1" class="drop-area" id="drop-area4">
+                              <input type="file" id="input-file4" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
+                              <div class="img-view" id="img-view4">
+                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                <p>Drag or drop or click here<br>to upload file</p>
+                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                              </div>
+                            </label>
+                          </div>
+
+                          <div class="col-lg-6">
+                            <p>Back</p>
+                            <label for="input-file2" class="drop-area" id="drop-area5">
+                              <input type="file" id="input-file5" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
+                              <div class="img-view" id="img-view5">
+                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                <p>Drag or drop or click here<br>to upload file</p>
+                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                              </div>
+                            </label>
+                          </div>
+
+                          <div class="col-lg-6">
+                            <p>Left</p>
+                            <label for="input-file3" class="drop-area" id="drop-area6">
+                              <input type="file" id="input-file6" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
+                              <div class="img-view" id="img-view6">
+                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                <p>Drag or drop or click here<br>to upload file</p>
+                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                              </div>
+                            </label>
+                          </div>
+                          <div class="col-lg-6">
+                            <p>Right</p>
+                            <label for="input-file3" class="drop-area" id="drop-area7">
+                              <input type="file" id="input-file7" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
+                              <div class="img-view" id="img-view7">
+                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                <p>Drag or drop or click here<br>to upload file</p>
+                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                              </div>
+                            </label>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -333,7 +435,7 @@
         console.log("added");
       }
     }
-
+    // Drop Area 1
     const dropArea1 = document.getElementById("drop-area1");
     const inputFile1 = document.getElementById("input-file1");
     const imageView1 = document.getElementById("img-view1");
@@ -412,6 +514,115 @@
       uploadfile(imageView3, inputFile3);
     });
 
+    // Drop Area 4
+    const dropArea4 = document.getElementById("drop-area4");
+    const inputFile4 = document.getElementById("input-file4");
+    const imageView4 = document.getElementById("img-view4");
+
+    inputFile4.addEventListener("change", function() {
+      uploadfile(imageView4, inputFile4);
+    });
+
+    dropArea4.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropArea4.style.background = "rgba(0, 0, 0, 0.1)";
+    });
+
+    dropArea4.addEventListener("dragleave", function(e) {
+      e.preventDefault();
+      if (!dropArea4.contains(e.relatedTarget)) {
+        dropArea4.style.background = "#d1d5d9";
+      }
+    });
+
+    dropArea4.addEventListener("drop", function(e) {
+      e.preventDefault();
+      inputFile4.files = e.dataTransfer.files;
+      uploadfile(imageView4, inputFile4);
+    });
+
+    // Drop Area 5
+    const dropArea5 = document.getElementById("drop-area5");
+    const inputFile5 = document.getElementById("input-file5");
+    const imageView5 = document.getElementById("img-view5");
+
+    inputFile5.addEventListener("change", function() {
+      uploadfile(imageView5, inputFile5);
+    });
+
+    dropArea5.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropArea5.style.background = "rgba(0, 0, 0, 0.1)";
+    });
+
+    dropArea5.addEventListener("dragleave", function(e) {
+      e.preventDefault();
+      if (!dropArea5.contains(e.relatedTarget)) {
+        dropArea5.style.background = "#d1d5d9";
+      }
+    });
+
+    dropArea5.addEventListener("drop", function(e) {
+      e.preventDefault();
+      inputFile5.files = e.dataTransfer.files;
+      uploadfile(imageView5, inputFile5);
+    });
+
+    // Drop Area 6
+    const dropArea6 = document.getElementById("drop-area6");
+    const inputFile6 = document.getElementById("input-file6");
+    const imageView6 = document.getElementById("img-view6");
+
+    inputFile6.addEventListener("change", function() {
+      uploadfile(imageView6, inputFile6);
+    });
+
+    dropArea6.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropArea6.style.background = "rgba(0, 0, 0, 0.1)";
+    });
+
+    dropArea6.addEventListener("dragleave", function(e) {
+      e.preventDefault();
+      if (!dropArea6.contains(e.relatedTarget)) {
+        dropArea6.style.background = "#d1d5d9";
+      }
+    });
+
+    dropArea6.addEventListener("drop", function(e) {
+      e.preventDefault();
+      inputFile6.files = e.dataTransfer.files;
+      uploadfile(imageView6, inputFile6);
+    });
+
+    // Drop Area 7
+    const dropArea7 = document.getElementById("drop-area7");
+    const inputFile7 = document.getElementById("input-file7");
+    const imageView7 = document.getElementById("img-view7");
+
+    inputFile7.addEventListener("change", function() {
+      uploadfile(imageView7, inputFile7);
+    });
+
+    dropArea7.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropArea7.style.background = "rgba(0, 0, 0, 0.1)";
+    });
+
+    dropArea7.addEventListener("dragleave", function(e) {
+      e.preventDefault();
+      if (!dropArea7.contains(e.relatedTarget)) {
+        dropArea7.style.background = "#d1d5d9";
+      }
+    });
+
+    dropArea7.addEventListener("drop", function(e) {
+      e.preventDefault();
+      inputFile7.files = e.dataTransfer.files;
+      uploadfile(imageView7, inputFile7);
+    });
+
+
 
     $(document).ready(function(){
 
@@ -428,6 +639,7 @@
 
         //show the next fieldset
         next_fs.show();
+        window.scrollTo(0, 0);
         //hide the current fieldset with style
         current_fs.animate({opacity: 0}, {
           step: function(now) {
@@ -454,6 +666,7 @@
 
         //show the previous fieldset
         previous_fs.show();
+        window.scrollTo(0, 0);
 
         //hide the current fieldset with style
         current_fs.animate({opacity: 0}, {
@@ -482,7 +695,44 @@
 
     });
 
+    // Call API
+    const host = "https://provinces.open-api.vn/api/";
+    let callAPI = (api) => {
+        return axios.get(api)
+            .then((response) => {
+                renderData(response.data, "province");
+            });
+    }
+    callAPI('https://provinces.open-api.vn/api/?depth=1');
+    let callApiDistrict = (api) => {
+        return axios.get(api)
+            .then((response) => {
+                renderData(response.data.districts, "district");
+            });
+    }
+    let callApiWard = (api) => {
+        return axios.get(api)
+            .then((response) => {
+                renderData(response.data.wards, "ward");
+            });
+    }
+
+    let renderData = (array, select) => {
+        let row = ' <option disable value="">Select</option>';
+        array.forEach(element => {
+            row += `<option value="${element.code}">${element.name}</option>`
+        });
+        document.querySelector("#" + select).innerHTML = row
+    }
+
+    $("#province").change(() => {
+        callApiDistrict(host + "p/" + $("#province").val() + "?depth=2");
+    });
+    $("#district").change(() => {
+        callApiWard(host + "d/" + $("#district").val() + "?depth=2");
+    });
+
   </script>
-</body>
 </th:block>
+</body>
 </html>
