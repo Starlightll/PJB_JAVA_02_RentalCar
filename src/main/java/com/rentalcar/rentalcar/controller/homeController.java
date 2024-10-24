@@ -27,6 +27,10 @@ public class homeController {
     public String loginPage() {
         return "UserManagement/Login";
     }
+    @GetMapping("/home")
+    public String Home() {
+        return "UserManagement/home";
+    }
 
     @GetMapping("/login-success")
     public String loginSuccessPage(HttpSession session) {

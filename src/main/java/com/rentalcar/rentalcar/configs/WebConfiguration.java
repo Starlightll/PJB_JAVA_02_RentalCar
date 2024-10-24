@@ -43,6 +43,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
                 .antMatchers("/login", "/register/**", "/forgotpassword").permitAll()
+                .antMatchers("/home").hasAnyAuthority("Admin", "Customer")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login")
