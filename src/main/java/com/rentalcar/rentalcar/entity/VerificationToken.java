@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 
 public class VerificationToken {
-    private static final int EXPIRATION = 1;  // Thời hạn token là 24 giờ
+    private static final int EXPIRATION = 60*24;  // Thời hạn token là 24 giờ
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

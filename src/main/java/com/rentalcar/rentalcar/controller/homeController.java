@@ -41,23 +41,6 @@ public class homeController {
     }
 
 
-    @GetMapping("/forgotPass")
-    public String forgotPassWord() {
-        return "password/ForgotPassword";
-    }
-
-    @GetMapping("/resetPass")
-    public String resetPassWord() {
-        return "password/ResetPassword";
-    }
-
-    @GetMapping("/myProfile")
-    public String myProfile_changPass() {
-        return "MyProfile_ChangPassword";
-    }
-
-
-
     @GetMapping("/logout")
     public String logoutPage(HttpSession session) {
         session.removeAttribute("user");
@@ -68,5 +51,10 @@ public class homeController {
     @GetMapping("/addcar")
     public String addCar() {
         return "carowner/AddCar";
+    }
+
+    @GetMapping("/myProfile")
+    public String myProfile_changPass() {
+        return "MyProfile_ChangPassword";
     }
 }

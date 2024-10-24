@@ -32,6 +32,16 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     }
 
     @Override
+    public void updateResetPasswordToken(User user, String newToken) {
+        VerificationToken existingToken = tokenRepository.findByUser(user);
+        if (existingToken != null) {
+            existingToken.setToken(newToken);  // Cập nhật token mới
+            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(1));  // Cập nhật thời hạn token mới
+            tokenRepository.save(existingToken);  // Lưu lại token mới
+        }
+    }
+
+    @Override
     public VerificationToken getVerificationToken(String token) {
         return tokenRepository.findByToken(token);
     }

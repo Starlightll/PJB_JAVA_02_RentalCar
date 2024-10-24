@@ -2,6 +2,7 @@ package com.rentalcar.rentalcar.service;
 
 
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +33,12 @@ public class UserDetailsServiceImpl implements UserDetailsService, com.rentalcar
 	// Thêm phương thức này để trả về User
 	@Override
 	public User loadUserByEmail(String email) {
-		return userRepo.getUserByEmail(email);
+		User user = userRepo.getUserByEmail(email);
+
+		if(user == null) {
+			throw new UserException("Not found");
+		}
+		return user;
 	}
 
 
