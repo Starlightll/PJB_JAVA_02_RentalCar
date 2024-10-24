@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.configs;
 import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
+import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,17 +37,26 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authenticationProvider());
     }
 
+    @Bean
+    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        CustomAuthenticationSuccessHandler successHandler = new CustomAuthenticationSuccessHandler();
+        successHandler.setUserDetailsService((UserDetailsServiceImpl) userDetailsService());
+        return successHandler;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/homepage-customer").hasAuthority("Customer")
+                .antMatchers("/homepage-carowner").hasAuthority("Car Owner")
+                .antMatchers("/homepage-guest").permitAll()
                 .antMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
                 .antMatchers("/login", "/register/**", "/forgotpassword").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login")
-                .defaultSuccessUrl("/login-success", true)
+                .successHandler(customAuthenticationSuccessHandler())
                 .failureHandler(new CustomAuthenticationFailureHandler())
                 .permitAll()
                 .and()
