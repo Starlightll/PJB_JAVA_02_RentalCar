@@ -1,6 +1,9 @@
 package com.rentalcar.rentalcar.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,6 +13,8 @@ import java.util.Set;
 
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "Users")
 public class User {
     @Id
