@@ -253,7 +253,7 @@
     <div class="forms">
         <div class="form-content">
             <div class="login-form">
-                <div class="title">Signin</div>
+                <div class="title">SIGN IN</div>
                 <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
                     <div th:if="${param.error}" style="color: red" th:text="${param.message}">
                     </div>
@@ -270,12 +270,12 @@
                         <div class="button input-box">
                             <input type="submit" value="Sumbit">
                         </div>
-                        <div class="text sign-up-text">Don't have an account? <label for="flip">Signup now</label></div>
+                        <div class="text sign-up-text">Don't have an account? <label for="flip">Sign up now</label></div>
                     </div>
                 </form>
             </div>
             <div class="signup-form">
-                <div class="title">Signup</div>
+                <div class="title">SIGN UP</div>
                 <form method="post" class="register-form" id="register-form" th:action="@{/register}"
                       th:object="${registerDto}">
                     <div class="input-boxes">
@@ -291,7 +291,7 @@
                         </div>
                         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
                         <div class="input-box">
-                            <i class="fas fa-envelope"></i>
+                            <i class="fas fa-phone"></i>
                             <input type="number" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
                                    placeholder="Enter your phone" required>
                         </div>
@@ -308,7 +308,7 @@
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
                             <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"
-                                   placeholder="Repeat your password"
+                                   placeholder="Confirm password"
                                    pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
                                    title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number."
                                    required>
@@ -333,7 +333,7 @@
                         <div class="button input-box">
                             <input type="submit" name="signup" id="signup" class="form-submit-re" value="Register" disabled/>
                         </div>
-                        <div class="text sign-up-text">Already have an account? <label for="flip">Signin now</label></div>
+                        <div class="text sign-up-text">Already have an account? <label for="flip">Sign in now</label></div>
                     </div>
                 </form>
             </div>
