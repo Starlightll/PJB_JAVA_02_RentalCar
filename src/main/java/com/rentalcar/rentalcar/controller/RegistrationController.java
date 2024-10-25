@@ -29,7 +29,7 @@ public class RegistrationController {
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("registerDto", new RegisterDto());
-        return "UserManagement/Register";
+        return "UserManagement/SignIn";
     }
 
 
@@ -37,7 +37,7 @@ public class RegistrationController {
     public String registerUser(@Valid RegisterDto registerDto, BindingResult result, Model model) {
         if(result.hasErrors()) {
             model.addAttribute("registerDto", registerDto);
-            return "UserManagement/Register";
+            return "UserManagement/SignIn";
         }
 
         try {
@@ -53,7 +53,7 @@ public class RegistrationController {
                     break;
             }
             model.addAttribute("registerDto", registerDto);
-            return "UserManagement/Register";
+            return "UserManagement/SignIn";
         }
     }
 

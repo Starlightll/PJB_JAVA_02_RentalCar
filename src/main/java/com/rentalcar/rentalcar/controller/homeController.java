@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.controller;
 
 
+import com.rentalcar.rentalcar.dto.RegisterDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import com.rentalcar.rentalcar.dto.RegisterDto;
+import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.VerificationToken;
+import com.rentalcar.rentalcar.exception.UserException;
+import com.rentalcar.rentalcar.repository.VerificationTokenRepo;
+import com.rentalcar.rentalcar.service.RegisterUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 
@@ -36,7 +51,8 @@ public class homeController {
 
 
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(Model model) {
+        model.addAttribute("registerDto", new RegisterDto());
         return "UserManagement/SignIn";
     }
 
