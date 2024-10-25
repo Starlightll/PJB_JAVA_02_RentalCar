@@ -253,7 +253,7 @@
     <div class="forms">
         <div class="form-content">
             <div class="login-form">
-                <div class="title">Login</div>
+                <div class="title">Signin</div>
                 <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
                     <div th:if="${param.error}" style="color: red" th:text="${param.message}">
                     </div>
@@ -270,7 +270,7 @@
                         <div class="button input-box">
                             <input type="submit" value="Sumbit">
                         </div>
-                        <div class="text sign-up-text">Don't have an account? <label for="flip">Sigup now</label></div>
+                        <div class="text sign-up-text">Don't have an account? <label for="flip">Signup now</label></div>
                     </div>
                 </form>
             </div>
@@ -333,7 +333,7 @@
                         <div class="button input-box">
                             <input type="submit" name="signup" id="signup" class="form-submit-re" value="Register" disabled/>
                         </div>
-                        <div class="text sign-up-text">Already have an account? <label for="flip">Login now</label></div>
+                        <div class="text sign-up-text">Already have an account? <label for="flip">Signin now</label></div>
                     </div>
                 </form>
             </div>
