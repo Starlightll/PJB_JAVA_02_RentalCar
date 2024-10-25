@@ -44,7 +44,7 @@ public class homeController {
     @GetMapping("/")
     public String homeRedirect(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("CUSTOMER"))) {
+            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Customer"))) {
                 return "redirect:/homepage-customer";
             } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Car Owner"))) {
                 return "redirect:/homepage-carowner";
