@@ -5,6 +5,7 @@ import com.rentalcar.rentalcar.dto.RegisterDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -33,20 +34,23 @@ public class homeController {
 
     @Autowired UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping({"/", "/homepage-guest"})
+    @GetMapping({"/homepage-guest"})
     public String homePage() {
         return "HomepageForGuest";
     }
 
 
-    @GetMapping("/homepage-customer")
-    public String customerHomepage() {
-        return "HomepageForCustomer"; // Return the view for customer
-    }
-
-    @GetMapping("/homepage-carowner")
-    public String carOwnerHomepage() {
-        return "HomepageForCarOwner"; // Return the view for car owner
+    //Phan quyen cho home tren navbar
+    @GetMapping("/")
+    public String homeRedirect(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Customer"))) {
+                return "redirect:/homepage-customer";
+            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Car Owner"))) {
+                return "redirect:/homepage-carowner";
+            }
+        }
+        return "redirect:/homepage-guest";
     }
 
 
@@ -59,7 +63,7 @@ public class homeController {
 
     @GetMapping("/logout")
     public String logoutPage(HttpSession session) {
-        session.removeAttribute("user");
+        session.invalidate();
         return "redirect:/";
     }
 
@@ -69,8 +73,4 @@ public class homeController {
         return "carowner/AddCar";
     }
 
-    @GetMapping("/myProfile")
-    public String myProfile_changPass() {
-        return "MyProfile_ChangPassword";
-    }
 }

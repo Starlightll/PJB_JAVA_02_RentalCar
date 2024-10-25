@@ -47,25 +47,24 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/homepage-guest").permitAll()
+                .antMatchers("/", "/homepage-guest").permitAll()
+                .antMatchers("myProfile").hasAnyAuthority("Customer", "Car Owner")
                 .antMatchers("/homepage-customer").hasAuthority("Customer")
                 .antMatchers("/homepage-carowner").hasAuthority("Car Owner")
                 .antMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
                 .antMatchers("/login", "/register/**", "/forgot-password", "/reset-password/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login")
+          .formLogin().loginPage("/login")
                 .successHandler(customAuthenticationSuccessHandler())
                 .failureHandler(new CustomAuthenticationFailureHandler())
                 .permitAll()
                 .and()
-              .rememberMe()
-                .key("uniqueAndSecret")
-                .tokenValiditySeconds(9000)// 2 tuan
-                .rememberMeParameter("remember-me")
-                .and()
-                .logout().permitAll()
+          .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID") // Xóa cookie nếu cần
                 .and()
                 .exceptionHandling().accessDeniedPage("/403")
         ;
