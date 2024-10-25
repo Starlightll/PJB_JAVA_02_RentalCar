@@ -25,9 +25,9 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     public void updateVerificationToken(User user, String newToken) {
         VerificationToken existingToken = tokenRepository.findByUser(user);
         if (existingToken != null) {
-            existingToken.setToken(newToken);  // Cập nhật token mới
-            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));  // Cập nhật thời hạn token mới
-            tokenRepository.save(existingToken);  // Lưu lại token mới
+            existingToken.setToken(newToken);
+            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
+            tokenRepository.save(existingToken);
         }
     }
 
@@ -35,8 +35,8 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     public void updateResetPasswordToken(User user, String newToken) {
         VerificationToken existingToken = tokenRepository.findByUser(user);
         if (existingToken != null) {
-            existingToken.setToken(newToken);  // Cập nhật token mới
-            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(1));  // Cập nhật thời hạn token mới
+            existingToken.setToken(newToken);
+            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(1));
             tokenRepository.save(existingToken);  // Lưu lại token mới
         }
     }

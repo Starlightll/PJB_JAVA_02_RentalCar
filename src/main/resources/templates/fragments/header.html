@@ -39,7 +39,7 @@
                                 <h6 class="dropdown-header">Hello, <span th:text="${session.user.username}"></span></h6>
                             </div>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/myProfile">My Profile</a>
+                                <a class="dropdown-item" href="/my-profile">My Profile</a>
                             <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
                                 <a class="dropdown-item" href="/my-bookings">My Booking</a>
                             </th:block>
@@ -48,7 +48,7 @@
                             </th:block>
                                 <a class="dropdown-item" href="/wallet">My Wallet</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/logout">Logout</a>
+                                <a class="dropdown-item" href="/logout" id="logout-link">Logout</a>
                         </div>
                     </li>
 
@@ -64,8 +64,6 @@
         </div>
     </div>
 </nav>
-
-
 
 </body>
 </html>
