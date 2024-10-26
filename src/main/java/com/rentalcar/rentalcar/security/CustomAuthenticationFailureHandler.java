@@ -19,7 +19,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String errorMessage = "Invalid email or password.";
         boolean showConfirmationLink = false;
-        String email = request.getParameter("username");
+        String email = request.getParameter("email");
 
         if (exception.getCause() instanceof UsernameNotFoundException) {
             errorMessage = "No account found with that email.";

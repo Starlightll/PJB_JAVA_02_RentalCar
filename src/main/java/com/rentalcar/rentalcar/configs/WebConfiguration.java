@@ -56,6 +56,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
           .formLogin().loginPage("/login")
+                .usernameParameter("email")
                 .successHandler(customAuthenticationSuccessHandler())
                 .failureHandler(new CustomAuthenticationFailureHandler())
                 .permitAll()
