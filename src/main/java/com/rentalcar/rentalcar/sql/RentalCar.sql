@@ -1,5 +1,14 @@
 CREATE DATABASE RentalCar
 USE RentalCar
+--===============================DB UPDATE ======================
+
+ALTER TABLE Users
+    ADD status VARCHAR(10) NOT NULL DEFAULT 'PENDING' CHECK (status IN('PENDING', 'ACTIVATED', 'LOCKED'))
+
+DROP TABLE [UserStatus]
+
+--========================================================================================
+
 
 
 -- Role table

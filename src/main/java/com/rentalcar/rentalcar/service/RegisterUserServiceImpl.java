@@ -101,7 +101,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         if(user.getStatus().equals(UserStatus.LOCKED)) {
             return "Account Locked";
         }
-        if (!user.getStatus().equals(UserStatus.ACTIVATED)) {
+        if (user.getStatus().equals(UserStatus.ACTIVATED)) {
             return "Account activated.";
         }
 
@@ -111,6 +111,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
 
         return "Token valid";
     }
+
 
     @Override
     public void resendActivationToken(String email) {
