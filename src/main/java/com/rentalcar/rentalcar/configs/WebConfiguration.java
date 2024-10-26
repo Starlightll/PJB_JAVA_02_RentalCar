@@ -52,7 +52,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/homepage-customer").hasAuthority("Customer")
                 .antMatchers("/homepage-carowner").hasAuthority("Car Owner")
                 .antMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
-                .antMatchers("/login", "/register/**", "/forgot-password", "/reset-password/**").permitAll()
+                .antMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation").permitAll()
                 .anyRequest().authenticated()
                 .and()
           .formLogin().loginPage("/login")

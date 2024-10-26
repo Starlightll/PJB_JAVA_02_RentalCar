@@ -257,7 +257,8 @@
 </head>
 <body>
 <div class="container">
-    <input type="checkbox" id="flip">
+    <input type="checkbox" id="flip" th:checked="${hasSignupErrors}">
+
     <div class="cover">
         <div class="front">
             <img src="/images/bg_2.jpg" alt="">
@@ -279,16 +280,23 @@
             <div class="login-form">
                 <div class="title">Login</div>
                 <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
-                    <div th:if="${param.error}" style="color: red" th:text="${param.message}">
+
+                    <div th:if="${param.error}" style="color: red">
+                        <span th:text="${param.message}"></span>
+
+                        <div th:if="${param.confirmation != null && param.confirmation.contains('true')}">
+                            <a href="/send-activation" style="color: blue">Click here to resend the activation link.</a>
+                        </div>
                     </div>
+
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" name="username" id="your_name" placeholder="Enter your email" required>
+                            <input type="email" name="username" id="your_name"  th:value="${param.email}" placeholder="Enter your email" autofocus required>
                         </div>
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
-                            <input type="password" name="password" id="your_pass"  placeholder="Enter your password" required>
+                            <input type="password" name="password" id="your_pass" placeholder="Enter your password" required>
                         </div>
                         <div class="text"><a href="/forgot-password">Forgot password?</a></div>
                         <div class="button input-box">
@@ -300,8 +308,7 @@
             </div>
             <div class="signup-form">
                 <div class="title">Signup</div>
-                <form method="post" class="register-form" id="register-form" th:action="@{/register}"
-                      th:object="${registerDto}">
+                <form method="post" class="register-form" id="register-form" th:action="@{/register}" th:object="${registerDto}">
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-user"></i>
@@ -315,8 +322,8 @@
                         </div>
                         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
                         <div class="input-box">
-                            <i class="fas fa-envelope"></i>
-                            <input type="number" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
+                            <i class="fas fa-phone"></i>
+                            <input type="text" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
                                    placeholder="Enter your phone" required>
                         </div>
                         <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
@@ -364,7 +371,10 @@
         </div>
     </div>
 </div>
-<<script>
+
+
+<script th:inline="javascript">
+
     function toggleSubmitButton() {
         const checkbox = document.getElementById("agree-term");
         const submitButton = document.getElementById("signup");
@@ -375,7 +385,11 @@
             submitButton.disabled = true;
             submitButton.classList.remove('active');
         }
+
+
     }
+
 </script>
+
 </body>
 </html>

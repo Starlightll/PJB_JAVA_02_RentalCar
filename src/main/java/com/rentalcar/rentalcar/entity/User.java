@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.entity;
 
+import com.rentalcar.rentalcar.common.UserStatus;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -18,8 +19,10 @@ public class User {
     private Long id;
     private String username;
     private LocalDate dob;
+    @Column(unique = true)
     private String email;
     private String nationalId;
+    @Column(unique = true)
     private String phone;
     private String drivingLicense;
     private BigDecimal wallet;
@@ -30,7 +33,8 @@ public class User {
     private String street;
     private String fullName;
     private boolean enabled;
-
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private VerificationToken verificationToken; // Tham chiếu đến VerificationToken
@@ -42,5 +46,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "roleId")
     )
     private Set<Role> roles = new HashSet<>();
+
+
 
 }

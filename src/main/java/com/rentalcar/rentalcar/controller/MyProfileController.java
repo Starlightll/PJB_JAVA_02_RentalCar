@@ -23,6 +23,7 @@ public class MyProfileController {
 
     @GetMapping("/my-profile")
     public String myProfile_changPass(Model model) {
+        model.addAttribute("hasReSetErrors", true);
         model.addAttribute("myProfileDto", new MyProfileDto());
         return "MyProfile_ChangPassword";
     }

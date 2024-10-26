@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.entity.VerificationToken;
 import com.rentalcar.rentalcar.exception.UserException;
@@ -28,9 +29,15 @@ public class ForgotPasswordServicImpl implements ForgotPasswordService{
     public void forgotPassword(String email) throws UserException {
         User user = userDetailsService.loadUserByEmail(email);
 
-        if(!user.isEnabled()) {
+
+        if(user.getStatus().equals(UserStatus.LOCKED)) {
+            throw new UserException("Account Locked");
+        }
+
+        if(!user.getStatus().equals(UserStatus.ACTIVATED)) {
             throw new UserException("Account not activated");
         }
+
 
         // Create token reset
         String token = UUID.randomUUID().toString();

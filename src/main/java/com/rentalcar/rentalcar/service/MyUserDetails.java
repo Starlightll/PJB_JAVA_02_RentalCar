@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.service;
 
 
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.entity.Role;
 import com.rentalcar.rentalcar.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,7 +51,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !user.getStatus().equals(UserStatus.LOCKED);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled();
+        return user.getStatus().equals(UserStatus.ACTIVATED);
     }
 
 

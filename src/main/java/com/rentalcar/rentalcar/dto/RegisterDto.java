@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -23,11 +24,16 @@ public class RegisterDto {
     @Email(message = "Valid email is required: ex@abc.xyz")
     private  String email;
     @NotBlank(message = "Phone number cannot be blank")
-    @Pattern(regexp = "(84|0[35789])[0-9]{8}", message = "Invalid phone number format")
+    @Pattern(regexp = "^\\+?[0-9]\\d{1,14}$", message = "Invalid phone number format")
     private String phoneNumber;// Thêm trường số điện thoại
-    @Size(min=8, max=20, message = "Password length must between 8 and 20 characters")
+    // Mật khẩu bao gồm cả chữ hoa, chữ thường, số, ký tự đặc biệt và ít nhất 8 ký tự
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
+            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character.")
     private String password;
-    @Size(min=8, max=20, message = "Password length must between 8 and 20 characters")
+
+    // Mật khẩu bao gồm cả chữ hoa, chữ thường, số, ký tự đặc biệt và ít nhất 8 ký tự
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
+            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character.")
     private String confirmPassword;
     private int role;
 }

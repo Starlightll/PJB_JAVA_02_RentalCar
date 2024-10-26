@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.service;
 
 
+import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.entity.VerificationToken;
 import com.rentalcar.rentalcar.repository.VerificationTokenRepo;
@@ -26,7 +27,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         VerificationToken existingToken = tokenRepository.findByUser(user);
         if (existingToken != null) {
             existingToken.setToken(newToken);
-            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
+            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(Constants.EXPIRATION));
             tokenRepository.save(existingToken);
         }
     }
@@ -36,7 +37,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         VerificationToken existingToken = tokenRepository.findByUser(user);
         if (existingToken != null) {
             existingToken.setToken(newToken);
-            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(1));
+            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(Constants.EXPIRATIONFORGOTPASS));
             tokenRepository.save(existingToken);  // Lưu lại token mới
         }
     }

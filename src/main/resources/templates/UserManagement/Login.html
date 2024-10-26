@@ -41,16 +41,21 @@
 
 
                     <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
-                        <div th:if="${param.error}" style="color: red" th:text="${param.message}">
-                            <!-- Thông báo lỗi sẽ được chèn ở đây -->
+                        <div th:if="${param.error}" style="color: red">
+                            <span th:text="${param.message}"></span>
+                            <p>Confirmation: <span th:text="${param.confirmation}"></span></p>
+                            <div th:if="${param.confirmation == 'true'}">
+                                <a th:href="@{/send-activation}">Click here to resend the activation link.</a>
+                            </div>
                         </div>
+
                         <div class="form-group">
                             <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" name="username" id="your_name" placeholder="Your Email" required autocomplete="on"/>
+                            <input type="text" name="username" id="your_name" autocomplete="username" placeholder="Your Email" required  />
                         </div>
                         <div class="form-group">
                             <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="password" id="your_pass" placeholder="Password" required autocomplete="on"/>
+                            <input type="password" name="password" id="your_pass" autocomplete="current-password" placeholder="Password" required />
                         </div>
                         <div class="form-group">
                             <input type="checkbox" name="remember-me" id="remember-me" class="agree-term"/>
