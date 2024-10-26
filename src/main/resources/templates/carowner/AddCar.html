@@ -33,6 +33,9 @@
     .document span{
       font-size: 10px;
     }
+
+  /*  Preview part */
+
   </style>
 </head>
 <body>
@@ -212,6 +215,9 @@
                               <span class="input-group-text">Fuel consumption</span>
                             </div>
                             <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                            <div class="input-group-append">
+                              <span class="input-group-text">liter/100km</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -287,9 +293,9 @@
                       <h5 class="card-title">Additional functions</h5>
                       <div class="document">
                         <div class="row">
-                          <div class="col-lg-6">
+                          <div class="col-lg-3 col-sm-6">
                             <p>Front</p>
-                            <label for="input-file1" class="drop-area" id="drop-area4">
+                            <label for="input-file4" class="drop-area" id="drop-area4">
                               <input type="file" id="input-file4" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
                               <div class="img-view" id="img-view4">
                                 <i class="fa-solid fa-file-arrow-up fa-2x"></i>
@@ -299,9 +305,9 @@
                             </label>
                           </div>
 
-                          <div class="col-lg-6">
+                          <div class="col-lg-3 col-sm-6">
                             <p>Back</p>
-                            <label for="input-file2" class="drop-area" id="drop-area5">
+                            <label for="input-file5" class="drop-area" id="drop-area5">
                               <input type="file" id="input-file5" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
                               <div class="img-view" id="img-view5">
                                 <i class="fa-solid fa-file-arrow-up fa-2x"></i>
@@ -311,9 +317,9 @@
                             </label>
                           </div>
 
-                          <div class="col-lg-6">
+                          <div class="col-lg-3 col-sm-6">
                             <p>Left</p>
-                            <label for="input-file3" class="drop-area" id="drop-area6">
+                            <label for="input-file6" class="drop-area" id="drop-area6">
                               <input type="file" id="input-file6" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
                               <div class="img-view" id="img-view6">
                                 <i class="fa-solid fa-file-arrow-up fa-2x"></i>
@@ -322,9 +328,9 @@
                               </div>
                             </label>
                           </div>
-                          <div class="col-lg-6">
+                          <div class="col-lg-3 col-sm-6">
                             <p>Right</p>
-                            <label for="input-file3" class="drop-area" id="drop-area7">
+                            <label for="input-file7" class="drop-area" id="drop-area7">
                               <input type="file" id="input-file7" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
                               <div class="img-view" id="img-view7">
                                 <i class="fa-solid fa-file-arrow-up fa-2x"></i>
@@ -342,53 +348,189 @@
                 <input type="button" name="next" class="next action-button" value="Next Step"/>
               </fieldset>
               <fieldset>
-                <div class="form-card">
-                  <h2 class="fs-title">Payment Information</h2>
-                  <div class="radio-group">
-                    <div class='radio' data-value="credit"><img src="https://i.imgur.com/XzOzVHZ.jpg" width="200px" height="100px"></div>
-                    <div class='radio' data-value="paypal"><img src="https://i.imgur.com/jXjwZlj.jpg" width="200px" height="100px"></div>
-                    <br>
-                  </div>
-                  <label class="pay">Card Holder Name*</label>
-                  <input type="text" name="holdername" placeholder=""/>
-                  <div class="row">
-                    <div class="col-9">
-                      <label class="pay">Card Number*</label>
-                      <input type="text" name="cardno" placeholder=""/>
-                    </div>
-                    <div class="col-3">
-                      <label class="pay">CVC*</label>
-                      <input type="password" name="cvcpwd" placeholder="***"/>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-3">
-                      <label class="pay">Expiry Date*</label>
-                    </div>
-                    <div class="col-9">
-                      <select class="list-dt" id="month" name="expmonth">
-                        <option selected>Month</option>
-                        <option>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option>December</option>
-                      </select>
-                      <select class="list-dt" id="year" name="expyear">
-                        <option selected>Year</option>
-                      </select>
+                <div class="d-flex justify-content-center">
+                  <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body text-left w-100">
+                      <h5 class="card-title">Pricing</h5>
+                      <div>
+                        <div class="row">
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Base price</span>
+                            </div>
+                            <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                            <div class="input-group-append">
+                              <span class="input-group-text">VND/Day</span>
+                            </div>
+                          </div>
+                          <div class="input-group input-group-sm mb-3 col-lg-6">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Deposit</span>
+                            </div>
+                            <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                            <div class="input-group-append">
+                              <span class="input-group-text">VND</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <h5 class="card-title">Term of Use</h5>
+                      <div>
+                        <div class="row">
+                          <div class="form-check col-lg-6 col-md-6">
+                            <label>
+                              <input class="form-check-input" type="checkbox" value="">
+                            </label>
+                            <label class="form-check-label" for="additionalFunction1">
+                              No smoking
+                            </label>
+                          </div>
+                          <div class="form-check col-lg-6 col-md-6">
+                            <label>
+                              <input class="form-check-input" type="checkbox" value="">
+                            </label>
+                            <label class="form-check-label" for="additionalFunction1">
+                              No food in car
+                            </label>
+                          </div>
+                          <div class="form-check col-lg-6 col-md-6">
+                            <label>
+                              <input class="form-check-input" type="checkbox" value="">
+                            </label>
+                            <label class="form-check-label" for="additionalFunction1">
+                              No pet
+                            </label>
+                          </div>
+                          <div class="input-group mb-3 col-lg-12 col-md-12">
+                            <div class="input-group-prepend">
+                              <div class="input-group-text">
+                                <input type="checkbox" aria-label="Checkbox for following text input">
+                                <label class="form-check-label" for="additionalFunction1" style="padding: 0 10px;">
+                                  Other
+                                </label>
+                              </div>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Text input with checkbox">
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="button" name="make_payment" class="next action-button" value="Confirm"/>
+                <input type="button" name="make_payment" class="next action-button" value="Next Step"/>
+              </fieldset>
+              <fieldset>
+                <div class="d-flex justify-content-center">
+                  <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body text-left w-100">
+                      <h5 class="card-title">Basic information</h5>
+                      <div class="row">
+                        <div class="swiper-container main-slider loading">
+                          <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1483985988355-763728e1935b?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Shaun Matthews</p>
+                                <span class="caption">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</span>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1500643752441-4dc90cda350a?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1500643752441-4dc90cda350a?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Alexis Berry</p>
+                                <span class="caption">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</span>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1465408953385-7c4627c29435?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1465408953385-7c4627c29435?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Billie	Pierce</p>
+                                <span class="caption">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</span>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1538329972958-465d6d2144ed?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTkzNg&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1538329972958-465d6d2144ed?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTkzNg&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Trevor	Copeland</p>
+                                <span class="caption">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</span>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTk1OQ&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTk1OQ&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Bernadette	Newman</p>
+                                <span class="caption">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</span>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- If we need navigation buttons -->
+                          <div class="swiper-button-prev swiper-button-white"></div>
+                          <div class="swiper-button-next swiper-button-white"></div>
+                        </div>
+
+                        <!-- Thumbnail navigation -->
+                        <div class="swiper-container nav-slider loading">
+                          <div class="swiper-wrapper" role="navigation">
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1483985988355-763728e1935b?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Shaun Matthews</p>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1500643752441-4dc90cda350a?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1500643752441-4dc90cda350a?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Alexis Berry</p>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1465408953385-7c4627c29435?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1465408953385-7c4627c29435?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTg2Ng&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Billie	Pierce</p>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1538329972958-465d6d2144ed?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTkzNg&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1538329972958-465d6d2144ed?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTkzNg&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Trevor	Copeland</p>
+                              </div>
+                            </div>
+                            <div class="swiper-slide">
+                              <figure class="slide-bgimg" style="background-image:url(https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTk1OQ&ixlib=rb-1.2.1&q=85)">
+                                <img src="https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0MDE1NTk1OQ&ixlib=rb-1.2.1&q=85" class="entity-img" />
+                              </figure>
+                              <div class="content">
+                                <p class="title">Bernadette	Newman</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                <input type="button" name="next" class="next action-button" value="Confirm"/>
               </fieldset>
               <fieldset>
                 <div class="form-card">
@@ -406,6 +548,7 @@
                     </div>
                   </div>
                 </div>
+                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
               </fieldset>
             </form>
           </div>
