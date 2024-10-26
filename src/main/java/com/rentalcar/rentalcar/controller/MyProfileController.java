@@ -50,7 +50,7 @@ public class MyProfileController {
                     result.rejectValue("oldPassword", "error.oldPassword", "Old password is incorrect");
                     break;
                 case "Passwords do not match":
-                    result.rejectValue("confirmPassword", "error.confirmPassword", "Passwords do not match");
+                    result.rejectValue("confirmPassword", "error.confirmPassword", "Password and Confirm password don’t match. Please try again.");
                     break;
             }
             model.addAttribute("myProfileDto", myProfileDto);

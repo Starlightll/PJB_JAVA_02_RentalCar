@@ -124,7 +124,7 @@ public class ForgotPassController {
         } catch (UserException e) {
             switch (e.getMessage()) {
                 case "Passwords do not match":
-                    result.rejectValue("confirmPassword", "error.confirmPassword", "Passwords do not match");
+                    result.rejectValue("confirmPassword", "error.confirmPassword", "Password and Confirm password don’t match. Please try again.");
                     break;
                 case "Not found":
                     result.rejectValue("email", "error.email", "Email does not exists");

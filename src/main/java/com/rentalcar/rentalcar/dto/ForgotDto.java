@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class ForgotDto {
     @NotBlank(message = "Email cannot blank")
-    @Email(message = "Valid email is required: ex@abc.xyz")
+    @Email(message = "Valid email is required: ex@abc.xyz", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private  String email;
 
     @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
