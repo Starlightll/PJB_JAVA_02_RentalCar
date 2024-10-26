@@ -9,6 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
@@ -16,6 +18,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String errorMessage = "Invalid email or password.";
+        boolean showConfirmationLink = false;
+        String email = request.getParameter("username");
 
         if (exception.getCause() instanceof UsernameNotFoundException) {
             errorMessage = "No account found with that email.";
@@ -23,6 +27,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             errorMessage = "Your account has been locked. Please contact support.";
         } else if (exception instanceof DisabledException) {
             errorMessage = "Your account is not active. Please activate your account.";
+            showConfirmationLink = true;
         } else if (exception instanceof BadCredentialsException) {
             errorMessage = "Invalid email or password.";
         } else if (exception instanceof AccountExpiredException) {
@@ -30,7 +35,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         } else if (exception instanceof CredentialsExpiredException) {
             errorMessage = "Your credentials have expired. Please reset your password.";
         }
-
-        response.sendRedirect("/login?error=true&message=" + errorMessage);
+        response.sendRedirect("/login?error=true&message=" + errorMessage + "&confirmation=" + showConfirmationLink
+                + "&email=" + URLEncoder.encode(email, StandardCharsets.UTF_8));
     }
 }

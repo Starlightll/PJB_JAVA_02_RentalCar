@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.entity;
 
+import com.rentalcar.rentalcar.common.Constants;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,7 +10,6 @@ import java.time.LocalDateTime;
 @Data
 
 public class VerificationToken {
-    private static final int EXPIRATION = 60*24;  // Thời hạn token là 24 giờ
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class VerificationToken {
     public VerificationToken(String token, User user) {
         this.token = token;
         this.user = user;
-        this.expiryDate = calculateExpiryDate(EXPIRATION);
+        this.expiryDate = calculateExpiryDate(Constants.EXPIRATION);
     }
 
     private LocalDateTime  calculateExpiryDate(int expiryTimeInMinutes) {

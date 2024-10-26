@@ -11,6 +11,8 @@
 
     <!-- Main css -->
     <link rel="stylesheet" href="css/style1.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <style>
         .no-absolute-label {
             position: static;
@@ -58,14 +60,14 @@
                           th:object="${registerDto}">
                         <div class="form-group">
                             <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" th:field="*{username}" name="username" id="name" placeholder="Your Name"
+                            <input type="text" th:field="*{username}"  name="username" id="name" placeholder="Your Name"
                                    required/>
                         </div>
                         <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
 
                         <div class="form-group">
                             <label for="email"><i class="zmdi zmdi-email"></i></label>
-                            <input type="email" name="email" id="email" th:field="*{email}" placeholder="Your Email"
+                            <input type="email" name="email" id="email" autocomplete="username" th:field="*{email}" placeholder="Your Email"
                                    required/>
                         </div>
                         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
@@ -80,7 +82,7 @@
 
                         <div class="form-group">
                             <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="password" id="pass" th:field="*{password}"
+                            <input type="password" name="password" id="pass" autocomplete="current-password" th:field="*{password}"
                                    placeholder="Password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
                                    title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number."
                                    required/>

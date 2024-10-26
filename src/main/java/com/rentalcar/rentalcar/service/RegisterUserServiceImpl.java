@@ -1,5 +1,7 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.Constants;
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.RegisterDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.entity.UserRole;
@@ -29,6 +31,8 @@ public class RegisterUserServiceImpl implements RegisterUserService {
     @Autowired
     private UserRoleRepo userRoleRepo;
 
+    @Autowired PhoneNumberStandardService phoneNumberStandardService;
+
 
     @Override
     public void registerUser(RegisterDto userDto) {
@@ -40,16 +44,25 @@ public class RegisterUserServiceImpl implements RegisterUserService {
             throw new UserException("Passwords do not match");
         }
 
+        if(phoneNumberStandardService.isPhoneNumberExists(userDto.getPhoneNumber(), Constants.DEFAULT_REGION_CODE)) {
+            throw new IllegalArgumentException("Phone number already exists");
+        }
+
+
+
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(userDto.getPhoneNumber(), Constants.DEFAULT_REGION_CODE);
+
 
         // Save user in the database
         User user = new User();
         user.setEmail(userDto.getEmail());
         user.setPassword(encodedPassword);
-        user.setPhone(userDto.getPhoneNumber());
+        user.setPhone(normalizedPhone);
         user.setEnabled(false);
         user.setUsername(userDto.getUsername());
+        user.setStatus(UserStatus.PENDING);
         userRepository.save(user);
 
 
@@ -58,6 +71,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         userRole.setUserId(user.getId());
         userRole.setRoleId(userDto.getRole());
         userRoleRepo.save(userRole);
+
 
 
 
@@ -84,11 +98,15 @@ public class RegisterUserServiceImpl implements RegisterUserService {
 
         User user = verificationToken.getUser();
 
-        if (user.isEnabled()) {
+        if(user.getStatus().equals(UserStatus.LOCKED)) {
+            return "Account Locked";
+        }
+        if (!user.getStatus().equals(UserStatus.ACTIVATED)) {
             return "Account activated.";
         }
+
         // Activate user
-        user.setEnabled(true);
+        user.setStatus(UserStatus.ACTIVATED);
         userRepository.save(user);
 
         return "Token valid";
@@ -101,9 +119,16 @@ public class RegisterUserServiceImpl implements RegisterUserService {
             throw new UserException("User not found.");
         }
 
-        if (user.isEnabled()) {
+
+        if(user.getStatus().equals(UserStatus.LOCKED)) {
+            throw new UserException("Account Locked");
+        }
+
+        if (user.getStatus().equals(UserStatus.ACTIVATED)) {
             throw new UserException("Account is already activated.");
         }
+
+
 
         // Create verification new token
         String newToken = UUID.randomUUID().toString();

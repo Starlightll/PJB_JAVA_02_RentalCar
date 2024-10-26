@@ -58,6 +58,9 @@ public class ForgotPassController {
                 case "Not found":
                     result.rejectValue("email", "error.email", "Email does not exists");
                     break;
+                case "Account Locked":
+                    result.rejectValue("email", "error.email", "Your account is locked");
+                    break;
             }
             model.addAttribute("forgotDto", forgotDto);
             return "password/ForgotPassword";
@@ -76,7 +79,7 @@ public class ForgotPassController {
 
         // Thêm forgotDto vào model để Thymeleaf nhận diện đối tượng này.
         model.addAttribute("forgotDto", new ForgotDto());
-        model.addAttribute("token", token);
+        model.addAttribute("token", token);//Mỗi lần lỗi thì vẫn giữ được token này trên url
         model.addAttribute("showResendLink", false); // display form
 
         if (result.equals("Token expired")) {
