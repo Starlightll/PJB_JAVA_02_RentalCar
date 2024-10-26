@@ -1,8 +1,10 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Poppins", Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #e0e0e0;
+    background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 
@@ -11,7 +13,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 50px;
-    margin: 50px 0;
+
 }
 
 .container-myProfile {
@@ -21,11 +23,11 @@ body {
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 40px;
-    backdrop-filter: blur(10px);
     z-index: 400;
     display: flex;
     flex-direction: column;
     top: 15%;
+
 }
 
     h2 {
@@ -59,6 +61,7 @@ body {
     label {
         display: block;
         margin-bottom: 5px;
+        color: #181818;
     }
 
     input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select {
@@ -102,7 +105,7 @@ body {
     }
 
     button:hover {
-        background-color: #555;
+        background-color: #01d28e;
     }
 
     .forgot-password-wrapper .container {
@@ -118,10 +121,6 @@ body {
 
     /* Responsive design */
     @media (max-width: 768px) {
-        .forgot-password-wrapper {
-            padding: 10px;
-        }
-
         .container {
             width: 100%;
             padding: 10px;
