@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title> Login and Registration Form in HTML & CSS | CodingLab </title>
-    <link rel="stylesheet" href="style.css">
     <!-- Fontawesome CDN Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -292,15 +291,15 @@
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" name="username" id="your_name"  th:value="${param.email}" placeholder="Enter your email" autofocus required>
+                            <label for="your-email"></label><input type="email" name="email" id="your-email" th:value="${param.email}" placeholder="Enter your email" autofocus required>
                         </div>
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
-                            <input type="password" name="password" id="your_pass" placeholder="Enter your password" required>
+                            <label for="your_pass"></label><input type="password" name="password" id="your_pass" placeholder="Enter your password" required>
                         </div>
                         <div class="text"><a href="/forgot-password">Forgot password?</a></div>
                         <div class="button input-box">
-                            <input type="submit" value="Sumbit">
+                            <input type="submit" value="Login">
                         </div>
                         <div class="text sign-up-text">Don't have an account? <label for="flip">Sigup now</label></div>
                     </div>
@@ -312,19 +311,19 @@
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-user"></i>
-                            <input type="text" th:field="*{username}" name="username" id="name" placeholder="Enter your name"
-                                   required>
+                            <label for="name"></label><input type="text" th:field="*{username}" name="username" id="name" placeholder="Enter your name"
+                                                             required>
                         </div>
                         <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
                         <div class="input-box">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" name="email" id="email" th:field="*{email}" placeholder="Enter your email" required>
+                            <label for="email"></label><input type="email" name="email" id="email" th:field="*{email}" placeholder="Enter your email" required>
                         </div>
                         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
                         <div class="input-box">
                             <i class="fas fa-phone"></i>
-                            <input type="text" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
-                                   placeholder="Enter your phone" required>
+                            <label for="phoneNumber"></label><input type="text" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
+                                                                    placeholder="Enter your phone" required>
                         </div>
                         <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                              style="color: red"></div>
