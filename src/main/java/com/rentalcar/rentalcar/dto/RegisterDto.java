@@ -21,7 +21,7 @@ public class RegisterDto {
     @NotBlank(message = "User Name cannot blank")
     private String username;
     @NotBlank(message = "Email cannot blank")
-    @Email(message = "Valid email is required: ex@abc.xyz")
+    @Email(message = "Valid email is required: ex@abc.xyz", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private  String email;
     @NotBlank(message = "Phone number cannot be blank")
     @Pattern(regexp = "^\\+?[0-9]\\d{1,14}$", message = "Invalid phone number format")
