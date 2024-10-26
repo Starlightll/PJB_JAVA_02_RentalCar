@@ -62,6 +62,7 @@ public class RegistrationController {
         }catch (IllegalArgumentException ex) {
             if(ex.getMessage().equals("Phone number already exists")) {
                 result.rejectValue("phoneNumber", "error.phoneNumber", "Phone number already exists");
+                model.addAttribute("hasSignupErrors", true);
                 model.addAttribute("registerDto", registerDto);
                 return "UserManagement/SignIn";
             }
