@@ -241,7 +241,7 @@ select.list-dt:focus {
 .hero-wrap {
     height: 200px !important;
     position: relative;
-    background-image: url('images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+    background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
 }
 
 .overlay {
