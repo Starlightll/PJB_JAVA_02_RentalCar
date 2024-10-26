@@ -1,14 +1,30 @@
 package com.rentalcar.rentalcar.controller;
 
 
+import com.rentalcar.rentalcar.dto.RegisterDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import com.rentalcar.rentalcar.dto.RegisterDto;
+import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.VerificationToken;
+import com.rentalcar.rentalcar.exception.UserException;
+import com.rentalcar.rentalcar.repository.VerificationTokenRepo;
+import com.rentalcar.rentalcar.service.RegisterUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 
@@ -18,49 +34,36 @@ public class homeController {
 
     @Autowired UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping({"/", "/homepage-guest"})
+    @GetMapping({"/homepage-guest"})
     public String homePage() {
         return "HomepageForGuest";
     }
 
 
-    @GetMapping("/homepage-customer")
-    public String customerHomepage() {
-        return "HomepageForCustomer"; // Return the view for customer
-    }
-
-    @GetMapping("/homepage-carowner")
-    public String carOwnerHomepage() {
-        return "HomepageForCarOwner"; // Return the view for car owner
+    //Phan quyen cho home tren navbar
+    @GetMapping("/")
+    public String homeRedirect(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Customer"))) {
+                return "redirect:/homepage-customer";
+            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Car Owner"))) {
+                return "redirect:/homepage-carowner";
+            }
+        }
+        return "redirect:/homepage-guest";
     }
 
 
     @GetMapping("/login")
-    public String loginPage() {
-        return "UserManagement/Login";
+    public String loginPage(Model model) {
+        model.addAttribute("registerDto", new RegisterDto());
+        return "UserManagement/SignIn";
     }
-
-
-    @GetMapping("/forgotPass")
-    public String forgotPassWord() {
-        return "password/ForgotPassword";
-    }
-
-    @GetMapping("/resetPass")
-    public String resetPassWord() {
-        return "password/ResetPassword";
-    }
-
-    @GetMapping("/myProfile")
-    public String myProfile_changPass() {
-        return "MyProfile_ChangPassword";
-    }
-
 
 
     @GetMapping("/logout")
     public String logoutPage(HttpSession session) {
-        session.removeAttribute("user");
+        session.invalidate();
         return "redirect:/";
     }
 
@@ -69,4 +72,5 @@ public class homeController {
     public String addCar() {
         return "carowner/AddCar";
     }
+
 }

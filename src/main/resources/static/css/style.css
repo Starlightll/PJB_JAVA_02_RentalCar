@@ -2339,11 +2339,11 @@ textarea.form-control {
     padding-left: 1.25rem;
 }
 
-.form-check-input {
-    position: absolute;
-    margin-top: 0.3rem;
-    margin-left: -1.25rem;
-}
+/*.form-check-input {*/
+/*    position: absolute;*/
+/*    margin-top: 0.3rem;*/
+/*    margin-left: -1.25rem;*/
+/*}*/
 
 .form-check-input:disabled ~ .form-check-label {
     color: #6c757d;
@@ -11440,7 +11440,7 @@ h1, h2, h3, h4, h5,
     top: 20px;
     left: 0;
     right: 0;
-    z-index: 3;
+    z-index: 1000;
 }
 
 @media (max-width: 991.98px) {
@@ -12775,15 +12775,15 @@ h1, h2, h3, h4, h5,
     }
 }
 
-.form-control {
-    height: 52px !important;
-    background: #fff !important;
-    color: #000000 !important;
-    font-size: 18px;
-    border-radius: 5px;
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-}
+/*.form-control {*/
+/*    height: 52px !important;*/
+/*    background: #fff !important;*/
+/*    color: #000000 !important;*/
+/*    font-size: 18px;*/
+/*    border-radius: 5px;*/
+/*    -webkit-box-shadow: none !important;*/
+/*    box-shadow: none !important;*/
+/*}*/
 
 .form-control:focus, .form-control:active {
     border-color: #000000;

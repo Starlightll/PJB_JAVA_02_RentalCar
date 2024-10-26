@@ -11,6 +11,8 @@
 
     <!-- Main css -->
     <link rel="stylesheet" href="css/style1.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <style>
         .no-absolute-label {
             position: static;
@@ -34,6 +36,10 @@
             margin-top: 25px;
             margin-right: 10px;
             position: relative; /* Đảm bảo label không bị ảnh hưởng bởi CSS bên ngoài */
+
+
+
+
         }
 
 
@@ -102,12 +108,12 @@
                         </div>
 
                         <div class="form-group">
-                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term"/>
+                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" onchange="toggleSubmitButton()"/>
                             <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all
                                 statements in <a href="#" class="term-service">Terms of service</a></label>
                         </div>
                         <div class="form-group form-button">
-                            <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                            <input type="submit" name="signup" id="signup" class="form-submit-re" value="Register" disabled/>
                         </div>
                     </form>
                 </div>
@@ -122,6 +128,19 @@
 </div>
 
 <!-- JS -->
+<<script>
+    function toggleSubmitButton() {
+        const checkbox = document.getElementById("agree-term");
+        const submitButton = document.getElementById("signup");
+        if (checkbox.checked) {
+            submitButton.disabled = false;
+            submitButton.classList.add('active');
+        } else {
+            submitButton.disabled = true;
+            submitButton.classList.remove('active');
+        }
+    }
+</script>
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="js/main.js"></script>
 </body>
