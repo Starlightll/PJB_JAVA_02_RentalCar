@@ -50,7 +50,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/", "/homepage-guest").permitAll()
-                .antMatchers("myProfile").hasAnyAuthority("Customer", "Car Owner")
+                .antMatchers("myProfile","/change-password").hasAnyAuthority("Customer", "Car Owner")
                 .antMatchers("/homepage-customer").hasAuthority("Customer")
                 .antMatchers("/homepage-carowner").hasAuthority("Car Owner")
                 .antMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
