@@ -37,7 +37,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         VerificationToken existingToken = tokenRepository.findByUser(user);
         if (existingToken != null) {
             existingToken.setToken(newToken);
-            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(Constants.EXPIRATIONFORGOTPASS));
+            existingToken.setExpiryDate(LocalDateTime.now().plusMinutes(Constants.EXPIRATION_FORGOTPASS));
             tokenRepository.save(existingToken);  // Lưu lại token mới
         }
     }

@@ -15,14 +15,14 @@ import javax.validation.constraints.Size;
 public class MyProfileDto {
 
     @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
-            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character.")
+            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.")
     private String oldPassword;
 
     @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
-            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character.")
+            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.")
     private String newPassword;
 
     @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
-            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character.")
+            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.")
     private String confirmPassword;
 }

@@ -38,6 +38,15 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute RegisterDto registerDto, BindingResult result, Model model) {
+        // Nếu người dùng chưa tích sẽ báo lỗi
+        if(!registerDto.isAgreedTerms()) {
+            model.addAttribute("hasSignupErrors", true);
+            result.rejectValue("agreedTerms", "error.agreedTerms", "You must agree to the terms");
+
+            model.addAttribute("registerDto", registerDto);
+            return "UserManagement/SignIn";
+        }
+
         if(result.hasErrors()) {
             model.addAttribute("hasSignupErrors", true);
             model.addAttribute("registerDto", registerDto);
@@ -52,7 +61,7 @@ public class RegistrationController {
                     result.rejectValue("email", "error.email", "Email already exists");
                     break;
                 case "Passwords do not match":
-                    result.rejectValue("confirmPassword", "error.confirmPassword", "Passwords do not match");
+                    result.rejectValue("confirmPassword", "error.confirmPassword", "Password and Confirm password don’t match. Please try again.");
                     break;
             }
             model.addAttribute("hasSignupErrors", true);
@@ -80,7 +89,7 @@ public class RegistrationController {
         if (result.equals("Token valid")) {
             model.addAttribute("message", "Account activated successfully.");
         } else if (result.equals("Token expired")) {
-            model.addAttribute("error", "Token has expired. Please request a new activation link.");
+            model.addAttribute("error", "This link has expired. Please go back to Homepage and try again.");
         } else if(result.equals("Account activated.")){
             model.addAttribute("message", "Account is activated.");
         } else {
@@ -122,7 +131,7 @@ public class RegistrationController {
         } catch (UserException e) {
             switch (e.getMessage()) {
                 case "User not found.":
-                    result.rejectValue("email", "error.email", "Email does not exists");
+                    result.rejectValue("email", "error.email", "The email address you’ve entered does not exist. Please try again");
                     break;
                 case "Account is already activated.":
                     result.rejectValue("email", "error.email", "Account is already activated.");
@@ -134,6 +143,12 @@ public class RegistrationController {
         }
 
 
+    }
+
+
+    @GetMapping("/agree-term-service")
+    public String agreeTermService(Model model) {
+        return "UserManagement/TermsOfService";
     }
 
 
