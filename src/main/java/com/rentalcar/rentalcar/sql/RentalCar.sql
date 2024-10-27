@@ -230,3 +230,5 @@ CREATE TABLE [dbo].[BookingCar]
     FOREIGN KEY (carId) REFERENCES [dbo].[Car](carId),
     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking](bookingId)
     );
+-- Table for province
+

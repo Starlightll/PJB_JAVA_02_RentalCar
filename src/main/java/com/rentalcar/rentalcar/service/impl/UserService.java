@@ -20,21 +20,51 @@ public class UserService implements IUserService {
     @Override
     public UserInfoResponse getUserInfo(UserInfoRequest userInfoRequest) {
         User user = ValidateBusinessRequestGetUserInfo(userInfoRequest);
+   //     districts.addDistrict();
+
         return UserMapper.INSTANCE.UserToUserInfoResponse(user);
     }
 
     @Override
+    public User saveUser(User user) {
+         return userRepo.save(user);
+    }
+//    public class ProvinceDto {
+//
+//        private String code;
+//        private String name;
+//
+//        // Getters and setters
+//        public String getCode() { return code; }
+//        public void setCode(String code) { this.code = code; }
+//
+//        public String getName() { return name; }
+//        public void setName(String name) { this.name = name; }
+//    }
+
+    @Override
     public boolean updateUserInfo(UpdateUserInfoRequest updateUserInfoRequest) {
         User user = ValidateBusinessRequestUpdateUserInfo(updateUserInfoRequest);
-        //Todo
-        user.setFullName(updateUserInfoRequest.getFullName());
+        if (user != null) { // Ensure user exists
+            user.setFullName(updateUserInfoRequest.getFullName());
+            user.setDob(updateUserInfoRequest.getDob());
+            user.setPhone(updateUserInfoRequest.getPhone());
+            user.setEmail(updateUserInfoRequest.getEmail());
+            user.setNationalId(updateUserInfoRequest.getNationalId());
+            user.setDrivingLicense(updateUserInfoRequest.getDrivingLicense());
+            user.setCity(updateUserInfoRequest.getCity());
+            user.setDistrict(updateUserInfoRequest.getDistrict());
+            user.setWard(updateUserInfoRequest.getWard());
+            user.setStreet(updateUserInfoRequest.getStreet());
 
-        try {
-            userRepo.save(user);
-            return true;
-        } catch (Exception e) {
-            return false;
+            try {
+                userRepo.save(user);
+                return true; // Successfully updated
+            } catch (Exception e) {
+                e.printStackTrace(); // Log the error (consider using a logger)
+            }
         }
+        return false; // Update failed
     }
 
     private User ValidateBusinessRequestGetUserInfo(UserInfoRequest userInfoRequest) {
