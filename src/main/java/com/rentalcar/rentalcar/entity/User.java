@@ -2,6 +2,7 @@ package com.rentalcar.rentalcar.entity;
 
 import com.rentalcar.rentalcar.common.UserStatus;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
     @Column(unique = true)
     private String email;
