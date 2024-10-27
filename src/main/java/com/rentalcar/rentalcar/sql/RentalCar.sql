@@ -1,6 +1,8 @@
 
 CREATE DATABASE RentalCar
+GO
 USE RentalCar
+GO
 
 -- Users table
 CREATE TABLE [dbo].[Users]
@@ -35,6 +37,22 @@ CREATE TABLE VerificationToken
     CONSTRAINT FK_UserToken FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
+-- Car Status table
+CREATE TABLE [dbo].[CarStatus]
+(
+    CarStatusId INT IDENTITY(1,1) PRIMARY KEY,
+    name NVARCHAR(50),
+);
+
+
+-- Brand table
+CREATE TABLE [dbo].[Brand]
+(
+    BrandId INT IDENTITY(1,1) PRIMARY KEY,
+    brandName NVARCHAR(50),
+);
+
+
 
 -- Car table
 CREATE TABLE [dbo].[Car]
@@ -55,8 +73,19 @@ CREATE TABLE [dbo].[Car]
     description NVARCHAR(MAX),
     termOfUse NVARCHAR(MAX),
     carPrice DECIMAL(18,2),
+    front NVARCHAR(200),
+    back NVARCHAR(200),
+    [left] NVARCHAR(200),
+    [right] NVARCHAR(200),
+    registration NVARCHAR(200),
+    certificate NVARCHAR(200),
+    insurance NVARCHAR(200),
     userId INT,
-    FOREIGN KEY (userId) REFERENCES [dbo].[Users](userId)
+    brandId INT NOT NULL,
+    statusId INT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES [dbo].[Users](userId),
+    FOREIGN KEY (brandId) REFERENCES [dbo].[Brand](brandId),
+    FOREIGN KEY (statusId) REFERENCES [dbo].[CarStatus](CarStatusId)
     );
 
 -- Role table
@@ -82,17 +111,7 @@ CREATE TABLE [dbo].[Feedback]
     dateTime DATETIME
     );
 
--- Images table
-CREATE TABLE [dbo].[Images]
-(
-    ImagesId INT IDENTITY(1,1) PRIMARY KEY,
-    front VARBINARY(MAX),
-    back VARBINARY(MAX),
-    [left] VARBINARY(MAX),
-    [right] VARBINARY(MAX),
-    carId INT,
-    FOREIGN KEY (carId) REFERENCES [dbo].[Car](carId)
-    );
+
 
 -- Booking Status table
 CREATE TABLE [dbo].[BookingStatus]
@@ -101,23 +120,6 @@ CREATE TABLE [dbo].[BookingStatus]
     name NVARCHAR(50)
     );
 
--- Brand table
-CREATE TABLE [dbo].[Brand]
-(
-    BrandId INT IDENTITY(1,1) PRIMARY KEY,
-    brandName NVARCHAR(50),
-    carId INT,
-    FOREIGN KEY (carId) REFERENCES [dbo].[Car](carId)
-    );
-
--- Car Status table
-CREATE TABLE [dbo].[CarStatus]
-(
-    CarStatusId INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(50),
-    carId INT,
-    FOREIGN KEY (carId) REFERENCES [dbo].[Car](carId)
-    );
 
 
 -- Payment Method table
@@ -134,16 +136,6 @@ CREATE TABLE [dbo].[AdditionalFunction]
     functionName NVARCHAR(50)
     );
 
--- Documents table
-CREATE TABLE [dbo].[Documents]
-(
-    DocumentsId INT IDENTITY(1,1) PRIMARY KEY,
-    registration NVARCHAR(100),
-    certificate NVARCHAR(100),
-    insurance NVARCHAR(100),
-    carId INT,
-    FOREIGN KEY (carId) REFERENCES [dbo].[Car](carId)
-    );
 
 -- UserRole table (mapping between Users and Role)
 CREATE TABLE [dbo].[UserRole]
