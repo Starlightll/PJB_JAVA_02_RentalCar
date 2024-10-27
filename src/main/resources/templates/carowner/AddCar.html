@@ -1,738 +1,951 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+>
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <style>
-    .drop-area {
-      width: 100%;
-      height: 200px;
-      padding: 30px;
-      background: #d1d5d9;
-      text-align: center;
-      border-radius: 10px;
-    }
+    <title>HomepageForCarOwner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
+            integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="/css/addcar.css">
+    <style>
 
-    .img-view{
-      width: 100%;
-      height: 100%;
-      border-radius: 10px;
-      border: dashed 2px #86ffcf;
-      background: rgb(229 251 255 / 38%);
-      padding: 20px;
-      overflow: hidden;
-    }
-
-    .document p{
-      font-size: 10px;
-      margin: 0;
-    }
-
-    .document span{
-      font-size: 10px;
-    }
-  </style>
+    </style>
 </head>
-<body>
 <th:block layout:fragment="content">
-<!-- MultiStep Form -->
-<div class="container-fluid" id="grad1">
-  <div class="row justify-content-center mt-0">
-    <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
-      <div class="card px-0 pt-4 pb-0 mt-3 mb-3 mt-lg-5">
-        <h2><strong>Add Car</strong></h2>
-        <p>Fill all form field to go to next step</p>
-        <div class="row">
-          <div class="col-md-12 mx-0">
-            <form id="msform">
-              <!-- progressbar -->
-              <ul id="progressbar">
-                <li class="active" id="basic"><strong>Step1. Basic</strong></li>
-                <li id="detail"><strong>Step2. Detail</strong></li>
-                <li id="pricing"><strong>Step3. Pricing</strong></li>
-                <li id="finish"><strong>Step4. Finish</strong></li>
-              </ul>
-              <!-- fieldsets -->
-              <fieldset>
-                <div class="d-flex justify-content-center">
-                  <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <div class="card-body text-left w-100">
-                      <h5 class="card-title">Basic information</h5>
-                      <h6 class="card-subtitle mb-2" style="color: #ff6f61;">Note: Please check your information carefully, you'll not be able to change the basic details of your car, which is based on the registration
-                        information</h6>
-                      <div>
-                        <div class="row">
-                          <div class="input-group input-group-sm mb-3 col-lg-6">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text" id="inputGroup-sizing-default">License plate</span>
-                            </div>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                          </div>
-                          <div class="input-group input-group-sm mb-3 col-lg-6">
-                            <div class="input-group-prepend">
-                              <label class="input-group-text" for="inputGroupSelect01">Color</label>
-                            </div>
-                            <select class="custom-select" id="inputGroupSelect01">
-                              <option selected>Choose...</option>
-                              <option value="1">One</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                            </select>
-                          </div>
-                          <div class="input-group input-group-sm mb-3 col-lg-6">
-                            <div class="input-group-prepend">
-                              <label class="input-group-text" for="inputGroupSelect02">Brand Name</label>
-                            </div>
-                            <select class="custom-select" id="inputGroupSelect02">
-                              <option selected>Choose...</option>
-                              <option value="1">One</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                            </select>
-                          </div>
-                          <div class="input-group input-group-sm mb-3 col-lg-6">
-                            <div class="input-group-prepend">
-                              <label class="input-group-text" for="inputGroupSelect03">Model</label>
-                            </div>
-                            <select class="custom-select" id="inputGroupSelect03">
-                              <option selected>Choose...</option>
-                              <option value="1">One</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                            </select>
-                          </div>
-                          <div class="input-group input-group-sm mb-3 col-lg-6">
-                            <div class="input-group-prepend">
-                              <label class="input-group-text" for="inputGroupSelect04">Production year</label>
-                            </div>
-                            <select class="custom-select" id="inputGroupSelect04">
-                              <option selected>Choose...</option>
-                              <option value="1">One</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                            </select>
-                          </div>
-                          <div class="input-group input-group-sm mb-3 col-lg-6">
-                            <div class="input-group-prepend">
-                              <label class="input-group-text" for="inputGroupSelect05">No of seats</label>
-                            </div>
-                            <select class="custom-select" id="inputGroupSelect05">
-                              <option selected>Choose...</option>
-                              <option value="1">One</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                            </select>
-                          </div>
-                          <div class="col-lg-12 row">
-                            <div class="col-lg-6">
-                              <p>Transmission</p>
-                              <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-secondary">
-                                  <input type="radio" name="options" id="option1"> Automatic
-                                </label>
-                                <label class="btn btn-secondary">
-                                  <input type="radio" name="options" id="option2"> Manual
-                                </label>
-                              </div>
-                            </div>
-                            <div class="col-lg-6">
-                              <p>Fuel</p>
-                              <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-secondary">
-                                  <input type="radio" name="options" id="option3"> Gasoline
-                                </label>
-                                <label class="btn btn-secondary">
-                                  <input type="radio" name="options" id="option4"> Diesel
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <h5 class="card-title">Documents</h5>
-                      <div class="document">
-                        <div class="row">
-                          <div class="col-lg-4">
-                            <label for="input-file1" class="drop-area" id="drop-area1">
-                              <input type="file" id="input-file1" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
-                              <div class="img-view" id="img-view1">
-                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                                <p>Drag or drop or click here<br>to upload file</p>
-                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
-                              </div>
-                            </label>
-                          </div>
-
-                          <div class="col-lg-4">
-                            <label for="input-file2" class="drop-area" id="drop-area2">
-                              <input type="file" id="input-file2" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
-                              <div class="img-view" id="img-view2">
-                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                                <p>Drag or drop or click here<br>to upload file</p>
-                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
-                              </div>
-                            </label>
-                          </div>
-
-                          <div class="col-lg-4">
-                            <label for="input-file3" class="drop-area" id="drop-area3">
-                              <input type="file" id="input-file3" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
-                              <div class="img-view" id="img-view3">
-                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                                <p>Drag or drop or click here<br>to upload file</p>
-                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
-                              </div>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
+    <body>
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs">
+                        <span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span class="mr-2"><a href="/my-cars">MY CARS <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span>ADD CAR <i class="ion-ios-arrow-forward"></i></span>
+                    </p>
+                    <h1 class="mb-3 bread">RENT A CAR TODAY!</h1>
                 </div>
-                <input type="button" name="next" class="next action-button" value="Next Step"/>
-              </fieldset>
-              <fieldset>
-                <div class="d-flex justify-content-center">
-                  <div class="card align-items-start display-flex-center" style="width: 90%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <div class="card-body text-left w-100">
-                        <h5 class="card-title">Car details</h5>
-                      <div>
-                        <div class="row">
-                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text">Mileage</span>
-                              </div>
-                              <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                            </div>
-                          <div class="input-group input-group-sm mb-3 col-lg-6">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text">Fuel consumption</span>
-                            </div>
-                            <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                          </div>
-                        </div>
-                      </div>
-                        <h5 class="card-title">Car address</h5>
-                        <div>
-                            <div class="row">
-                                <div class="input-group input-group-sm mb-3 col-lg-6">
-                                    <div class="input-group-prepend">
-                                        <label class="input-group-text" for="province">Province</label>
-                                    </div>
-                                    <select class="custom-select" id="province">
-                                    </select>
-                                </div>
-                                <div class="input-group input-group-sm mb-3 col-lg-6">
-                                    <div class="input-group-prepend">
-                                        <label class="input-group-text" for="district">District</label>
-                                    </div>
-                                    <select class="custom-select" id="district">
-                                       <option selected>Select</option>
-                                    </select>
-                                </div>
-                                <div class="input-group input-group-sm mb-3 col-lg-6">
-                                    <div class="input-group-prepend">
-                                        <label class="input-group-text" for="ward">Ward</label>
-                                    </div>
-                                    <select class="custom-select" id="ward">
-                                        <option selected>Select</option>
-                                    </select>
-                                </div>
-                                <div class="input-group input-group-sm mb-3 col-lg-6 h-25">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text">Home</span>
-                                </div>
-                                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                                </div>
-                            </div>
-                        </div>
-                      <h5 class="card-title">Additional functions</h5>
-                      <div>
-                        <div class="row">
-                          <div class="form-check col-lg-3 col-md-6">
-                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction1">
-                            <label class="form-check-label" for="additionalFunction1">
-                              Bluetooth
-                            </label>
-                          </div>
-                          <div class="form-check col-lg-3 col-md-6">
-                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction2">
-                            <label class="form-check-label" for="additionalFunction2">
-                              Sun roof
-                            </label>
-                          </div>
-                          <div class="form-check col-lg-3 col-md-6">
-                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction3">
-                            <label class="form-check-label" for="additionalFunction3">
-                              DVD
-                            </label>
-                          </div>
-                          <div class="form-check col-lg-3 col-md-6">
-                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction4">
-                            <label class="form-check-label" for="additionalFunction4">
-                              GPS
-                            </label>
-                          </div>
-                          <div class="form-check col-lg-3 col-md-6">
-                            <input class="form-check-input" type="checkbox" value="" id="additionalFunction5">
-                            <label class="form-check-label" for="additionalFunction5">
-                              Child lock
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <h5 class="card-title">Additional functions</h5>
-                      <div class="document">
-                        <div class="row">
-                          <div class="col-lg-6">
-                            <p>Front</p>
-                            <label for="input-file1" class="drop-area" id="drop-area4">
-                              <input type="file" id="input-file4" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
-                              <div class="img-view" id="img-view4">
-                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                                <p>Drag or drop or click here<br>to upload file</p>
-                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
-                              </div>
-                            </label>
-                          </div>
-
-                          <div class="col-lg-6">
-                            <p>Back</p>
-                            <label for="input-file2" class="drop-area" id="drop-area5">
-                              <input type="file" id="input-file5" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
-                              <div class="img-view" id="img-view5">
-                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                                <p>Drag or drop or click here<br>to upload file</p>
-                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
-                              </div>
-                            </label>
-                          </div>
-
-                          <div class="col-lg-6">
-                            <p>Left</p>
-                            <label for="input-file3" class="drop-area" id="drop-area6">
-                              <input type="file" id="input-file6" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
-                              <div class="img-view" id="img-view6">
-                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                                <p>Drag or drop or click here<br>to upload file</p>
-                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
-                              </div>
-                            </label>
-                          </div>
-                          <div class="col-lg-6">
-                            <p>Right</p>
-                            <label for="input-file3" class="drop-area" id="drop-area7">
-                              <input type="file" id="input-file7" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" hidden>
-                              <div class="img-view" id="img-view7">
-                                <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                                <p>Drag or drop or click here<br>to upload file</p>
-                                <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
-                              </div>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="button" name="next" class="next action-button" value="Next Step"/>
-              </fieldset>
-              <fieldset>
-                <div class="form-card">
-                  <h2 class="fs-title">Payment Information</h2>
-                  <div class="radio-group">
-                    <div class='radio' data-value="credit"><img src="https://i.imgur.com/XzOzVHZ.jpg" width="200px" height="100px"></div>
-                    <div class='radio' data-value="paypal"><img src="https://i.imgur.com/jXjwZlj.jpg" width="200px" height="100px"></div>
-                    <br>
-                  </div>
-                  <label class="pay">Card Holder Name*</label>
-                  <input type="text" name="holdername" placeholder=""/>
-                  <div class="row">
-                    <div class="col-9">
-                      <label class="pay">Card Number*</label>
-                      <input type="text" name="cardno" placeholder=""/>
-                    </div>
-                    <div class="col-3">
-                      <label class="pay">CVC*</label>
-                      <input type="password" name="cvcpwd" placeholder="***"/>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-3">
-                      <label class="pay">Expiry Date*</label>
-                    </div>
-                    <div class="col-9">
-                      <select class="list-dt" id="month" name="expmonth">
-                        <option selected>Month</option>
-                        <option>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option>December</option>
-                      </select>
-                      <select class="list-dt" id="year" name="expyear">
-                        <option selected>Year</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="button" name="make_payment" class="next action-button" value="Confirm"/>
-              </fieldset>
-              <fieldset>
-                <div class="form-card">
-                  <h2 class="fs-title text-center">Success !</h2>
-                  <br><br>
-                  <div class="row justify-content-center">
-                    <div class="col-3">
-                      <img src="https://img.icons8.com/color/96/000000/ok--v2.png" class="fit-image">
-                    </div>
-                  </div>
-                  <br><br>
-                  <div class="row justify-content-center">
-                    <div class="col-7 text-center">
-                      <h5>You Have Successfully Signed Up</h5>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-            </form>
-          </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-  <script>
-    function uploadfile(imageView, inputFile) {
-      const file = inputFile.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          if (file.type.match("image.*")) {
-            imageView.style.backgroundImage = `url(${e.target.result})`;
-            imageView.style.backgroundSize = "cover";
-            imageView.style.backgroundPosition = "center";
-            imageView.innerHTML = `<p>${file.name}</p>`;
-          } else {
-            imageView.style.backgroundImage = "none";
-            imageView.innerHTML = `<p>${file.name}</p>`;
-          }
-          imageView.style.border = "none";
-        };
-        reader.readAsDataURL(file);
-        console.log("added");
-      }
-    }
-    // Drop Area 1
-    const dropArea1 = document.getElementById("drop-area1");
-    const inputFile1 = document.getElementById("input-file1");
-    const imageView1 = document.getElementById("img-view1");
+    </section>
+    <section class="ftco-section">
+        <div class="container-fluid" id="grad1">
+            <div class="row justify-content-center mt-0">
+                <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
+                    <div class="card px-0 pt-4 pb-0 mt-3 mb-3 mt-lg-5">
+                        <h2><strong>Add Car</strong></h2>
+                        <p>Fill all form field to go to next step</p>
+                        <div class="row">
+                            <div class="col-md-12 mx-0">
+                                <form id="msform">
+                                    <!-- progressbar -->
+                                    <ul id="progressbar">
+                                        <li class="active" id="basic"><strong>Step1. Basic</strong></li>
+                                        <li id="detail"><strong>Step2. Detail</strong></li>
+                                        <li id="pricing"><strong>Step3. Pricing</strong></li>
+                                        <li id="finish"><strong>Step4. Finish</strong></li>
+                                    </ul>
+                                    <!-- fieldsets -->
+                                    <fieldset>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="card align-items-start display-flex-center"
+                                                 style="">
+                                                <div class="card-body text-left w-100">
+                                                    <h5 class="card-title">Basic information</h5>
+                                                    <h6 class="card-subtitle mb-2" style="color: #ff6f61;">Note:
+                                                        Please check your information carefully, you'll not be able
+                                                        to change the basic details of your car, which is based on
+                                                        the registration
+                                                        information</h6>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text"
+                                                                              id="inputGroup-sizing-default">License plate</span>
+                                                                </div>
+                                                                <input type="text" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default">
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="inputGroupSelect01">Color</label>
+                                                                </div>
+                                                                <select class="custom-select"
+                                                                        id="inputGroupSelect01">
+                                                                    <option selected>Choose...</option>
+                                                                    <option value="1">One</option>
+                                                                    <option value="2">Two</option>
+                                                                    <option value="3">Three</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="inputGroupSelect02">Brand
+                                                                        Name</label>
+                                                                </div>
+                                                                <select class="custom-select"
+                                                                        id="inputGroupSelect02">
+                                                                    <option selected>Choose...</option>
+                                                                    <option value="1">One</option>
+                                                                    <option value="2">Two</option>
+                                                                    <option value="3">Three</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="inputGroupSelect03">Model</label>
+                                                                </div>
+                                                                <select class="custom-select"
+                                                                        id="inputGroupSelect03">
+                                                                    <option selected>Choose...</option>
+                                                                    <option value="1">One</option>
+                                                                    <option value="2">Two</option>
+                                                                    <option value="3">Three</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="inputGroupSelect04">Production
+                                                                        year</label>
+                                                                </div>
+                                                                <select class="custom-select"
+                                                                        id="inputGroupSelect04">
+                                                                    <option selected>Choose...</option>
+                                                                    <option value="1">One</option>
+                                                                    <option value="2">Two</option>
+                                                                    <option value="3">Three</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="inputGroupSelect05">No of
+                                                                        seats</label>
+                                                                </div>
+                                                                <select class="custom-select"
+                                                                        id="inputGroupSelect05">
+                                                                    <option selected>Choose...</option>
+                                                                    <option value="1">One</option>
+                                                                    <option value="2">Two</option>
+                                                                    <option value="3">Three</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-12 row">
+                                                                <div class="col-lg-6">
+                                                                    <p>Transmission</p>
+                                                                    <div class="btn-group btn-group-toggle"
+                                                                         data-toggle="buttons">
+                                                                        <label class="btn btn-secondary">
+                                                                            <input type="radio" name="options"
+                                                                                   id="option1"> Automatic
+                                                                        </label>
+                                                                        <label class="btn btn-secondary">
+                                                                            <input type="radio" name="options"
+                                                                                   id="option2"> Manual
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6">
+                                                                    <p>Fuel</p>
+                                                                    <div class="btn-group btn-group-toggle"
+                                                                         data-toggle="buttons">
+                                                                        <label class="btn btn-secondary">
+                                                                            <input type="radio" name="options"
+                                                                                   id="option3"> Gasoline
+                                                                        </label>
+                                                                        <label class="btn btn-secondary">
+                                                                            <input type="radio" name="options"
+                                                                                   id="option4"> Diesel
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <h5 class="card-title">Documents</h5>
+                                                    <div class="document">
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <label for="input-file1" class="drop-area"
+                                                                       id="drop-area1">
+                                                                    <input type="file" id="input-file1"
+                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           hidden>
+                                                                    <div class="img-view" id="img-view1">
+                                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                                        <p>Drag or drop or click here<br>to upload
+                                                                            file</p>
+                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
 
-    inputFile1.addEventListener("change", function() {
-      uploadfile(imageView1, inputFile1);
-    });
+                                                            <div class="col-lg-4">
+                                                                <label for="input-file2" class="drop-area"
+                                                                       id="drop-area2">
+                                                                    <input type="file" id="input-file2"
+                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           hidden>
+                                                                    <div class="img-view" id="img-view2">
+                                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                                        <p>Drag or drop or click here<br>to upload
+                                                                            file</p>
+                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
 
-    dropArea1.addEventListener("dragover", function(e) {
-      e.preventDefault();
-      dropArea1.style.background = "rgba(0, 0, 0, 0.1)";
-    });
+                                                            <div class="col-lg-4">
+                                                                <label for="input-file3" class="drop-area"
+                                                                       id="drop-area3">
+                                                                    <input type="file" id="input-file3"
+                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           hidden>
+                                                                    <div class="img-view" id="img-view3">
+                                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                                        <p>Drag or drop or click here<br>to upload
+                                                                            file</p>
+                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-    dropArea1.addEventListener("dragleave", function(e) {
-      e.preventDefault();
-      if (!dropArea1.contains(e.relatedTarget)) {
-        dropArea1.style.background = "#d1d5d9";
-      }
-    });
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="button" name="next" class="next action-button"
+                                               value="Next Step"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="card align-items-start display-flex-center"
+                                                 style="">
+                                                <div class="card-body text-left w-100">
+                                                    <h5 class="card-title">Car details</h5>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Mileage</span>
+                                                                </div>
+                                                                <input type="number" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default">
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Fuel consumption</span>
+                                                                </div>
+                                                                <input type="number" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">liter/100km</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <h5 class="card-title">Car address</h5>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text" for="province">Province</label>
+                                                                </div>
+                                                                <select class="custom-select" id="province">
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text" for="district">District</label>
+                                                                </div>
+                                                                <select class="custom-select" id="district">
+                                                                    <option selected>Select</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="ward">Ward</label>
+                                                                </div>
+                                                                <select class="custom-select" id="ward">
+                                                                    <option selected>Select</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6 h-25">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Home</span>
+                                                                </div>
+                                                                <input type="text" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <h5 class="card-title">Additional functions</h5>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="form-check col-lg-3 col-md-6">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       value="" id="additionalFunction1">
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction1">
+                                                                    Bluetooth
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check col-lg-3 col-md-6">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       value="" id="additionalFunction2">
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction2">
+                                                                    Sun roof
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check col-lg-3 col-md-6">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       value="" id="additionalFunction3">
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction3">
+                                                                    DVD
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check col-lg-3 col-md-6">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       value="" id="additionalFunction4">
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction4">
+                                                                    GPS
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check col-lg-3 col-md-6">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       value="" id="additionalFunction5">
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction5">
+                                                                    Child lock
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <h5 class="card-title">Additional functions</h5>
+                                                    <div class="document">
+                                                        <div class="row">
+                                                            <div class="col-lg-3 col-sm-6">
+                                                                <p>Front</p>
+                                                                <label for="input-file4" class="drop-area"
+                                                                       id="drop-area4">
+                                                                    <input type="file" id="input-file4"
+                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           hidden>
+                                                                    <div class="img-view" id="img-view4">
+                                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                                        <p>Drag or drop or click here<br>to upload
+                                                                            file</p>
+                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
 
-    dropArea1.addEventListener("drop", function(e) {
-      e.preventDefault();
-      inputFile1.files = e.dataTransfer.files;
-      uploadfile(imageView1, inputFile1);
-    });
+                                                            <div class="col-lg-3 col-sm-6">
+                                                                <p>Back</p>
+                                                                <label for="input-file5" class="drop-area"
+                                                                       id="drop-area5">
+                                                                    <input type="file" id="input-file5"
+                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           hidden>
+                                                                    <div class="img-view" id="img-view5">
+                                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                                        <p>Drag or drop or click here<br>to upload
+                                                                            file</p>
+                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
 
-    const dropArea2 = document.getElementById("drop-area2");
-    const inputFile2 = document.getElementById("input-file2");
-    const imageView2 = document.getElementById("img-view2");
+                                                            <div class="col-lg-3 col-sm-6">
+                                                                <p>Left</p>
+                                                                <label for="input-file6" class="drop-area"
+                                                                       id="drop-area6">
+                                                                    <input type="file" id="input-file6"
+                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           hidden>
+                                                                    <div class="img-view" id="img-view6">
+                                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                                        <p>Drag or drop or click here<br>to upload
+                                                                            file</p>
+                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-lg-3 col-sm-6">
+                                                                <p>Right</p>
+                                                                <label for="input-file7" class="drop-area"
+                                                                       id="drop-area7">
+                                                                    <input type="file" id="input-file7"
+                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           hidden>
+                                                                    <div class="img-view" id="img-view7">
+                                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                                        <p>Drag or drop or click here<br>to upload
+                                                                            file</p>
+                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="button" name="previous" class="previous action-button-previous"
+                                               value="Previous"/>
+                                        <input type="button" name="next" class="next action-button"
+                                               value="Next Step"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="card align-items-start display-flex-center"
+                                                 style="">
+                                                <div class="card-body text-left w-100">
+                                                    <h5 class="card-title">Pricing</h5>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Base price</span>
+                                                                </div>
+                                                                <input type="number" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">VND/Day</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Deposit</span>
+                                                                </div>
+                                                                <input type="number" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">VND</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <h5 class="card-title">Term of Use</h5>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="form-check col-lg-6 col-md-6">
+                                                                <label>
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="">
+                                                                </label>
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction1">
+                                                                    No smoking
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check col-lg-6 col-md-6">
+                                                                <label>
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="">
+                                                                </label>
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction1">
+                                                                    No food in car
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check col-lg-6 col-md-6">
+                                                                <label>
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="">
+                                                                </label>
+                                                                <label class="form-check-label"
+                                                                       for="additionalFunction1">
+                                                                    No pet
+                                                                </label>
+                                                            </div>
+                                                            <div class="input-group mb-3 col-lg-12 col-md-12">
+                                                                <div class="input-group-prepend">
+                                                                    <div class="input-group-text">
+                                                                        <input type="checkbox"
+                                                                               aria-label="Checkbox for following text input">
+                                                                        <label class="form-check-label"
+                                                                               for="additionalFunction1"
+                                                                               style="padding: 0 10px;">
+                                                                            Other
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="text" class="form-control"
+                                                                       aria-label="Text input with checkbox">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="button" name="previous" class="previous action-button-previous"
+                                               value="Previous"/>
+                                        <input type="button" name="make_payment" class="next action-button"
+                                               value="Next Step"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="card align-items-start display-flex-center"
+                                                 style="">
+                                                <div class="card-body text-left w-100">
+                                                    <h5 class="card-title">Basic information</h5>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-md-6">
+                                                            <div class="wrapper">
+                                                                <input type="radio" name="slide" id="one" checked>
+                                                                <input type="radio" name="slide" id="two">
+                                                                <input type="radio" name="slide" id="three">
+                                                                <input type="radio" name="slide" id="four">
+                                                                <input type="radio" name="slide" id="five">
+                                                                <div class="img img-1">
+                                                                    <img src="/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg" alt="">
+                                                                </div>
+                                                                <div class="img img-2">
+                                                                    <img src="/images/2025-Postre.jpg" alt="">
+                                                                </div>
+                                                                <div class="img img-3">
+                                                                    <img src="/images/2025-Mini-John-Cooper-Works-Electric-004-2000.jpg" alt="">
+                                                                </div>
+                                                                <div class="img img-4">
+                                                                    <img src="/images/2024-Renault-Embleme-Concept-005-2000.jpg" alt="">
+                                                                </div>
+                                                                <div class="img img-5">
+                                                                    <img src="/images/2025-Porsche-911-GT3-005-2000.jpg" alt="">
+                                                                </div>
+                                                                <div class="sliders">
+                                                                    <label for="one" class="one"></label>
+                                                                    <label for="two" class="two"></label>
+                                                                    <label for="three" class="three"></label>
+                                                                    <label for="four" class="four"></label>
+                                                                    <label for="five" class="five"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                            <div class="row justify-content-center align-items-center align-content-center">
+                                                                <h1 class="col-lg-12 col-md-12 col-sm-12 text-center">Nissan Navara EI 2017</h1>
+                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">Ratings: </p>
+                                                                    <div class="rating">
+                                                                        <div class="star">
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                        </div>
+                                                                        <div class="star-base">
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                            <i class="fa fa-star"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">No. of rides: </p>
+                                                                    <p>0</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">Price: </p>
+                                                                    <p>0k/Day</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">Location: </p>
+                                                                    <p>0k/Day</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
+                                                                    <div class="input-group input-group-sm mb-3 col-lg-6 p-0 pr-2">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="ward">Status</label>
+                                                                        </div>
+                                                                        <select class="custom-select" id="">
+                                                                            <option selected>Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-    inputFile2.addEventListener("change", function() {
-      uploadfile(imageView2, inputFile2);
-    });
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="button" name="previous" class="previous action-button-previous"
+                                               value="Previous"/>
+                                        <input type="button" name="next" class="next action-button"
+                                               value="Confirm"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="form-card">
+                                            <h2 class="fs-title text-center">Success !</h2>
+                                            <br><br>
+                                            <div class="row justify-content-center">
+                                                <div class="col-3">
+                                                    <img src="https://img.icons8.com/color/96/000000/ok--v2.png"
+                                                         class="fit-image">
+                                                </div>
+                                            </div>
+                                            <br><br>
+                                            <div class="row justify-content-center">
+                                                <div class="col-7 text-center">
+                                                    <h5>You Have Successfully Signed Up</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="button" name="previous" class="previous action-button-previous"
+                                               value="Previous"/>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        function uploadfile(imageView, inputFile) {
+            const file = inputFile.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (file.type.match("image.*")) {
+                        imageView.style.backgroundImage = `url(${e.target.result})`;
+                        imageView.style.backgroundSize = "cover";
+                        imageView.style.backgroundPosition = "center";
+                        imageView.innerHTML = `<p>${file.name}</p>`;
+                    } else {
+                        imageView.style.backgroundImage = "none";
+                        imageView.innerHTML = `<p>${file.name}</p>`;
+                    }
+                    imageView.style.border = "none";
+                };
+                reader.readAsDataURL(file);
+                console.log("added");
+            }
+        }
 
-    dropArea2.addEventListener("dragover", function(e) {
-      e.preventDefault();
-      dropArea2.style.background = "rgba(0, 0, 0, 0.1)";
-    });
+        // Drop Area 1
+        const dropArea1 = document.getElementById("drop-area1");
+        const inputFile1 = document.getElementById("input-file1");
+        const imageView1 = document.getElementById("img-view1");
 
-    dropArea2.addEventListener("dragleave", function(e) {
-      e.preventDefault();
-      if (!dropArea2.contains(e.relatedTarget)) {
-        dropArea2.style.background = "#d1d5d9";
-      }
-    });
-
-    dropArea2.addEventListener("drop", function(e) {
-      e.preventDefault();
-      inputFile2.files = e.dataTransfer.files;
-      uploadfile(imageView2, inputFile2);
-    });
-
-    const dropArea3 = document.getElementById("drop-area3");
-    const inputFile3 = document.getElementById("input-file3");
-    const imageView3 = document.getElementById("img-view3");
-
-    inputFile3.addEventListener("change", function() {
-      uploadfile(imageView3, inputFile3);
-    });
-
-    dropArea3.addEventListener("dragover", function(e) {
-      e.preventDefault();
-      dropArea3.style.background = "rgba(0, 0, 0, 0.1)";
-    });
-
-    dropArea3.addEventListener("dragleave", function(e) {
-      e.preventDefault();
-      if (!dropArea3.contains(e.relatedTarget)) {
-        dropArea3.style.background = "#d1d5d9";
-      }
-    });
-
-    dropArea3.addEventListener("drop", function(e) {
-      e.preventDefault();
-      inputFile3.files = e.dataTransfer.files;
-      uploadfile(imageView3, inputFile3);
-    });
-
-    // Drop Area 4
-    const dropArea4 = document.getElementById("drop-area4");
-    const inputFile4 = document.getElementById("input-file4");
-    const imageView4 = document.getElementById("img-view4");
-
-    inputFile4.addEventListener("change", function() {
-      uploadfile(imageView4, inputFile4);
-    });
-
-    dropArea4.addEventListener("dragover", function(e) {
-      e.preventDefault();
-      dropArea4.style.background = "rgba(0, 0, 0, 0.1)";
-    });
-
-    dropArea4.addEventListener("dragleave", function(e) {
-      e.preventDefault();
-      if (!dropArea4.contains(e.relatedTarget)) {
-        dropArea4.style.background = "#d1d5d9";
-      }
-    });
-
-    dropArea4.addEventListener("drop", function(e) {
-      e.preventDefault();
-      inputFile4.files = e.dataTransfer.files;
-      uploadfile(imageView4, inputFile4);
-    });
-
-    // Drop Area 5
-    const dropArea5 = document.getElementById("drop-area5");
-    const inputFile5 = document.getElementById("input-file5");
-    const imageView5 = document.getElementById("img-view5");
-
-    inputFile5.addEventListener("change", function() {
-      uploadfile(imageView5, inputFile5);
-    });
-
-    dropArea5.addEventListener("dragover", function(e) {
-      e.preventDefault();
-      dropArea5.style.background = "rgba(0, 0, 0, 0.1)";
-    });
-
-    dropArea5.addEventListener("dragleave", function(e) {
-      e.preventDefault();
-      if (!dropArea5.contains(e.relatedTarget)) {
-        dropArea5.style.background = "#d1d5d9";
-      }
-    });
-
-    dropArea5.addEventListener("drop", function(e) {
-      e.preventDefault();
-      inputFile5.files = e.dataTransfer.files;
-      uploadfile(imageView5, inputFile5);
-    });
-
-    // Drop Area 6
-    const dropArea6 = document.getElementById("drop-area6");
-    const inputFile6 = document.getElementById("input-file6");
-    const imageView6 = document.getElementById("img-view6");
-
-    inputFile6.addEventListener("change", function() {
-      uploadfile(imageView6, inputFile6);
-    });
-
-    dropArea6.addEventListener("dragover", function(e) {
-      e.preventDefault();
-      dropArea6.style.background = "rgba(0, 0, 0, 0.1)";
-    });
-
-    dropArea6.addEventListener("dragleave", function(e) {
-      e.preventDefault();
-      if (!dropArea6.contains(e.relatedTarget)) {
-        dropArea6.style.background = "#d1d5d9";
-      }
-    });
-
-    dropArea6.addEventListener("drop", function(e) {
-      e.preventDefault();
-      inputFile6.files = e.dataTransfer.files;
-      uploadfile(imageView6, inputFile6);
-    });
-
-    // Drop Area 7
-    const dropArea7 = document.getElementById("drop-area7");
-    const inputFile7 = document.getElementById("input-file7");
-    const imageView7 = document.getElementById("img-view7");
-
-    inputFile7.addEventListener("change", function() {
-      uploadfile(imageView7, inputFile7);
-    });
-
-    dropArea7.addEventListener("dragover", function(e) {
-      e.preventDefault();
-      dropArea7.style.background = "rgba(0, 0, 0, 0.1)";
-    });
-
-    dropArea7.addEventListener("dragleave", function(e) {
-      e.preventDefault();
-      if (!dropArea7.contains(e.relatedTarget)) {
-        dropArea7.style.background = "#d1d5d9";
-      }
-    });
-
-    dropArea7.addEventListener("drop", function(e) {
-      e.preventDefault();
-      inputFile7.files = e.dataTransfer.files;
-      uploadfile(imageView7, inputFile7);
-    });
-
-
-
-    $(document).ready(function(){
-
-      var current_fs, next_fs, previous_fs; //fieldsets
-      var opacity;
-
-      $(".next").click(function(){
-
-        current_fs = $(this).parent();
-        next_fs = $(this).parent().next();
-
-        //Add Class Active
-        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-
-        //show the next fieldset
-        next_fs.show();
-        window.scrollTo(0, 0);
-        //hide the current fieldset with style
-        current_fs.animate({opacity: 0}, {
-          step: function(now) {
-            // for making fielset appear animation
-            opacity = 1 - now;
-
-            current_fs.css({
-              'display': 'none',
-              'position': 'relative'
-            });
-            next_fs.css({'opacity': opacity});
-          },
-          duration: 600
+        inputFile1.addEventListener("change", function () {
+            uploadfile(imageView1, inputFile1);
         });
-      });
 
-      $(".previous").click(function(){
-
-        current_fs = $(this).parent();
-        previous_fs = $(this).parent().prev();
-
-        //Remove class active
-        $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
-
-        //show the previous fieldset
-        previous_fs.show();
-        window.scrollTo(0, 0);
-
-        //hide the current fieldset with style
-        current_fs.animate({opacity: 0}, {
-          step: function(now) {
-            // for making fielset appear animation
-            opacity = 1 - now;
-
-            current_fs.css({
-              'display': 'none',
-              'position': 'relative'
-            });
-            previous_fs.css({'opacity': opacity});
-          },
-          duration: 600
+        dropArea1.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea1.style.background = "rgba(0, 0, 0, 0.1)";
         });
-      });
 
-      $('.radio-group .radio').click(function(){
-        $(this).parent().find('.radio').removeClass('selected');
-        $(this).addClass('selected');
-      });
-
-      $(".submit").click(function(){
-        return false;
-      })
-
-    });
-
-    // Call API
-    const host = "https://provinces.open-api.vn/api/";
-    let callAPI = (api) => {
-        return axios.get(api)
-            .then((response) => {
-                renderData(response.data, "province");
-            });
-    }
-    callAPI('https://provinces.open-api.vn/api/?depth=1');
-    let callApiDistrict = (api) => {
-        return axios.get(api)
-            .then((response) => {
-                renderData(response.data.districts, "district");
-            });
-    }
-    let callApiWard = (api) => {
-        return axios.get(api)
-            .then((response) => {
-                renderData(response.data.wards, "ward");
-            });
-    }
-
-    let renderData = (array, select) => {
-        let row = ' <option disable value="">Select</option>';
-        array.forEach(element => {
-            row += `<option value="${element.code}">${element.name}</option>`
+        dropArea1.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            if (!dropArea1.contains(e.relatedTarget)) {
+                dropArea1.style.background = "#d1d5d9";
+            }
         });
-        document.querySelector("#" + select).innerHTML = row
-    }
 
-    $("#province").change(() => {
-        callApiDistrict(host + "p/" + $("#province").val() + "?depth=2");
-    });
-    $("#district").change(() => {
-        callApiWard(host + "d/" + $("#district").val() + "?depth=2");
-    });
+        dropArea1.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile1.files = e.dataTransfer.files;
+            uploadfile(imageView1, inputFile1);
+        });
 
-  </script>
+        const dropArea2 = document.getElementById("drop-area2");
+        const inputFile2 = document.getElementById("input-file2");
+        const imageView2 = document.getElementById("img-view2");
+
+        inputFile2.addEventListener("change", function () {
+            uploadfile(imageView2, inputFile2);
+        });
+
+        dropArea2.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea2.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        dropArea2.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            if (!dropArea2.contains(e.relatedTarget)) {
+                dropArea2.style.background = "#d1d5d9";
+            }
+        });
+
+        dropArea2.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile2.files = e.dataTransfer.files;
+            uploadfile(imageView2, inputFile2);
+        });
+
+        const dropArea3 = document.getElementById("drop-area3");
+        const inputFile3 = document.getElementById("input-file3");
+        const imageView3 = document.getElementById("img-view3");
+
+        inputFile3.addEventListener("change", function () {
+            uploadfile(imageView3, inputFile3);
+        });
+
+        dropArea3.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea3.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        dropArea3.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            if (!dropArea3.contains(e.relatedTarget)) {
+                dropArea3.style.background = "#d1d5d9";
+            }
+        });
+
+        dropArea3.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile3.files = e.dataTransfer.files;
+            uploadfile(imageView3, inputFile3);
+        });
+
+        // Drop Area 4
+        const dropArea4 = document.getElementById("drop-area4");
+        const inputFile4 = document.getElementById("input-file4");
+        const imageView4 = document.getElementById("img-view4");
+
+        inputFile4.addEventListener("change", function () {
+            uploadfile(imageView4, inputFile4);
+        });
+
+        dropArea4.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea4.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        dropArea4.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            if (!dropArea4.contains(e.relatedTarget)) {
+                dropArea4.style.background = "#d1d5d9";
+            }
+        });
+
+        dropArea4.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile4.files = e.dataTransfer.files;
+            uploadfile(imageView4, inputFile4);
+        });
+
+        // Drop Area 5
+        const dropArea5 = document.getElementById("drop-area5");
+        const inputFile5 = document.getElementById("input-file5");
+        const imageView5 = document.getElementById("img-view5");
+
+        inputFile5.addEventListener("change", function () {
+            uploadfile(imageView5, inputFile5);
+        });
+
+        dropArea5.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea5.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        dropArea5.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            if (!dropArea5.contains(e.relatedTarget)) {
+                dropArea5.style.background = "#d1d5d9";
+            }
+        });
+
+        dropArea5.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile5.files = e.dataTransfer.files;
+            uploadfile(imageView5, inputFile5);
+        });
+
+        // Drop Area 6
+        const dropArea6 = document.getElementById("drop-area6");
+        const inputFile6 = document.getElementById("input-file6");
+        const imageView6 = document.getElementById("img-view6");
+
+        inputFile6.addEventListener("change", function () {
+            uploadfile(imageView6, inputFile6);
+        });
+
+        dropArea6.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea6.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        dropArea6.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            if (!dropArea6.contains(e.relatedTarget)) {
+                dropArea6.style.background = "#d1d5d9";
+            }
+        });
+
+        dropArea6.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile6.files = e.dataTransfer.files;
+            uploadfile(imageView6, inputFile6);
+        });
+
+        // Drop Area 7
+        const dropArea7 = document.getElementById("drop-area7");
+        const inputFile7 = document.getElementById("input-file7");
+        const imageView7 = document.getElementById("img-view7");
+
+        inputFile7.addEventListener("change", function () {
+            uploadfile(imageView7, inputFile7);
+        });
+
+        dropArea7.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea7.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        dropArea7.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            if (!dropArea7.contains(e.relatedTarget)) {
+                dropArea7.style.background = "#d1d5d9";
+            }
+        });
+
+        dropArea7.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile7.files = e.dataTransfer.files;
+            uploadfile(imageView7, inputFile7);
+        });
+
+
+        $(document).ready(function () {
+
+            var current_fs, next_fs, previous_fs; //fieldsets
+            var opacity;
+
+            $(".next").click(function () {
+
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
+
+                //Add Class Active
+                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+                //show the next fieldset
+                next_fs.show();
+                // window.scrollTo(0, 0);
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        next_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            $(".previous").click(function () {
+
+                current_fs = $(this).parent();
+                previous_fs = $(this).parent().prev();
+
+                //Remove class active
+                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+                //show the previous fieldset
+                previous_fs.show();
+                // window.scrollTo(0, 0);
+
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        previous_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            $('.radio-group .radio').click(function () {
+                $(this).parent().find('.radio').removeClass('selected');
+                $(this).addClass('selected');
+            });
+
+            $(".submit").click(function () {
+                return false;
+            })
+
+        });
+
+        // Call API
+        const host = "https://provinces.open-api.vn/api/";
+        let callAPI = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data, "province");
+                });
+        }
+        callAPI('https://provinces.open-api.vn/api/?depth=1');
+        let callApiDistrict = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data.districts, "district");
+                });
+        }
+        let callApiWard = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data.wards, "ward");
+                });
+        }
+
+        let renderData = (array, select) => {
+            let row = ' <option disable value="">Select</option>';
+            array.forEach(element => {
+                row += `<option value="${element.code}">${element.name}</option>`
+            });
+            document.querySelector("#" + select).innerHTML = row
+        }
+
+        $("#province").change(() => {
+            callApiDistrict(host + "p/" + $("#province").val() + "?depth=2");
+        });
+        $("#district").change(() => {
+            callApiWard(host + "d/" + $("#district").val() + "?depth=2");
+        });
+
+
+
+    </script>
+    </body>
 </th:block>
-</body>
 </html>

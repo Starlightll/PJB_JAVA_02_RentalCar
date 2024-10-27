@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title> Login and Registration Form in HTML & CSS | CodingLab </title>
-    <link rel="stylesheet" href="style.css">
     <!-- Fontawesome CDN Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -127,7 +126,7 @@
             bottom: 0;
             height: 3px;
             width: 25px;
-            background: #7d2ae8;
+            background: #00c86f;
         }
         .forms .signup-form .title:before {
             width: 20px;
@@ -156,11 +155,11 @@
         }
         .form-content .input-box input:focus,
         .form-content .input-box input:valid {
-            border-color: #7d2ae8;
+            border-color: #00c86f;
         }
         .form-content .input-box i {
             position: absolute;
-            color: #7d2ae8;
+            color: #222423;
             font-size: 17px;
             padding-left: 4px;
         }
@@ -181,7 +180,7 @@
         }
         .forms .form-content .button input {
             color: #fff;
-            background: #7d2ae8;
+            background: #000000;
             border-radius: 6px;
             padding: 0;
             cursor: pointer;
@@ -253,11 +252,15 @@
             cursor: pointer !important;
 
         }
+        .form-group {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <input type="checkbox" id="flip">
+    <input type="checkbox" id="flip" th:checked="${hasSignupErrors}">
+
     <div class="cover">
         <div class="front">
             <img src="/images/bg_2.jpg" alt="">
@@ -279,20 +282,27 @@
             <div class="login-form">
                 <div class="title">SIGN IN</div>
                 <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
-                    <div th:if="${param.error}" style="color: red" th:text="${param.message}">
+
+                    <div th:if="${param.error}" style="color: red">
+                        <span th:text="${param.message}"></span>
+
+                        <div th:if="${param.confirmation != null && param.confirmation.contains('true')}">
+                            <a href="/send-activation" style="color: blue">Click here to active.</a>
+                        </div>
                     </div>
+
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" name="username" id="your_name" placeholder="Enter your email" required>
+                            <label for="your-email"></label><input type="email" name="email" id="your-email" th:value="${param.email}" placeholder="Enter your email" autofocus required>
                         </div>
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
-                            <input type="password" name="password" id="your_pass"  placeholder="Enter your password" required>
+                            <label for="your_pass"></label><input type="password" name="password" id="your_pass" placeholder="Enter your password" required>
                         </div>
                         <div class="text"><a href="/forgot-password">Forgot password?</a></div>
                         <div class="button input-box">
-                            <input type="submit" value="Sumbit">
+                            <input type="submit" value="Login">
                         </div>
                         <div class="text sign-up-text">Don't have an account? <label for="flip">Sign up now</label></div>
                     </div>
@@ -305,37 +315,32 @@
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-user"></i>
-                            <input type="text" th:field="*{username}" name="username" id="name" placeholder="Enter your name"
-                                   required>
+                            <label for="name"></label><input type="text" th:field="*{username}" name="username" id="name" placeholder="Enter your name"
+                                                             required>
                         </div>
                         <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
                         <div class="input-box">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" name="email" id="email" th:field="*{email}" placeholder="Enter your email" required>
+                            <label for="email"></label><input type="email" name="email" id="email" th:field="*{email}" placeholder="Enter your email" required>
                         </div>
                         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
                         <div class="input-box">
                             <i class="fas fa-phone"></i>
-                            <input type="number" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
-                                   placeholder="Enter your phone" required>
+                            <label for="phoneNumber"></label><input type="text" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
+                                                                    placeholder="Enter your phone" required>
                         </div>
                         <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                              style="color: red"></div>
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
                             <input type="password" name="password" id="pass" th:field="*{password}"
-                                   placeholder="Password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
-                                   title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number."
-                                   required>
+                                   placeholder="Password" required>
                         </div>
                         <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></div>
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
                             <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"
-                                   placeholder="Confirm password"
-                                   pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
-                                   title="Please include at least 1 uppercase character, 1 lowercase character, and 1 number."
-                                   required>
+                                   placeholder="Repeat your password" required>
                         </div>
                         <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
                              style="color: red"></div>
@@ -350,10 +355,11 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" onchange="toggleSubmitButton()"/>
+                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" th:field="*{agreedTerms}" onchange="toggleSubmitButton()"/>
                             <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all
-                                statements in <a href="#" class="term-service">Terms of service</a></label>
+                                statements in <a href="/agree-term-service"  target="_blank" class="term-service">Terms of service</a></label>
                         </div>
+                        <div th:if="${#fields.hasErrors('agreedTerms')}" th:errors="*{agreedTerms}" style="color: red; font-size: small;"></div>
                         <div class="button input-box">
                             <input type="submit" name="signup" id="signup" class="form-submit-re" value="Register" disabled/>
                         </div>
@@ -364,7 +370,10 @@
         </div>
     </div>
 </div>
-<<script>
+
+
+<script th:inline="javascript">
+
     function toggleSubmitButton() {
         const checkbox = document.getElementById("agree-term");
         const submitButton = document.getElementById("signup");
@@ -376,6 +385,8 @@
             submitButton.classList.remove('active');
         }
     }
+
 </script>
+
 </body>
 </html>

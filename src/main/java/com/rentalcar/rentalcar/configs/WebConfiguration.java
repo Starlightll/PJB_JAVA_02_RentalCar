@@ -4,6 +4,7 @@ import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
+@EnableAsync
 public class WebConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public UserDetailsService userDetailsService() {
@@ -48,14 +50,15 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/", "/homepage-guest").permitAll()
-                .antMatchers("myProfile").hasAnyAuthority("Customer", "Car Owner")
+                .antMatchers("myProfile","/change-password").hasAnyAuthority("Customer", "Car Owner")
                 .antMatchers("/homepage-customer").hasAuthority("Customer")
                 .antMatchers("/homepage-carowner").hasAuthority("Car Owner")
                 .antMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
-                .antMatchers("/login", "/register/**", "/forgot-password", "/reset-password/**").permitAll()
+                .antMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
                 .anyRequest().authenticated()
                 .and()
           .formLogin().loginPage("/login")
+                .usernameParameter("email")
                 .successHandler(customAuthenticationSuccessHandler())
                 .failureHandler(new CustomAuthenticationFailureHandler())
                 .permitAll()

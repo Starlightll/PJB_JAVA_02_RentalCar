@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -15,12 +16,15 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class ForgotDto {
     @NotBlank(message = "Email cannot blank")
-    @Email(message = "Valid email is required: ex@abc.xyz")
+    @Email(message = "Please enter a valid email address", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private  String email;
 
-    @Size(min=8, max=20, message = "Password length must between 8 and 20 characters")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
+            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.")
     private String password;
-    @Size(min=8, max=20, message = "Password length must between 8 and 20 characters")
+
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
+            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.")
     private String confirmPassword;
 
 }

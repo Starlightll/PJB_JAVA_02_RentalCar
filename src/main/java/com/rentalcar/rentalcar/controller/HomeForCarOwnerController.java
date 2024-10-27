@@ -17,4 +17,9 @@ public class HomeForCarOwnerController {
     public String myProfileHomepage() {
         return "MyProfile_ChangPassword";
     }
+
+    @GetMapping("/my-cars")
+    public String myCar() {
+        return "/carowner/MyCars";
+    }
 }
