@@ -29,7 +29,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             errorMessage = "Your account is not active. Please activate your account.";
             showConfirmationLink = true;
         } else if (exception instanceof BadCredentialsException) {
-            errorMessage = "Invalid email or password.";
+            errorMessage = "Either email address or Password is incorrect. Please try again";
         } else if (exception instanceof AccountExpiredException) {
             errorMessage = "Your account has expired. Please contact support.";
         } else if (exception instanceof CredentialsExpiredException) {

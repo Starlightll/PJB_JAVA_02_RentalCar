@@ -56,7 +56,7 @@ public class ForgotPassController {
                     result.rejectValue("email", "error.email", "Your account is not activated");
                     break;
                 case "Not found":
-                    result.rejectValue("email", "error.email", "Email does not exists");
+                    result.rejectValue("email", "error.email", "The email address you’ve entered does not exist. Please try again");
                     break;
                 case "Account Locked":
                     result.rejectValue("email", "error.email", "Your account is locked");
@@ -83,7 +83,7 @@ public class ForgotPassController {
         model.addAttribute("showResendLink", false); // display form
 
         if (result.equals("Token expired")) {
-            model.addAttribute("error", "Token has expired. Please request a new reset password link.");
+            model.addAttribute("error", "This link has expired. Please go back to Homepage and try again.");
             model.addAttribute("showResendLink", true);
             return "password/ResetPassword";
         }
@@ -127,7 +127,7 @@ public class ForgotPassController {
                     result.rejectValue("confirmPassword", "error.confirmPassword", "Password and Confirm password don’t match. Please try again.");
                     break;
                 case "Not found":
-                    result.rejectValue("email", "error.email", "Email does not exists");
+                    result.rejectValue("email", "error.email", "The email address you’ve entered does not exist. Please try again");
                     break;
             }
             model.addAttribute("forgotDto", forgotDto);
