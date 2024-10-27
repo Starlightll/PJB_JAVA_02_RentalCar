@@ -13059,11 +13059,11 @@ textarea.form-control {
 }
 
 .heading-section .subheading {
-    font-size: 18px;
+    padding-top:20px;
     display: block;
     margin-bottom: 5px;
     color: #1089ff;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;

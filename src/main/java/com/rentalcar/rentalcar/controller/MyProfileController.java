@@ -49,7 +49,7 @@ public class MyProfileController {
 
     @PostMapping("/change-password")
     public String handleMyProfile(@Valid @ModelAttribute("myProfileDto") MyProfileDto myProfileDto, BindingResult result, Model model,
-        HttpSession session) {
+                                  HttpSession session) {
 
         model.addAttribute("activeTab", "Security");
 
@@ -63,7 +63,7 @@ public class MyProfileController {
 
         try {
             myProfileService.changePassword(myProfileDto, session);
-            model.addAttribute("success", "Your password has been changed successfully!");
+            model.addAttribute("success2", "Your password has been changed successfully!");
             return "MyProfile_ChangPassword";
         }catch (UserException ex){
             switch (ex.getMessage()) {
@@ -87,7 +87,7 @@ public class MyProfileController {
     @PostMapping("/save")
     public String saveUser(@ModelAttribute UserInfoDto userInfoRequest, HttpSession session , RedirectAttributes model) {
         userService.saveUser(userInfoRequest,session);
-        model.addFlashAttribute("success","Update successfully!!!");
+        model.addFlashAttribute("success1","Update successfully!!!");
         return "redirect:/my-profile";
     }
 
