@@ -1,8 +1,11 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.rentalcar.rentalcar.dto.MyProfileDto;
+import com.rentalcar.rentalcar.dto.UserInfoDto;
+import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.service.MyProfileService;
+import com.rentalcar.rentalcar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -19,12 +23,20 @@ public class MyProfileController {
 
     @Autowired
     MyProfileService myProfileService;
+    @Autowired
+    private UserService userService;
 
 
     @GetMapping("/my-profile")
-    public String myProfile_changPass(Model model) {
+    public String myProfile_changPass(Model model ,HttpSession session) {
         model.addAttribute("hasReSetErrors", true);
         model.addAttribute("myProfileDto", new MyProfileDto());
+
+        User user = (User) session.getAttribute("user");
+
+
+
+        model.addAttribute("userInfo", user);
         return "MyProfile_ChangPassword";
     }
 
@@ -57,6 +69,18 @@ public class MyProfileController {
             return "MyProfile_ChangPassword";
         }
 
+    }
+    @PostMapping("/save")
+    public String saveUser(@ModelAttribute UserInfoDto userInfoRequest, HttpSession session , RedirectAttributes model) {
+
+
+
+
+        userService.saveUser(userInfoRequest,session);
+
+
+        model.addFlashAttribute("success","Update successfully!!!");
+        return "redirect:/my-profile";
     }
 
 }
