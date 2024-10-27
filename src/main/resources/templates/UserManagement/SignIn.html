@@ -355,9 +355,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" th:field="*{agreedTerms}"  onchange="toggleSubmitButton()"/>
+                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" th:checked="${false}"  onchange="toggleSubmitButton()"/>
                             <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all
-                                statements in <a href="/agree-term-service" class="term-service">Terms of service</a></label>
+                                statements in <a href="/agree-term-service"  target="_blank" class="term-service">Terms of service</a></label>
                         </div>
                         <div th:if="${#fields.hasErrors('agreedTerms')}" th:errors="*{agreedTerms}" style="color: red; font-size: small;"></div>
                         <div class="button input-box">
@@ -384,8 +384,6 @@
             submitButton.disabled = true;
             submitButton.classList.remove('active');
         }
-
-
     }
 
 </script>

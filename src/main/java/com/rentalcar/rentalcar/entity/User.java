@@ -32,7 +32,7 @@ public class User {
     private String ward;
     private String street;
     private String fullName;
-    private boolean enabled;
+    private boolean agreeTerms;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 

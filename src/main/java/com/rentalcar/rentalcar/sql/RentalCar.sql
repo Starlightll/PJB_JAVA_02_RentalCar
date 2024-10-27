@@ -1,26 +1,6 @@
+
 CREATE DATABASE RentalCar
 USE RentalCar
---===============================DB UPDATE ======================
-
-ALTER TABLE Users
-    ADD status VARCHAR(10) NOT NULL DEFAULT 'PENDING' CHECK (status IN('PENDING', 'ACTIVATED', 'LOCKED'))
-
-DROP TABLE [UserStatus]
-
---========================================================================================
-
-
-
--- Role table
-CREATE TABLE [dbo].[Role]
-(
-    RoleId INT IDENTITY(1,1) PRIMARY KEY,
-    roleName NVARCHAR(50)
-    );
-insert into [Role]
-values ( 'Admin'),
-    ('Car Owner'),
-    ( 'Customer' )
 
 -- Users table
 CREATE TABLE [dbo].[Users]
@@ -39,42 +19,21 @@ CREATE TABLE [dbo].[Users]
     ward NVARCHAR(100) ,
     street NVARCHAR(255),
     fullName NVARCHAR(100),
-    enabled int not null,
+    agreeTerms int not null,
+    status VARCHAR(10) NOT NULL CHECK (status IN('PENDING', 'ACTIVATED', 'LOCKED'))
     PRIMARY KEY (userId)
     );
-
-INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, enabled)
-VALUES
-    ('AnhNT', '2003-07-11', 'Admin', '123456789', '0123456789', 'DL123456', 1000.00, '$2a$10$lMlBedWTeJ/22rnVoiOJMOlP7USPuJXFM4yphx.BdiaDP4foLAqVi', 'New York', 'Manhattan', 'Midtown', '123 Main St', 'Nguyen Tuan Anh', 1),
-
-    ('John', '1985-05-30', 'a', '987654321', '0987654321', 'DL654321', 1500.00, '$2a$10$lMlBedWTeJ/22rnVoiOJMOlP7USPuJXFM4yphx.BdiaDP4foLAqVi', 'Los Angeles', 'LA', 'Downtown', '456 Elm St', 'John Smith', 1);
-
-
--- UserRole table (mapping between Users and Role)
-CREATE TABLE [dbo].[UserRole]
-(
-    userId INT,
-    roleId INT,
-    PRIMARY KEY (userId, roleId),
-    FOREIGN KEY (userId) REFERENCES [dbo].[Users](userId),
-    FOREIGN KEY (roleId) REFERENCES [dbo].[Role](RoleId)
-    );
-
-
-insert into [UserRole]
-values (2,1),(1,2)
 
 
 
 CREATE TABLE VerificationToken
 (
-    tokenId INT IDENTITY(1,1) PRIMARY KEY,  -- tokenId là khóa chính
+    tokenId INT IDENTITY(1,1) PRIMARY KEY,
     tokenCode NVARCHAR(MAX),
     expiryDate DATETIME,
     userId INT UNIQUE,                        -- Đảm bảo mỗi userId chỉ xuất hiện một lần
     CONSTRAINT FK_UserToken FOREIGN KEY (userId) REFERENCES users(userId)
 );
-
 
 
 -- Car table
@@ -99,6 +58,19 @@ CREATE TABLE [dbo].[Car]
     userId INT,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users](userId)
     );
+
+-- Role table
+CREATE TABLE [dbo].[Role]
+(
+    RoleId INT IDENTITY(1,1) PRIMARY KEY,
+    roleName NVARCHAR(50)
+    );
+
+insert into [Role]
+values ( 'Admin'),
+    ('Car Owner'),
+    ( 'Customer' )
+
 
 
 -- Feedback table
@@ -147,14 +119,6 @@ CREATE TABLE [dbo].[CarStatus]
     FOREIGN KEY (carId) REFERENCES [dbo].[Car](carId)
     );
 
--- User Status table
-CREATE TABLE [dbo].[UserStatus]
-(
-    UserStatusId INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(50),
-    userId INT,
-    FOREIGN KEY (userId) REFERENCES [dbo].[Users](userId)
-    );
 
 -- Payment Method table
 CREATE TABLE [dbo].[PaymentMethod]
@@ -181,7 +145,15 @@ CREATE TABLE [dbo].[Documents]
     FOREIGN KEY (carId) REFERENCES [dbo].[Car](carId)
     );
 
-
+-- UserRole table (mapping between Users and Role)
+CREATE TABLE [dbo].[UserRole]
+(
+    userId INT,
+    roleId INT,
+    PRIMARY KEY (userId, roleId),
+    FOREIGN KEY (userId) REFERENCES [dbo].[Users](userId),
+    FOREIGN KEY (roleId) REFERENCES [dbo].[Role](RoleId)
+    );
 
 -- CarAdditionalFunction table (mapping between Car and Additional Functions)
 CREATE TABLE [dbo].[CarAdditionalFunction]
