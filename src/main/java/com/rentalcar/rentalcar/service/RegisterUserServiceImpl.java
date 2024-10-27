@@ -60,7 +60,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(encodedPassword);
         user.setPhone(normalizedPhone);
-        user.setEnabled(false);
+        user.setAgreeTerms(true);
         user.setUsername(userDto.getUsername());
         user.setStatus(UserStatus.PENDING);
         userRepository.save(user);
