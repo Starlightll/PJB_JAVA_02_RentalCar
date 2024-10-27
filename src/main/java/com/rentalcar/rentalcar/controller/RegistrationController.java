@@ -49,6 +49,7 @@ public class RegistrationController {
 
         if(result.hasErrors()) {
             model.addAttribute("hasSignupErrors", true);
+            registerDto.setAgreedTerms(false); // Đặt mặc định là false
             model.addAttribute("registerDto", registerDto);
             return "UserManagement/SignIn";
         }
@@ -64,6 +65,7 @@ public class RegistrationController {
                     result.rejectValue("confirmPassword", "error.confirmPassword", "Password and Confirm password don’t match. Please try again.");
                     break;
             }
+            registerDto.setAgreedTerms(false); // Đặt mặc định là false
             model.addAttribute("hasSignupErrors", true);
             model.addAttribute("registerDto", registerDto);
             return "UserManagement/SignIn";
@@ -72,6 +74,7 @@ public class RegistrationController {
             if(ex.getMessage().equals("Phone number already exists")) {
                 result.rejectValue("phoneNumber", "error.phoneNumber", "Phone number already exists");
                 model.addAttribute("hasSignupErrors", true);
+                registerDto.setAgreedTerms(false); // Đặt mặc định là false
                 model.addAttribute("registerDto", registerDto);
                 return "UserManagement/SignIn";
             }
