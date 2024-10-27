@@ -77,7 +77,7 @@ public class MyProfileController {
         userService.saveUser(userInfoRequest,session);
 
 
-        model.addFlashAttribute("success","Update successfully!!!");
+        model.addFlashAttribute("successfully","Update successfully!!!");
         return "redirect:/my-profile";
     }
 
