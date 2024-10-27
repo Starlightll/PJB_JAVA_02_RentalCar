@@ -2,7 +2,6 @@ package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.mapper.UserMapper;
 import com.rentalcar.rentalcar.repository.UserRepo;
 
 

@@ -34,8 +34,6 @@ public class MyProfileController {
 
         User user = (User) session.getAttribute("user");
 
-
-
         model.addAttribute("userInfo", user);
         return "MyProfile_ChangPassword";
     }
