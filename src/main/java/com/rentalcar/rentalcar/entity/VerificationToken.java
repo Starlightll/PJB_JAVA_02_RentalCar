@@ -3,7 +3,7 @@ package com.rentalcar.rentalcar.entity;
 import com.rentalcar.rentalcar.common.Constants;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -39,5 +39,4 @@ public class VerificationToken {
         return LocalDateTime.now().plusMinutes(expiryTimeInMinutes);
     }
 
-    // Getters và setters
 }

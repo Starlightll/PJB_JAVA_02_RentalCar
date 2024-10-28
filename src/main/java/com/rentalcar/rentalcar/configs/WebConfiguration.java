@@ -5,16 +5,17 @@ import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableAsync
-public class WebConfiguration extends WebSecurityConfigurerAdapter {
+public class WebConfiguration {
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
@@ -34,10 +35,6 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
         return authProvider;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
 
     @Bean
     public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
@@ -46,30 +43,40 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
         return successHandler;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/", "/homepage-guest").permitAll()
-                .antMatchers("myProfile","/change-password").hasAnyAuthority("Customer", "Car Owner")
-                .antMatchers("/homepage-customer").hasAuthority("Customer")
-                .antMatchers("/homepage-carowner").hasAuthority("Car Owner")
-                .antMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
-                .antMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
-                .anyRequest().authenticated()
-                .and()
-          .formLogin().loginPage("/login")
-                .usernameParameter("email")
-                .successHandler(customAuthenticationSuccessHandler())
-                .failureHandler(new CustomAuthenticationFailureHandler())
-                .permitAll()
-                .and()
-          .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID") // Xóa cookie nếu cần
-                .and()
-                .exceptionHandling().accessDeniedPage("/403")
-        ;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/", "/homepage-guest").permitAll()
+                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
+                        .requestMatchers("/homepage-customer").hasAuthority("Customer")
+                        .requestMatchers("/homepage-carowner").hasAuthority("Car Owner")
+                        .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
+                        .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .successHandler(customAuthenticationSuccessHandler())
+                        .failureHandler(new CustomAuthenticationFailureHandler())
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/403")
+                );
+
+        return http.build();
+    }
+
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
     }
 }

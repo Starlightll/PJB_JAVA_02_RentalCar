@@ -8,6 +8,7 @@ import com.rentalcar.rentalcar.entity.VerificationToken;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.VerificationTokenRepo;
 import com.rentalcar.rentalcar.service.RegisterUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 
 @Controller
 public class RegistrationController {
@@ -101,16 +101,6 @@ public class RegistrationController {
         return "UserManagement/activationResult";
     }
 
-//    @PostMapping("/register/resendToken")
-//    public String resendToken(@RequestParam("email") String email, Model model) {
-//        try {
-//            userService.resendActivationToken(email); // Gửi lại token
-//            model.addAttribute("message", "A new activation link has been sent to your email.");
-//        } catch (UserException e) {
-//            model.addAttribute("message", "Error: " + e.getMessage());
-//        }
-//        return "UserManagement/activationResult";
-//    }
 
 
 

@@ -6,6 +6,8 @@ import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.service.MyProfileService;
 import com.rentalcar.rentalcar.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 @Controller
 public class MyProfileController {
@@ -49,7 +49,7 @@ public class MyProfileController {
 
     @PostMapping("/change-password")
     public String handleMyProfile(@Valid @ModelAttribute("myProfileDto") MyProfileDto myProfileDto, BindingResult result, Model model,
-        HttpSession session) {
+                                  HttpSession session) {
 
         model.addAttribute("activeTab", "Security");
 
@@ -63,7 +63,7 @@ public class MyProfileController {
 
         try {
             myProfileService.changePassword(myProfileDto, session);
-            model.addAttribute("success", "Your password has been changed successfully!");
+            model.addAttribute("success2", "Your password has been changed successfully!");
             return "MyProfile_ChangPassword";
         }catch (UserException ex){
             switch (ex.getMessage()) {
@@ -86,8 +86,8 @@ public class MyProfileController {
 
     @PostMapping("/save")
     public String saveUser(@ModelAttribute UserInfoDto userInfoRequest, HttpSession session , RedirectAttributes model) {
-        userService.saveUser(userInfoRequest,session);
-        model.addFlashAttribute("success","Update successfully!!!");
+        userService.saveUser(userInfoRequest, session);
+        model.addFlashAttribute("success1","Update successfully!!!");
         return "redirect:/my-profile";
     }
 

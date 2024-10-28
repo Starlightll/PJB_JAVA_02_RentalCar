@@ -4,11 +4,11 @@ import com.rentalcar.rentalcar.dto.MyProfileDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 
 
 @Service
