@@ -51,9 +51,9 @@ public class Car {
     private String frontImage;
     @Column(name = "back")
     private String backImage;
-    @Column(name = "left")
+    @Column(name = "[left]")
     private String leftImage;
-    @Column(name = "right")
+    @Column(name = "[right]")
     private String rightImage;
     private String registration;
     private String certificate;
