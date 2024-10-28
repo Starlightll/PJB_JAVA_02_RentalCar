@@ -95,10 +95,11 @@ public class MyProfileController {
             // Return the view with the current user info to display errors
              model.addAttribute("userInfo", userInfoRequest);
             return "MyProfile_ChangPassword"; // Ensure this is the correct view name
+            //return "redirect:/my-profile";
         }
 
         userService.saveUser(userInfoRequest, session);
-        models.addFlashAttribute("successfully", "Update successfully!!!");
+        models.addFlashAttribute("success1", "Update successfully!!!");
         return "redirect:/my-profile";
     }
 
