@@ -28,20 +28,34 @@ public class MyProfileController {
 
 
     @GetMapping("/my-profile")
-    public String myProfile_changPass(Model model ,HttpSession session) {
-        model.addAttribute("hasReSetErrors", true);
+    public String myProfile(Model model, HttpSession session) {
+        model.addAttribute("activeTab", "PersonalInfo"); // Set default tab
         model.addAttribute("myProfileDto", new MyProfileDto());
-
         User user = (User) session.getAttribute("user");
 
         model.addAttribute("userInfo", user);
         return "MyProfile_ChangPassword";
     }
 
+    @GetMapping("/change-password")
+    public String changePassword(Model model, HttpSession session) {
+        model.addAttribute("activeTab", "Security"); // Set active tab to Security
+        model.addAttribute("myProfileDto", new MyProfileDto());
+        User user = (User) session.getAttribute("user");
 
-    @PostMapping("/my-profile")
+        model.addAttribute("userInfo", user);
+        return "MyProfile_ChangPassword";
+    }
+
+    @PostMapping("/change-password")
     public String handleMyProfile(@Valid @ModelAttribute("myProfileDto") MyProfileDto myProfileDto, BindingResult result, Model model,
-        HttpSession session) {
+                                  HttpSession session) {
+
+        model.addAttribute("activeTab", "Security");
+
+        User user = (User) session.getAttribute("user");
+        model.addAttribute("userInfo", user);
+
         if(result.hasErrors()) {
             model.addAttribute("myProfileDto", myProfileDto);
             return "MyProfile_ChangPassword";
@@ -49,7 +63,7 @@ public class MyProfileController {
 
         try {
             myProfileService.changePassword(myProfileDto, session);
-            model.addAttribute("success", "Your password has been changed successfully!");
+            model.addAttribute("success2", "Your password has been changed successfully!");
             return "MyProfile_ChangPassword";
         }catch (UserException ex){
             switch (ex.getMessage()) {
@@ -68,16 +82,12 @@ public class MyProfileController {
         }
 
     }
+
+
     @PostMapping("/save")
     public String saveUser(@ModelAttribute UserInfoDto userInfoRequest, HttpSession session , RedirectAttributes model) {
-
-
-
-
         userService.saveUser(userInfoRequest,session);
-
-
-        model.addFlashAttribute("successfully","Update successfully!!!");
+        model.addFlashAttribute("success1","Update successfully!!!");
         return "redirect:/my-profile";
     }
 
