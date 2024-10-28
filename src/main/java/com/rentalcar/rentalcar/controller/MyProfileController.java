@@ -31,6 +31,7 @@ public class MyProfileController {
     public String myProfile(Model model, HttpSession session) {
         model.addAttribute("activeTab", "PersonalInfo"); // Set default tab
         model.addAttribute("myProfileDto", new MyProfileDto());
+        model.addAttribute("userInfo", new UserInfoDto());
         User user = (User) session.getAttribute("user");
 
         model.addAttribute("userInfo", user);
@@ -85,10 +86,21 @@ public class MyProfileController {
 
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute UserInfoDto userInfoRequest, HttpSession session , RedirectAttributes model) {
-        userService.saveUser(userInfoRequest,session);
-        model.addFlashAttribute("success1","Update successfully!!!");
+    public String saveUser(@Valid @ModelAttribute("userInfo") UserInfoDto userInfoRequest,
+                           BindingResult bindingResult,
+                           HttpSession session,
+                           RedirectAttributes models , Model model) {
+
+        if (bindingResult.hasErrors()) {
+            // Return the view with the current user info to display errors
+             model.addAttribute("userInfo", userInfoRequest);
+            return "MyProfile_ChangPassword"; // Ensure this is the correct view name
+        }
+
+        userService.saveUser(userInfoRequest, session);
+        models.addFlashAttribute("successfully", "Update successfully!!!");
         return "redirect:/my-profile";
     }
+
 
 }

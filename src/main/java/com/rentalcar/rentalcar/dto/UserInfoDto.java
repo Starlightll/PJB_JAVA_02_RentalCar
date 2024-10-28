@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
@@ -12,12 +13,13 @@ import java.time.LocalDate;
 @Data
 @Builder
 @AllArgsConstructor
+
+@NoArgsConstructor
 public class UserInfoDto {
 
-        private Long id;
 
-        @NotBlank(message = "Username is required")
-        private String username;
+
+
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         @Past(message = "Date of birth must be in the past")
@@ -33,7 +35,7 @@ public class UserInfoDto {
         @NotBlank(message = "Phone number is required")
         @Pattern(regexp = "^\\+?[0-9. ()-]{7,25}$", message = "Phone number is invalid")
         private String phone;
-
+        @NotBlank(message = "Driving License ID is required")
         private String drivingLicense;
 
         @DecimalMin(value = "0.0", inclusive = true, message = "Wallet balance must be positive")
