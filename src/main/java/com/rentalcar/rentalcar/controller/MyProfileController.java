@@ -6,6 +6,8 @@ import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.service.MyProfileService;
 import com.rentalcar.rentalcar.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 @Controller
 public class MyProfileController {
@@ -86,7 +86,7 @@ public class MyProfileController {
 
     @PostMapping("/save")
     public String saveUser(@ModelAttribute UserInfoDto userInfoRequest, HttpSession session , RedirectAttributes model) {
-        userService.saveUser(userInfoRequest,session);
+        userService.saveUser(userInfoRequest, session);
         model.addFlashAttribute("success1","Update successfully!!!");
         return "redirect:/my-profile";
     }

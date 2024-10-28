@@ -3,14 +3,15 @@ package com.rentalcar.rentalcar.mail;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.TimeFormatter;
 import com.rentalcar.rentalcar.entity.User;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+
 
 @Service
 public class EmailService {

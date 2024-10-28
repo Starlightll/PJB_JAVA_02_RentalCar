@@ -5,11 +5,9 @@ import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.UserRepo;
 
 
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
