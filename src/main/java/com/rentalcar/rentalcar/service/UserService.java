@@ -37,6 +37,10 @@ public class UserService implements IUserService {
 
     }
 
+    @Override
+    public boolean checkPhone(String phone) {
+            return userRepo.existsByPhone(phone);
+    }
 
 
 //
