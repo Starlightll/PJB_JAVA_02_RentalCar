@@ -6,5 +6,6 @@ import jakarta.servlet.http.HttpSession;
 
 public interface IUserService {
     void saveUser(UserInfoDto user, HttpSession session);
+    boolean checkPhone(String phone);
 
 }

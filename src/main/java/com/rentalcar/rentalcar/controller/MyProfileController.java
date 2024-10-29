@@ -90,6 +90,9 @@ public class MyProfileController {
                            BindingResult bindingResult,
                            HttpSession session,
                            RedirectAttributes models , Model model) {
+        if (userService.checkPhone(userInfoRequest.getPhone())) {
+            bindingResult.rejectValue("phone", "error.userInfo", "Phone number already exists");
+        }
         String dobError = null;
         String emailError = null;
         String nationalIdError = null;
