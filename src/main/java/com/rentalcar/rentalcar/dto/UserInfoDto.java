@@ -33,7 +33,7 @@ public class UserInfoDto {
         @NotBlank(message = "Phone number is required")
         @Pattern(regexp = "^\\+?[0-9]{7,25}$", message = "Phone number must contain only numbers")
         private String phone;
-        private String originalPhone;
+
         @NotBlank(message = "Driving License ID is required")
         private String drivingLicense;
 
