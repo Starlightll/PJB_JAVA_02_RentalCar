@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,9 +95,67 @@ public class MyProfileController {
 
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute UserInfoDto userInfoRequest, HttpSession session , RedirectAttributes model) {
+    public String saveUser(@Valid @ModelAttribute("userInfo") UserInfoDto userInfoRequest,
+                           BindingResult bindingResult,
+                           HttpSession session,
+                           RedirectAttributes models , Model model) {
+        if (userService.checkPhone(userInfoRequest.getPhone())) {
+            bindingResult.rejectValue("phone", "error.userInfo", "Phone number already exists");
+        }
+        String dobError = null;
+        String emailError = null;
+        String nationalIdError = null;
+        String phoneError = null;
+        String drivingLicenseError = null;
+        String streetError = null;
+        String fullNameError = null;
+        if (bindingResult.hasErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                switch (error.getField()) {
+                    case "dob":
+                        dobError = error.getDefaultMessage();
+                        break;
+                    case "email":
+                        emailError = error.getDefaultMessage();
+                        break;
+                    case "nationalId":
+                        nationalIdError = error.getDefaultMessage();
+                        break;
+                    case "phone":
+                        phoneError = error.getDefaultMessage();
+                        break;
+                    case "drivingLicense":
+                        drivingLicenseError = error.getDefaultMessage();
+                        break;
+                    case "street":
+                        streetError = error.getDefaultMessage();
+                        break;
+                    case "fullName":
+                        fullNameError = error.getDefaultMessage();
+                        break;
+                }
+            }
+
+            // Thêm các thông điệp lỗi vào model để hiển thị lại
+            models.addFlashAttribute("dobError", dobError);
+            models.addFlashAttribute("emailError", emailError);
+            models.addFlashAttribute("nationalIdError", nationalIdError);
+            models.addFlashAttribute("phoneError", phoneError);
+            models.addFlashAttribute("drivingLicenseError", drivingLicenseError);
+            models.addFlashAttribute("streetError", streetError);
+            models.addFlashAttribute("fullNameError", fullNameError);
+            //User user = (User) session.getAttribute("user");
+
+            // model.addAttribute("userInfo", user);
+            // Return the view with the current user info to display errors
+            //  model.addAttribute("userInfo", userInfoRequest);
+            // return "MyProfile_ChangPassword"; // Ensure this is the correct view name
+
+            return "redirect:/my-profile";
+        }
+
         userService.saveUser(userInfoRequest, session);
-        model.addFlashAttribute("success1","Update successfully!!!");
+        models.addFlashAttribute("success1", "Update successfully!!!");
         return "redirect:/my-profile";
     }
 
