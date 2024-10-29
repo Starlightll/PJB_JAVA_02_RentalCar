@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -16,28 +16,35 @@ import java.util.Date;
 public class CarDraft {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer draftId;
     private Integer step;
     @Column(name = "name")
     private String carName;
     private String licensePlate;
-    private LocalDate lastModified;
+    private Date lastModified;
     private String model;
     private String color;
     @Column(name = "seatNo")
-    private int seat;
-    private int productionYear;
+    private Integer seat;
+    private Integer productionYear;
     private String transmission;
     @Column(name = "fuel")
     private String fuelType;
-    private float mileage;
-    private float fuelConsumption;
-    private float basePrice;
-    private float deposit;
+    private Float mileage;
+    private Float fuelConsumption;
+    private String additionalFunction;
+    private String province;
+    private String district;
+    private String ward;
+    @Column(name = "street")
+    private String home;
+    private Float basePrice;
+    private Float deposit;
     private String description;
     @Column(name = "termOfUse")
     private String terms;
-    private float carPrice;
+    private Float carPrice;
     @Column(name = "front")
     private String frontImage;
     @Column(name = "back")
@@ -53,4 +60,8 @@ public class CarDraft {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "brandId")
+    private Brand brand;
 }

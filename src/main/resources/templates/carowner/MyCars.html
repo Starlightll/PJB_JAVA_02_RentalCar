@@ -5,6 +5,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <title>HomepageForCarOwner</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         .hero-wrap{
@@ -47,7 +48,27 @@
     <section class="ftco-section" style="min-height: 500px !important;">
         <div class="container">
             <button id="addCarBtn" class="btn btn-primary btn-lg m-4">Add car</button>
-
+            <!-- Modal -->
+            <div class="modal fade" id="hasDraftModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="hasDraftModalTitle">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            You have a car draft. Do you want to continue with it?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" id="carDraftContinues">Yes</button>
+                            <button type="button" class="btn btn-secondary" id="carDraftAddNew">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
         </div>
@@ -68,11 +89,20 @@
                 event.preventDefault();
 
                 $.ajax({
-                    url: '/add-car',
+                    url: '/check-draft',
                     type: 'GET',
                     success: function (response) {
-                        if (response) {
-                            console.log(response);
+                        if (response.hasDraft === true) {
+                            $('#hasDraftModal').modal('show');
+                            $('#carDraftAddNew').click(function () {
+                                deleteDraft();
+                                addCar();
+                            });
+                            $('#carDraftContinues').click(function () {
+                                addCar();
+                            });
+                        }else{
+                            window.location.href = '/add-car';
                         }
                     },
                     error: function (error) {
@@ -81,6 +111,29 @@
                 });
             });
         });
+
+        function addCar() {
+            window.location.href = '/add-car';
+        }
+
+
+        function deleteDraft() {
+            $.ajax({
+                url: '/delete-draft',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
+                },
+                success: function (response) {
+                    alert("Draft deleted.");
+                },
+                error: function (error) {
+                    console.error("Error:", error);
+                    alert("Error deleting draft.");
+                }
+            });
+        }
+
     </script>
     </body>
 </th:block>

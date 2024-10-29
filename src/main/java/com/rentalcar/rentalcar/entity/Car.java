@@ -3,7 +3,7 @@ package com.rentalcar.rentalcar.entity;
 import lombok.*;
 import org.apache.poi.hpsf.Decimal;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +37,11 @@ public class Car {
     private float mileage;
     @Column(name = "fuelConsumption")
     private float fuelConsumption;
+    private String province;
+    private String district;
+    private String ward;
+    @Column(name = "street")
+    private String home;
     @Column(name = "basePrice")
     private float basePrice;
     @Column(name = "deposit")

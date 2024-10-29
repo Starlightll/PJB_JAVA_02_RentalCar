@@ -66,6 +66,10 @@ CREATE TABLE [dbo].[Car]
     fuel            NVARCHAR(20),
     mileage         DECIMAL(18, 2),
     fuelConsumption DECIMAL(18, 2),
+    province        NVARCHAR(50),
+    district        NVARCHAR(50),
+    ward            NVARCHAR(50),
+    street          NVARCHAR(255),
     basePrice       DECIMAL(18, 2),
     deposit         DECIMAL(18, 2),
     description     NVARCHAR(MAX),
@@ -102,6 +106,11 @@ CREATE TABLE CarDraft
     fuel            NVARCHAR(20),
     mileage         DECIMAL(18, 2),
     fuelConsumption DECIMAL(18, 2),
+    additionalFunction NVARCHAR(MAX),
+    province        NVARCHAR(50),
+    district        NVARCHAR(50),
+    ward            NVARCHAR(50),
+    street          NVARCHAR(255),
     basePrice       DECIMAL(18, 2),
     deposit         DECIMAL(18, 2),
     description     NVARCHAR(MAX),
@@ -114,7 +123,7 @@ CREATE TABLE CarDraft
     registration    NVARCHAR(200),
     certificate     NVARCHAR(200),
     insurance       NVARCHAR(200),
-    brandId         INT NOT NULL,
+    brandId         INT,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (brandId) REFERENCES [dbo].[Brand] (brandId),
 );
@@ -231,3 +240,10 @@ CREATE TABLE [dbo].[BookingCar]
     FOREIGN KEY (carId) REFERENCES [dbo].[Car] (carId),
     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
 );
+
+INSERT INTO Brand (brandName) VALUES ('Toyota'), ('Honda'), ('Hyundai'), ('Kia'), ('Mazda'), ('Ford'), ('Chevrolet'), ('Mercedes-Benz'), ('BMW'), ('Audi'), ('Lexus'), ('Nissan'), ('Volkswagen'), ('Peugeot'), ('Suzuki'), ('Subaru'), ('Mitsubishi'), ('Volvo'), ('Land Rover'), ('Jeep'), ('Porsche'), ('Jaguar'), ('Ferrari'), ('Lamborghini'), ('Rolls-Royce'), ('Bentley'), ('Bugatti'), ('Maserati'), ('McLaren'), ('Aston Martin'), ('Lotus'), ('Alfa Romeo'), ('Fiat'), ('Citroen'), ('Renault'), ('Skoda'), ('Seat'), ('Opel'), ('Dacia'), ('Lada'), ('ZAZ'), ('GAZ'), ('UAZ'), ('Moskvich'), ('Kamaz'), ('PAZ'), ('KAvZ'), ('Ikarus'), ('Neoplan'), ('Setra'), ('Van Hool'), ('Volvo'), ('Scania')
+
+INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('Sun roof'), ('DVD'), ('Ski Rack'), ('Car Cover'), ('Car Wash'), ('Car Wax'), ('Car Polish'), ('Car Vacuum'), ('Car Freshener'), ('Car Shampoo');
+
+INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED');
+
