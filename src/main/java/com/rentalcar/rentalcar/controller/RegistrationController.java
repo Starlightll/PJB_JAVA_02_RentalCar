@@ -62,8 +62,8 @@ public class RegistrationController {
 
         try {
             userService.registerUser(registerDto);
-//            redirectAttributes.addFlashAttribute ("success", "Ban da tao tai khoan thanh cong");
-            session.setAttribute("msg", "Đăng ký thành công!");
+            redirectAttributes.addFlashAttribute ("success", true);
+
         }catch (UserException e) {
             switch (e.getMessage()) {
                 case "Email already exists":
@@ -96,7 +96,7 @@ public class RegistrationController {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.registerDto", result);
             return "redirect:/register";
         }
-        return "redirect:/login";
+        return "redirect:/login?success";
     }
 
 
