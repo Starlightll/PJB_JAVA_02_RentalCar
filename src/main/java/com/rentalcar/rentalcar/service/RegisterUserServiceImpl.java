@@ -35,7 +35,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
 
 
     @Override
-    public void registerUser(RegisterDto userDto) {
+    public void registerUser(RegisterDto userDto) throws IllegalArgumentException {
         if(userRepository.getUserByEmail(userDto.getEmail()) != null) {
             throw new UserException("Email already exists");
         }
@@ -44,7 +44,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
             throw new UserException("Passwords do not match");
         }
 
-        if(phoneNumberStandardService.isPhoneNumberExists(userDto.getPhoneNumber(), Constants.DEFAULT_REGION_CODE)) {
+        if(phoneNumberStandardService.isPhoneNumberExists(userDto.getPhoneNumber(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
             throw new IllegalArgumentException("Phone number already exists");
         }
 
@@ -52,7 +52,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(userDto.getPhoneNumber(), Constants.DEFAULT_REGION_CODE);
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(userDto.getPhoneNumber(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
 
 
         // Save user in the database

@@ -9,13 +9,18 @@ import com.rentalcar.rentalcar.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Controller
@@ -27,48 +32,40 @@ public class MyProfileController {
     private UserService userService;
 
 
-    @GetMapping("/my-profile")
-    public String myProfile(Model model, HttpSession session) {
-        model.addAttribute("activeTab", "PersonalInfo"); // Set default tab
-        model.addAttribute("myProfileDto", new MyProfileDto());
-        User user = (User) session.getAttribute("user");
-
-        model.addAttribute("userInfo", user);
-        return "MyProfile_ChangPassword";
-    }
-
     @GetMapping("/change-password")
     public String changePassword(Model model, HttpSession session) {
         model.addAttribute("activeTab", "Security"); // Set active tab to Security
-        model.addAttribute("myProfileDto", new MyProfileDto());
+
+        if (!model.containsAttribute("myProfileDto")) {
+            model.addAttribute("myProfileDto", new MyProfileDto());
+        }
         User user = (User) session.getAttribute("user");
 
+        //truyền dữ liệu cho personal in4
         model.addAttribute("userInfo", user);
         return "MyProfile_ChangPassword";
     }
 
     @PostMapping("/change-password")
-    public String handleMyProfile(@Valid @ModelAttribute("myProfileDto") MyProfileDto myProfileDto, BindingResult result, Model model,
-                                  HttpSession session) {
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> handleChangePassword(
+            @Valid @ModelAttribute("myProfileDto") MyProfileDto myProfileDto,
+            BindingResult result, HttpSession session) {
 
-        model.addAttribute("activeTab", "Security");
-
-        User user = (User) session.getAttribute("user");
-        model.addAttribute("userInfo", user);
-
-        if(result.hasErrors()) {
-            model.addAttribute("myProfileDto", myProfileDto);
-            return "MyProfile_ChangPassword";
+        Map<String, String> response = new HashMap<>();
+        if (result.hasErrors()) {
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(response); // Trả về lỗi 400 kèm thông báo lỗi
         }
 
         try {
             myProfileService.changePassword(myProfileDto, session);
-            model.addAttribute("success2", "Your password has been changed successfully!");
-            return "MyProfile_ChangPassword";
-        }catch (UserException ex){
+            response.put("success", "Your password has been changed successfully!");
+            return ResponseEntity.ok(response); // Trả về thành công
+        } catch (UserException ex) {
             switch (ex.getMessage()) {
                 case "User not found":
-                    model.addAttribute("error", "User not found");
+                    response.put("general", "User not found.");
                     break;
                 case "Old password is incorrect":
                     result.rejectValue("oldPassword", "error.oldPassword", "Current password is incorrect");
@@ -77,10 +74,22 @@ public class MyProfileController {
                     result.rejectValue("confirmPassword", "error.confirmPassword", "New password and Confirm password don’t match");
                     break;
             }
-            model.addAttribute("myProfileDto", myProfileDto);
-            return "MyProfile_ChangPassword";
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(response); // Trả về lỗi kèm thông báo lỗi
         }
+    }
 
+
+
+
+    @GetMapping("/my-profile")
+    public String myProfile(Model model, HttpSession session) {
+        model.addAttribute("activeTab", "PersonalInfo"); // Set default tab
+        model.addAttribute("myProfileDto", new MyProfileDto());
+        User user = (User) session.getAttribute("user");
+
+        model.addAttribute("userInfo", user);
+        return "MyProfile_ChangPassword";
     }
 
 
