@@ -17,13 +17,13 @@ import org.hibernate.validator.constraints.UniqueElements;
 @NoArgsConstructor
 public class RegisterDto {
 
-    @NotBlank(message = "User Name cannot blank")
+    @NotBlank(message = "User Name cannot blank.")
     private String username;
-    @NotBlank(message = "Email cannot blank")
+    @NotBlank(message = "Email cannot blank.")
     @Email(message = "Please enter a valid email address ", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private  String email;
-    @NotBlank(message = "Phone number cannot be blank")
-    @Pattern(regexp = "^\\+?[0-9]\\d{1,14}$", message = "Invalid phone number format")
+    @NotBlank(message = "Phone number cannot be blank.")
+    @Pattern(regexp = "^\\+?[0-9]\\d{1,14}$", message = "Invalid phone number format.")
     private String phoneNumber;// Thêm trường số điện thoại
     // Mật khẩu bao gồm cả chữ hoa, chữ thường, số, ký tự đặc biệt và ít nhất 8 ký tự
     @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
