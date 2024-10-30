@@ -15,6 +15,27 @@
 </head>
 <th:block layout:fragment="content">
     <body>
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="hasDraftModalTitle">No Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="hasDraftModalBody">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="confirm">Yes</button>
+                    <button type="button" class="btn btn-secondary" id="notConfirm">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -46,7 +67,7 @@
                                         <li class="active" id="basic"><strong>Step1. Basic</strong></li>
                                         <li id="detail"><strong>Step2. Detail</strong></li>
                                         <li id="pricing"><strong>Step3. Pricing</strong></li>
-                                        <li id="finish"><strong>Step4. Finish</strong></li>
+                                        <li id="finish"><strong>Step4. Preview</strong></li>
                                     </ul>
                                     <!-- fieldsets -->
                                     <fieldset>
@@ -64,7 +85,7 @@
                                                         <div class="row">
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                        <span class="input-group-text"
+                                                                        <span class="input-group-text required-label"
                                                                               id="inputGroup-sizing-default">License plate</span>
                                                                 </div>
                                                                 <input type="text" class="form-control"
@@ -74,7 +95,7 @@
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
+                                                                    <label class="input-group-text required-label"
                                                                            for="color"
                                                                            >Color</label>
                                                                 </div>
@@ -92,7 +113,7 @@
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
+                                                                    <label class="input-group-text required-label"
                                                                            for="brand">Brand
                                                                         Name</label>
                                                                 </div>
@@ -107,7 +128,7 @@
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                        <span class="input-group-text"
+                                                                        <span class="input-group-text required-label"
                                                                         >Model</span>
                                                                 </div>
                                                                 <input type="text" class="form-control"
@@ -117,7 +138,7 @@
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
+                                                                    <label class="input-group-text required-label"
                                                                            for="productionYear">Production
                                                                         year</label>
                                                                 </div>
@@ -130,7 +151,7 @@
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
+                                                                    <label class="input-group-text required-label"
                                                                            for="seatNo">No of seats</label>
                                                                 </div>
                                                                 <select class="custom-select" id="seatNo" name="seatNo">
@@ -143,7 +164,7 @@
                                                             </div>
                                                             <div class="col-lg-12 row">
                                                                 <div class="col-lg-6">
-                                                                    <p>Transmission</p>
+                                                                    <p class="required-label">Transmission</p>
                                                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                                                         <label class="btn btn-secondary" th:classappend="${carDraft.transmission == 'Automatic'} ? 'active'">
                                                                             <input type="radio" name="transmission" id="option1" value="Automatic" th:checked="${carDraft.transmission == 'Automatic'}"> Automatic
@@ -154,7 +175,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6">
-                                                                    <p>Fuel</p>
+                                                                    <p class="required-label">Fuel</p>
                                                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                                                         <label class="btn btn-secondary" th:classappend="${carDraft.fuelType == 'Gasoline'} ? 'active'">
                                                                             <input type="radio" name="fuel" id="option3" value="Gasoline" th:checked="${carDraft.fuelType == 'Gasoline'}"> Gasoline
@@ -172,7 +193,7 @@
                                                         <div class="row">
                                                             <div class="col-lg-4">
                                                                 <input type="hidden" id="registrationImg" th:value="${carDraft.registration}">
-                                                                <p>Registration</p>
+                                                                <p class="required-label">Registration</p>
                                                                 <label for="input-file1" class="drop-area"
                                                                        id="drop-area1">
                                                                     <input type="file" id="input-file1"
@@ -189,7 +210,7 @@
 
                                                             <div class="col-lg-4">
                                                                 <input type="hidden" id="certificateImg" th:value="${carDraft.certificate}">
-                                                                <p>certificate</p>
+                                                                <p class="required-label">certificate</p>
                                                                 <label for="input-file2" class="drop-area"
                                                                        id="drop-area2">
                                                                     <input type="file" id="input-file2"
@@ -206,7 +227,7 @@
 
                                                             <div class="col-lg-4">
                                                                 <input type="hidden" id="insuranceImg" th:value="${carDraft.insurance}">
-                                                                <p>Front</p>
+                                                                <p class="required-label">Insurance</p>
                                                                 <label for="input-file3" class="drop-area"
                                                                        id="drop-area3">
                                                                     <input type="file" id="input-file3"
@@ -239,23 +260,23 @@
                                                         <div class="row">
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Mileage</span>
+                                                                    <span class="input-group-text required-label">Mileage</span>
                                                                 </div>
                                                                 <input type="number" class="form-control"
                                                                        aria-label="Sizing example input"
                                                                        aria-describedby="inputGroup-sizing-default"
-                                                                        id="mileage" th:value="${carDraft.mileage}">
+                                                                        id="mileage" th:value="${formattedMileage}">
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Fuel consumption</span>
+                                                                    <span class="input-group-text required-label">Fuel consumption</span>
                                                                 </div>
                                                                 <input type="number" class="form-control"
                                                                        aria-label="Sizing example input"
                                                                        aria-describedby="inputGroup-sizing-default"
-                                                                    id="fuelConsumption" th:value="${carDraft.fuelConsumption}">
+                                                                    id="fuelConsumption" th:value="${formattedFuelConsumption}">
                                                                 <div class="input-group-append">
-                                                                    <span class="input-group-text">liter/100km</span>
+                                                                    <span class="input-group-text required-label">liter/100km</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -265,26 +286,29 @@
                                                         <div class="row">
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <label class="input-group-text" for="province">Province</label>
+                                                                    <label class="input-group-text required-label" for="province">Province</label>
                                                                 </div>
-                                                                <select class="custom-select" id="province" th:value="${carDraft.province.split(',')[1]}" th:data-default="${carDraft.province.split(',')[0]}">
+                                                                <select class="custom-select" id="province" th:value="${carDraft.province != null and carDraft.province.contains(',') ? carDraft.province.split(',')[1] : ''}"
+                                                                        th:data-default="${carDraft.province != null and carDraft.province.contains(',') ? carDraft.province.split(',')[0] : ''}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <label class="input-group-text" for="district">District</label>
+                                                                    <label class="input-group-text required-label" for="district">District</label>
                                                                 </div>
-                                                                <select class="custom-select" id="district" th:value="${carDraft.district.split(',')[1]}" th:data-default="${carDraft.district.split(',')[0]}">
+                                                                <select class="custom-select" id="district" th:value="${carDraft.district != null and carDraft.district.contains(',') ? carDraft.district.split(',')[1] : ''}"
+                                                                        th:data-default="${carDraft.province != null and carDraft.district.contains(',') ? carDraft.district.split(',')[0] : ''}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
                                                             <div class="input-group input-group-sm mb-3 col-lg-6">
                                                                 <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
+                                                                    <label class="input-group-text required-label"
                                                                            for="ward">Ward</label>
                                                                 </div>
-                                                                <select class="custom-select" id="ward" th:value="${carDraft.ward.split(',')[1]}" th:data-default="${carDraft.ward.split(',')[0]}">
+                                                                <select class="custom-select" id="ward" th:value="${carDraft.ward != null and carDraft.ward.contains(',') ? carDraft.ward.split(',')[1] : ''}"
+                                                                        th:data-default="${carDraft.province != null and carDraft.ward.contains(',') ? carDraft.ward.split(',')[0] : ''}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -319,7 +343,8 @@
                                                     <div class="document">
                                                         <div class="row">
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Front</p>
+                                                                <input type="hidden" id="frontImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Front</p>
                                                                 <label for="input-file4" class="drop-area"
                                                                        id="drop-area4">
                                                                     <input type="file" id="input-file4"
@@ -335,7 +360,8 @@
                                                             </div>
 
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Back</p>
+                                                                <input type="hidden" id="backImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Back</p>
                                                                 <label for="input-file5" class="drop-area"
                                                                        id="drop-area5">
                                                                     <input type="file" id="input-file5"
@@ -351,7 +377,8 @@
                                                             </div>
 
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Left</p>
+                                                                <input type="hidden" id="leftImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Left</p>
                                                                 <label for="input-file6" class="drop-area"
                                                                        id="drop-area6">
                                                                     <input type="file" id="input-file6"
@@ -366,7 +393,8 @@
                                                                 </label>
                                                             </div>
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Right</p>
+                                                                <input type="hidden" id="rightImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Right</p>
                                                                 <label for="input-file7" class="drop-area"
                                                                        id="drop-area7">
                                                                     <input type="file" id="input-file7"
@@ -404,7 +432,7 @@
                                                                 </div>
                                                                 <input type="number" class="form-control"
                                                                        aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default" id="basePrice" th:value="${carDraft.basePrice}">
+                                                                       aria-describedby="inputGroup-sizing-default" id="basePrice" th:value="${formattedBasePrice}">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">VND/Day</span>
                                                                 </div>
@@ -415,7 +443,7 @@
                                                                 </div>
                                                                 <input type="number" class="form-control"
                                                                        aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default" id="carPrice" th:value="${carDraft.carPrice}">
+                                                                       aria-describedby="inputGroup-sizing-default" id="carPrice" th:value="${formattedCarPrice}">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">VND/Day</span>
                                                                 </div>
@@ -426,7 +454,7 @@
                                                                 </div>
                                                                 <input type="number" class="form-control"
                                                                        aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default" id="deposit" th:value="${carDraft.deposit}">
+                                                                       aria-describedby="inputGroup-sizing-default" id="deposit" th:value="${formattedDeposit}">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">VND</span>
                                                                 </div>
@@ -463,7 +491,7 @@
                                             <div class="card align-items-start display-flex-center"
                                                  style="">
                                                 <div class="card-body text-left w-100">
-                                                    <h5 class="card-title">Basic information</h5>
+                                                    <h5 class="card-title">Preview</h5>
                                                     <div class="row">
                                                         <div class="col-lg-6 col-md-6">
                                                             <div class="wrapper">
@@ -524,15 +552,17 @@
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
-                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" id="previewPrice">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
                                                                         Price: </p>
-                                                                    <p th:text="${carDraft.getBasePrice()} + 'K/Day'">0k/Day</p>
+                                                                    <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
                                                                         Location: </p>
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' " th:text="${carDraft.getProvince().split(',')[1]} +', '+ ${carDraft.getDistrict().split(',')[1]} +', '+${carDraft.getWard().split(',')[1]}">No</p>
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                        th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''} + ', ' + ${carDraft.getHome()}"
+                                                                    >No</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
@@ -549,29 +579,29 @@
                                         </div>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
-                                        <input type="button" name="next" class="next action-button"
+                                        <input type="button" name="next" class="action-button" onclick="showConfirm()"
                                                value="Confirm"/>
                                     </fieldset>
-                                    <fieldset>
-                                        <div class="form-card">
-                                            <h2 class="fs-title text-center">Success !</h2>
-                                            <br><br>
-                                            <div class="row justify-content-center">
-                                                <div class="col-3">
-                                                    <img src="https://img.icons8.com/color/96/000000/ok--v2.png"
-                                                         class="fit-image">
-                                                </div>
-                                            </div>
-                                            <br><br>
-                                            <div class="row justify-content-center">
-                                                <div class="col-7 text-center">
-                                                    <h5>You Have Successfully Signed Up</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <input type="button" name="previous" class="previous action-button-previous"
-                                               value="Previous"/>
-                                    </fieldset>
+<!--                                    <fieldset>-->
+<!--                                        <div class="form-card">-->
+<!--                                            <h2 class="fs-title text-center">Success !</h2>-->
+<!--                                            <br><br>-->
+<!--                                            <div class="row justify-content-center">-->
+<!--                                                <div class="col-3">-->
+<!--                                                    <img src="https://img.icons8.com/color/96/000000/ok&#45;&#45;v2.png"-->
+<!--                                                         class="fit-image">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <br><br>-->
+<!--                                            <div class="row justify-content-center">-->
+<!--                                                <div class="col-7 text-center">-->
+<!--                                                    <h5>You Have Successfully Signed Up</h5>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <input type="button" name="previous" class="previous action-button-previous"-->
+<!--                                               value="Previous"/>-->
+<!--                                    </fieldset>-->
                                 </form>
                             </div>
                         </div>
@@ -603,7 +633,6 @@
                     if (!checkStep2()) {
                         return;
                     }
-                    loadCarPreviewImage();
                     saveDraft();
                     pageStep++;
                 }else if (pageStep === 3) {
@@ -614,10 +643,9 @@
                     pageStep++;
                 }else if (pageStep === 4) {
                     if (!checkStep4()) {
+                        console.log('fail');
                         return;
                     }
-                    pageStep++;
-                    saveDraft();
                 }
 
                 current_fs = $(this).parent();
@@ -685,7 +713,7 @@
         });
 
         function goToStep(targetStep) {
-            if(targetStep > 5){
+            if(targetStep > 4){
                 targetStep = 4;
             }
             if(targetStep < 1){
@@ -702,26 +730,6 @@
             $("fieldset").hide();
             $("fieldset").eq(targetStep - 1).show();
         }
-
-        function loadCarPreviewImage() {
-            $.ajax({
-                url: '/load-image',
-                type: 'GET',
-                success: function (response) {
-                    document.getElementById('carFrontImage').src = response.frontImage;
-                    document.getElementById('carBackImage').src = response.backImage;
-                    document.getElementById('carLeftImage').src = response.leftImage;
-                    document.getElementById('carRightImage').src = response.rightImage;
-                },
-                error: function (xhr, status, error) {
-                    console.error("Load Image Error", error);
-                    return false;
-                }
-            });
-        }
-
-
-
 
     </script>
     <script>
@@ -740,6 +748,13 @@
             const fuel = document.querySelector('input[name="fuel"]:checked');
             const fuelValue = fuel ? fuel.value : null;
 
+            const registration = document.getElementById("input-file1");
+            const certification = document.getElementById("input-file2");
+            const insurance = document.getElementById("input-file3")
+            const registrationUrl = document.getElementById('registrationImg').value;
+            const certificationUrl = document.getElementById('certificateImg').value;
+            const insuranceUrl = document.getElementById('insuranceImg').value;
+
             console.log(transmissionValue, fuelValue);
 
             if (licensePlate === ''
@@ -748,8 +763,11 @@
                 || model === ''
                 || productionYear === ''
                 || seatNo === ''
-                || transmission === null
-                || fuel === null) {
+                || transmissionValue === null
+                || fuelValue === null
+                || (registration.files.length === 0 && registrationUrl === '')
+                || (certification.files.length === 0 && certificationUrl === '')
+                || (insurance.files.length === 0 && insuranceUrl === '')) {
                 alert('Please fill all required fields');
                 return false;
             }
@@ -766,7 +784,14 @@
             // Lấy tất cả các checkbox có name là 'additionalFunction'
             const checkboxes = document.querySelectorAll('input[name="additionalFunction"]:checked');
             const checkedValues = [];
-
+            const frontImage = document.getElementById("input-file4");
+            const backImage = document.getElementById("input-file5");
+            const leftImage = document.getElementById("input-file6")
+            const rightImage = document.getElementById("input-file7")
+            const frontImageUrl = document.getElementById('frontImage').value;
+            const backImageUrl = document.getElementById('backImage').value;
+            const leftImageUrl = document.getElementById('leftImage').value;
+            const rightImageUrl = document.getElementById('rightImage').value;
             checkboxes.forEach((checkbox) => {
                 checkedValues.push(checkbox.value);
             });
@@ -778,7 +803,12 @@
                 || province === ''
                 || district === ''
                 || ward === ''
-                || street === '') {
+                || street === ''
+                || checkedValues.length === 0
+                || (frontImage.files.length === 0 && frontImageUrl === '')
+                || (backImage.files.length === 0 && backImageUrl === '')
+                || (leftImage.files.length === 0 && leftImageUrl === '')
+                || (rightImage.files.length === 0 && rightImageUrl === '')) {
                 alert('Please fill all required fields');
                 return false;
             }
@@ -798,7 +828,7 @@
         }
 
         function checkStep4(){
-
+            return true;
         }
     </script>
     <script>
@@ -852,8 +882,8 @@
             // }
 
             // Đối tượng CarDraft
-            if(actualStep > 5){
-                actualStep = 5;
+            if(actualStep > 4){
+                actualStep = 4;
             }else if(actualStep < 1){
                 actualStep = 1;
             }
@@ -931,6 +961,19 @@
         }
     </script>
     <script>
+            function showConfirm(){
+                $('#confirmModal').modal('show');
+                $('#hasDraftModalTitle').text("Confirm!");
+                $('#hasDraftModalBody').html("Do you want to save the car? <br> <p style='color: indianred'>If you don't save, all data will be lost.</p>");
+                $('#confirm').click(function () {
+                    window.location.href = '/my-cars';
+                });
+                $('#notConfirm').click(function () {
+                    // deleteDraft();
+                    window.location.href = '/my-cars';
+                });
+            }
+
             const carFrontPreviewImage = document.getElementById('carFrontImage');
             const carBackPreviewImage = document.getElementById('carBackImage');
             const carLeftPreviewImage = document.getElementById('carLeftImage');
@@ -1157,8 +1200,9 @@
             //Load price
             const basePrice = document.getElementById('basePrice');
             const basePricePreview = document.getElementById('previewPrice');
-            basePrice.addEventListener('input', function(){
-                basePricePreview.textContent = basePrice.value + 'K/Day';
+            basePrice.addEventListener('input', function () {
+                const value = parseFloat(basePrice.value) || 0;
+                basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' K/Day';
             });
 
             const province = document.getElementById('province');

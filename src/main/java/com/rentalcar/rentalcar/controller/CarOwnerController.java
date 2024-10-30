@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.UUID;
 
@@ -70,7 +71,20 @@ public class CarOwnerController {
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
         model.addAttribute("carStatus", carStatusRepository.findAll());
-        model.addAttribute(carDraftService.createCarDraft(user));
+        CarDraft carDraft = carDraftService.createCarDraft(user);
+        model.addAttribute("carDraft", carDraft);
+        DecimalFormat df = new DecimalFormat("#.############");
+        String formattedBasePrice = df.format(carDraft.getBasePrice() == null ? 0 : carDraft.getBasePrice());
+        String formattedCarPrice = df.format(carDraft.getCarPrice() == null ? 0 : carDraft.getBasePrice());
+        String formattedDeposit = df.format(carDraft.getDeposit() == null ? 0 : carDraft.getBasePrice());
+        String formattedMileage = df.format(carDraft.getMileage() == null ? 0 : carDraft.getBasePrice());
+        String formattedFuelConsumption = df.format(carDraft.getFuelConsumption() == null ? 0 : carDraft.getBasePrice());
+        model.addAttribute("formattedCarPrice", formattedCarPrice);
+        model.addAttribute("formattedDeposit", formattedDeposit);
+        model.addAttribute("formattedMileage", formattedMileage);
+        model.addAttribute("formattedFuelConsumption", formattedFuelConsumption);
+        model.addAttribute("formattedBasePrice", formattedBasePrice);
+
         return "carowner/AddCar";
     }
 
@@ -138,19 +152,6 @@ public class CarOwnerController {
     public String deleteCar() {
         return "carowner/MyCars";
     }
-
-    @GetMapping("/load-image")
-    public ResponseEntity<?> loadCarImage() {
-        User user = (User) httpSession.getAttribute("user");
-        CarDraft carDraft = carDraftService.getDraftByLastModified(user.getId());
-        return ResponseEntity.ok(Map.of(
-                "frontImage", carDraft.getFrontImage(),
-                "backImage", carDraft.getBackImage(),
-                "leftImage", carDraft.getLeftImage(),
-                "rightImage", carDraft.getRightImage()
-        ));
-    }
-
 
 
 
