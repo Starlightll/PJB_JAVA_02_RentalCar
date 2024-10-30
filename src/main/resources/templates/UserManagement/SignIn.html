@@ -5,6 +5,11 @@
     <title> Login and Registration Form in HTML & CSS | CodingLab </title>
     <!-- Fontawesome CDN Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Google Font Link */
@@ -255,6 +260,21 @@
         .form-group {
             margin-top: 10px;
         }
+
+        .my-custom-button {
+            background-color: #000000 !important;
+            color: #fff !important;
+            padding: 10px 20px !important;
+            border: none !important;
+            border-radius: 6px !important;
+            transition: all 0.4s ease !important;
+            cursor: pointer !important;
+        }
+
+        .my-custom-button:hover {
+            background-color: #5b13b9 !important;
+        }
+
     </style>
 </head>
 <body>
@@ -281,6 +301,25 @@
         <div class="form-content">
             <div class="login-form">
                 <div class="title">SIGN IN</div>
+
+                <div th:if="${success}">
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            Swal.fire({
+                                title: 'Registered successfully!',
+                                text: '\n' +
+                                    'We have sent an account activation link to your email, please check your email and activate your account.',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    confirmButton: 'my-custom-button'
+                                }
+                            });
+                        });
+                    </script>
+                </div>
+
+
                 <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
 
                     <div th:if="${param.error}" style="color: red">
@@ -312,38 +351,53 @@
                 <div class="title">SIGN UP</div>
                 <form method="post" class="register-form" id="register-form" th:action="@{/register}"
                       th:object="${registerDto}">
+
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-user"></i>
                             <label for="name"></label><input type="text" th:field="*{username}" name="username" id="name" placeholder="Enter your name"
-                                                             required>
+                                                             required >
+
                         </div>
-                        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
+<!--                        Lỗi backend-->
+                        <div  th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
+<!--                        Lỗi fontend-->
+                        <div id="usernameError" style="color: red"></div>
+
                         <div class="input-box">
                             <i class="fas fa-envelope"></i>
-                            <label for="email"></label><input type="email" name="email" id="email" th:field="*{email}" placeholder="Enter your email" required>
+                            <label for="email"></label><input type="email" name="email" id="email" th:field="*{email}" placeholder="Enter your email" required oninput="validateEmail()">
+
                         </div>
-                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+                        <div  th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+                        <div id="emailError" style="color: red"></div>
+
                         <div class="input-box">
                             <i class="fas fa-phone"></i>
                             <label for="phoneNumber"></label><input type="text" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
-                                                                    placeholder="Enter your phone" required>
+                                                                    placeholder="Enter your phone" required  oninput="validatePhone()">
                         </div>
                         <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                              style="color: red"></div>
+                        <div id="phoneError" style="color: red"></div>
+
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
                             <input type="password" name="password" id="pass" th:field="*{password}"
-                                   placeholder="Password" required>
+                                   placeholder="Password" required oninput="validatePassword()">
                         </div>
                         <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></div>
+                        <div id="passwordError" style="color: red"></div>
+
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
                             <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"
-                                   placeholder="Repeat your password" required>
+                                   placeholder="Repeat your password" required oninput="validateConfirmPassword()">
                         </div>
                         <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
                              style="color: red"></div>
+                        <div id="confirmPasswordError" style="color: red"></div>
+
                         <div class="role">
                             <div>
                                 <input type="radio" value=3 id="radioOne" name="role" checked/>
@@ -386,6 +440,53 @@
         }
     }
 
+    function validateEmail() {
+        const email = document.getElementById("email").value;
+        const emailError = document.getElementById("emailError");
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!emailPattern.test(email)) {
+            emailError.textContent = "Please enter a valid email address.";
+        } else {
+            emailError.textContent = "";  // Clear error if no frontend error
+        }
+    }
+
+    function validatePhone() {
+        const phone = document.getElementById("phoneNumber").value;
+        const phoneError = document.getElementById("phoneError");
+        const phonePattern = /^(0|(\+84))?(3|5|7|8|9)\d{8}$/;
+        if (!phonePattern.test(phone)) {
+            phoneError.textContent = "Invalid phone number format.";
+        } else {
+            phoneError.textContent = "";  // Clear error if no frontend error
+        }
+    }
+    function validatePassword() {
+        const password = document.getElementById("pass").value;
+        const passwordError = document.getElementById("passwordError");
+        const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*(){}\[\]_\-+=~`|:;\"'<>,.\/?])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+
+        if (!regex.test(password)) {
+            passwordError.textContent = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.";
+        } else {
+            passwordError.textContent = "";
+        }
+    }
+
+    function validateConfirmPassword() {
+        const password = document.getElementById("pass").value;
+        const confirmPassword = document.getElementById("re_pass").value;
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+        const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*(){}\[\]_\-+=~`|:;\"'<>,.\/?])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+
+        if(!regex.test(confirmPassword)) {
+            confirmPasswordError.textContent = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.";
+        }else if (confirmPassword !== password) {
+            confirmPasswordError.textContent = "Passwords do not match.";
+        } else {
+            confirmPasswordError.textContent = "";
+        }
+    }
 </script>
 
 </body>

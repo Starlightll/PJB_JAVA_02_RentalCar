@@ -8,6 +8,7 @@ import com.rentalcar.rentalcar.entity.VerificationToken;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.VerificationTokenRepo;
 import com.rentalcar.rentalcar.service.RegisterUserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,31 +32,38 @@ public class RegistrationController {
 
     @GetMapping("/register")
     public String registerPage(Model model) {
-        model.addAttribute("registerDto", new RegisterDto());
+        if(!model.containsAttribute("registerDto")) {
+            model.addAttribute("registerDto", new RegisterDto());
+        }
         return "UserManagement/SignIn";
     }
 
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute RegisterDto registerDto, BindingResult result, Model model) {
+    public String registerUser(@Valid @ModelAttribute RegisterDto registerDto, BindingResult result, HttpSession session, RedirectAttributes redirectAttributes) {
         // Nếu người dùng chưa tích sẽ báo lỗi
         if(!registerDto.isAgreedTerms()) {
-            model.addAttribute("hasSignupErrors", true);
+            redirectAttributes.addFlashAttribute ("hasSignupErrors", true);
             result.rejectValue("agreedTerms", "error.agreedTerms", "You must agree to the terms");
+            redirectAttributes.addFlashAttribute ("registerDto", registerDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.registerDto", result);
 
-            model.addAttribute("registerDto", registerDto);
-            return "UserManagement/SignIn";
+            return "redirect:/register";
         }
 
         if(result.hasErrors()) {
-            model.addAttribute("hasSignupErrors", true);
+            redirectAttributes.addFlashAttribute ("hasSignupErrors", true);
             registerDto.setAgreedTerms(false); // Đặt mặc định là false
-            model.addAttribute("registerDto", registerDto);
-            return "UserManagement/SignIn";
+            redirectAttributes.addFlashAttribute ("registerDto", registerDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.registerDto", result);
+
+            return "redirect:/register";
         }
 
         try {
             userService.registerUser(registerDto);
+            redirectAttributes.addFlashAttribute ("success", true);
+
         }catch (UserException e) {
             switch (e.getMessage()) {
                 case "Email already exists":
@@ -66,20 +74,29 @@ public class RegistrationController {
                     break;
             }
             registerDto.setAgreedTerms(false); // Đặt mặc định là false
-            model.addAttribute("hasSignupErrors", true);
-            model.addAttribute("registerDto", registerDto);
-            return "UserManagement/SignIn";
+            redirectAttributes.addFlashAttribute ("hasSignupErrors", true);
+            redirectAttributes.addFlashAttribute ("registerDto", registerDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.registerDto", result);
+
+            return "redirect:/register";
 
         }catch (IllegalArgumentException ex) {
-            if(ex.getMessage().equals("Phone number already exists")) {
-                result.rejectValue("phoneNumber", "error.phoneNumber", "Phone number already exists");
-                model.addAttribute("hasSignupErrors", true);
-                registerDto.setAgreedTerms(false); // Đặt mặc định là false
-                model.addAttribute("registerDto", registerDto);
-                return "UserManagement/SignIn";
+
+            switch (ex.getMessage()) {
+                case "Phone number already exists":
+                    result.rejectValue("phoneNumber", "error.phoneNumber", "Phone number already exists");
+                    break;
+                case "Invalid phone number format":
+                    result.rejectValue("phoneNumber", "error.phoneNumber", "Invalid phone number format");
+                    break;
             }
+            redirectAttributes.addFlashAttribute ("hasSignupErrors", true);
+            registerDto.setAgreedTerms(false); // Đặt mặc định là false
+            redirectAttributes.addFlashAttribute ("registerDto", registerDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.registerDto", result);
+            return "redirect:/register";
         }
-        return "redirect:/login";
+        return "redirect:/login?success";
     }
 
 

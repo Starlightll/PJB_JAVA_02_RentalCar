@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.dto;
 
+import com.rentalcar.rentalcar.util.ValidAge;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +15,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserInfoDto {
 
-        private Long id;
 
-        @NotBlank(message = "Username is required")
-        private String username;
-
+        @NotNull(message = "Date of birth is required")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         @Past(message = "Date of birth must be in the past")
+        @ValidAge
         private LocalDate dob;
 
         @NotBlank(message = "Email is required")
@@ -28,22 +27,24 @@ public class UserInfoDto {
         private String email;
 
         @NotBlank(message = "National ID is required")
+        @Pattern(regexp = "^[0-9]+$", message = "National ID must contain only numbers")
         private String nationalId;
 
         @NotBlank(message = "Phone number is required")
-        @Pattern(regexp = "^\\+?[0-9. ()-]{7,25}$", message = "Phone number is invalid")
+        @Pattern(regexp = "^\\+?[0-9]{7,25}$", message = "Phone number must contain only numbers")
         private String phone;
 
+        @NotBlank(message = "Driving License ID is required")
         private String drivingLicense;
 
-        @DecimalMin(value = "0.0", inclusive = true, message = "Wallet balance must be positive")
-        private BigDecimal wallet;
 
         private String city;
         private String district;
         private String ward;
+        @NotBlank(message = "Street is required")
         private String street;
 
         @NotBlank(message = "Full name is required")
         private String fullName;
+
 }

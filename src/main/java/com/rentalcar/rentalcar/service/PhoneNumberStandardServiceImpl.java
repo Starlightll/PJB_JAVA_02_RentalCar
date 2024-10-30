@@ -13,19 +13,23 @@ public class PhoneNumberStandardServiceImpl implements PhoneNumberStandardServic
     UserRepo userRepo;
 
     @Override
-    public String normalizePhoneNumber(String phoneNumber, String regionCode) {
+    public String normalizePhoneNumber(String phoneNumber, String regionCode, int countryCode) {
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         try {
             Phonenumber.PhoneNumber number = phoneUtil.parse(phoneNumber, regionCode);
-            return phoneUtil.format(number, PhoneNumberUtil.PhoneNumberFormat.E164);
+            if(number.getCountryCode() == countryCode) {
+                return phoneUtil.format(number, PhoneNumberUtil.PhoneNumberFormat.E164);
+            } else {
+                throw new IllegalArgumentException("Invalid phone number format");
+            }
         } catch (NumberParseException e) {
             throw new IllegalArgumentException("Invalid phone number format");
         }
     }
 
     @Override
-    public boolean isPhoneNumberExists(String phoneNumber, String regionCode) {
-        String normalizedPhone = normalizePhoneNumber(phoneNumber, regionCode);
+    public boolean isPhoneNumberExists(String phoneNumber, String regionCode, int countryCode) throws IllegalArgumentException {
+        String normalizedPhone = normalizePhoneNumber(phoneNumber, regionCode, countryCode);
         return userRepo.existsByPhone(normalizedPhone);
     }
 
