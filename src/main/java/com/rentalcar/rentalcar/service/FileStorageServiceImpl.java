@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -10,6 +11,7 @@ import com.rentalcar.rentalcar.configs.FileStorageProperties;
 import com.rentalcar.rentalcar.exception.FileNotFoundException;
 import com.rentalcar.rentalcar.exception.FileStorageException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -35,18 +37,13 @@ public class FileStorageServiceImpl implements FileStorageService{
     }
 
     @Override
-    public String storeFile(MultipartFile file, Path customPath) {
+    public String storeFile(MultipartFile file, Path customPath, String fileName) {
         try {
             // Create the custom directory if it doesn't exist
             if(!Files.exists(customPath)){
                 Files.createDirectories(customPath);
             }
 
-            // Normalize file name
-            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-
-            // Get file extension
-            String fileExtension = fileName.substring(fileName.lastIndexOf("."));
 
             if (fileName.contains("..")) {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
@@ -87,6 +84,16 @@ public class FileStorageServiceImpl implements FileStorageService{
             throw new FileStorageException("Could not read file: " + filename, e);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteFolder(Path folderPath) {
+        //Delete the folder
+        try {
+            FileUtils.deleteDirectory(new File(folderPath.toString()));
+        } catch (IOException e) {
+            throw new FileStorageException("Could not delete folder", e);
         }
     }
 }
