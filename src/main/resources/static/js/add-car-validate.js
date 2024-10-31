@@ -17,19 +17,19 @@ const licensePlatePatterns = {
 // Regex patterns for Money
 const moneyPatterns = {
     // 0-9999999999
-    civilian: /^(?!0)\d+(\.\d{1,2})?$/
+    civilian: /^\d+(\.\d{0,2})?$/
 };
 
 // Regex patterns for distance
 const distancePatterns = {
     // 0-9999999999
-    civilian: /^(?!0)\d+(\.\d{1,2})?$/
+    civilian: /^\d+(\.\d{0,2})?$/
 }
 
 // Regex patterns for material
 const resourcePatterns = {
     // 0-9999999999
-    liquid: /^(?!0)\d+(\.\d{1,2})?$/
+    liquid: /^\d+(\.\d{0,2})?$/
 }
 
 

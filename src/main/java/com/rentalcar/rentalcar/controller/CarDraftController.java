@@ -102,7 +102,8 @@ public class CarDraftController {
             String licensePlate = carDraft.getLicensePlate();
             pattern = Pattern.compile(LICENSE_PLATE_REGEX);
             matcher = pattern.matcher(licensePlate);
-            if (licensePlate.isEmpty() || !matcher.matches()) {
+
+            if (!licensePlate.isEmpty() && !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid license plate");
             }
         } catch (Exception e) {

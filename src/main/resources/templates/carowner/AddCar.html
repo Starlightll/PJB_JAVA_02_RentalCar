@@ -359,7 +359,7 @@
                                                                 <a class="validate-msg">Invalid</a>
                                                             </div>
 
-                                                            <div class="col-lg-6 mb-3 required-label">
+                                                            <div class="col-lg-6 mb-3">
                                                                 <div class="input-group input-group-sm">
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text">Home</span>
@@ -1026,14 +1026,14 @@
             if (file) {
                 const validExtensions = ["jpg", "jpeg", "png"];
                 const fileExtension = file.name.split('.').pop().toLowerCase();
-
+                if(file.size > MAX_SIZE_BYTES){
+                    alert("File size must be less than 200MB");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
                 // Kiểm tra phần mở rộng file
                 if (!validExtensions.includes(fileExtension)) {
                     alert("Chỉ chấp nhận các định dạng file ảnh: .jpg, .jpeg, .png");
-                    inputFile.value = ""; // Reset input nếu file không hợp lệ
-                    return;
-                }else if(file.size > MAX_SIZE_BYTES){
-                    alert("File size must be less than 200MB");
                     inputFile.value = ""; // Reset input nếu file không hợp lệ
                     return;
                 }
@@ -1107,13 +1107,13 @@
                 if (files.length > 0) {
                     const validExtensions = ["jpg", "jpeg", "png"];
                     const fileExtension = files[0].name.split('.').pop().toLowerCase();
-
+                    if(files[0].size > MAX_SIZE_BYTES){
+                        alert("File size must be less than 200MB");
+                        return;
+                    }
                     // Kiểm tra phần mở rộng file
                     if (!validExtensions.includes(fileExtension)) {
                         alert("Only accept file type: .jpg, .jpeg, .png");
-                        return;
-                    }else if(files[0].size > MAX_SIZE_BYTES){
-                        alert("File size must be less than 200MB");
                         return;
                     }
 
