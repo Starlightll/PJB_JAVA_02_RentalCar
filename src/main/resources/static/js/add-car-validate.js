@@ -1,7 +1,7 @@
 // Regex patterns cho biển số xe
 const licensePlatePatterns = {
-    // Dân sự (xx-X9-99999)
-    civilian: /^[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{5}$/,
+    // Dân sự (XXG-XXXXX)
+    civilian: /^[0-9]{2}[A-Z]{1}-[0-9]{5}$/,
 
     // Format hiện đại (99A-999.99)
     modernCivilian: /^[0-9]{2}[A-Z][0-9]{3}\.[0-9]{2}$/,
@@ -47,7 +47,7 @@ const setupLicensePlateValidation = (inputElement, msgElement) => {
         if (!licensePlatePatterns.civilian.test(cleanValue)) {
             return {
                 isValid: false,
-                message: 'Invalid license plate. Required format: XXGX-XXXXX'
+                message: 'Invalid license plate. Required format: XXG-XXXXX'
             };
         }
 
