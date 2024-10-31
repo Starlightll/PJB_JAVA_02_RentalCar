@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
+    <title>Send Activation</title>
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Google Font Link */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
         body {
-            background-color: whitesmoke;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
             overflow: hidden;
+            backdrop-filter: blur(5px) brightness(0.5);
+            background: url("/images/nhatrang.jpg") no-repeat center;
         }
 
         .content-container {
             text-align: center; /* Căn giữa nội dung bên trong */
         }
-        .blur-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: whitesmoke;
-            backdrop-filter: blur(10px);
-        }
+
         .reset-password-container {
             position: relative;
             background: white;
@@ -41,7 +44,7 @@
 
         .navbar-brand {
             font-size: 30px;
-            text-align: center;
+            text-align: center; !important;
             margin-bottom: 20px;
         }
         .reset-password-container h2 {
@@ -60,22 +63,41 @@
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
+
             border-radius: 4px;
         }
         .form-button {
-            margin-top: 20px;
+            margin-top: -10px;
         }
         .form-button input {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+                height: 100%;
+                width: 100%;
+                outline: none;
+                border: none;
+                padding: 0 30px;
+                font-size: 16px;
+                font-weight: 500;
+                border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+            }
+
+        .form-button input:focus,
+        .form-button input:valid {
+            border-color: #00c86f;
+        }
+        .form-button input {
+            color: #fff;
+            background: #000000;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.4s ease;
+            padding: 10px 15px;
             width: 100%;
         }
+
+
         .form-button input:hover {
-            background-color: #4cae4c;
+            background-color: #5b13b9;
         }
         .back-to-login {
             margin-top: 15px;
@@ -109,10 +131,10 @@
 <body>
 
 <div class="content-container">
-<div>
+<div  class="navbar-dark ftco-navbar-light">
     <a class="navbar-brand" href="/">Car<span>Book</span></a>
 </div>
-<!--<div class="blur-background"></div>-->
+<div class="blur-background"></div>
 
 
 <div class="reset-password-container">
