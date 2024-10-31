@@ -32,20 +32,20 @@ public class CarDraft {
     private String transmission;
     @Column(name = "fuel")
     private String fuelType;
-    private Float mileage;
-    private Float fuelConsumption;
+    private Double mileage;
+    private Double fuelConsumption;
     private String additionalFunction;
     private String province;
     private String district;
     private String ward;
     @Column(name = "street")
     private String home;
-    private Float basePrice;
-    private Float deposit;
+    private Double basePrice;
+    private Double deposit;
     private String description;
     @Column(name = "termOfUse")
     private String terms;
-    private Float carPrice;
+    private Double carPrice;
     @Column(name = "front")
     private String frontImage;
     @Column(name = "back")

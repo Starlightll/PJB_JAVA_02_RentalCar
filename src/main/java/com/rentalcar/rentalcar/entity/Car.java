@@ -1,14 +1,13 @@
 package com.rentalcar.rentalcar.entity;
 
 import lombok.*;
-import org.apache.poi.hpsf.Decimal;
 
 import jakarta.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -34,24 +33,19 @@ public class Car {
     @Column(name = "fuel")
     private String fuelType;
     @Column(name = "mileage")
-    private float mileage;
+    private double mileage;
     @Column(name = "fuelConsumption")
-    private float fuelConsumption;
-    private String province;
-    private String district;
-    private String ward;
-    @Column(name = "street")
-    private String home;
+    private double fuelConsumption;
     @Column(name = "basePrice")
-    private float basePrice;
+    private double basePrice;
     @Column(name = "deposit")
-    private float deposit;
+    private double deposit;
     @Column(name = "description")
     private String description;
     @Column(name = "termOfUse")
     private String terms;
     @Column(name = "carPrice")
-    private float carPrice;
+    private double carPrice;
     @Column(name = "front")
     private String frontImage;
     @Column(name = "back")
@@ -83,5 +77,13 @@ public class Car {
     @ManyToOne
     @JoinColumn(name = "statusId")
     private CarStatus carStatus;
+
+    @OneToOne (cascade = CascadeType.ALL)
+    @JoinColumn(name = "carId", referencedColumnName = "carId")
+    private CarAddress address;
+
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
 }

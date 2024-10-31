@@ -52,6 +52,8 @@ CREATE TABLE [dbo].[Brand]
 );
 
 
+
+
 -- Car table
 CREATE TABLE [dbo].[Car]
 (
@@ -66,10 +68,6 @@ CREATE TABLE [dbo].[Car]
     fuel            NVARCHAR(20),
     mileage         DECIMAL(18, 2),
     fuelConsumption DECIMAL(18, 2),
-    province        NVARCHAR(50),
-    district        NVARCHAR(50),
-    ward            NVARCHAR(50),
-    street          NVARCHAR(255),
     basePrice       DECIMAL(18, 2),
     deposit         DECIMAL(18, 2),
     description     NVARCHAR(MAX),
@@ -88,6 +86,21 @@ CREATE TABLE [dbo].[Car]
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (brandId) REFERENCES [dbo].[Brand] (brandId),
     FOREIGN KEY (statusId) REFERENCES [dbo].[CarStatus] (CarStatusId)
+);
+
+-- Car Address table
+CREATE TABLE [dbo].[CarAddress]
+(
+    addressId INT IDENTITY (1,1) PRIMARY KEY,
+    province  NVARCHAR(50),
+    provinceId INT,
+    district  NVARCHAR(50),
+    districtId INT,
+    ward      NVARCHAR(50),
+    wardId    INT,
+    street    NVARCHAR(255),
+    carId     INT UNIQUE NOT NULL,
+    FOREIGN KEY (carId) REFERENCES [dbo].[Car] (carId)
 );
 
 CREATE TABLE CarDraft

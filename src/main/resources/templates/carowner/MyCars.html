@@ -72,6 +72,108 @@
 
 
         </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+<!--                        <th:block th:object="${carDraft}">-->
+<!--                            <div class="d-flex justify-content-center">-->
+<!--                                <div class="card align-items-start display-flex-center"-->
+<!--                                     style="">-->
+<!--                                    <div class="card-body text-left w-100">-->
+<!--                                        <h5 class="card-title">Preview</h5>-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-lg-6 col-md-6">-->
+<!--                                                <div class="wrapper">-->
+<!--                                                    <input type="radio" name="slide" id="one" checked>-->
+<!--                                                    <input type="radio" name="slide" id="two">-->
+<!--                                                    <input type="radio" name="slide" id="three">-->
+<!--                                                    <input type="radio" name="slide" id="four">-->
+<!--                                                    <div class="img img-1">-->
+<!--                                                        <img id="carFrontImage" th:src="${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                    </div>-->
+<!--                                                    <div class="img img-2">-->
+<!--                                                        <img id="carBackImage" th:src="${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                    </div>-->
+<!--                                                    <div class="img img-3">-->
+<!--                                                        <img id="carLeftImage" th:src="${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                    </div>-->
+<!--                                                    <div class="img img-4">-->
+<!--                                                        <img id="carRightImage" th:src="${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                    </div>-->
+<!--                                                    <div class="sliders">-->
+<!--                                                        <label for="one" class="one"></label>-->
+<!--                                                        <label for="two" class="two"></label>-->
+<!--                                                        <label for="three" class="three"></label>-->
+<!--                                                        <label for="four" class="four"></label>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-lg-6 col-md-6 justify-content-center align-items-center">-->
+<!--                                                <div class="row justify-content-center align-items-center align-content-center">-->
+<!--                                                    <h1 class="col-lg-12 col-md-12 col-sm-12 text-center">-->
+<!--                                                        Nissan Navara EI 2017</h1>-->
+<!--                                                    <div class="col-lg-12 row"-->
+<!--                                                         style="display: flex; align-items: center">-->
+<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                            Ratings: </p>-->
+<!--                                                        <div class="rating">-->
+<!--                                                            <div class="star">-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                            </div>-->
+<!--                                                            <div class="star-base">-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                                <i class="fa fa-star"></i>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-lg-12 row"-->
+<!--                                                         style="display: flex; align-items: center">-->
+<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                            No. of rides: </p>-->
+<!--                                                        <p>0</p>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-lg-12 row"-->
+<!--                                                         style="display: flex; align-items: center">-->
+<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >-->
+<!--                                                            Price: </p>-->
+<!--                                                        <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-lg-12 row"-->
+<!--                                                         style="display: flex; align-items: center">-->
+<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >-->
+<!--                                                            Location: </p>-->
+<!--                                                        <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
+<!--                                                           th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''} + ', ' + ${carDraft.getHome()}"-->
+<!--                                                        >No</p>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-lg-12 row"-->
+<!--                                                         style="display: flex; align-items: center">-->
+<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                            Status: </p>-->
+<!--                                                        <p style="color: #5bd77a; font-weight: bold">Available</p>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </th:block>-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
 

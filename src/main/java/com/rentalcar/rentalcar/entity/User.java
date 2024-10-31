@@ -55,4 +55,8 @@ public class User {
     @JoinColumn(name = "userId")
     private List<CarDraft> carDrafts = new ArrayList<>();
 
+    @OneToMany
+    @JoinColumn(name = "userId")
+    private List<Car> cars = new ArrayList<>();
+
 }

@@ -99,7 +99,7 @@ public class CarDraftServiceImpl implements CarDraftService {
         }
         if(carDraft != null) {
             carDraft.setStep(draft.getStep());
-            carDraft.setLicensePlate(draft.getLicensePlate());
+            carDraft.setLicensePlate(draft.getLicensePlate().toUpperCase());
             carDraft.setLastModified(draft.getLastModified());
             carDraft.setModel(draft.getModel());
             carDraft.setColor(draft.getColor());

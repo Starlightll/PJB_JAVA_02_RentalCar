@@ -43,28 +43,15 @@ public class CarOwnerController {
     private AdditionalFunctionRepository additionalFunctionRepository;
     @Autowired
     private CarStatusRepository carStatusRepository;
-    @Autowired
-    private CarDraftRepository carDraftRepository;
+
 
 
     @GetMapping("/my-cars")
-    public String myCar() {
+    public String myCar(Model model) {
         return "/carowner/MyCars";
     }
 
-    @GetMapping("/check-draft")
-    public ResponseEntity<?> checkDraft(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        CarDraft carDraft = carDraftService.getDraftByLastModified(user.getId());
-        if (carDraft != null) {
-            return ResponseEntity.ok(Map.of(
-                    "hasDraft", true,
-                    "lastModified", carDraft.getLastModified() != null ? carDraft.getLastModified().toString() : "NULL"
-            ));
-        }
-        return ResponseEntity.ok(Map.of("hasDraft", false));
-    }
-
+    //Display the add car page
     @GetMapping("/add-car")
     public String addCar(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -84,40 +71,7 @@ public class CarOwnerController {
         model.addAttribute("formattedMileage", formattedMileage);
         model.addAttribute("formattedFuelConsumption", formattedFuelConsumption);
         model.addAttribute("formattedBasePrice", formattedBasePrice);
-
         return "carowner/AddCar";
-    }
-
-
-    @PostMapping("/create-draft")
-    public void createDraft() {
-        User user = (User) httpSession.getAttribute("user");
-
-    }
-
-    //    Test saveDraft with multipart file
-    @PostMapping("/save-draft")
-    public ResponseEntity<?> saveDraft(
-            @RequestParam(value = "carDraft") String carDraftJson,
-            @RequestParam(value = "frontImage", required = false) MultipartFile frontImage,
-            @RequestParam(value = "backImage", required = false) MultipartFile backImage,
-            @RequestParam(value = "leftImage", required = false) MultipartFile leftImage,
-            @RequestParam(value = "rightImage", required = false) MultipartFile rightImage,
-            @RequestParam(value = "registration", required = false) MultipartFile registration,
-            @RequestParam(value = "certificate", required = false) MultipartFile certificate,
-            @RequestParam(value = "insurance", required = false) MultipartFile insurance,
-            HttpSession session
-    ) throws IOException {
-        // Parse carDraft JSON
-        ObjectMapper objectMapper = new ObjectMapper();
-        CarDraft carDraft = objectMapper.readValue(carDraftJson, CarDraft.class);
-
-        User user = (User) session.getAttribute("user");
-
-        //Save draft
-        MultipartFile[] files = {frontImage, backImage, leftImage, rightImage, registration, certificate, insurance};
-        carDraftService.saveDraft(carDraft, files, user);
-        return ResponseEntity.ok("Draft saved successfully");
     }
 
 
@@ -127,21 +81,20 @@ public class CarOwnerController {
         return new CarDraft();
     }
 
-    @PostMapping("/delete-draft")
-    @ResponseBody
-    public ResponseEntity<?> deleteDraft() {
-        User user = (User) httpSession.getAttribute("user");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+    @PostMapping("/save-car")
+    public ResponseEntity<?> saveCar(
+            HttpSession session
+    ) throws IOException {
+        User user = (User) session.getAttribute("user");
+        CarDraft carDraft = carDraftService.getDraftByLastModified(user.getId());
+        if (carDraft == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Draft not found");
         }
-        try {
-            carDraftService.deleteDraftByUserId(user.getId());
-            return ResponseEntity.ok("Draft deleted successfully");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting draft");
-        }
+        carOwnerService.saveCar(carDraft, user);
+        return ResponseEntity.ok("Draft saved successfully");
     }
+
+
 
     @GetMapping("/edit-car")
     public String editCar() {
