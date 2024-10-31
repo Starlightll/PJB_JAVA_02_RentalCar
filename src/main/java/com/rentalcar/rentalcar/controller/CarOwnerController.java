@@ -68,12 +68,12 @@ public class CarOwnerController {
         model.addAttribute("carStatus", carStatusRepository.findAll());
         CarDraft carDraft = carDraftService.createCarDraft(user);
         model.addAttribute("carDraft", carDraft);
-        DecimalFormat df = new DecimalFormat("#.############");
+        DecimalFormat df = new DecimalFormat("#.##");
         String formattedBasePrice = df.format(carDraft.getBasePrice() == null ? 0 : carDraft.getBasePrice());
-        String formattedCarPrice = df.format(carDraft.getCarPrice() == null ? 0 : carDraft.getBasePrice());
-        String formattedDeposit = df.format(carDraft.getDeposit() == null ? 0 : carDraft.getBasePrice());
-        String formattedMileage = df.format(carDraft.getMileage() == null ? 0 : carDraft.getBasePrice());
-        String formattedFuelConsumption = df.format(carDraft.getFuelConsumption() == null ? 0 : carDraft.getBasePrice());
+        String formattedCarPrice = df.format(carDraft.getCarPrice() == null ? 0 : carDraft.getCarPrice());
+        String formattedDeposit = df.format(carDraft.getDeposit() == null ? 0 : carDraft.getDeposit());
+        String formattedMileage = df.format(carDraft.getMileage() == null ? 0 : carDraft.getMileage());
+        String formattedFuelConsumption = df.format(carDraft.getFuelConsumption() == null ? 0 : carDraft.getFuelConsumption());
         model.addAttribute("formattedCarPrice", formattedCarPrice);
         model.addAttribute("formattedDeposit", formattedDeposit);
         model.addAttribute("formattedMileage", formattedMileage);

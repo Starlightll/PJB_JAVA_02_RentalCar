@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,31 +65,37 @@ public class CarDraftController {
         CarDraft carDraft = objectMapper.readValue(carDraftJson, CarDraft.class);
         //Validate here
         try {
+            DecimalFormat df = new DecimalFormat("#.##");
+            String formattedBasePrice = df.format(carDraft.getBasePrice() == null ? 0 : carDraft.getBasePrice());
+            String formattedCarPrice = df.format(carDraft.getCarPrice() == null ? 0 : carDraft.getCarPrice());
+            String formattedDeposit = df.format(carDraft.getDeposit() == null ? 0 : carDraft.getDeposit());
+            String formattedMileage = df.format(carDraft.getMileage() == null ? 0 : carDraft.getMileage());
+            String formattedFuelConsumption = df.format(carDraft.getFuelConsumption() == null ? 0 : carDraft.getFuelConsumption());
             Double carPrice = carDraft.getCarPrice();
             Pattern pattern = Pattern.compile(MONEY_REGEX);
-            Matcher matcher = pattern.matcher(carPrice.toString());
+            Matcher matcher = pattern.matcher(formattedCarPrice);
             if (carPrice < 0 || !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid car price");
             }
             Double basePrice = carDraft.getBasePrice();
-            matcher = pattern.matcher(basePrice.toString());
-            if (basePrice < 0) {
+            matcher = pattern.matcher(formattedBasePrice);
+            if (basePrice < 0 || !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid base price");
             }
             Double deposit = carDraft.getDeposit();
-            matcher = pattern.matcher(deposit.toString());
+            matcher = pattern.matcher(formattedDeposit);
             if (deposit < 0  || !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid deposit");
             }
             Double mileage = carDraft.getMileage();
             pattern = Pattern.compile(DISTANCE_REGEX);
-            matcher = pattern.matcher(mileage.toString());
+            matcher = pattern.matcher(formattedMileage);
             if (mileage < 0 || mileage > 1000000 || !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid mileage");
             }
             Double fuelConsumption = carDraft.getFuelConsumption();
             pattern = Pattern.compile(FUEL_CONSUMPTION_REGEX);
-            matcher = pattern.matcher(fuelConsumption.toString());
+            matcher = pattern.matcher(formattedFuelConsumption);
             if (fuelConsumption < 0 || fuelConsumption > 10000 || !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid fuel consumption");
             }
