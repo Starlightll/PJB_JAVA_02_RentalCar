@@ -99,25 +99,25 @@ public class CarDraftServiceImpl implements CarDraftService {
         }
         if(carDraft != null) {
             carDraft.setStep(draft.getStep());
-            carDraft.setLicensePlate(draft.getLicensePlate().toUpperCase());
+            carDraft.setLicensePlate(draft.getLicensePlate().toUpperCase().trim());
             carDraft.setLastModified(draft.getLastModified());
-            carDraft.setModel(draft.getModel());
-            carDraft.setColor(draft.getColor());
+            carDraft.setModel(draft.getModel().trim());
+            carDraft.setColor(draft.getColor().trim());
             carDraft.setSeat(draft.getSeat());
             carDraft.setProductionYear(draft.getProductionYear());
-            carDraft.setTransmission(draft.getTransmission());
-            carDraft.setFuelType(draft.getFuelType());
+            carDraft.setTransmission(draft.getTransmission().trim());
+            carDraft.setFuelType(draft.getFuelType().trim());
             carDraft.setMileage(draft.getMileage());
             carDraft.setFuelConsumption(draft.getFuelConsumption());
-            carDraft.setAdditionalFunction(draft.getAdditionalFunction());
-            carDraft.setProvince(draft.getProvince());
-            carDraft.setDistrict(draft.getDistrict());
-            carDraft.setWard(draft.getWard());
-            carDraft.setHome(draft.getHome());
+            carDraft.setAdditionalFunction(draft.getAdditionalFunction().trim());
+            carDraft.setProvince(draft.getProvince().trim());
+            carDraft.setDistrict(draft.getDistrict().trim());
+            carDraft.setWard(draft.getWard().trim());
+            carDraft.setHome(draft.getHome().trim());
             carDraft.setBasePrice(draft.getBasePrice());
             carDraft.setDeposit(draft.getDeposit());
-            carDraft.setDescription(draft.getDescription());
-            carDraft.setTerms(draft.getTerms());
+            carDraft.setDescription(draft.getDescription().trim());
+            carDraft.setTerms(draft.getTerms().trim());
             carDraft.setCarPrice(draft.getCarPrice());
             carDraft.setBrand(draft.getBrand());
         } else {

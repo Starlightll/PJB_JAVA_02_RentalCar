@@ -153,7 +153,7 @@
                                                                            aria-describedby="inputGroup-sizing-default"
                                                                            id="model" th:value="${carDraft.model}">
                                                                 </div>
-                                                                <a class="validate-msg">Invalid</a>
+                                                                <a class="validate-msg" id="modelValidate">Invalid</a>
                                                             </div>
 
                                                             <div class="col-lg-6 mb-3 required-label">
@@ -1003,6 +1003,22 @@
                 }
             });
 
+            function deleteDraft() {
+                $.ajax({
+                    url: '/delete-draft',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
+                    },
+                    success: function (response) {
+                        alert("Draft deleted.");
+                    },
+                    error: function (error) {
+                        console.error("Error:", error);
+                        alert("Error deleting draft.");
+                    }
+                });
+            }
 
         function uploadfile(imageView, inputFile) {
             const file = inputFile.files[0];

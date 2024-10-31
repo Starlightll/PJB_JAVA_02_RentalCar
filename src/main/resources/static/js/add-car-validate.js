@@ -287,6 +287,70 @@ const setupMaterialValidation = (inputElement, msgElement) => {
 };
 
 
+//Validate for Model
+const setupModelValidation = (inputElement, msgElement) => {
+    // Thêm class ẩn cho message ban đầu
+    msgElement.style.display = 'none';
+
+    const validateModel = (value) => {
+        // Xóa khoảng trắng và chuyển sang chữ hoa
+        const cleanValue = value.trim();
+
+        // Kiểm tra với pattern
+        if (cleanValue === '') {
+            return {
+                isValid: false,
+                message: 'Model cannot be empty'
+            };
+        }
+
+        return {
+            isValid: true,
+            value: cleanValue
+        };
+    };
+
+    // Hàm update UI
+    const updateUI = (result) => {
+        if (result.isValid) {
+            // Success state
+            inputElement.classList.remove('is-invalid');
+            inputElement.classList.add('is-valid');
+            msgElement.style.display = 'none';
+            msgElement.textContent = '';
+        } else {
+            // Error state
+            inputElement.classList.remove('is-valid');
+            inputElement.classList.add('is-invalid');
+            msgElement.style.display = 'block';
+            msgElement.style.color = '#dc3545';  // Bootstrap danger color
+            msgElement.style.fontSize = '80%';
+            msgElement.style.marginTop = '0.25rem';
+            msgElement.textContent = result.message;
+        }
+    };
+
+    // Validate on input
+    inputElement.addEventListener('input', (e) => {
+        const result = validateModel(e.target.value);
+        updateUI(result);
+    });
+
+    // Validate on blur
+    inputElement.addEventListener('blur', (e) => {
+        const result = validateModel(e.target.value);
+        updateUI(result);
+    });
+
+    // Return validate function for external use (e.g., form submit)
+    return () => {
+        const result = validateModel(inputElement.value);
+        updateUI(result);
+        return result.isValid;
+    };
+};
+
+
 
 let pageStep = 1;
 // Initialize validation when document is ready
@@ -303,6 +367,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const mileageValidateMsg = document.getElementById('mileageValidate');
     const fuelConsumptionInput = document.getElementById('fuelConsumption');
     const fuelConsumptionValidateMsg = document.getElementById('fuelConsumptionValidate');
+    const modelInput = document.getElementById('model');
+    const modelValidateMsg = document.getElementById('modelValidate');
 
 
     // Setup validation for license plate
@@ -315,6 +381,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const validateMileage = setupRangeValidation(mileageInput, mileageValidateMsg);
     // Setup validation for material
     const validateFuelConsumption = setupMaterialValidation(fuelConsumptionInput, fuelConsumptionValidateMsg);
+    // Setup validation for model
+    const validateModel = setupModelValidation(modelInput, modelValidateMsg);
 
 
     // Optional: Validate on form submit
@@ -339,7 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $(".next").click(function () {
             console.log(pageStep);
             if (pageStep === 1) {
-                if (!checkStep1() || !validateLicensePlate()) {
+                if (!checkStep1() || !validateLicensePlate() || !validateModel()) {
                     return;
                 }
                 saveDraft();
