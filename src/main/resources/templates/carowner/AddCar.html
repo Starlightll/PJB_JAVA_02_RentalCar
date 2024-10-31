@@ -727,8 +727,6 @@
             const district = document.getElementById('district').value;
             const ward = document.getElementById('ward').value;
             const street = document.getElementById('street').value;
-            // Lấy tất cả các checkbox có name là 'additionalFunction'
-            const checkboxes = document.querySelectorAll('input[name="additionalFunction"]:checked');
             const checkedValues = [];
             const frontImage = document.getElementById("input-file4");
             const backImage = document.getElementById("input-file5");
@@ -738,9 +736,7 @@
             const backImageUrl = document.getElementById('backImage').value;
             const leftImageUrl = document.getElementById('leftImage').value;
             const rightImageUrl = document.getElementById('rightImage').value;
-            checkboxes.forEach((checkbox) => {
-                checkedValues.push(checkbox.value);
-            });
+
 
             console.log(checkedValues);
 
@@ -749,8 +745,6 @@
                 || province === ''
                 || district === ''
                 || ward === ''
-                || street === ''
-                || checkedValues.length === 0
                 || (frontImage.files.length === 0 && frontImageUrl === '')
                 || (backImage.files.length === 0 && backImageUrl === '')
                 || (leftImage.files.length === 0 && leftImageUrl === '')
