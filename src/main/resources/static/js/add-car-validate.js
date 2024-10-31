@@ -16,20 +16,20 @@ const licensePlatePatterns = {
 
 // Regex patterns for Money
 const moneyPatterns = {
-    // 0-999999999
-    civilian: /^\d+(\.\d{0,2})?$/
+    // 0-9999999999
+    civilian: /^(?!0)\d+(\.\d{1,2})?$/
 };
 
 // Regex patterns for distance
 const distancePatterns = {
-    // 0-999999999
-    civilian: /^\d+(\.\d{0,2})?$/
+    // 0-9999999999
+    civilian: /^(?!0)\d+(\.\d{1,2})?$/
 }
 
 // Regex patterns for material
 const resourcePatterns = {
-    // 0-999999999
-    liquid: /^\d+(\.\d{0,2})?$/
+    // 0-9999999999
+    liquid: /^(?!0)\d+(\.\d{1,2})?$/
 }
 
 
@@ -107,7 +107,7 @@ const setupMoneyValidation = (inputElement, msgElement) => {
         const cleanValue = value.trim();
 
         // Kiểm tra với pattern
-        if (!moneyPatterns.civilian.test(cleanValue)) {
+        if (!moneyPatterns.civilian.test(cleanValue) || cleanValue < 0 || cleanValue > 999999999) {
             return {
                 isValid: false,
                 message: 'Invalid money format. Required format: 0-999999999'

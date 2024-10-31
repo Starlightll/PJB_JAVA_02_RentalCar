@@ -1023,29 +1023,30 @@
         function uploadfile(imageView, inputFile) {
             const file = inputFile.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    if (file.type.match("image.*")) {
-                        imageView.style.backgroundImage = `url(${e.target.result})`;
-                        imageView.style.backgroundSize = "cover";
-                        imageView.style.backgroundPosition = "center";
-                        // Xóa nội dung cũ
-                        imageView.innerHTML = "";
-                    } else {
-                        imageView.style.backgroundImage = "none";
-                        imageView.innerHTML = `
-                    <i class="fa-solid fa-file-arrow-up fa-2x"></i>
-                    <p>${file.name}</p>`;
-                    }
-                    imageView.style.border = "none";
+                const validExtensions = ["jpg", "jpeg", "png"];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                // Kiểm tra phần mở rộng file
+                if (!validExtensions.includes(fileExtension)) {
+                    alert("Chỉ chấp nhận các định dạng file ảnh: .jpg, .jpeg, .png");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+
+                const fileReader = new FileReader();
+                fileReader.onload = function(e) {
+                    imageView.style.backgroundImage = `url(${e.target.result})`;
+                    imageView.style.backgroundSize = "cover";
+                    imageView.style.backgroundPosition = "center";
+                    imageView.innerHTML = "";
                 };
-                reader.readAsDataURL(file);
+                fileReader.readAsDataURL(file); // Đọc file dưới dạng URL để hiển thị
             }
         }
 
         function displayExistingImage(imageView, imageUrl) {
             if (imageUrl) {
-                if (imageUrl.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {
                     imageView.style.backgroundImage = 'url('+ imageUrl.replaceAll("\\", "/")+')';
                     imageView.style.backgroundSize = "cover";
                     imageView.style.backgroundPosition = "center";
@@ -1095,8 +1096,22 @@
             dropArea.addEventListener("drop", function (e) {
                 e.preventDefault();
                 dropArea.style.background = "#d1d5d9";
-                inputFile.files = e.dataTransfer.files;
-                uploadfile(imageView, inputFile);
+
+                const files = e.dataTransfer.files;
+
+                if (files.length > 0) {
+                    const validExtensions = ["jpg", "jpeg", "png"];
+                    const fileExtension = files[0].name.split('.').pop().toLowerCase();
+
+                    // Kiểm tra phần mở rộng file
+                    if (!validExtensions.includes(fileExtension)) {
+                        alert("Only accept file type: .jpg, .jpeg, .png");
+                        return;
+                    }
+
+                    inputFile.files = files; // Thiết lập files cho input
+                    uploadfile(imageView, inputFile); // Gọi hàm uploadfile
+                }
             });
         }
 
