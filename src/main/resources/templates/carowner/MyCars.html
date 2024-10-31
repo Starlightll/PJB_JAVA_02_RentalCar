@@ -26,6 +26,142 @@
         .slider-text{
             height: 200px !important;
         }
+
+        /*  Preview part */
+
+        .wrapper{
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        .wrapper .img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .wrapper .img img{
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            clip-path: circle(0% at 0% 100%);
+            transition: all 0.7s;
+        }
+
+        /* CSS cho dynamic ID */
+        [id^="one-"]:checked ~ .img-1 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+        [id^="two-"]:checked ~ .img-1 img,
+        [id^="two-"]:checked ~ .img-2 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+        [id^="three-"]:checked ~ .img-1 img,
+        [id^="three-"]:checked ~ .img-2 img,
+        [id^="three-"]:checked ~ .img-3 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+        [id^="four-"]:checked ~ .img-1 img,
+        [id^="four-"]:checked ~ .img-2 img,
+        [id^="four-"]:checked ~ .img-3 img,
+        [id^="four-"]:checked ~ .img-4 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+
+
+
+        /* Slider controls với ID động */
+        .wrapper .sliders {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 99;
+            display: flex;
+        }
+
+        .wrapper .sliders label {
+            border: 2px solid rgb(255, 255, 255);
+            width: 13px;
+            height: 13px;
+            margin: 0 3px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #one:checked ~ .sliders label.one,
+        #two:checked ~ .sliders label.two,
+        #three:checked ~ .sliders label.three,
+        #four:checked ~ .sliders label.four,
+        #five:checked ~ .sliders label.five{
+            width: 35px;
+            border-radius: 14px;
+            background: rgb(26, 255, 149);
+        }
+
+        /* Khi các nút được chọn, thay đổi kích thước và màu sắc */
+        input[id^="one-"]:checked ~ .sliders label[id^="label-one"],
+        input[id^="two-"]:checked ~ .sliders label[id^="label-two"],
+        input[id^="three-"]:checked ~ .sliders label[id^="label-three"],
+        input[id^="four-"]:checked ~ .sliders label[id^="label-four"] {
+            width: 35px;
+            border-radius: 14px;
+            background: rgb(26, 255, 149);
+        }
+
+        .sliders label:hover {
+            background: rgb(26, 255, 149);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+
+
+        /*Rating star*/
+
+        .rating{
+            display: flex;
+            align-items: center;
+            height: 0;
+            margin-bottom: 1.2rem;
+            width: 116.05px;
+        }
+
+        .rating i{
+            font-size: 1.2rem;
+        }
+
+        .star {
+            color: #00d79d;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+            width: 20%;
+        }
+
+        .star-base {
+            position: absolute;
+            color: #3d3d3d;
+            overflow: hidden;
+            z-index: 0;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+        }
+
+        .required-label::after {
+            content: "*";
+            color: red;
+            font-size: 1rem;
+            position: absolute;
+            top: -3px;
+            left: 1px
+        }
+
     </style>
 </head>
 
@@ -63,8 +199,8 @@
                             </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-secondary" id="carDraftContinues">Yes</button>
-                            <button type="button" class="btn btn-secondary" id="carDraftAddNew">No</button>
+                            <button type="button" class="btn btn-secondary" id="carContinues">Yes</button>
+                            <button type="button" class="btn btn-secondary" id="carAddNew">No</button>
                         </div>
                     </div>
                 </div>
@@ -73,96 +209,98 @@
 
         </div>
 
-        <div class="container">
+        <div class="container pb-5">
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-wrap">
-<!--                        <th:block th:object="${carDraft}">-->
+<!--                        <th:block th:object="${car}">-->
 <!--                            <div class="d-flex justify-content-center">-->
 <!--                                <div class="card align-items-start display-flex-center"-->
 <!--                                     style="">-->
 <!--                                    <div class="card-body text-left w-100">-->
-<!--                                        <h5 class="card-title">Preview</h5>-->
-<!--                                        <div class="row">-->
-<!--                                            <div class="col-lg-6 col-md-6">-->
-<!--                                                <div class="wrapper">-->
-<!--                                                    <input type="radio" name="slide" id="one" checked>-->
-<!--                                                    <input type="radio" name="slide" id="two">-->
-<!--                                                    <input type="radio" name="slide" id="three">-->
-<!--                                                    <input type="radio" name="slide" id="four">-->
-<!--                                                    <div class="img img-1">-->
-<!--                                                        <img id="carFrontImage" th:src="${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">-->
-<!--                                                    </div>-->
-<!--                                                    <div class="img img-2">-->
-<!--                                                        <img id="carBackImage" th:src="${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">-->
-<!--                                                    </div>-->
-<!--                                                    <div class="img img-3">-->
-<!--                                                        <img id="carLeftImage" th:src="${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">-->
-<!--                                                    </div>-->
-<!--                                                    <div class="img img-4">-->
-<!--                                                        <img id="carRightImage" th:src="${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">-->
-<!--                                                    </div>-->
-<!--                                                    <div class="sliders">-->
-<!--                                                        <label for="one" class="one"></label>-->
-<!--                                                        <label for="two" class="two"></label>-->
-<!--                                                        <label for="three" class="three"></label>-->
-<!--                                                        <label for="four" class="four"></label>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="col-lg-6 col-md-6 justify-content-center align-items-center">-->
-<!--                                                <div class="row justify-content-center align-items-center align-content-center">-->
-<!--                                                    <h1 class="col-lg-12 col-md-12 col-sm-12 text-center">-->
-<!--                                                        Nissan Navara EI 2017</h1>-->
-<!--                                                    <div class="col-lg-12 row"-->
-<!--                                                         style="display: flex; align-items: center">-->
-<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
-<!--                                                            Ratings: </p>-->
-<!--                                                        <div class="rating">-->
-<!--                                                            <div class="star">-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                            </div>-->
-<!--                                                            <div class="star-base">-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                                <i class="fa fa-star"></i>-->
-<!--                                                            </div>-->
+<!--                                        <h5 class="card-title"></h5>-->
+<!--                                        <div class="row d-flex justify-content-center">-->
+<!--                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px">-->
+<!--                                                <div class="col-lg-6 col-md-6 d-flex align-items-center">-->
+<!--                                                    <div class="wrapper" style="max-height: 270px">-->
+<!--                                                        <input type="radio" name="slide" id="one-1" checked>-->
+<!--                                                        <input type="radio" name="slide" id="two-1">-->
+<!--                                                        <input type="radio" name="slide" id="three-1">-->
+<!--                                                        <input type="radio" name="slide" id="four-1">-->
+<!--                                                        <div class="img img-1">-->
+<!--                                                            <img th:src="${car.getFrontImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                        </div>-->
+<!--                                                        <div class="img img-2">-->
+<!--                                                            <img th:src="${car.getBackImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                        </div>-->
+<!--                                                        <div class="img img-3">-->
+<!--                                                            <img th:src="${car.getLeftImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                        </div>-->
+<!--                                                        <div class="img img-4">-->
+<!--                                                            <img th:src="${car.getRightImage()}" style="background: #1a1a1a" alt="">-->
+<!--                                                        </div>-->
+<!--                                                        <div class="sliders">-->
+<!--                                                            <label for="one-1" id="label-one-1" class="one"></label>-->
+<!--                                                            <label for="two-1" id="label-two-1" class="two"></label>-->
+<!--                                                            <label for="three-1" id="label-three-1" class="three"></label>-->
+<!--                                                            <label for="four-1" id="label-four-1" class="four"></label>-->
 <!--                                                        </div>-->
 <!--                                                    </div>-->
-<!--                                                    <div class="col-lg-12 row"-->
-<!--                                                         style="display: flex; align-items: center">-->
-<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
-<!--                                                            No. of rides: </p>-->
-<!--                                                        <p>0</p>-->
-<!--                                                    </div>-->
-<!--                                                    <div class="col-lg-12 row"-->
-<!--                                                         style="display: flex; align-items: center">-->
-<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >-->
-<!--                                                            Price: </p>-->
-<!--                                                        <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>-->
-<!--                                                    </div>-->
-<!--                                                    <div class="col-lg-12 row"-->
-<!--                                                         style="display: flex; align-items: center">-->
-<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >-->
-<!--                                                            Location: </p>-->
-<!--                                                        <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
-<!--                                                           th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''} + ', ' + ${carDraft.getHome()}"-->
-<!--                                                        >No</p>-->
-<!--                                                    </div>-->
-<!--                                                    <div class="col-lg-12 row"-->
-<!--                                                         style="display: flex; align-items: center">-->
-<!--                                                        <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
-<!--                                                            Status: </p>-->
-<!--                                                        <p style="color: #5bd77a; font-weight: bold">Available</p>-->
+<!--                                                </div>-->
+<!--                                                <div class="col-lg-6 col-md-6 justify-content-center align-items-center">-->
+<!--                                                    <div class="row justify-content-center align-items-center align-content-center">-->
+<!--                                                        <h1 class="col-lg-12 col-md-12 col-sm-12 text-center" style="font-size: 2rem">-->
+<!--                                                            Nissan Navara EI 2017</h1>-->
+<!--                                                        <div class="col-lg-12 row"-->
+<!--                                                             style="display: flex; align-items: center">-->
+<!--                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                                Ratings: </p>-->
+<!--                                                            <div class="rating">-->
+<!--                                                                <div class="star">-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                </div>-->
+<!--                                                                <div class="star-base">-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                    <i class="fa fa-star"></i>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                        <div class="col-lg-12 row"-->
+<!--                                                             style="display: flex; align-items: center">-->
+<!--                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                                No. of rides: </p>-->
+<!--                                                            <p>0</p>-->
+<!--                                                        </div>-->
+<!--                                                        <div class="col-lg-12 row"-->
+<!--                                                             style="display: flex; align-items: center">-->
+<!--                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >-->
+<!--                                                                Price: </p>-->
+<!--                                                            <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>-->
+<!--                                                        </div>-->
+<!--                                                        <div class="col-lg-12 row"-->
+<!--                                                             style="display: flex; align-items: center">-->
+<!--                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >-->
+<!--                                                                Location: </p>-->
+<!--                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
+<!--                                                               th:text="${car.getAddress().getProvince()}">No</p>-->
+<!--                                                        </div>-->
+<!--                                                        <div class="col-lg-12 row"-->
+<!--                                                             style="display: flex; align-items: center">-->
+<!--                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                                Status: </p>-->
+<!--                                                            <p style="color: #5bd77a; font-weight: bold">Available</p>-->
+<!--                                                        </div>-->
 <!--                                                    </div>-->
 <!--                                                </div>-->
 <!--                                            </div>-->
+
 <!--                                        </div>-->
 
 <!--                                    </div>-->
@@ -198,11 +336,11 @@
                             $('#hasDraftModal').modal('show');
                             $('#hasDraftModalTitle').text("Draft found!");
                             $('#hasDraftModalBody').html("You have a car draft in <b>" + response.lastModified + "</b>. Do you want to continue with it?");
-                            $('#carDraftAddNew').click(function () {
+                            $('#carAddNew').click(function () {
                                 deleteDraft();
                                 addCar();
                             });
-                            $('#carDraftContinues').click(function () {
+                            $('#carContinues').click(function () {
                                 addCar();
                             });
                         }else{

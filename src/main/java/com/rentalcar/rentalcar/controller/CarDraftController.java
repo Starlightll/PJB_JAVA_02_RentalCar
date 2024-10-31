@@ -77,7 +77,7 @@ public class CarDraftController {
             }
             Double deposit = carDraft.getDeposit();
             matcher = pattern.matcher(deposit.toString());
-            if (deposit < 0 || deposit > basePrice || !matcher.matches()) {
+            if (deposit < 0  || !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid deposit");
             }
             Double mileage = carDraft.getMileage();

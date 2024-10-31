@@ -1,12 +1,10 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
-import com.rentalcar.rentalcar.repository.BrandRepository;
-import com.rentalcar.rentalcar.repository.CarDraftRepository;
-import com.rentalcar.rentalcar.repository.CarStatusRepository;
+import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import com.rentalcar.rentalcar.service.FileStorageService;
@@ -26,6 +24,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -43,11 +43,19 @@ public class CarOwnerController {
     private AdditionalFunctionRepository additionalFunctionRepository;
     @Autowired
     private CarStatusRepository carStatusRepository;
-
+    @Autowired
+    private CarRepository carRepository;
 
 
     @GetMapping("/my-cars")
     public String myCar(Model model) {
+//        List<Car> cars = new ArrayList<>();
+//        Car car = new Car();
+//        User user = (User) httpSession.getAttribute("user");
+//        if (user != null) {
+//            car = carRepository.getCarByUser(user);
+//        }
+//        model.addAttribute("car", car);
         return "/carowner/MyCars";
     }
 
