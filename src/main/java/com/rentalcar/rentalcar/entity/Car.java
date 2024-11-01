@@ -3,6 +3,8 @@ package com.rentalcar.rentalcar.entity;
 import lombok.*;
 
 import jakarta.persistence.*;
+
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,6 +59,7 @@ public class Car {
     private String registration;
     private String certificate;
     private String insurance;
+    private Date lastModified;
 
     @ManyToMany
     @JoinTable(

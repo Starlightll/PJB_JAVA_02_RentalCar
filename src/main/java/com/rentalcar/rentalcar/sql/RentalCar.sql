@@ -80,6 +80,7 @@ CREATE TABLE [dbo].[Car]
     registration    NVARCHAR(200),
     certificate     NVARCHAR(200),
     insurance       NVARCHAR(200),
+    lastModified    DATETIME DEFAULT CURRENT_TIMESTAMP,
     userId          INT,
     brandId         INT                            NOT NULL,
     statusId        INT                            NOT NULL,

@@ -6,9 +6,11 @@ import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import org.apache.poi.ss.formula.functions.Address;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,14 +32,15 @@ public class CarOwnerServiceImpl implements CarOwnerService {
     }
 
     @Override
-    public Car getCarById(int carId) {
-        return null;
+    public List<Car> findAllWithSortDesc(String field) {
+        return carRepository.findAll(Sort.by(Sort.Direction.DESC, field));
     }
 
     @Override
-    public void addCar(Car car) {
-
+    public List<Car> findAllWithSortAsc(String field) {
+        return carRepository.findAll(Sort.by(Sort.Direction.ASC, field));
     }
+
 
     @Override
     public void updateCar(Car car) {
@@ -77,6 +80,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
             car.setCertificate(carDraft.getCertificate());
             car.setInsurance(carDraft.getInsurance());
             car.setBrand(carDraft.getBrand());
+            car.setLastModified(new Date());
             setCarStatus(car);
             //Set car additional Functions
             setCarAdditionalFunction(carDraft, car);
@@ -90,6 +94,10 @@ public class CarOwnerServiceImpl implements CarOwnerService {
             System.out.println("Something wrong when save car from draft in car owner service" + e.getMessage());
             throw e;
         }
+    }
+
+    private void updateCar(){
+
     }
 
     private void setCarStatus(Car car){

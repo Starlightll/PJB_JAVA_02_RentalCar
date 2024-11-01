@@ -14,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -49,13 +46,20 @@ public class CarOwnerController {
 
     @GetMapping("/my-cars")
     public String myCar(Model model) {
-//        List<Car> cars = new ArrayList<>();
-//        Car car = new Car();
-//        User user = (User) httpSession.getAttribute("user");
-//        if (user != null) {
-//            car = carRepository.getCarByUser(user);
-//        }
-//        model.addAttribute("car", car);
+        List<Car> cars = new ArrayList<>();
+        Car car = new Car();
+        User user = (User) httpSession.getAttribute("user");
+        if (user != null) {
+//            if(field != null){
+//                    cars = carOwnerService.findAllWithSortDesc(field);
+//            }else{
+                cars = carRepository.getCarsByUser(user);
+                if(cars.isEmpty()){
+                    model.addAttribute("message", "You have no cars");
+                }
+//            }
+        }
+        model.addAttribute("carList", cars);
         return "/carowner/MyCars";
     }
 
@@ -89,6 +93,13 @@ public class CarOwnerController {
         return new CarDraft();
     }
 
+    @GetMapping("edit-car/{carId}")
+    public String editCar(@PathVariable("carId") Integer carId, Model model) {
+        Car car = carRepository.getCarByCarId(carId);
+        model.addAttribute("car", car);
+        return "carowner/EditCar";
+    }
+
     @PostMapping("/save-car")
     public ResponseEntity<?> saveCar(
             HttpSession session
@@ -102,12 +113,6 @@ public class CarOwnerController {
         return ResponseEntity.ok("Draft saved successfully");
     }
 
-
-
-    @GetMapping("/edit-car")
-    public String editCar() {
-        return "carowner/EditCar";
-    }
 
     @GetMapping("/delete-car")
     public String deleteCar() {

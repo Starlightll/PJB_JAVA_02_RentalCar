@@ -1,10 +1,381 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <title>Edit Car</title>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        .hero-wrap{
+            height: 200px !important;
+            position: relative;
+            background-image: url('images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+        }
+
+        .overlay{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            height: 200px !important;
+        }
+        .slider-text{
+            height: 200px !important;
+        }
+
+        /*  Preview part */
+
+        .wrapper{
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        .wrapper .img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .wrapper .img img{
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            clip-path: circle(0% at 0% 100%);
+            transition: all 0.7s;
+        }
+
+        /* CSS cho dynamic ID */
+        [id^="one-"]:checked ~ .img-1 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+        [id^="two-"]:checked ~ .img-1 img,
+        [id^="two-"]:checked ~ .img-2 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+        [id^="three-"]:checked ~ .img-1 img,
+        [id^="three-"]:checked ~ .img-2 img,
+        [id^="three-"]:checked ~ .img-3 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+        [id^="four-"]:checked ~ .img-1 img,
+        [id^="four-"]:checked ~ .img-2 img,
+        [id^="four-"]:checked ~ .img-3 img,
+        [id^="four-"]:checked ~ .img-4 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+
+
+
+        /* Slider controls với ID động */
+        .wrapper .sliders {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 99;
+            display: flex;
+        }
+
+        .wrapper .sliders label {
+            border: 2px solid rgb(255, 255, 255);
+            width: 13px;
+            height: 13px;
+            margin: 0 3px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #one:checked ~ .sliders label.one,
+        #two:checked ~ .sliders label.two,
+        #three:checked ~ .sliders label.three,
+        #four:checked ~ .sliders label.four,
+        #five:checked ~ .sliders label.five{
+            width: 35px;
+            border-radius: 14px;
+            background: rgb(26, 255, 149);
+        }
+
+        /* Khi các nút được chọn, thay đổi kích thước và màu sắc */
+        input[id^="one-"]:checked ~ .sliders label[id^="label-one"],
+        input[id^="two-"]:checked ~ .sliders label[id^="label-two"],
+        input[id^="three-"]:checked ~ .sliders label[id^="label-three"],
+        input[id^="four-"]:checked ~ .sliders label[id^="label-four"] {
+            width: 35px;
+            border-radius: 14px;
+            background: rgb(26, 255, 149);
+        }
+
+        .sliders label:hover {
+            background: rgb(26, 255, 149);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+
+
+        /*Rating star*/
+
+        .rating{
+            display: flex;
+            align-items: center;
+            height: 0;
+            margin-bottom: 1.2rem;
+            width: 116.05px;
+        }
+
+        .rating i{
+            font-size: 1.2rem;
+        }
+
+        .star {
+            color: #00d79d;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+            width: 20%;
+        }
+
+        .star-base {
+            position: absolute;
+            color: #3d3d3d;
+            overflow: hidden;
+            z-index: 0;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+        }
+
+        .required-label::after {
+            content: "*";
+            color: red;
+            font-size: 1rem;
+            position: absolute;
+            top: -3px;
+            left: 1px
+        }
+
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body>
+
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>MY CARS <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-3 bread">My Cars!</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ftco-section p-0"  style="min-height: 500px !important;">
+        <div class="container">
+            <button id="addCarBtn" class="btn btn-primary btn-lg m-4">Add car</button>
+            <!-- Modal -->
+            <div class="modal fade" id="hasDraftModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="hasDraftModalTitle">No Title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="hasDraftModalBody">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" id="carContinues">Yes</button>
+                            <button type="button" class="btn btn-secondary" id="carAddNew">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="container pb-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <div class="d-flex justify-content-center">
+                            <div class="card align-items-start display-flex-center"
+                                 style="">
+                                <div class="card-body text-left w-100">
+                                    <h5 class="card-title"></h5>
+                                    <div class="row d-flex justify-content-center">
+                                        <th:block>
+                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
+                                                <div class="col-lg-6 col-md-6 d-flex align-items-center">
+                                                    <div class="wrapper" style="max-height: 270px">
+                                                        <input type="radio" name="slide-1" id="one-1" checked>
+                                                        <input type="radio" name="'slide-1" id="two-1">
+                                                        <input type="radio" name="'slide-1" id="three-1">
+                                                        <input type="radio" name="'slide-1" id="four-1">
+                                                        <div class="img img-1">
+                                                            <img th:src="${car.getFrontImage()}" style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-2">
+                                                            <img th:src="${car.getBackImage()}" style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-3">
+                                                            <img th:src="${car.getLeftImage()}" style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-4">
+                                                            <img th:src="${car.getRightImage()}" style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="sliders">
+                                                            <label for="one-1" id="label-one-1" class="one"></label>
+                                                            <label for="two-1" id="label-two-1" class="two"></label>
+                                                            <label for="three-1" id="label-three-1" class="three"></label>
+                                                            <label for="four-1" id="label-four-1" class="four"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                    <div class="row justify-content-center align-items-center align-content-center">
+                                                        <h1 class="col-lg-12 col-md-12 col-sm-12 text-center" style="font-size: 2rem">
+                                                            Nissan Navara EI 2017</h1>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Ratings: </p>
+                                                            <div class="rating">
+                                                                <div class="star" th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                </div>
+                                                                <div class="star-base">
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                No. of rides: </p>
+                                                            <p>0</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
+                                                                Price: </p>
+                                                            <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
+                                                                Location: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${car.getAddress().getProvince()}">No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Status: </p>
+                                                            <p style="color: #5bd77a; font-weight: bold">Available</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+
+
+    <script>
+        $(document).ready(function () {
+            $('#addCarBtn').click(function (event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: '/check-draft',
+                    type: 'GET',
+                    success: function (response) {
+                        if (response.hasDraft === true) {
+                            $('#hasDraftModal').modal('show');
+                            $('#hasDraftModalTitle').text("Draft found!");
+                            $('#hasDraftModalBody').html("You have a car draft in <b>" + response.lastModified + "</b>. Do you want to continue with it?");
+                            $('#carAddNew').click(function () {
+                                deleteDraft();
+                                addCar();
+                            });
+                            $('#carContinues').click(function () {
+                                addCar();
+                            });
+                        }else{
+                            window.location.href = '/add-car';
+                        }
+                    },
+                    error: function (error) {
+                        console.log("Error");
+                    }
+                });
+            });
+        });
+
+        function addCar() {
+            window.location.href = '/add-car';
+        }
+
+
+        function deleteDraft() {
+            $.ajax({
+                url: '/delete-draft',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
+                },
+                success: function (response) {
+                    alert("Draft deleted.");
+                },
+                error: function (error) {
+                    console.error("Error:", error);
+                    alert("Error deleting draft.");
+                }
+            });
+        }
+
+    </script>
+    </body>
+</th:block>
 </body>
 </html>

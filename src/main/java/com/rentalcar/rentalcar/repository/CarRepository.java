@@ -9,5 +9,5 @@ import java.util.List;
 public interface CarRepository extends JpaRepository<Car, Integer> {
     List<Car> getCarsByUser(User user);
 
-    Car getCarByUser(User user);
+    Car getCarByCarId(Integer carId);
 }
