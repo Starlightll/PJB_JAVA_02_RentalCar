@@ -2,6 +2,7 @@ package com.rentalcar.rentalcar.configs;
 import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
 import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -75,6 +76,7 @@ public class WebConfiguration {
 
         return http.build();
     }
+
 
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
