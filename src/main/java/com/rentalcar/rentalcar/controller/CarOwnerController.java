@@ -56,10 +56,11 @@ public class CarOwnerController {
                 cars = carRepository.getCarsByUser(user);
                 if(cars.isEmpty()){
                     model.addAttribute("message", "You have no cars");
+                }else{
+                    model.addAttribute("carList", cars);
                 }
 //            }
         }
-        model.addAttribute("carList", cars);
         return "/carowner/MyCars";
     }
 
@@ -94,9 +95,35 @@ public class CarOwnerController {
     }
 
     @GetMapping("edit-car/{carId}")
-    public String editCar(@PathVariable("carId") Integer carId, Model model) {
+    public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
-        model.addAttribute("car", car);
+        if(car == null){
+            return "redirect:/my-cars";
+        }else{
+            User user = (User) session.getAttribute("user");
+            model.addAttribute("brands", brandRepository.findAll());
+            model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
+            model.addAttribute("carStatus", carStatusRepository.findAll());
+            model.addAttribute("car", car);
+            DecimalFormat df = new DecimalFormat("#.##");
+            String formattedBasePrice = df.format(car.getBasePrice() == null ? 0 : car.getBasePrice());
+            String formattedCarPrice = df.format(car.getCarPrice() == null ? 0 : car.getCarPrice());
+            String formattedDeposit = df.format(car.getDeposit() == null ? 0 : car.getDeposit());
+            String formattedMileage = df.format(car.getMileage() == null ? 0 : car.getMileage());
+            String formattedFuelConsumption = df.format(car.getFuelConsumption() == null ? 0 : car.getFuelConsumption());
+            model.addAttribute("formattedCarPrice", formattedCarPrice);
+            model.addAttribute("formattedDeposit", formattedDeposit);
+            model.addAttribute("formattedMileage", formattedMileage);
+            model.addAttribute("formattedFuelConsumption", formattedFuelConsumption);
+            model.addAttribute("formattedBasePrice", formattedBasePrice);
+            String registrationPath = car.getRegistration();
+            String certificatePath = car.getCertificate();
+            String insurancePath = car.getInsurance();
+            model.addAttribute("registrationUrl", "/" + registrationPath);
+            model.addAttribute("certificateUrl", "/" + certificatePath);
+            model.addAttribute("insuranceUrl", "/" + insurancePath);
+
+        }
         return "carowner/EditCar";
     }
 
@@ -109,9 +136,34 @@ public class CarOwnerController {
         if (carDraft == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Draft not found");
         }
-        carOwnerService.saveCar(carDraft, user);
-        return ResponseEntity.ok("Draft saved successfully");
+        try{
+            carOwnerService.saveCar(carDraft, user);
+            return ResponseEntity.ok("Car saved successfully");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Can't saving car");
+        }
     }
+
+//    @PostMapping("/save-car")
+//    public String saveCar(
+//            HttpSession session,
+//            Model model
+//    ) throws IOException {
+//        User user = (User) session.getAttribute("user");
+//        CarDraft carDraft = carDraftService.getDraftByLastModified(user.getId());
+//        if (carDraft == null) {
+//            return "carowner/MyCars";
+//        }else{
+//            try{
+//                carOwnerService.saveCar(carDraft, user);
+//                model.addAttribute("success", true);
+//                return "carowner/MyCars";
+//            }catch (Exception e){
+//                model.addAttribute("error", true);
+//                return "carowner/MyCars";
+//            }
+//        }
+//    }
 
 
     @GetMapping("/delete-car")

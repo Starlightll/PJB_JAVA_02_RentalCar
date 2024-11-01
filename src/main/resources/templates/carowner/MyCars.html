@@ -7,11 +7,15 @@
     <title>HomepageForCarOwner</title>
     <meta name="_csrf" th:content="${_csrf.token}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         .hero-wrap{
             height: 200px !important;
             position: relative;
-            background-image: url('images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+            background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
         }
 
         .overlay{
@@ -169,6 +173,23 @@
 <th:block layout:fragment="content">
     <body>
 
+    <div th:if="${success}">
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    title: 'Registered successfully!',
+                    text: '\n' +
+                        'We have sent an account activation link to your email, please check your email and activate your account.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'my-custom-button'
+                    }
+                });
+            });
+        </script>
+    </div>
+
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -221,8 +242,8 @@
                                         <div th:if="${message}">
                                             <p th:text="${message}"></p>
                                         </div>
-                                        <div class="row d-flex justify-content-center">
-                                            <div th:if="${carList != null}">
+                                        <div class="row d-flex justify-content-center" th:if="${carList != null}">
+
                                             <th:block th:each="car, iterStat: ${carList}">
                                                 <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
                                                     <div class="col-lg-6 col-md-6 d-flex align-items-center">
@@ -232,16 +253,16 @@
                                                             <input type="radio" th:name="'slide-'+ ${iterStat.index}" th:id="'three-' + ${iterStat.index}">
                                                             <input type="radio" th:name="'slide-'+ ${iterStat.index}" th:id="'four-' + ${iterStat.index}">
                                                             <div class="img img-1">
-                                                                <img th:src="${car.getFrontImage()}" style="background: #1a1a1a" alt="">
+                                                                <img th:src="'/'+${car.getFrontImage()}" style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-2">
-                                                                <img th:src="${car.getBackImage()}" style="background: #1a1a1a" alt="">
+                                                                <img th:src="'/'+${car.getBackImage()}" style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-3">
-                                                                <img th:src="${car.getLeftImage()}" style="background: #1a1a1a" alt="">
+                                                                <img th:src="'/'+${car.getLeftImage()}" style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-4">
-                                                                <img th:src="${car.getRightImage()}" style="background: #1a1a1a" alt="">
+                                                                <img th:src="'/'+${car.getRightImage()}" style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="sliders">
                                                                 <label th:for="'one-' + ${iterStat.index}" th:id="'label-one-' + ${iterStat.index}" class="one"></label>
@@ -305,7 +326,6 @@
                                                     </div>
                                                 </div>
                                             </th:block>
-                                            </div>
                                         </div>
 
                                     </div>
