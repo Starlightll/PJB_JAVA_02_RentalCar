@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Feedback</title>
+    <link rel="stylesheet" href="/css/feedback.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .average-rating {
+            text-align: center;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .stars {
+            color: gold;
+        }
+
+        .filter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .feedback-list {
+            border-top: 1px solid #ccc;
+        }
+
+        .feedback-item {
+            border-bottom: 1px solid #ccc;
+            padding: 15px 0;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .car-info {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .car-info img {
+            width: 100px;
+            height: 60px;
+            margin-right: 10px;
+        }
+
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .pagination span {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <!-- Navbar goes here -->
+</header>
+
+<div class="container">
+    <h2>My Feedback</h2>
+    <p>Average Ratings</p>
+    <div class="average-rating">
+        <span>4.25</span>
+        <div class="stars">
+            <!-- Display average rating stars here -->
+            ★★★★★
+        </div>
+    </div>
+
+    <div class="filter">
+        <button>All (200)</button>
+        <button>5 Stars (100)</button>
+        <button>4 Stars (50)</button>
+        <button>3 Stars (50)</button>
+        <button>2 Stars (0)</button>
+        <button>1 Star (0)</button>
+    </div>
+
+    <div class="feedback-list">
+        <div class="feedback-item">
+            <div class="user-info">
+                <span>User 1234</span>
+                <div class="stars">
+                    ★★★★☆
+                </div>
+                <span class="date">12/02/2022 08:30</span>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vehicula placerat faucibus.</p>
+            <div class="car-info">
+                <img src="car-placeholder.png" alt="Car Image">
+                <div>
+                    <strong>Nissan Navara E1 2017</strong>
+                    <p>From: 13/02/2022 - 12:00 PM</p>
+                    <p>To: 23/02/2022 - 14:00 PM</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repeat feedback items as necessary -->
+    </div>
+
+    <div class="pagination">
+        <span>&laquo;</span>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>&raquo;</span>
+    </div>
+</div>
+
+<footer>
+    <p>Rentercar | Search Cars and Rates | Manage My Booking | Join Us</p>
+</footer>
+</body>
+</html>

@@ -59,4 +59,9 @@ public class homeController {
         return "carowner/AddCar";
     }
 
+   @GetMapping("/my-feedback")
+    public String myFeedback() {
+        return "feedback/MyFeedback";
+    }
+
 }
