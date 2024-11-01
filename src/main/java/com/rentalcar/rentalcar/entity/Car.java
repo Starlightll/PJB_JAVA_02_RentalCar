@@ -27,27 +27,27 @@ public class Car {
     @Column(name = "color")
     private String color;
     @Column(name = "seatNo")
-    private int seat;
+    private Integer seat;
     @Column(name = "productionYear")
-    private int productionYear;
+    private Integer productionYear;
     @Column(name = "transmission")
     private String transmission;
     @Column(name = "fuel")
     private String fuelType;
     @Column(name = "mileage")
-    private double mileage;
+    private Double mileage;
     @Column(name = "fuelConsumption")
-    private double fuelConsumption;
+    private Double fuelConsumption;
     @Column(name = "basePrice")
-    private double basePrice;
+    private Double basePrice;
     @Column(name = "deposit")
-    private double deposit;
+    private Double deposit;
     @Column(name = "description")
     private String description;
     @Column(name = "termOfUse")
     private String terms;
     @Column(name = "carPrice")
-    private double carPrice;
+    private Double carPrice;
     @Column(name = "front")
     private String frontImage;
     @Column(name = "back")

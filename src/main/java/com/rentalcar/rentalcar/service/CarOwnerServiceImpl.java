@@ -58,41 +58,46 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         try{
             Car car = new Car();
             car.setUser(user);
-            car.setLicensePlate(carDraft.getLicensePlate());
-            car.setModel(carDraft.getModel());
-            car.setColor(carDraft.getColor());
-            car.setSeat(carDraft.getSeat());
-            car.setProductionYear(carDraft.getProductionYear());
-            car.setTransmission(carDraft.getTransmission());
-            car.setFuelType(carDraft.getFuelType());
-            car.setMileage(carDraft.getMileage());
-            car.setFuelConsumption(carDraft.getFuelConsumption());
-            car.setBasePrice(carDraft.getBasePrice());
-            car.setDeposit(carDraft.getDeposit());
-            car.setDescription(carDraft.getDescription());
-            car.setTerms(carDraft.getTerms());
-            car.setCarPrice(carDraft.getCarPrice());
-            car.setFrontImage(carDraft.getFrontImage());
-            car.setBackImage(carDraft.getBackImage());
-            car.setLeftImage(carDraft.getLeftImage());
-            car.setRightImage(carDraft.getRightImage());
-            car.setRegistration(carDraft.getRegistration());
-            car.setCertificate(carDraft.getCertificate());
-            car.setInsurance(carDraft.getInsurance());
-            car.setBrand(carDraft.getBrand());
-            car.setLastModified(new Date());
-            setCarStatus(car);
-            //Set car additional Functions
-            setCarAdditionalFunction(carDraft, car);
-            carRepository.save(car);
-            //Set Address for car
-            setCarAddress(carDraft, car);
-            car.getAddress().setCar(car);
-            carRepository.save(car);
-            carDraftRepository.delete(carDraft);
+            if(carRepository.findFirstLicensePlateMatchNative(carDraft.getLicensePlate()) != null){
+                System.out.println("License plate already exists");
+                throw new Exception("License plate already exists");
+            }else{
+                car.setLicensePlate(carDraft.getLicensePlate());
+                car.setModel(carDraft.getModel());
+                car.setColor(carDraft.getColor());
+                car.setSeat(carDraft.getSeat());
+                car.setProductionYear(carDraft.getProductionYear());
+                car.setTransmission(carDraft.getTransmission());
+                car.setFuelType(carDraft.getFuelType());
+                car.setMileage(carDraft.getMileage());
+                car.setFuelConsumption(carDraft.getFuelConsumption());
+                car.setBasePrice(carDraft.getBasePrice());
+                car.setDeposit(carDraft.getDeposit());
+                car.setDescription(carDraft.getDescription());
+                car.setTerms(carDraft.getTerms());
+                car.setCarPrice(carDraft.getCarPrice());
+                car.setFrontImage(carDraft.getFrontImage());
+                car.setBackImage(carDraft.getBackImage());
+                car.setLeftImage(carDraft.getLeftImage());
+                car.setRightImage(carDraft.getRightImage());
+                car.setRegistration(carDraft.getRegistration());
+                car.setCertificate(carDraft.getCertificate());
+                car.setInsurance(carDraft.getInsurance());
+                car.setBrand(carDraft.getBrand());
+                car.setLastModified(new Date());
+                setCarStatus(car);
+                //Set car additional Functions
+                setCarAdditionalFunction(carDraft, car);
+                carRepository.save(car);
+                //Set Address for car
+                setCarAddress(carDraft, car);
+                car.getAddress().setCar(car);
+                carRepository.save(car);
+                carDraftRepository.delete(carDraft);
+            }
         }catch (Exception e){
             System.out.println("Something wrong when save car from draft in car owner service" + e.getMessage());
-            throw e;
+            throw new RuntimeException("Something wrong when save car from draft in car owner service");
         }
     }
 

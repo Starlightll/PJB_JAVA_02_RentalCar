@@ -912,13 +912,31 @@
         }
     </script>
     <script>
+        function checkLicensePlate(licensePlate) {
+            $.ajax({
+                url: '/api/car/check-license-plate',
+                type: 'GET',
+                data: {
+                    licensePlate: licensePlate
+                },
+                success: function(response) {
+                    return !!response.licensePlateExists;
+                },
+                error: function(error) {
+                    console.error('Error checking license plate:', error);
+                    reject(error);
+                    return false;
+                }
+            });
+        }
+
             function showConfirm(){
                 $('#confirmModal').modal('show');
                 $('#ModalTitle').text("Confirm!");
                 $('#ModalBody').html("Do you want to save the car? <br> <p style='color: indianred'>If you don't save, all data will be lost.</p>");
                 $('#confirm').click(function () {
                     saveCar();
-                    window.location.href = '/my-cars';
+
                 });
                 $('#notConfirm').click(function () {
                     deleteDraft();
@@ -936,6 +954,7 @@
                         },
                         success: function (response) {
                             console.log("Car saved successfully", response);
+                            // window.location.href = '/my-cars';
                         },
                         error: function (xhr, status, error) {
                             console.error("Error saving car:", error);
@@ -943,6 +962,8 @@
                     });
                 }
             }
+
+
 
             const carFrontPreviewImage = document.getElementById('carFrontImage');
             const carBackPreviewImage = document.getElementById('carBackImage');
@@ -1006,6 +1027,7 @@
                     },
                     success: function (response) {
                         alert("Draft deleted.");
+                        window.location.href = '/my-cars';
                     },
                     error: function (error) {
                         console.error("Error:", error);

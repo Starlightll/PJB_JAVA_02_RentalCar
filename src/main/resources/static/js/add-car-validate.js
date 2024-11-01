@@ -352,6 +352,8 @@ const setupModelValidation = (inputElement, msgElement) => {
 
 
 
+
+
 let pageStep = 1;
 // Initialize validation when document is ready
 document.addEventListener('DOMContentLoaded', function() {
