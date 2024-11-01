@@ -58,10 +58,10 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         try{
             Car car = new Car();
             car.setUser(user);
-            if(carRepository.findFirstLicensePlateMatchNative(carDraft.getLicensePlate()) != null){
-                System.out.println("License plate already exists");
-                throw new Exception("License plate already exists");
-            }else{
+//            if(carRepository.findFirstLicensePlateMatchNative(carDraft.getLicensePlate()) != null){
+//                System.out.println("License plate already exists");
+//                throw new Exception("License plate already exists");
+//            }else{
                 car.setLicensePlate(carDraft.getLicensePlate());
                 car.setModel(carDraft.getModel());
                 car.setColor(carDraft.getColor());
@@ -94,7 +94,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 car.getAddress().setCar(car);
                 carRepository.save(car);
                 carDraftRepository.delete(carDraft);
-            }
+//            }
         }catch (Exception e){
             System.out.println("Something wrong when save car from draft in car owner service" + e.getMessage());
             throw new RuntimeException("Something wrong when save car from draft in car owner service");
