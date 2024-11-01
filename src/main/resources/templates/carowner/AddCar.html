@@ -774,6 +774,24 @@
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
+        function checkLicensePlate(licensePlate) {
+            $.ajax({
+                url: '/api/car/check-license-plate',
+                type: 'GET',
+                data: {
+                    licensePlate: licensePlate
+                },
+                success: function(response) {
+                    return !!response.licensePlateExists;
+                },
+                error: function(error) {
+                    console.error('Error checking license plate:', error);
+                    reject(error);
+                    return false;
+                }
+            });
+        }
+
         function saveDraft() {
             const licensePlate = document.getElementById('licensePlate').value;
             const color = document.getElementById('color').value;
@@ -912,23 +930,7 @@
         }
     </script>
     <script>
-        function checkLicensePlate(licensePlate) {
-            $.ajax({
-                url: '/api/car/check-license-plate',
-                type: 'GET',
-                data: {
-                    licensePlate: licensePlate
-                },
-                success: function(response) {
-                    return !!response.licensePlateExists;
-                },
-                error: function(error) {
-                    console.error('Error checking license plate:', error);
-                    reject(error);
-                    return false;
-                }
-            });
-        }
+
 
             function showConfirm(){
                 $('#confirmModal').modal('show');

@@ -14,6 +14,8 @@ const licensePlatePatterns = {
 };
 
 
+
+
 // Regex patterns for Money
 const moneyPatterns = {
     // 0-9999999999
