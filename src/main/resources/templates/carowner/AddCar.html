@@ -937,7 +937,7 @@
                 $('#ModalTitle').text("Confirm!");
                 $('#ModalBody').html("Do you want to save the car? <br> <p style='color: indianred'>If you don't save, all data will be lost.</p>");
                 $('#confirm').click(function () {
-                    saveCar();
+                    addCar();
 
                 });
                 $('#notConfirm').click(function () {
@@ -946,10 +946,10 @@
                 });
             }
 
-            function saveCar(){
+            function addCar(){
                 if(checkStep1() && checkStep2() && checkStep3() && checkStep4()){
                     $.ajax({
-                        url: '/save-car',
+                        url: '/add-car',
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken

@@ -5,7 +5,7 @@
 >
 <head>
     <title>Edit Car</title>
-
+    <meta name="_csrf" th:content="${_csrf.token}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         .hero-wrap {
@@ -247,6 +247,28 @@
 <th:block layout:fragment="content">
     <body>
 
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalTitle">No Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="ModalBody">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="confirm">Yes</button>
+                    <button type="button" class="btn btn-secondary" id="notConfirm">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -293,12 +315,13 @@
                 <div class="col-md-12">
                     <div class="table-wrap">
                         <div class="d-flex justify-content-center">
-                            <div class="card align-items-start display-flex-center"
+                            <div class="card align-items-start display-flex-center align-items-center"
                                  style="">
                                 <div class="card-body text-left w-100">
                                     <h5 class="card-title"></h5>
                                     <div class="row d-flex justify-content-center">
                                         <th:block th:object="${car}">
+                                            <input type="text" th:value="${car.getCarId()}" th:id="carId" hidden>
                                             <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
                                                 <div class="col-lg-6 col-md-6 d-flex align-items-center">
                                                     <div class="wrapper" style="max-height: 270px">
@@ -428,33 +451,44 @@
                                                     </div>
                                                     <a class="validate-msg" id="LicensePlateValidate">Invalid</a>
                                                 </div>
-                                                <div class="col-lg-6 mb-3 ">
+                                                <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
-                                                        <div class="input-group-prepend">
-                                                                        <span class="input-group-text "
-                                                                        >Color</span>
+                                                        <div class="input-group-prepend" >
+                                                            <label class="input-group-text "
+                                                                   for="color"
+                                                            >Color</label>
                                                         </div>
-                                                        <input type="text" class="form-control"
-                                                               aria-label="Sizing example input"
-                                                               aria-describedby="inputGroup-sizing-default"
-                                                               id="color" name="licensePlate" th:value="${car.color}"
-                                                               readonly>
+                                                        <select class="custom-select"
+                                                                id="color" name="color" disabled>
+                                                            <option value="" th:selected="${car.color == null}">Choose...</option>
+                                                            <option value="Red" th:selected="${car.color == 'Red'}">Red</option>
+                                                            <option value="Green" th:selected="${car.color == 'Green'}">Green</option>
+                                                            <option value="Blue" th:selected="${car.color == 'Blue'}">Blue</option>
+                                                            <option value="Black" th:selected="${car.color == 'Black'}">Black</option>
+                                                            <option value="Grey" th:selected="${car.color == 'Grey'}">Grey</option>
+                                                            <option value="Gold" th:selected="${car.color == 'Gold'}">Gold</option>
+                                                            <option value="Silver" th:selected="${car.color == 'Silver'}">Silver</option>
+                                                        </select>
                                                     </div>
-                                                    <a class="validate-msg" id="colorValidate">Invalid</a>
+                                                    <a class="validate-msg">Invalid</a>
                                                 </div>
-                                                <div class="col-lg-6 mb-3 ">
+                                                <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
-                                                        <div class="input-group-prepend">
-                                                                        <span class="input-group-text "
-                                                                        >Brand</span>
+                                                        <div class="input-group-prepend" >
+                                                            <label class="input-group-text "
+                                                                   for="brand">Brand
+                                                                Name</label>
                                                         </div>
-                                                        <input type="text" class="form-control"
-                                                               aria-label="Sizing example input"
-                                                               aria-describedby="inputGroup-sizing-default"
-                                                               id="brand" name="licensePlate"
-                                                               th:value="${car.brand.getBrandName()}" readonly>
+                                                        <select class="custom-select" id="brand" name="brand" disabled>
+                                                            <option value="">Choose...</option>
+                                                            <th:block th:each="brand : ${brands}">
+                                                                <option th:value="${brand.brandId}"
+                                                                        th:text="${brand.brandName}"
+                                                                        th:selected="${car.brand?.brandId == brand.brandId}"></option>
+                                                            </th:block>
+                                                        </select>
                                                     </div>
-                                                    <a class="validate-msg" id="brandValidate">Invalid</a>
+                                                    <a class="validate-msg">Invalid</a>
                                                 </div>
                                                 <div class="col-lg-6 mb-3 ">
                                                     <div class="input-group input-group-sm">
@@ -816,6 +850,15 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div>
+                                    <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                                            onclick="window.history.back()">Back</button>
+                                    <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                                            onclick="window.location.reload()">Discard</button>
+                                    <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                                            onclick="updateCar()">Save</button>
+                                </div>
+
                             </div>
 
                         </div>
@@ -838,6 +881,128 @@
 
 
     <script>
+        const csrfToken = $('meta[name="_csrf"]').attr('content');
+
+        function updateCar(){
+            const mileage = document.getElementById('mileage').value;
+            const fuelConsumption = document.getElementById('fuelConsumption').value;
+            const province = document.getElementById('province').value +"," + document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
+            const district = document.getElementById('district').value +"," + document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
+            const ward = document.getElementById('ward').value +"," + document.getElementById('ward').options[document.getElementById('ward').selectedIndex].text;
+            const street = document.getElementById('street').value;
+            const checkboxes = document.querySelectorAll('input[name="additionalFunction"]:checked');
+            const additionalFunction = [];
+            checkboxes.forEach((checkbox) => {
+                additionalFunction.push(checkbox.value);
+            });
+            const basePrice = document.getElementById('basePrice').value;
+            const deposit = document.getElementById('deposit').value;
+            const termOfUse = document.getElementById('termOfUse').value;
+            const carPrice = document.getElementById('carPrice').value;
+            const carId = document.getElementById('carId').value;
+
+            const carData = {
+                mileage: mileage,
+                fuelConsumption: fuelConsumption,
+                additionalFunction: additionalFunction.join(','),
+                province: province,
+                district: district,
+                ward: ward,
+                home: street,
+                basePrice: basePrice,
+                deposit: deposit,
+                terms: termOfUse,
+                carPrice: carPrice,
+                description: "",
+            };
+
+            const formData = new FormData();
+            //Add carId to formData
+            formData.append("carId", carId);
+            // Add the carDraft object as JSON string
+            formData.append("carData", JSON.stringify(carData));
+
+            const fileInputs = {
+                "frontImage": document.getElementById("input-file4"),
+                "backImage": document.getElementById("input-file5"),
+                "leftImage": document.getElementById("input-file6"),
+                "rightImage": document.getElementById("input-file7")
+            };
+
+            // Check if files exist before adding to FormData
+            for (const [key, input] of Object.entries(fileInputs)) {
+                if (input && input.files && input.files[0]) {
+                    formData.append(key, input.files[0]);
+                } else {
+                    // If file is not selected, append null or empty file to maintain the structure
+                    formData.append(key, new Blob([], { type: 'application/octet-stream' }));
+                }
+            }
+            console.log(carData);
+            console.log(fileInputs);
+
+            $.ajax({
+                url: '/update-car',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function (response) {
+                    console.log("Car updated successfully", response);
+                    return true;
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 400) {
+                        // Display the custom error message from the server
+                        $('#confirmModal').modal('show');
+                        $('#ModalTitle').text("Format!");
+                        $('#ModalBody').html(xhr.responseText);
+                        $('#confirm').text("OK").click(function () {
+                            $('#confirmModal').modal('hide');
+                        });
+                        $('#notConfirm').hide();
+                    } else {
+                        console.log("Other Error:", error);
+                    }
+                    return false;
+                }
+            });
+        }
+
+        const MAX_FILE_MB = 200;
+        const MAX_SIZE_BYTES = MAX_FILE_MB * 1024 * 1024;
+        function uploadfile(imageView, inputFile) {
+            const file = inputFile.files[0];
+            if (file) {
+                const validExtensions = ["jpg", "jpeg", "png"];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if(file.size > MAX_SIZE_BYTES){
+                    alert("File size must be less than 200MB");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+                // Kiểm tra phần mở rộng file
+                if (!validExtensions.includes(fileExtension)) {
+                    alert("Chỉ chấp nhận các định dạng file ảnh: .jpg, .jpeg, .png");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+
+                const fileReader = new FileReader();
+                fileReader.onload = function(e) {
+                    imageView.style.backgroundImage = `url(${e.target.result})`;
+                    imageView.style.backgroundSize = "cover";
+                    imageView.style.backgroundPosition = "center";
+                    imageView.innerHTML = "";
+                };
+                fileReader.readAsDataURL(file); // Đọc file dưới dạng URL để hiển thị
+            }
+        }
+
+
         function displayExistingImage(imageView, imageUrl) {
             if (imageUrl) {
                 if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {

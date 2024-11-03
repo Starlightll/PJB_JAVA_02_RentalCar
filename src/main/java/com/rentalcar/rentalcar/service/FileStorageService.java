@@ -19,4 +19,6 @@ public interface FileStorageService {
 
     public boolean moveFiles(Path sourceFolder, Path destinationFolder);
 
+    public void deleteFile(Path filePath);
+
 }

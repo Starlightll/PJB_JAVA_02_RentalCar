@@ -95,6 +95,8 @@ public class FileStorageServiceImpl implements FileStorageService{
         }
     }
 
+
+
     @Override
     public void changeFolderName(String oldFolderName, String newFolderName) {
     }
@@ -123,6 +125,19 @@ public class FileStorageServiceImpl implements FileStorageService{
             }
             System.err.println("Error when moving files: " + e.getMessage());
             return false;
+        }
+    }
+
+    @Override
+    public void deleteFile(Path filePath) {
+        try {
+            //Check if the file exists
+            if (!Files.exists(filePath)) {
+                return;
+            }
+            Files.delete(filePath);
+        } catch (IOException e) {
+            throw new FileStorageException("Could not delete file", e);
         }
     }
 }

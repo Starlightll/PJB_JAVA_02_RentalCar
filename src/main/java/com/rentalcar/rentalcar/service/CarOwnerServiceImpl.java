@@ -4,11 +4,11 @@ import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
-import org.apache.poi.ss.formula.functions.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,16 +17,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.aspectj.util.FileUtil.copyFiles;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 @Service
 public class CarOwnerServiceImpl implements CarOwnerService {
 
     @Autowired
     private CarRepository carRepository;
-
     @Autowired
-    AdditionalFunctionRepository additionalFunctionRepository;
+    private AdditionalFunctionRepository additionalFunctionRepository;
     @Autowired
     private CarDraftRepository carDraftRepository;
     @Autowired
@@ -51,8 +50,64 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
 
     @Override
-    public void updateCar(Car car) {
+    public void updateCar(Car carUpdate, MultipartFile[] files, User user, Integer carId) {
+        try{
+            Car car = carRepository.findById(carId).get();
+            // Create folder path
+            String folderName = String.format("%s", car.getCarId()+"");
+            Path carFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", folderName);
+            Path imageFilePath;
+            // Store each file if it exists
+            //Front image
+            if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
+                imageFilePath = Paths.get(car.getFrontImage());
+                fileStorageService.deleteFile(imageFilePath);
+                files[0].getSize();
+                String storedPath = fileStorageService.storeFile(files[0], carFolderPath, "frontImage."+getExtension(files[0].getOriginalFilename()));
+                car.setFrontImage(storedPath);
+            }
+            //Back image
+            if (files[1] != null && !files[1].isEmpty() && files[1].getSize() > 0) {
+                imageFilePath = Paths.get(car.getBackImage());
+                fileStorageService.deleteFile(imageFilePath);
+                files[1].getSize();
+                String storedPath = fileStorageService.storeFile(files[1], carFolderPath, "backImage."+getExtension(files[1].getOriginalFilename()));
+                car.setBackImage(storedPath);
+            }
+            //Left image
+            if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
+                imageFilePath = Paths.get(car.getLeftImage());
+                fileStorageService.deleteFile(imageFilePath);
+                files[2].getSize();
+                String storedPath = fileStorageService.storeFile(files[2], carFolderPath, "leftImage."+getExtension(files[2].getOriginalFilename()));
+                car.setLeftImage(storedPath);
+            }
+            //Right image
+            if (files[3] != null && !files[3].isEmpty() && files[3].getSize() > 0) {
+                imageFilePath = Paths.get(car.getRightImage());
+                fileStorageService.deleteFile(imageFilePath);
+                files[3].getSize();
+                String storedPath = fileStorageService.storeFile(files[3], carFolderPath, "rightImage."+getExtension(files[3].getOriginalFilename()));
+                car.setRightImage(storedPath);
+            }
 
+            //Details Information
+            car.setMileage(carUpdate.getMileage());
+            car.setFuelConsumption(carUpdate.getFuelConsumption());
+            //Set car Address
+            setCarAddress(car, carUpdate);
+            //Set car Additional Functions
+            setCarAdditionalFunction(car, carUpdate);
+            car.setBasePrice(carUpdate.getBasePrice());
+            car.setCarPrice(carUpdate.getCarPrice());
+            car.setDeposit(carUpdate.getDeposit());
+            car.setTerms(carUpdate.getTerms());
+            car.setLastModified(new Date());
+            carRepository.save(car);
+        }catch (Exception e){
+            System.out.println("Something wrong when update car in car owner service" + e.getMessage());
+            throw new RuntimeException("Something wrong when update car in car owner service");
+        }
     }
 
     @Override
@@ -62,7 +117,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     @Override
     @Transactional
-    public void saveCar(CarDraft carDraft, User user) {
+    public void addCar(CarDraft carDraft, User user) {
         try{
             Car car = new Car();
             car.setUser(user);
@@ -104,9 +159,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         }
     }
 
-    private void updateCar(){
-
-    }
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
@@ -143,8 +195,25 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         car.setAddress(address);
     }
 
+    private void setCarAddress(Car car, Car carUpdate){
+        try{
+            CarAddress address = car.getAddress();
+            address.setProvinceId(carUpdate.getAddress().getProvinceId());
+            address.setDistrictId(carUpdate.getAddress().getDistrictId());
+            address.setWardId(carUpdate.getAddress().getWardId());
+            address.setProvince(carUpdate.getAddress().getProvince());
+            address.setDistrict(carUpdate.getAddress().getDistrict());
+            address.setWard(carUpdate.getAddress().getWard());
+            address.setStreet(carUpdate.getAddress().getStreet());
+            car.setAddress(address);
+        }catch (Exception e){
+            System.out.println("Something wrong when parse Integer with the address Ids");
+        }
+    }
+
     private void setCarAdditionalFunction(CarDraft carDraft, Car car) {
         try {
+//            carAdditionalFunctionRepository.deleteAllByCarId(car.getCarId());
             Set<AdditionalFunction> additionalFunctions = new HashSet<>();
             String[] functionIds = carDraft.getAdditionalFunction().split(",");
             for (String idStr : functionIds) {
@@ -156,6 +225,20 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 }
             }
             car.setAdditionalFunctions(additionalFunctions);
+        }catch (Exception e){
+            System.out.println("Something wrong when set additional function for car in car owner service" + e.getMessage());
+        }
+    }
+
+    private void setCarAdditionalFunction(Car car, Car carUpdate) {
+        try {
+////            carAdditionalFunctionRepository.deleteAllByCarId(car.getCarId());
+//            Set<AdditionalFunction> additionalFunctions = car.getAdditionalFunctions();
+//            additionalFunctions.clear();
+//            additionalFunctions = carUpdate.getAdditionalFunctions();
+//            car.setAdditionalFunctions(additionalFunctions);
+            car.getAdditionalFunctions().clear();
+            car.setAdditionalFunctions(carUpdate.getAdditionalFunctions());
         }catch (Exception e){
             System.out.println("Something wrong when set additional function for car in car owner service" + e.getMessage());
         }
