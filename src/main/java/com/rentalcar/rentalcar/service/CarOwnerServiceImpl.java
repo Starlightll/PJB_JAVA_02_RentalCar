@@ -10,10 +10,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.aspectj.util.FileUtil.copyFiles;
 
 @Service
 public class CarOwnerServiceImpl implements CarOwnerService {
@@ -25,6 +29,10 @@ public class CarOwnerServiceImpl implements CarOwnerService {
     AdditionalFunctionRepository additionalFunctionRepository;
     @Autowired
     private CarDraftRepository carDraftRepository;
+    @Autowired
+    private FileStorageService fileStorageService;
+    @Autowired
+    private CarDraftService carDraftService;
 
     @Override
     public Set<Car> listCars() {
@@ -76,13 +84,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 car.setDescription(carDraft.getDescription());
                 car.setTerms(carDraft.getTerms());
                 car.setCarPrice(carDraft.getCarPrice());
-                car.setFrontImage(carDraft.getFrontImage());
-                car.setBackImage(carDraft.getBackImage());
-                car.setLeftImage(carDraft.getLeftImage());
-                car.setRightImage(carDraft.getRightImage());
-                car.setRegistration(carDraft.getRegistration());
-                car.setCertificate(carDraft.getCertificate());
-                car.setInsurance(carDraft.getInsurance());
                 car.setBrand(carDraft.getBrand());
                 car.setLastModified(new Date());
                 setCarStatus(car);
@@ -92,8 +93,10 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 //Set Address for car
                 setCarAddress(carDraft, car);
                 car.getAddress().setCar(car);
+                //Set car files
+                setCarFiles(car, carDraft, user);
                 carRepository.save(car);
-                carDraftRepository.delete(carDraft);
+                carDraftService.deleteDraftByUserId(user.getId());
 //            }
         }catch (Exception e){
             System.out.println("Something wrong when save car from draft in car owner service" + e.getMessage());
@@ -157,5 +160,25 @@ public class CarOwnerServiceImpl implements CarOwnerService {
             System.out.println("Something wrong when set additional function for car in car owner service" + e.getMessage());
         }
     }
+
+
+    private void setCarFiles(Car car, CarDraft carDraft, User user){
+        //Car files
+        Path sourceFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
+        Path targetFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", car.getCarId()+"");
+        if(fileStorageService.moveFiles(sourceFolder, targetFolder)){
+            car.setFrontImage(carDraft.getFrontImage().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setBackImage(carDraft.getBackImage().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setLeftImage(carDraft.getLeftImage().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setRightImage(carDraft.getRightImage().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setRegistration(carDraft.getRegistration().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setCertificate(carDraft.getCertificate().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setInsurance(carDraft.getInsurance().replace(sourceFolder.toString(), targetFolder.toString()));
+        }else{
+            System.out.println("Error when copy files from draft to car");
+            throw new RuntimeException("Error when copy files from draft to car");
+        }
+    }
+
 }
 

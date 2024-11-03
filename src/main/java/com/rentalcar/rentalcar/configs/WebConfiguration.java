@@ -50,7 +50,7 @@ public class WebConfiguration {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/homepage-guest").permitAll()
-                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
+                        .requestMatchers("/myProfile", "/change-password", "/carowner").hasAnyAuthority("Customer", "Car Owner")
                         .requestMatchers("/homepage-customer").hasAuthority("Customer")
                         .requestMatchers("/homepage-carowner").hasAuthority("Car Owner")
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()

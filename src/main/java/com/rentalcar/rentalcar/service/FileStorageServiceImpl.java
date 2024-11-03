@@ -14,10 +14,8 @@ import com.rentalcar.rentalcar.exception.FileStorageException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
 public class FileStorageServiceImpl implements FileStorageService{
@@ -94,6 +92,37 @@ public class FileStorageServiceImpl implements FileStorageService{
             FileUtils.deleteDirectory(new File(folderPath.toString()));
         } catch (IOException e) {
             throw new FileStorageException("Could not delete folder", e);
+        }
+    }
+
+    @Override
+    public void changeFolderName(String oldFolderName, String newFolderName) {
+    }
+
+
+    @Override
+    public boolean moveFiles(Path sourceDir, Path targetDir) {
+        try {
+            if (!Files.exists(targetDir)) {
+                Files.createDirectories(targetDir);
+            }
+
+            DirectoryStream<Path> stream = Files.newDirectoryStream(sourceDir);
+            for (Path file : stream) {
+                Path targetPath = targetDir.resolve(file.getFileName());
+                Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+            System.out.println("Files moved successfully.");
+            return true;
+        } catch (IOException e) {
+            //Delete the created folder
+            try {
+                FileUtils.deleteDirectory(new File(targetDir.toString()));
+            } catch (IOException ex) {
+                throw new FileStorageException("Could not delete folder", ex);
+            }
+            System.err.println("Error when moving files: " + e.getMessage());
+            return false;
         }
     }
 }

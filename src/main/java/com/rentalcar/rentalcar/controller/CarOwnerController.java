@@ -10,6 +10,10 @@ import com.rentalcar.rentalcar.service.CarOwnerService;
 import com.rentalcar.rentalcar.service.FileStorageService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,21 +49,23 @@ public class CarOwnerController {
 
 
     @GetMapping("/my-cars")
-    public String myCar(Model model) {
-        List<Car> cars = new ArrayList<>();
-        Car car = new Car();
-        User user = (User) httpSession.getAttribute("user");
-        if (user != null) {
-//            if(field != null){
-//                    cars = carOwnerService.findAllWithSortDesc(field);
-//            }else{
-                cars = carRepository.getCarsByUser(user);
-                if(cars.isEmpty()){
-                    model.addAttribute("message", "You have no cars");
-                }else{
-                    model.addAttribute("carList", cars);
-                }
-//            }
+    public String myCar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "lastModified") String sortBy,
+            @RequestParam(defaultValue = "asc") String order,
+            Model model) {
+
+        Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(sorDirection, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Car> carPage = carRepository.findAll(pageable);
+        List<Car> cars = carPage.getContent();
+
+        if(cars.isEmpty()){
+            model.addAttribute("message", "You have no cars");
+        }else{
+            model.addAttribute("carList", cars);
         }
         return "/carowner/MyCars";
     }

@@ -14,4 +14,9 @@ public interface FileStorageService {
     Resource loadAsResource(String filename);
 
     public void deleteFolder(Path folderPath);
+
+    public void changeFolderName(String oldFolderName, String newFolderName);
+
+    public boolean moveFiles(Path sourceFolder, Path destinationFolder);
+
 }

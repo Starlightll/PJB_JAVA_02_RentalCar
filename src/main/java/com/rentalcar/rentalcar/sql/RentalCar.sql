@@ -261,3 +261,9 @@ INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('
 
 INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED');
 
+
+-- SQL to delete all information of carDraft, Car and relative information of Car
+-- DELETE FROM CarDraft WHERE CarDraft.draftId > 0;
+-- DELETE FROM CarAdditionalFunction WHERE CarAdditionalFunction.AdditionalFunctionId > 0;
+-- DELETE FROM CarAddress WHERE CarAddress.addressId > 0;
+-- DELETE FROM Car WHERE Car.carId > 0;

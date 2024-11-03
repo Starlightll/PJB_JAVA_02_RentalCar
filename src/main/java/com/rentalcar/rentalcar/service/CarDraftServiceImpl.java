@@ -34,8 +34,8 @@ public class CarDraftServiceImpl implements CarDraftService {
         //Delete all files in the folder
         CarDraft carDraft = getDraftByLastModified(userId);
         if (carDraft != null) {
-            String folderName = String.format("%s_%d_%s", carDraft.getUser().getUsername(), carDraft.getUser().getId(), carDraft.getDraftId());
-            Path draftFolderPath = Paths.get("uploads", folderName);
+            String folderName = String.format("%s", carDraft.getDraftId()+"");
+            Path draftFolderPath = Paths.get("uploads/CarOwner/"+userId+"/Draft/", folderName);
             fileStorageService.deleteFolder(draftFolderPath);
         }
         carDraftRepository.deleteDraftByUserId(userId);
@@ -47,8 +47,8 @@ public class CarDraftServiceImpl implements CarDraftService {
         String draftId = carDraft != null ? carDraft.getDraftId().toString() : UUID.randomUUID().toString();
 
         // Create folder path
-        String folderName = String.format("%s_%d_%s", user.getUsername(), user.getId(), draftId);
-        Path draftFolderPath = Paths.get("uploads", folderName);
+        String folderName = String.format("%s", draftId);
+        Path draftFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", folderName);
 
         try {
 
@@ -68,7 +68,7 @@ public class CarDraftServiceImpl implements CarDraftService {
             //Left image
             if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
                 files[2].getSize();
-                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "backImage."+getExtension(files[2].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "leftImage."+getExtension(files[2].getOriginalFilename()));
                 carDraft.setLeftImage(storedPath);
             }
             //Right image
