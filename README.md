@@ -27,14 +27,32 @@ The **Car Rental System** is a web application designed for customers to rent ca
 ## Getting Started
 
 ### Prerequisites
-- **Java 11+**
-- **Spring Boot**
-- **MySQL** for database
+- **Java 17+**
+- **Spring Boot**Navigate to the project directory:
+- **SQL Server** for database
 - **Thymeleaf** for server-side rendering (Optional if using frontend frameworks)
 - **Maven** or **Gradle** for dependency management
 
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/car-rental-system.git
+   git clone https://github.com/Starlightll/PJB_JAVA_02_RentalCar.git
    ```
+2. Navigate to the project directory:
+```bash
+cd car-rental-system
+```
+3. Configure the database in the `application.properties`
+```properties
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.url= jdbc:sqlserver://localhost:1433;encrypt=true;databaseName=RentalCar;encrypt=false;
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+spring.jpa.hibernate.dialect=org.hibernate.dialect.SQLServer2012Dialect
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+```
+4. Run the application:
+   ```bash
+   mvn spring-boot:run
+   ```
+
