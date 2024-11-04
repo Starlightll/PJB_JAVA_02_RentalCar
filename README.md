@@ -61,14 +61,14 @@ The **Car Rental System** is a web application designed for customers to rent ca
 - ...
 - UPDATING
 
-##Usage
+## Usage
 ### Customers:
 - Create an account or log in.
 - Search for available cars based on location, pick-up, and drop-off times.
 - View car details and rent a car.
 - Manage bookings, confirm pick-up, and return cars.
 
-###Car Owners:
+### Car Owners:
 - Register as a car owner.
 - List available cars and manage car information.
 - Confirm bookings, deposits, and payments.
