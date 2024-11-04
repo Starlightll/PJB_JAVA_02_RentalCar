@@ -11,14 +11,15 @@ import com.rentalcar.rentalcar.service.RegisterUserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Controller
@@ -128,16 +129,20 @@ public class RegistrationController {
     }
 
     @PostMapping("send-activation")
-    public String handleSendActivation(@Valid @ModelAttribute ForgotDto forgotDto, BindingResult result, Model model,  RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> handleSendActivation(@Valid @ModelAttribute ForgotDto forgotDto, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+
+        Map<String, String> response = new HashMap<>();
         if(result.hasErrors()) {
-            model.addAttribute("forgotDto", forgotDto);
-            return "UserManagement/send-activation";
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(response);
         }
         try {
             userService.resendActivationToken(forgotDto.getEmail()); // Gửi lại token
             // Thêm thông báo thành công vào RedirectAttributes
-            redirectAttributes.addFlashAttribute("successMessage", "A new activation link has been sent to your email.");
-            return "redirect:/send-activation";
+            response.put("success", "A new activation link has been sent to your email.");
+            return ResponseEntity.ok(response); // Trả về thành công
+
         } catch (UserException e) {
             switch (e.getMessage()) {
                 case "User not found.":
@@ -147,9 +152,8 @@ public class RegistrationController {
                     result.rejectValue("email", "error.email", "Account is already activated.");
                     break;
             }
-            model.addAttribute("forgotDto", forgotDto);
-
-            return "UserManagement/send-activation";
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(response); // Trả về lỗi kèm thông báo lỗi
         }
 
 

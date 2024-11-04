@@ -1,11 +1,35 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>My Feedback</title>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> My Feedback</title>
+<!--    <link href="css/myProfileStyle.css" rel="stylesheet">-->
     <link rel="stylesheet" href="/css/feedback.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Poppins", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container-myProfile {
+            position: relative;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            z-index: 400;
+            display: flex;
+            flex-direction: column;
+            top: 15%;
+
         }
 
         .container {
@@ -13,9 +37,6 @@
             margin: auto;
         }
 
-        h2 {
-            text-align: center;
-        }
 
         .average-rating {
             text-align: center;
@@ -72,14 +93,40 @@
             cursor: pointer;
         }
 
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #01d28e;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+
+        }
     </style>
 </head>
 <body>
-<header>
-    <!-- Navbar goes here -->
-</header>
+<th:block layout:fragment="content">
+<body>
+<div class="blur-background"></div>
 
 <div class="container">
+
+    <div class="wrapper mt-md-0 mt-sm-0 mt-lg-5">
+    <div class="container-myProfile mt-lg-5">
     <h2>My Feedback</h2>
     <p>Average Ratings</p>
     <div class="average-rating">
@@ -119,6 +166,24 @@
             </div>
         </div>
 
+        <div class="feedback-item">
+            <div class="user-info">
+                <span>User 1234</span>
+                <div class="stars">
+                    ★★★★☆
+                </div>
+                <span class="date">12/02/2022 08:30</span>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vehicula placerat faucibus.</p>
+            <div class="car-info">
+                <img src="car-placeholder.png" alt="Car Image">
+                <div>
+                    <strong>Nissan Navara E1 2017</strong>
+                    <p>From: 13/02/2022 - 12:00 PM</p>
+                    <p>To: 23/02/2022 - 14:00 PM</p>
+                </div>
+            </div>
+        </div>
         <!-- Repeat feedback items as necessary -->
     </div>
 
@@ -129,10 +194,11 @@
         <span>3</span>
         <span>&raquo;</span>
     </div>
+    </div>
+    </div>
 </div>
 
-<footer>
-    <p>Rentercar | Search Cars and Rates | Manage My Booking | Join Us</p>
-</footer>
+</body>
+</th:block>
 </body>
 </html>

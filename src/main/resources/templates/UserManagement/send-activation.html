@@ -131,9 +131,6 @@
 <body>
 
 <div class="content-container">
-<div  class="navbar-dark ftco-navbar-light">
-    <a class="navbar-brand" href="/">Car<span>Book</span></a>
-</div>
 <div class="blur-background"></div>
 
 
@@ -141,26 +138,23 @@
     <h2>Send account activation email</h2>
 
 
-    <div class="alert-success" th:if="${successMessage}">
-        <p style="color: #67c23a">
-            <i class="bi bi-check-circle"></i>
-            <span  th:text="${successMessage}"></span>
-        </p>
-    </div>
-
     <div th:if="${successMessage == null}">
         <p>
             Account activation email is sent when registering for a <strong>Car Rental</strong> account. If you do not receive it, please provide us
             with your <strong>Car Rental</strong> registered email address. We will send you an account activation email again.</p>
     </div>
+    <!--  Hiển thị thành công-->
+    <div class="alert-success" id="success-message" style="display: none;">
+        <p style="color: #67c23a;margin: 10px 20px 10px 20px;">
+            <i class="bi bi-check-circle"></i>
+            <span id="success-text"></span>
+        </p>
+    </div>
 
-
-    <form method="POST" th:action="@{/send-activation}" class="register-form" id="forgot-password-form"  th:object="${forgotDto}">
-
-        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+    <form method="POST" th:action="@{/send-activation}" id="resend-activation-form"  th:object="${forgotDto}">
 
         <div class="form-group">
-            <input type="email" name="email"  th:field="*{email}" placeholder="Your Email" required />
+            <input type="email" name="email" id="email"  th:field="*{email}" placeholder="Your Email" required />
         </div>
         <div class="form-button">
             <input type="submit" name="Send" class="form-submit" value="Send"/>
@@ -173,5 +167,40 @@
 <!-- JS -->
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="js/main.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#resend-activation-form').on('submit', function (event) {
+            event.preventDefault(); // Ngăn form submit
+
+            $.ajax({
+                type: 'POST',
+                url: '/send-activation',
+                data: $(this).serialize(),
+
+                success: function (response) {
+                    // Xóa thông báo lỗi cũ nếu có
+                    $('.error').remove();
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        $('#success-text').text(response.success);
+                        $('#success-message').show(); // Hiện thị phần thành công
+                    }
+                },
+
+                error: function (xhr) {
+                    const errors = xhr.responseJSON;
+                    $('.error').remove();
+                    $('#success-message').hide();
+                    // Hiển thị lỗi từ validation trên từng trường
+                    for (const field in errors) {
+                        $(`#${field}`).after(`<span class="error" style="color: red">${errors[field]}</span>`);
+                    }
+                }
+            });
+        });
+    });
+
+</script>
 </body>
 </html>
