@@ -7,6 +7,11 @@
     <title>Edit Car</title>
     <meta name="_csrf" th:content="${_csrf.token}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         .hero-wrap {
             height: 200px !important;
@@ -600,8 +605,8 @@
                                         </div>
                                         <div class="tab-pane fade" id="nav-profile" role="tabpanel"
                                              aria-labelledby="nav-profile-tab">
-                                            <div class="row d-flex justify-content-center w-100">
-                                                <div class="col-lg-6 mb-3 required-label">
+                                            <div class="row">
+                                                <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Mileage</span>
@@ -615,7 +620,7 @@
                                                     <a class="validate-msg" id="mileageValidate">Invalid</a>
                                                 </div>
 
-                                                <div class="col-lg-6 mb-3 required-label">
+                                                <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Fuel consumption</span>
@@ -631,7 +636,7 @@
                                                     </div>
                                                     <a class="validate-msg" id="fuelConsumptionValidate">Invalid</a>
                                                 </div>
-                                                <div class="col-lg-6 mb-3 required-label">
+                                                <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-prepend">
                                                             <label class="input-group-text"
@@ -646,7 +651,7 @@
                                                     <a class="validate-msg">Invalid</a>
                                                 </div>
 
-                                                <div class="col-lg-6 mb-3 required-label">
+                                                <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-prepend">
                                                             <label class="input-group-text"
@@ -661,7 +666,7 @@
                                                     <a class="validate-msg">Invalid</a>
                                                 </div>
 
-                                                <div class="col-lg-6 mb-3 required-label">
+                                                <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-prepend">
                                                             <label class="input-group-text"
@@ -688,7 +693,7 @@
                                                     </div>
                                                     <a class="validate-msg">Invalid</a>
                                                 </div>
-                                                <div>
+                                                <div style="padding:10px">
                                                     <div class="row">
                                                         <th:block th:each="function : ${additionalFunction}">
                                                             <div class="form-check col-lg-3 col-md-6 col-6">
@@ -703,11 +708,11 @@
                                                         </th:block>
                                                     </div>
                                                 </div>
-                                                <div class="document row w-100">
+                                                <div class="document row m-auto w-100">
                                                     <div class="col-lg-3 col-sm-6">
                                                         <input type="hidden" id="frontImage"
                                                                th:value="${car.registration}">
-                                                        <p class="required-label">Front</p>
+                                                        <p class="">Front</p>
                                                         <label for="input-file4" class="drop-area"
                                                                id="drop-area4">
                                                             <input type="file" id="input-file4"
@@ -725,7 +730,7 @@
                                                     <div class="col-lg-3 col-sm-6">
                                                         <input type="hidden" id="backImage"
                                                                th:value="${car.registration}">
-                                                        <p class="required-label">Back</p>
+                                                        <p class="">Back</p>
                                                         <label for="input-file5" class="drop-area"
                                                                id="drop-area5">
                                                             <input type="file" id="input-file5"
@@ -743,7 +748,7 @@
                                                     <div class="col-lg-3 col-sm-6">
                                                         <input type="hidden" id="leftImage"
                                                                th:value="${car.registration}">
-                                                        <p class="required-label">Left</p>
+                                                        <p class="">Left</p>
                                                         <label for="input-file6" class="drop-area"
                                                                id="drop-area6">
                                                             <input type="file" id="input-file6"
@@ -761,7 +766,7 @@
                                                     <div class="col-lg-3 col-sm-6">
                                                         <input type="hidden" id="rightImage"
                                                                th:value="${car.registration}">
-                                                        <p class="required-label">Right</p>
+                                                        <p class="">Right</p>
                                                         <label for="input-file7" class="drop-area"
                                                                id="drop-area7">
                                                             <input type="file" id="input-file7"
@@ -782,7 +787,7 @@
                                         <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
                                             <div>
                                                 <div class="row">
-                                                    <div class="col-lg-6 mb-3 required-label">
+                                                    <div class="col-lg-6 mb-3">
                                                         <div class="input-group input-group-sm">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Base price</span>
@@ -797,7 +802,7 @@
                                                         <a class="validate-msg" id="basePriceValidate">Invalid</a>
                                                     </div>
 
-                                                    <div class="col-lg-6 mb-3 required-label">
+                                                    <div class="col-lg-6 mb-3">
                                                         <div class="input-group input-group-sm">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Car price</span>
@@ -811,7 +816,7 @@
                                                         </div>
                                                         <a class="validate-msg" id="carPriceValidate">Invalid</a>
                                                     </div>
-                                                    <div class="col-lg-6 mb-3 required-label">
+                                                    <div class="col-lg-6 mb-3">
                                                         <div class="input-group input-group-sm">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Deposit</span>
@@ -883,6 +888,8 @@
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
+
+
         function updateCar(){
             const mileage = document.getElementById('mileage').value;
             const fuelConsumption = document.getElementById('fuelConsumption').value;
@@ -940,36 +947,51 @@
             }
             console.log(carData);
             console.log(fileInputs);
-
-            $.ajax({
-                url: '/update-car',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                success: function (response) {
-                    console.log("Car updated successfully", response);
-                    return true;
-                },
-                error: function (xhr, status, error) {
-                    if (xhr.status === 400) {
-                        // Display the custom error message from the server
-                        $('#confirmModal').modal('show');
-                        $('#ModalTitle').text("Format!");
-                        $('#ModalBody').html(xhr.responseText);
-                        $('#confirm').text("OK").click(function () {
-                            $('#confirmModal').modal('hide');
+            if(!validate()){
+                console.warn("Validation failed, try again!.");
+                alert("Validation failed");
+                return false;
+            }else{
+                $.ajax({
+                    url: '/update-car',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function (response) {
+                        console.log("Car updated successfully", response);
+                        Swal.fire({
+                            title: 'Updated!',
+                            text: '' +
+                                '',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                confirmButton: 'my-custom-button'
+                            }
                         });
-                        $('#notConfirm').hide();
-                    } else {
-                        console.log("Other Error:", error);
+                        return true;
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 400) {
+                            // Display the custom error message from the server
+                            $('#confirmModal').modal('show');
+                            $('#ModalTitle').text("Format!");
+                            $('#ModalBody').html(xhr.responseText);
+                            $('#confirm').text("OK").click(function () {
+                                $('#confirmModal').modal('hide');
+                            });
+                            $('#notConfirm').hide();
+                        } else {
+                            console.log("Other Error:", error);
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
+                });
+            }
         }
 
         const MAX_FILE_MB = 200;
@@ -1183,7 +1205,46 @@
         ward.addEventListener('change', function(){
             previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
         });
+
+
+
+
+        function checkDetails(){
+            const mileage = document.getElementById('mileage').value;
+            const fuelConsumption = document.getElementById('fuelConsumption').value;
+            const province = document.getElementById('province').value;
+            const district = document.getElementById('district').value;
+            const ward = document.getElementById('ward').value;
+            const street = document.getElementById('street').value;
+            const checkedValues = [];
+            const frontImage = document.getElementById("input-file4");
+            const backImage = document.getElementById("input-file5");
+            const leftImage = document.getElementById("input-file6")
+            const rightImage = document.getElementById("input-file7")
+            const frontImageUrl = document.getElementById('frontImage').value;
+            const backImageUrl = document.getElementById('backImage').value;
+            const leftImageUrl = document.getElementById('leftImage').value;
+            const rightImageUrl = document.getElementById('rightImage').value;
+
+
+            console.log(checkedValues);
+
+            if (mileage === ''
+                || fuelConsumption === ''
+                || province === ''
+                || district === ''
+                || ward === ''
+                || (frontImage.files.length === 0 && frontImageUrl === '')
+                || (backImage.files.length === 0 && backImageUrl === '')
+                || (leftImage.files.length === 0 && leftImageUrl === '')
+                || (rightImage.files.length === 0 && rightImageUrl === '')) {
+                alert('Please fill all required fields');
+                return false;
+            }
+            return true;
+        }
     </script>
+    <script src="/js/update-car-validate.js"></script>
     </body>
 </th:block>
 </body>
