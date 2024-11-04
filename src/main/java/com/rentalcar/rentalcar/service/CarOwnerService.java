@@ -12,7 +12,7 @@ public interface CarOwnerService {
     Set<Car> listCars();
     List<Car> findAllWithSortDesc(String field);
     List<Car> findAllWithSortAsc(String field);
-    void updateCar(Car car, MultipartFile[] files, User user, Integer carId);
+    void updateCar(Car car, MultipartFile[] files, User user, Integer carId, Integer carStatus);
     void deleteCar(int carId);
     void addCar(CarDraft carDraft, User user);
 }

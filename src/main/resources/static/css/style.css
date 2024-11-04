@@ -14006,3 +14006,11 @@ textarea.form-control {
 }
 
 
+@media (max-width: 575px) {
+    .justify-content--center {
+        -webkit-box-pack: center !important;
+        -ms-flex-pack: center !important;
+        justify-content: center !important;
+    }
+}
+

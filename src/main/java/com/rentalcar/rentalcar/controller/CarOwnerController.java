@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
+import com.rentalcar.rentalcar.entity.CarStatus;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
@@ -49,23 +50,63 @@ public class CarOwnerController {
 
     @GetMapping("/my-cars")
     public String myCar(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "lastModified") String sortBy,
             @RequestParam(defaultValue = "desc") String order,
             Model model,
             HttpSession session) {
         User user = (User) session.getAttribute("user");
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+            case "available", "booked":
+                findByStatus = true;
+                break;
+            default:
+                break;
+        }
         Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(sorDirection, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Car> carPage = carRepository.findAllByUser(user, pageable);
+        Pageable pageable = PageRequest.of(page-1, size, sort);
+        Page<Car> carPage;
+        if(findByStatus){
+            int statusId = 0;
+            if(sortBy.equalsIgnoreCase("available")){
+                statusId = 1;
+            }else{
+                statusId = 2;
+            }
+            pageable = PageRequest.of(page-1, size);
+            carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
+        }else{
+            carPage = carRepository.findAllByUser(user, pageable);
+        }
         List<Car> cars = carPage.getContent();
-
         if(cars.isEmpty()){
             model.addAttribute("message", "You have no cars");
         }else{
             model.addAttribute("carList", cars);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", carPage.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
         }
         return "/carowner/MyCars";
     }
@@ -128,6 +169,8 @@ public class CarOwnerController {
             model.addAttribute("registrationUrl", "/" + registrationPath);
             model.addAttribute("certificateUrl", "/" + certificatePath);
             model.addAttribute("insuranceUrl", "/" + insurancePath);
+            List<CarStatus> carStatus = carStatusRepository.findAll();
+            model.addAttribute("carStatuses", carStatus);
 
         }
         return "carowner/EditCar";
@@ -153,6 +196,7 @@ public class CarOwnerController {
     @PostMapping("/update-car")
     public ResponseEntity<?> saveDraft(
             @RequestParam(value = "carId") Integer carId,
+            @RequestParam(value = "carStatus") Integer carStatus,
             @RequestParam(value = "carData") String carJson,
             @RequestParam(value = "frontImage", required = false) MultipartFile frontImage,
             @RequestParam(value = "backImage", required = false) MultipartFile backImage,
@@ -207,7 +251,7 @@ public class CarOwnerController {
         Car carUpdate = carDraftService.convertCarDraftToCar(carDraft);
         //Update car
         MultipartFile[] files = {frontImage, backImage, leftImage, rightImage};
-        carOwnerService.updateCar(carUpdate, files, user, carId);
+        carOwnerService.updateCar(carUpdate, files, user, carId, carStatus);
         return ResponseEntity.ok("Draft saved successfully");
     }
 

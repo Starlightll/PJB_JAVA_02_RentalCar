@@ -6,8 +6,6 @@ import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +47,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
 
     @Override
-    public void updateCar(Car carUpdate, MultipartFile[] files, User user, Integer carId) {
+    public void updateCar(Car carUpdate, MultipartFile[] files, User user, Integer carId, Integer statusId) {
         try{
             Car car = carRepository.findById(carId).get();
             // Create folder path
@@ -102,6 +100,14 @@ public class CarOwnerServiceImpl implements CarOwnerService {
             car.setDeposit(carUpdate.getDeposit());
             car.setTerms(carUpdate.getTerms());
             car.setLastModified(new Date());
+            CarStatus carStatus = new CarStatus();
+            if(statusId != null){
+                carStatus.setStatusId(statusId);
+                car.setCarStatus(carStatus);
+            }else{
+                carStatus.setStatusId(1);
+                car.setCarStatus(carStatus);
+            }
             carRepository.save(car);
         }catch (Exception e){
             System.out.println("Something wrong when update car in car owner service" + e.getMessage());

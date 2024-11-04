@@ -408,11 +408,21 @@
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${car.getAddress().getProvince()}">No</p>
                                                         </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Status: </p>
-                                                            <p style="color: #5bd77a; font-weight: bold">Available</p>
+                                                        <div class="col-lg-12 mb-3">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="province">Province</label>
+                                                                </div>
+                                                                <select class="custom-select" id="carStatus">
+                                                                    <th:block th:each="carStatus : ${carStatuses}">
+                                                                        <option th:value="${carStatus.statusId}"
+                                                                                th:text="${carStatus.name}"
+                                                                                th:selected="${carStatus.statusId == car.carStatus.statusId}"></option>
+                                                                    </th:block>
+                                                                </select>
+                                                            </div>
+                                                            <a class="validate-msg">Invalid</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -907,6 +917,7 @@
             const termOfUse = document.getElementById('termOfUse').value;
             const carPrice = document.getElementById('carPrice').value;
             const carId = document.getElementById('carId').value;
+            const carStatus = document.getElementById('carStatus').value;
 
             const carData = {
                 mileage: mileage,
@@ -926,6 +937,8 @@
             const formData = new FormData();
             //Add carId to formData
             formData.append("carId", carId);
+            //Add carStatus to formData
+            formData.append("carStatus", carStatus);
             // Add the carDraft object as JSON string
             formData.append("carData", JSON.stringify(carData));
 
