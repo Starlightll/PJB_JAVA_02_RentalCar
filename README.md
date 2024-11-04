@@ -39,20 +39,37 @@ The **Car Rental System** is a web application designed for customers to rent ca
    git clone https://github.com/Starlightll/PJB_JAVA_02_RentalCar.git
    ```
 2. Navigate to the project directory:
-```bash
-cd car-rental-system
-```
+   ```bash
+   cd car-rental-system
+   ```
 3. Configure the database in the `application.properties`
-```properties
-spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
-spring.datasource.url= jdbc:sqlserver://localhost:1433;encrypt=true;databaseName=RentalCar;encrypt=false;
-spring.datasource.username=root
-spring.datasource.password=yourpassword
-spring.jpa.hibernate.dialect=org.hibernate.dialect.SQLServer2012Dialect
-spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-```
+   ```properties
+   spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+   spring.datasource.url= jdbc:sqlserver://localhost:1433;encrypt=true;databaseName=RentalCar;encrypt=false;
+   spring.datasource.username=root
+   spring.datasource.password=yourpassword
+   spring.jpa.hibernate.dialect=org.hibernate.dialect.SQLServer2012Dialect
+   spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+   ```
 4. Run the application:
    ```bash
    mvn spring-boot:run
    ```
+   
+## API Endpoints
+- POST /login: Login to the system.
+- ...
+- UPDATING
+
+##Usage
+### Customers:
+- Create an account or log in.
+- Search for available cars based on location, pick-up, and drop-off times.
+- View car details and rent a car.
+- Manage bookings, confirm pick-up, and return cars.
+
+###Car Owners:
+- Register as a car owner.
+- List available cars and manage car information.
+- Confirm bookings, deposits, and payments.
 
