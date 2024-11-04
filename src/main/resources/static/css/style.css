@@ -4215,7 +4215,7 @@ input[type="button"].btn-block {
 }
 
 .custom-select:disabled {
-    color: #6c757d;
+    color: #232425;
     background-color: #e9ecef;
 }
 
@@ -14005,4 +14005,12 @@ textarea.form-control {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+
+@media (max-width: 575px) {
+    .justify-content--center {
+        -webkit-box-pack: center !important;
+        -ms-flex-pack: center !important;
+        justify-content: center !important;
+    }
+}
 

@@ -4,17 +4,43 @@
       layout:decorate="~{layouts/layout}"
 >
 <head>
-    <title>HomepageForCarOwner</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
-            integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Add Car</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
     <link rel="stylesheet" href="/css/addcar.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
-
+        .validate-msg {
+            display: none;
+            color: #dc3545;
+            font-size: 80%;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <th:block layout:fragment="content">
     <body>
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalTitle">No Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="ModalBody">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="confirm">Yes</button>
+                    <button type="button" class="btn btn-secondary" id="notConfirm">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -25,7 +51,7 @@
                         <span class="mr-2"><a href="/my-cars">MY CARS <i class="ion-ios-arrow-forward"></i></a></span>
                         <span>ADD CAR <i class="ion-ios-arrow-forward"></i></span>
                     </p>
-                    <h1 class="mb-3 bread">RENT A CAR TODAY!</h1>
+                    <h1 class="mb-3 bread">ADD CAR</h1>
                 </div>
             </div>
         </div>
@@ -39,13 +65,14 @@
                         <p>Fill all form field to go to next step</p>
                         <div class="row">
                             <div class="col-md-12 mx-0">
-                                <form id="msform">
+                                <form id="msform" th:object="${carDraft}">
+                                    <input id="currentStep" th:value="${carDraft.getStep()}" hidden>
                                     <!-- progressbar -->
                                     <ul id="progressbar">
                                         <li class="active" id="basic"><strong>Step1. Basic</strong></li>
                                         <li id="detail"><strong>Step2. Detail</strong></li>
                                         <li id="pricing"><strong>Step3. Pricing</strong></li>
-                                        <li id="finish"><strong>Step4. Finish</strong></li>
+                                        <li id="finish"><strong>Step4. Preview</strong></li>
                                     </ul>
                                     <!-- fieldsets -->
                                     <fieldset>
@@ -61,109 +88,128 @@
                                                         information</h6>
                                                     <div>
                                                         <div class="row">
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                        <span class="input-group-text"
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend" >
+                                                                        <span class="input-group-text "
                                                                               id="inputGroup-sizing-default">License plate</span>
+                                                                    </div>
+                                                                    <input type="text" class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default"
+                                                                           id="licensePlate" name="licensePlate" th:value="${carDraft.licensePlate}">
                                                                 </div>
-                                                                <input type="text" class="form-control"
-                                                                       aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default">
+                                                                <a class="validate-msg" id="LicensePlateValidate">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
-                                                                           for="inputGroupSelect01">Color</label>
-                                                                </div>
-                                                                <select class="custom-select"
-                                                                        id="inputGroupSelect01">
-                                                                    <option selected>Choose...</option>
-                                                                    <option value="1">One</option>
-                                                                    <option value="2">Two</option>
-                                                                    <option value="3">Three</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
-                                                                           for="inputGroupSelect02">Brand
-                                                                        Name</label>
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend" >
+                                                                    <label class="input-group-text "
+                                                                           for="color"
+                                                                           >Color</label>
                                                                 </div>
                                                                 <select class="custom-select"
-                                                                        id="inputGroupSelect02">
-                                                                    <option selected>Choose...</option>
-                                                                    <option value="1">One</option>
-                                                                    <option value="2">Two</option>
-                                                                    <option value="3">Three</option>
+                                                                        id="color" name="color">
+                                                                    <option value="" th:selected="${carDraft.color == null}">Choose...</option>
+                                                                    <option value="Red" th:selected="${carDraft.color == 'Red'}">Red</option>
+                                                                    <option value="Green" th:selected="${carDraft.color == 'Green'}">Green</option>
+                                                                    <option value="Blue" th:selected="${carDraft.color == 'Blue'}">Blue</option>
+                                                                    <option value="Black" th:selected="${carDraft.color == 'Black'}">Black</option>
+                                                                    <option value="Grey" th:selected="${carDraft.color == 'Grey'}">Grey</option>
+                                                                    <option value="Gold" th:selected="${carDraft.color == 'Gold'}">Gold</option>
+                                                                    <option value="Silver" th:selected="${carDraft.color == 'Silver'}">Silver</option>
                                                                 </select>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
-                                                                           for="inputGroupSelect03">Model</label>
+                                                                <a class="validate-msg">Invalid</a>
+                                                            </div>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend" >
+                                                                        <label class="input-group-text "
+                                                                               for="brand">Brand
+                                                                            Name</label>
+                                                                    </div>
+                                                                    <select class="custom-select" id="brand" name="brand">
+                                                                        <option value="">Choose...</option>
+                                                                        <th:block th:each="brand : ${brands}">
+                                                                            <option th:value="${brand.brandId}"
+                                                                                    th:text="${brand.brandName}"
+                                                                                    th:selected="${carDraft.brand?.brandId == brand.brandId}"></option>
+                                                                        </th:block>
+                                                                    </select>
                                                                 </div>
-                                                                <select class="custom-select"
-                                                                        id="inputGroupSelect03">
-                                                                    <option selected>Choose...</option>
-                                                                    <option value="1">One</option>
-                                                                    <option value="2">Two</option>
-                                                                    <option value="3">Three</option>
-                                                                </select>
+                                                                <a class="validate-msg">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
-                                                                           for="inputGroupSelect04">Production
-                                                                        year</label>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend" >
+                                                                        <span class="input-group-text "
+                                                                        >Model</span>
+                                                                    </div>
+                                                                    <input type="text" class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default"
+                                                                           id="model" th:value="${carDraft.model}">
                                                                 </div>
-                                                                <select class="custom-select"
-                                                                        id="inputGroupSelect04">
-                                                                    <option selected>Choose...</option>
-                                                                    <option value="1">One</option>
-                                                                    <option value="2">Two</option>
-                                                                    <option value="3">Three</option>
-                                                                </select>
+                                                                <a class="validate-msg" id="modelValidate">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
-                                                                           for="inputGroupSelect05">No of
-                                                                        seats</label>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend" >
+                                                                        <label class="input-group-text "
+                                                                               for="productionYear">Production
+                                                                            year</label>
+                                                                    </div>
+                                                                    <select class="custom-select" id="productionYear" name="productionYear">
+                                                                        <option value="">Choose</option>
+                                                                        <option value="2022" th:selected="${carDraft.productionYear == 2022}">2022</option>
+                                                                        <option value="2023" th:selected="${carDraft.productionYear == 2023}">2023</option>
+                                                                        <option value="2024" th:selected="${carDraft.productionYear == 2024}">2024</option>
+                                                                    </select>
                                                                 </div>
-                                                                <select class="custom-select"
-                                                                        id="inputGroupSelect05">
-                                                                    <option selected>Choose...</option>
-                                                                    <option value="1">One</option>
-                                                                    <option value="2">Two</option>
-                                                                    <option value="3">Three</option>
-                                                                </select>
+                                                                <a class="validate-msg">Invalid</a>
                                                             </div>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend" >
+                                                                        <label class="input-group-text "
+                                                                               for="seatNo">No of seats</label>
+                                                                    </div>
+                                                                    <select class="custom-select" id="seatNo" name="seatNo">
+                                                                        <option value="">Choose</option>
+                                                                        <option value="2" th:selected="${carDraft.seat == 2}">2</option>
+                                                                        <option value="4" th:selected="${carDraft.seat == 4}">4</option>
+                                                                        <option value="5" th:selected="${carDraft.seat == 5}">5</option>
+                                                                        <option value="7" th:selected="${carDraft.seat == 7}">7</option>
+                                                                    </select>
+                                                                </div>
+                                                                <a class="validate-msg">Invalid</a>
+                                                            </div>
+
                                                             <div class="col-lg-12 row">
                                                                 <div class="col-lg-6">
-                                                                    <p>Transmission</p>
-                                                                    <div class="btn-group btn-group-toggle"
-                                                                         data-toggle="buttons">
-                                                                        <label class="btn btn-secondary">
-                                                                            <input type="radio" name="options"
-                                                                                   id="option1"> Automatic
+                                                                    <p class="required-label">Transmission</p>
+                                                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                                        <label class="btn btn-secondary" th:classappend="${carDraft.transmission == 'Automatic'} ? 'active'">
+                                                                            <input type="radio" name="transmission" id="option1" value="Automatic" th:checked="${carDraft.transmission == 'Automatic'}"> Automatic
                                                                         </label>
-                                                                        <label class="btn btn-secondary">
-                                                                            <input type="radio" name="options"
-                                                                                   id="option2"> Manual
+                                                                        <label class="btn btn-secondary" th:classappend="${carDraft.transmission == 'Manual'} ? 'active'">
+                                                                            <input type="radio" name="transmission" id="option2" value="Manual" th:checked="${carDraft.transmission == 'Manual'}"> Manual
                                                                         </label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6">
-                                                                    <p>Fuel</p>
-                                                                    <div class="btn-group btn-group-toggle"
-                                                                         data-toggle="buttons">
-                                                                        <label class="btn btn-secondary">
-                                                                            <input type="radio" name="options"
-                                                                                   id="option3"> Gasoline
+                                                                    <p class="required-label">Fuel</p>
+                                                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                                        <label class="btn btn-secondary" th:classappend="${carDraft.fuelType == 'Gasoline'} ? 'active'">
+                                                                            <input type="radio" name="fuel" id="option3" value="Gasoline" th:checked="${carDraft.fuelType == 'Gasoline'}"> Gasoline
                                                                         </label>
-                                                                        <label class="btn btn-secondary">
-                                                                            <input type="radio" name="options"
-                                                                                   id="option4"> Diesel
+                                                                        <label class="btn btn-secondary" th:classappend="${carDraft.fuelType == 'Diesel'} ? 'active'">
+                                                                            <input type="radio" name="fuel" id="option4" value="Diesel" th:checked="${carDraft.fuelType == 'Diesel'}"> Diesel
                                                                         </label>
                                                                     </div>
                                                                 </div>
@@ -174,46 +220,52 @@
                                                     <div class="document">
                                                         <div class="row">
                                                             <div class="col-lg-4">
+                                                                <input type="hidden" id="registrationImg" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Registration</p>
                                                                 <label for="input-file1" class="drop-area"
                                                                        id="drop-area1">
                                                                     <input type="file" id="input-file1"
-                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view1">
+                                                                    <div class="img-view" id="img-view1" th:data-image-url="${carDraft.getRegistration()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
-                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                        <span>Upload type: .jpg , .jpeg , .png</span>
                                                                     </div>
                                                                 </label>
                                                             </div>
 
                                                             <div class="col-lg-4">
+                                                                <input type="hidden" id="certificateImg" th:value="${carDraft.certificate}">
+                                                                <p class="required-label">certificate</p>
                                                                 <label for="input-file2" class="drop-area"
                                                                        id="drop-area2">
                                                                     <input type="file" id="input-file2"
-                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view2">
+                                                                    <div class="img-view" id="img-view2" th:data-image-url="${carDraft.getCertificate()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
-                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                        <span>Upload type: .jpg , .jpeg , .png</span>
                                                                     </div>
                                                                 </label>
                                                             </div>
 
                                                             <div class="col-lg-4">
+                                                                <input type="hidden" id="insuranceImg" th:value="${carDraft.insurance}">
+                                                                <p class="required-label">Insurance</p>
                                                                 <label for="input-file3" class="drop-area"
                                                                        id="drop-area3">
                                                                     <input type="file" id="input-file3"
-                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view3">
+                                                                    <div class="img-view" id="img-view3" th:data-image-url="${carDraft.getInsurance()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
-                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                        <span>Upload type: .jpg , .jpeg , .png</span>
                                                                     </div>
                                                                 </label>
                                                             </div>
@@ -234,171 +286,175 @@
                                                     <h5 class="card-title">Car details</h5>
                                                     <div>
                                                         <div class="row">
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Mileage</span>
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Mileage</span>
+                                                                    </div>
+                                                                    <input  class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default"
+                                                                           id="mileage" th:value="${formattedMileage.replaceAll(',','')}">
                                                                 </div>
-                                                                <input type="number" class="form-control"
-                                                                       aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default">
+                                                                <a class="validate-msg" id="mileageValidate">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Fuel consumption</span>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Fuel consumption</span>
+                                                                    </div>
+                                                                    <input class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default"
+                                                                           id="fuelConsumption" th:value="${formattedFuelConsumption.replaceAll(',','')}">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">liter/100km</span>
+                                                                    </div>
                                                                 </div>
-                                                                <input type="number" class="form-control"
-                                                                       aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">liter/100km</span>
-                                                                </div>
+                                                                <a class="validate-msg" id="fuelConsumptionValidate">Invalid</a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <h5 class="card-title">Car address</h5>
                                                     <div>
                                                         <div class="row">
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text" for="province">Province</label>
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <label class="input-group-text" for="province">Province</label>
+                                                                    </div>
+                                                                    <select class="custom-select" id="province" th:value="${carDraft.province != null and carDraft.province.contains(',') ? carDraft.province.split(',')[1] : ''}"
+                                                                            th:data-default="${carDraft.province != null and carDraft.province.contains(',') ? carDraft.province.split(',')[0] : ''}">
+                                                                        <option value="">Select</option>
+                                                                    </select>
                                                                 </div>
-                                                                <select class="custom-select" id="province">
-                                                                </select>
+                                                                <a class="validate-msg">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text" for="district">District</label>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <label class="input-group-text" for="district">District</label>
+                                                                    </div>
+                                                                    <select class="custom-select" id="district" th:value="${carDraft.district != null and carDraft.district.contains(',') ? carDraft.district.split(',')[1] : ''}"
+                                                                            th:data-default="${carDraft.province != null and carDraft.district.contains(',') ? carDraft.district.split(',')[0] : ''}">
+                                                                        <option value="">Select</option>
+                                                                    </select>
                                                                 </div>
-                                                                <select class="custom-select" id="district">
-                                                                    <option selected>Select</option>
-                                                                </select>
+                                                                <a class="validate-msg">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <label class="input-group-text"
-                                                                           for="ward">Ward</label>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <label class="input-group-text"
+                                                                               for="ward">Ward</label>
+                                                                    </div>
+                                                                    <select class="custom-select" id="ward" th:value="${carDraft.ward != null and carDraft.ward.contains(',') ? carDraft.ward.split(',')[1] : ''}"
+                                                                            th:data-default="${carDraft.province != null and carDraft.ward.contains(',') ? carDraft.ward.split(',')[0] : ''}">
+                                                                        <option value="">Select</option>
+                                                                    </select>
                                                                 </div>
-                                                                <select class="custom-select" id="ward">
-                                                                    <option selected>Select</option>
-                                                                </select>
+                                                                <a class="validate-msg">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6 h-25">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Home</span>
+
+                                                            <div class="col-lg-6 mb-3">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Home</span>
+                                                                    </div>
+                                                                    <input type="text" class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default"
+                                                                           id="street" th:value="${carDraft.home}">
                                                                 </div>
-                                                                <input type="text" class="form-control"
-                                                                       aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default">
+                                                                <a class="validate-msg">Invalid</a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <h5 class="card-title">Additional functions</h5>
                                                     <div>
                                                         <div class="row">
-                                                            <div class="form-check col-lg-3 col-md-6">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       value="" id="additionalFunction1">
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction1">
-                                                                    Bluetooth
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check col-lg-3 col-md-6">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       value="" id="additionalFunction2">
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction2">
-                                                                    Sun roof
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check col-lg-3 col-md-6">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       value="" id="additionalFunction3">
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction3">
-                                                                    DVD
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check col-lg-3 col-md-6">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       value="" id="additionalFunction4">
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction4">
-                                                                    GPS
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check col-lg-3 col-md-6">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       value="" id="additionalFunction5">
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction5">
-                                                                    Child lock
-                                                                </label>
-                                                            </div>
+                                                            <th:block th:each="function : ${additionalFunction}">
+                                                                <div class="form-check col-lg-3 col-md-6">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           th:value="${function.functionId}"
+                                                                           name="additionalFunction"
+                                                                           th:checked="${carDraft.additionalFunction != null && #lists.contains(carDraft.additionalFunction, function.functionId.toString())}">
+                                                                    <label class="form-check-label">
+                                                                        <span th:text="${function.functionName}"></span>
+                                                                    </label>
+                                                                </div>
+                                                            </th:block>
                                                         </div>
                                                     </div>
-                                                    <h5 class="card-title">Additional functions</h5>
+                                                    <h5 class="card-title">Images</h5>
                                                     <div class="document">
                                                         <div class="row">
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Front</p>
+                                                                <input type="hidden" id="frontImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Front</p>
                                                                 <label for="input-file4" class="drop-area"
                                                                        id="drop-area4">
                                                                     <input type="file" id="input-file4"
-                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view4">
+                                                                    <div class="img-view" id="img-view4" th:data-image-url="${carDraft.getFrontImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
-                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                        <span>Upload type: .img, .png, .jpg, .jpeg</span>
                                                                     </div>
                                                                 </label>
                                                             </div>
 
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Back</p>
+                                                                <input type="hidden" id="backImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Back</p>
                                                                 <label for="input-file5" class="drop-area"
                                                                        id="drop-area5">
                                                                     <input type="file" id="input-file5"
-                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view5">
+                                                                    <div class="img-view" id="img-view5" th:data-image-url="${carDraft.getBackImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
-                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                        <span>Upload type: .img, .png, .jpg, .jpeg</span>
                                                                     </div>
                                                                 </label>
                                                             </div>
 
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Left</p>
+                                                                <input type="hidden" id="leftImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Left</p>
                                                                 <label for="input-file6" class="drop-area"
                                                                        id="drop-area6">
                                                                     <input type="file" id="input-file6"
-                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view6">
+                                                                    <div class="img-view" id="img-view6" th:data-image-url="${carDraft.getLeftImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
-                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                        <span>Upload type: .img, .png, .jpg, .jpeg</span>
                                                                     </div>
                                                                 </label>
                                                             </div>
                                                             <div class="col-lg-3 col-sm-6">
-                                                                <p>Right</p>
+                                                                <input type="hidden" id="rightImage" th:value="${carDraft.registration}">
+                                                                <p class="required-label">Right</p>
                                                                 <label for="input-file7" class="drop-area"
                                                                        id="drop-area7">
                                                                     <input type="file" id="input-file7"
-                                                                           accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                                                                           accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view7">
+                                                                    <div class="img-view" id="img-view7" th:data-image-url="${carDraft.getRightImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
-                                                                        <span>Upload type: doc, .docx, .pdf, .jpg , .jpeg , .png</span>
+                                                                        <span>Upload type: .img, .png, .jpg, .jpeg</span>
                                                                     </div>
                                                                 </label>
                                                             </div>
@@ -420,77 +476,68 @@
                                                     <h5 class="card-title">Pricing</h5>
                                                     <div>
                                                         <div class="row">
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Base price</span>
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Base price</span>
+                                                                    </div>
+                                                                    <input  class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default" id="basePrice" th:value="${formattedBasePrice.replaceAll(',','')}">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">VND/Day</span>
+                                                                    </div>
                                                                 </div>
-                                                                <input type="number" class="form-control"
-                                                                       aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">VND/Day</span>
-                                                                </div>
+                                                                <a class="validate-msg" id="basePriceValidate">Invalid</a>
                                                             </div>
-                                                            <div class="input-group input-group-sm mb-3 col-lg-6">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Deposit</span>
+
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Car price</span>
+                                                                    </div>
+                                                                    <input  class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default" id="carPrice" th:value="${formattedCarPrice.replaceAll(',','')}">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">VND/Day</span>
+                                                                    </div>
                                                                 </div>
-                                                                <input type="number" class="form-control"
-                                                                       aria-label="Sizing example input"
-                                                                       aria-describedby="inputGroup-sizing-default">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">VND</span>
-                                                                </div>
+                                                                <a class="validate-msg" id="carPriceValidate">Invalid</a>
                                                             </div>
+                                                            <div class="col-lg-6 mb-3 required-label">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Deposit</span>
+                                                                    </div>
+                                                                    <input  class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default" id="deposit" th:value="${formattedDeposit.replaceAll(',','')}">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">VND</span>
+                                                                    </div>
+                                                                </div>
+                                                                <a class="validate-msg" id="depositValidate">Invalid</a>
+                                                            </div>
+
                                                         </div>
                                                     </div>
                                                     <h5 class="card-title">Term of Use</h5>
                                                     <div>
                                                         <div class="row">
-                                                            <div class="form-check col-lg-6 col-md-6">
-                                                                <label>
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                           value="">
-                                                                </label>
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction1">
-                                                                    No smoking
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check col-lg-6 col-md-6">
-                                                                <label>
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                           value="">
-                                                                </label>
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction1">
-                                                                    No food in car
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check col-lg-6 col-md-6">
-                                                                <label>
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                           value="">
-                                                                </label>
-                                                                <label class="form-check-label"
-                                                                       for="additionalFunction1">
-                                                                    No pet
-                                                                </label>
-                                                            </div>
-                                                            <div class="input-group mb-3 col-lg-12 col-md-12">
-                                                                <div class="input-group-prepend">
-                                                                    <div class="input-group-text">
-                                                                        <input type="checkbox"
-                                                                               aria-label="Checkbox for following text input">
-                                                                        <label class="form-check-label"
-                                                                               for="additionalFunction1"
-                                                                               style="padding: 0 10px;">
-                                                                            Other
-                                                                        </label>
+                                                            <div class="col-lg-12 col-md-12 mb-3">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <div class="input-group-text">
+                                                                            <label class="form-check-label"
+                                                                                   style="padding: 0 10px;">
+                                                                                Write here
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
+                                                                    <input type="text" class="form-control"
+                                                                           aria-label="Text input with checkbox" id="termOfUse" th:value="${carDraft.terms}">
                                                                 </div>
-                                                                <input type="text" class="form-control"
-                                                                       aria-label="Text input with checkbox">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -507,7 +554,7 @@
                                             <div class="card align-items-start display-flex-center"
                                                  style="">
                                                 <div class="card-body text-left w-100">
-                                                    <h5 class="card-title">Basic information</h5>
+                                                    <h5 class="card-title">Preview</h5>
                                                     <div class="row">
                                                         <div class="col-lg-6 col-md-6">
                                                             <div class="wrapper">
@@ -515,36 +562,33 @@
                                                                 <input type="radio" name="slide" id="two">
                                                                 <input type="radio" name="slide" id="three">
                                                                 <input type="radio" name="slide" id="four">
-                                                                <input type="radio" name="slide" id="five">
                                                                 <div class="img img-1">
-                                                                    <img src="/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg" alt="">
+                                                                    <img id="carFrontImage" th:src="${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-2">
-                                                                    <img src="/images/2025-Postre.jpg" alt="">
+                                                                    <img id="carBackImage" th:src="${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-3">
-                                                                    <img src="/images/2025-Mini-John-Cooper-Works-Electric-004-2000.jpg" alt="">
+                                                                    <img id="carLeftImage" th:src="${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-4">
-                                                                    <img src="/images/2024-Renault-Embleme-Concept-005-2000.jpg" alt="">
-                                                                </div>
-                                                                <div class="img img-5">
-                                                                    <img src="/images/2025-Porsche-911-GT3-005-2000.jpg" alt="">
+                                                                    <img id="carRightImage" th:src="${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="sliders">
                                                                     <label for="one" class="one"></label>
                                                                     <label for="two" class="two"></label>
                                                                     <label for="three" class="three"></label>
                                                                     <label for="four" class="four"></label>
-                                                                    <label for="five" class="five"></label>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
                                                             <div class="row justify-content-center align-items-center align-content-center">
-                                                                <h1 class="col-lg-12 col-md-12 col-sm-12 text-center">Nissan Navara EI 2017</h1>
-                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
-                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">Ratings: </p>
+                                                                <h1 class="col-lg-12 col-md-12 col-sm-12 text-center" id="previewName"></h1>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Ratings: </p>
                                                                     <div class="rating">
                                                                         <div class="star">
                                                                             <i class="fa fa-star"></i>
@@ -562,28 +606,31 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
-                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">No. of rides: </p>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        No. of rides: </p>
                                                                     <p>0</p>
                                                                 </div>
-                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
-                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">Price: </p>
-                                                                    <p>0k/Day</p>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
+                                                                        Price: </p>
+                                                                    <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>
                                                                 </div>
-                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
-                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">Location: </p>
-                                                                    <p>0k/Day</p>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
+                                                                        Location: </p>
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                        th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''} + ', ' + ${carDraft.getHome()}"
+                                                                    >No</p>
                                                                 </div>
-                                                                <div class="col-lg-12 row" style="display: flex; align-items: center">
-                                                                    <div class="input-group input-group-sm mb-3 col-lg-6 p-0 pr-2">
-                                                                        <div class="input-group-prepend">
-                                                                            <label class="input-group-text"
-                                                                                   for="ward">Status</label>
-                                                                        </div>
-                                                                        <select class="custom-select" id="">
-                                                                            <option selected>Select</option>
-                                                                        </select>
-                                                                    </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Status: </p>
+                                                                    <p style="color: #5bd77a; font-weight: bold">Available</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -594,29 +641,29 @@
                                         </div>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
-                                        <input type="button" name="next" class="next action-button"
+                                        <input type="button" name="next" class="action-button" onclick="showConfirm()"
                                                value="Confirm"/>
                                     </fieldset>
-                                    <fieldset>
-                                        <div class="form-card">
-                                            <h2 class="fs-title text-center">Success !</h2>
-                                            <br><br>
-                                            <div class="row justify-content-center">
-                                                <div class="col-3">
-                                                    <img src="https://img.icons8.com/color/96/000000/ok--v2.png"
-                                                         class="fit-image">
-                                                </div>
-                                            </div>
-                                            <br><br>
-                                            <div class="row justify-content-center">
-                                                <div class="col-7 text-center">
-                                                    <h5>You Have Successfully Signed Up</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <input type="button" name="previous" class="previous action-button-previous"
-                                               value="Previous"/>
-                                    </fieldset>
+<!--                                    <fieldset>-->
+<!--                                        <div class="form-card">-->
+<!--                                            <h2 class="fs-title text-center">Success !</h2>-->
+<!--                                            <br><br>-->
+<!--                                            <div class="row justify-content-center">-->
+<!--                                                <div class="col-3">-->
+<!--                                                    <img src="https://img.icons8.com/color/96/000000/ok&#45;&#45;v2.png"-->
+<!--                                                         class="fit-image">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <br><br>-->
+<!--                                            <div class="row justify-content-center">-->
+<!--                                                <div class="col-7 text-center">-->
+<!--                                                    <h5>You Have Successfully Signed Up</h5>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <input type="button" name="previous" class="previous action-button-previous"-->
+<!--                                               value="Previous"/>-->
+<!--                                    </fieldset>-->
                                 </form>
                             </div>
                         </div>
@@ -625,327 +672,577 @@
             </div>
         </div>
     </section>
+<!--Validate-->
     <script>
+
+
+    </script>
+    <script>
+
+        function checkStep1() {
+            const licensePlate = document.getElementById('licensePlate').value;
+            const color = document.getElementById('color').value;
+            const brand = document.getElementById('brand').value;
+            const model = document.getElementById('model').value;
+            const productionYear = document.getElementById('productionYear').value;
+            const seatNo = document.getElementById('seatNo').value;
+
+            // Lấy giá trị của radio button
+            const transmission = document.querySelector('input[name="transmission"]:checked');
+            const transmissionValue = transmission ? transmission.value : null;
+            const fuel = document.querySelector('input[name="fuel"]:checked');
+            const fuelValue = fuel ? fuel.value : null;
+
+            const registration = document.getElementById("input-file1");
+            const certification = document.getElementById("input-file2");
+            const insurance = document.getElementById("input-file3")
+            const registrationUrl = document.getElementById('registrationImg').value;
+            const certificationUrl = document.getElementById('certificateImg').value;
+            const insuranceUrl = document.getElementById('insuranceImg').value;
+
+            console.log(transmissionValue, fuelValue);
+
+            if (licensePlate === ''
+                || color === ''
+                || brand === ''
+                || model === ''
+                || productionYear === ''
+                || seatNo === ''
+                || transmissionValue === null
+                || fuelValue === null
+                || (registration.files.length === 0 && registrationUrl === '')
+                || (certification.files.length === 0 && certificationUrl === '')
+                || (insurance.files.length === 0 && insuranceUrl === '')) {
+                alert('Please fill all required fields');
+                return false;
+            }
+            return true;
+        }
+
+        function checkStep2(){
+            const mileage = document.getElementById('mileage').value;
+            const fuelConsumption = document.getElementById('fuelConsumption').value;
+            const province = document.getElementById('province').value;
+            const district = document.getElementById('district').value;
+            const ward = document.getElementById('ward').value;
+            const street = document.getElementById('street').value;
+            const checkedValues = [];
+            const frontImage = document.getElementById("input-file4");
+            const backImage = document.getElementById("input-file5");
+            const leftImage = document.getElementById("input-file6")
+            const rightImage = document.getElementById("input-file7")
+            const frontImageUrl = document.getElementById('frontImage').value;
+            const backImageUrl = document.getElementById('backImage').value;
+            const leftImageUrl = document.getElementById('leftImage').value;
+            const rightImageUrl = document.getElementById('rightImage').value;
+
+
+            console.log(checkedValues);
+
+            if (mileage === ''
+                || fuelConsumption === ''
+                || province === ''
+                || district === ''
+                || ward === ''
+                || (frontImage.files.length === 0 && frontImageUrl === '')
+                || (backImage.files.length === 0 && backImageUrl === '')
+                || (leftImage.files.length === 0 && leftImageUrl === '')
+                || (rightImage.files.length === 0 && rightImageUrl === '')) {
+                alert('Please fill all required fields');
+                return false;
+            }
+            return true;
+        }
+
+        function checkStep3(){
+            const basePrice = document.getElementById('basePrice').value;
+            const deposit = document.getElementById('deposit').value;
+
+            if (basePrice === ''
+                || deposit === '') {
+                alert('Please fill all required fields');
+                return false;
+            }
+            return true;
+        }
+
+        function checkStep4(){
+            return true;
+        }
+    </script>
+    <script>
+        const csrfToken = $('meta[name="_csrf"]').attr('content');
+
+
+
+
+
+        function saveDraft() {
+            const licensePlate = document.getElementById('licensePlate').value;
+            const color = document.getElementById('color').value;
+            const model = document.getElementById('model').value;
+            const productionYear = document.getElementById('productionYear').value;
+            const seatNo = document.getElementById('seatNo').value;
+            const transmission = document.querySelector('input[name="transmission"]:checked');
+            const transmissionType = transmission ? transmission.value : null;
+            const fuel = document.querySelector('input[name="fuel"]:checked');
+            const fuelType = fuel ? fuel.value : null;
+            const mileage = document.getElementById('mileage').value;
+            const fuelConsumption = document.getElementById('fuelConsumption').value;
+            const province = document.getElementById('province').value +"," + document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
+            const district = document.getElementById('district').value +"," + document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
+            const ward = document.getElementById('ward').value +"," + document.getElementById('ward').options[document.getElementById('ward').selectedIndex].text;
+            const street = document.getElementById('street').value;
+            const checkboxes = document.querySelectorAll('input[name="additionalFunction"]:checked');
+            const additionalFunction = [];
+            checkboxes.forEach((checkbox) => {
+                additionalFunction.push(checkbox.value);
+            });
+            const basePrice = document.getElementById('basePrice').value;
+            const deposit = document.getElementById('deposit').value;
+            const termOfUse = document.getElementById('termOfUse').value;
+            const lastModified = new Date();
+            const carPrice = document.getElementById('carPrice').value;
+
+            const brand = {
+                brandId: document.getElementById('brand').value,
+                brandName: ""
+            };
+
+            // This is for testing only - auto get the actual step base on filled fields
+            let actualStep = pageStep + 1;
+            console.log("Actual step: ", actualStep);
+            // if(!checkStep1()){
+            //     actualStep = 1;
+            // }else if(!checkStep2()){
+            //     actualStep = 2;
+            // }else if(!checkStep3()){
+            //     actualStep = 3;
+            // }else if(!checkStep4()){
+            //     actualStep = 4;
+            // }else{
+            //     actualStep = 5;
+            // }
+
+            // Đối tượng CarDraft
+            if(actualStep > 4){
+                actualStep = 4;
+            }else if(actualStep < 1){
+                actualStep = 1;
+            }
+            const carDraft = {
+                step: actualStep,
+                carName: "",
+                licensePlate: licensePlate,
+                lastModified: lastModified,
+                color: color,
+                model: model,
+                seat: seatNo,
+                productionYear: productionYear,
+                transmission: transmissionType,
+                fuelType: fuelType,
+                mileage: mileage,
+                fuelConsumption: fuelConsumption,
+                additionalFunction: additionalFunction.join(','), // Chuyển sang chuỗi
+                province: province,
+                district: district,
+                ward: ward,
+                home: street,
+                basePrice: basePrice,
+                deposit: deposit,
+                terms: termOfUse,
+                carPrice: carPrice,
+                description: "",
+                brand: brand,
+            };
+            console.log(carDraft);
+
+            const formData = new FormData();
+
+            // Add the carDraft object as JSON string
+            formData.append("carDraft", JSON.stringify(carDraft));
+
+            // Add files only if they exist
+            const fileInputs = {
+                "frontImage": document.getElementById("input-file4"),
+                "backImage": document.getElementById("input-file5"),
+                "leftImage": document.getElementById("input-file6"),
+                "rightImage": document.getElementById("input-file7"),
+                "registration": document.getElementById("input-file1"),
+                "certificate": document.getElementById("input-file2"),
+                "insurance": document.getElementById("input-file3")
+            };
+
+            // Check if files exist before adding to FormData
+            for (const [key, input] of Object.entries(fileInputs)) {
+                if (input && input.files && input.files[0]) {
+                    formData.append(key, input.files[0]);
+                } else {
+                    // If file is not selected, append null or empty file to maintain the structure
+                    formData.append(key, new Blob([], { type: 'application/octet-stream' }));
+                }
+            }
+            console.log(formData);
+            $.ajax({
+                url: '/save-draft',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function (response) {
+                    console.log("Draft saved successfully", response);
+                    return true;
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 400) {
+                        // Display the custom error message from the server
+                        $('#confirmModal').modal('show');
+                        $('#ModalTitle').text("Format!");
+                        $('#ModalBody').html(xhr.responseText);
+                        $('#confirm').text("OK").click(function () {
+                            $('#confirmModal').modal('hide');
+                        });
+                        $('#notConfirm').hide();
+                    } else {
+                        console.log("Other Error:", error);
+                    }
+                    return false;
+                }
+            });
+        }
+    </script>
+    <script>
+
+
+            function showConfirm(){
+                $('#confirmModal').modal('show');
+                $('#ModalTitle').text("Confirm!");
+                $('#ModalBody').html("Do you want to save the car? <br> <p style='color: indianred'>If you don't save, all data will be lost.</p>");
+                $('#confirm').click(function () {
+                    addCar();
+
+                });
+                $('#notConfirm').click(function () {
+                    deleteDraft();
+                    window.location.href = '/my-cars';
+                });
+            }
+
+            function addCar(){
+                if(checkStep1() && checkStep2() && checkStep3() && checkStep4()){
+                    $.ajax({
+                        url: '/add-car',
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        success: function (response) {
+                            console.log("Car saved successfully", response);
+                            window.location.href = '/my-cars';
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error saving car:", error);
+                        }
+                    });
+                }
+            }
+
+
+
+            const carFrontPreviewImage = document.getElementById('carFrontImage');
+            const carBackPreviewImage = document.getElementById('carBackImage');
+            const carLeftPreviewImage = document.getElementById('carLeftImage');
+            const carRightPreviewImage = document.getElementById('carRightImage');
+            const carFrontImage = document.getElementById('input-file4');
+            const carBackImage = document.getElementById('input-file5');
+            const carLeftImage = document.getElementById('input-file6');
+            const carRightImage = document.getElementById('input-file7');
+
+            carFrontImage.addEventListener('change', function(){
+                const file = carFrontImage.files[0];
+                if(file){
+                    const reader = new FileReader();
+                    reader.onload = function(e){
+                        carFrontPreviewImage.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            carBackImage.addEventListener('change', function(){
+                const file = carBackImage.files[0];
+                if(file){
+                    const reader = new FileReader();
+                    reader.onload = function(e){
+                        carBackPreviewImage.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            carLeftImage.addEventListener('change', function(){
+                const file = carLeftImage.files[0];
+                if(file){
+                    const reader = new FileReader();
+                    reader.onload = function(e){
+                        carLeftPreviewImage.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            carRightImage.addEventListener('change', function(){
+                const file = carRightImage.files[0];
+                if(file){
+                    const reader = new FileReader();
+                    reader.onload = function(e){
+                        carRightPreviewImage.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function deleteDraft() {
+                $.ajax({
+                    url: '/delete-draft',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
+                    },
+                    success: function (response) {
+                        alert("Draft deleted.");
+                        window.location.href = '/my-cars';
+                    },
+                    error: function (error) {
+                        console.error("Error:", error);
+                        alert("Error deleting draft.");
+                    }
+                });
+            }
+            const MAX_FILE_MB = 200;
+            const MAX_SIZE_BYTES = MAX_FILE_MB * 1024 * 1024;
         function uploadfile(imageView, inputFile) {
             const file = inputFile.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    if (file.type.match("image.*")) {
-                        imageView.style.backgroundImage = `url(${e.target.result})`;
-                        imageView.style.backgroundSize = "cover";
-                        imageView.style.backgroundPosition = "center";
-                        imageView.innerHTML = `<p>${file.name}</p>`;
-                    } else {
-                        imageView.style.backgroundImage = "none";
-                        imageView.innerHTML = `<p>${file.name}</p>`;
-                    }
-                    imageView.style.border = "none";
+                const validExtensions = ["jpg", "jpeg", "png"];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if(file.size > MAX_SIZE_BYTES){
+                    alert("File size must be less than 200MB");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+                // Kiểm tra phần mở rộng file
+                if (!validExtensions.includes(fileExtension)) {
+                    alert("Chỉ chấp nhận các định dạng file ảnh: .jpg, .jpeg, .png");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+
+                const fileReader = new FileReader();
+                fileReader.onload = function(e) {
+                    imageView.style.backgroundImage = `url(${e.target.result})`;
+                    imageView.style.backgroundSize = "cover";
+                    imageView.style.backgroundPosition = "center";
+                    imageView.innerHTML = "";
                 };
-                reader.readAsDataURL(file);
-                console.log("added");
+                fileReader.readAsDataURL(file); // Đọc file dưới dạng URL để hiển thị
             }
         }
 
-        // Drop Area 1
-        const dropArea1 = document.getElementById("drop-area1");
-        const inputFile1 = document.getElementById("input-file1");
-        const imageView1 = document.getElementById("img-view1");
-
-        inputFile1.addEventListener("change", function () {
-            uploadfile(imageView1, inputFile1);
-        });
-
-        dropArea1.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea1.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        dropArea1.addEventListener("dragleave", function (e) {
-            e.preventDefault();
-            if (!dropArea1.contains(e.relatedTarget)) {
-                dropArea1.style.background = "#d1d5d9";
+        function displayExistingImage(imageView, imageUrl) {
+            if (imageUrl) {
+                if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {
+                    imageView.style.backgroundImage = 'url('+ imageUrl.replaceAll("\\", "/")+')';
+                    imageView.style.backgroundSize = "cover";
+                    imageView.style.backgroundPosition = "center";
+                    imageView.innerHTML = "";
+                } else {
+                    imageView.style.backgroundImage = "none";
+                    imageView.innerHTML = `
+                <i class="fa-solid fa-file fa-2x"></i>
+                <p>File đã tải lên</p>
+            `;
+                }
+                imageView.style.border = "none";
             }
-        });
+        }
 
-        dropArea1.addEventListener("drop", function (e) {
-            e.preventDefault();
-            inputFile1.files = e.dataTransfer.files;
-            uploadfile(imageView1, inputFile1);
-        });
+        function initializeDropArea(index) {
+            const dropArea = document.getElementById(`drop-area${index}`);
+            const inputFile = document.getElementById(`input-file${index}`);
+            const imageView = document.getElementById(`img-view${index}`);
 
-        const dropArea2 = document.getElementById("drop-area2");
-        const inputFile2 = document.getElementById("input-file2");
-        const imageView2 = document.getElementById("img-view2");
-
-        inputFile2.addEventListener("change", function () {
-            uploadfile(imageView2, inputFile2);
-        });
-
-        dropArea2.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea2.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        dropArea2.addEventListener("dragleave", function (e) {
-            e.preventDefault();
-            if (!dropArea2.contains(e.relatedTarget)) {
-                dropArea2.style.background = "#d1d5d9";
+            // Hiển thị ảnh đã có nếu có
+            const existingImageUrl = imageView.getAttribute('data-image-url');
+            if (existingImageUrl) {
+                displayExistingImage(imageView, existingImageUrl);
             }
-        });
 
-        dropArea2.addEventListener("drop", function (e) {
-            e.preventDefault();
-            inputFile2.files = e.dataTransfer.files;
-            uploadfile(imageView2, inputFile2);
-        });
-
-        const dropArea3 = document.getElementById("drop-area3");
-        const inputFile3 = document.getElementById("input-file3");
-        const imageView3 = document.getElementById("img-view3");
-
-        inputFile3.addEventListener("change", function () {
-            uploadfile(imageView3, inputFile3);
-        });
-
-        dropArea3.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea3.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        dropArea3.addEventListener("dragleave", function (e) {
-            e.preventDefault();
-            if (!dropArea3.contains(e.relatedTarget)) {
-                dropArea3.style.background = "#d1d5d9";
-            }
-        });
-
-        dropArea3.addEventListener("drop", function (e) {
-            e.preventDefault();
-            inputFile3.files = e.dataTransfer.files;
-            uploadfile(imageView3, inputFile3);
-        });
-
-        // Drop Area 4
-        const dropArea4 = document.getElementById("drop-area4");
-        const inputFile4 = document.getElementById("input-file4");
-        const imageView4 = document.getElementById("img-view4");
-
-        inputFile4.addEventListener("change", function () {
-            uploadfile(imageView4, inputFile4);
-        });
-
-        dropArea4.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea4.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        dropArea4.addEventListener("dragleave", function (e) {
-            e.preventDefault();
-            if (!dropArea4.contains(e.relatedTarget)) {
-                dropArea4.style.background = "#d1d5d9";
-            }
-        });
-
-        dropArea4.addEventListener("drop", function (e) {
-            e.preventDefault();
-            inputFile4.files = e.dataTransfer.files;
-            uploadfile(imageView4, inputFile4);
-        });
-
-        // Drop Area 5
-        const dropArea5 = document.getElementById("drop-area5");
-        const inputFile5 = document.getElementById("input-file5");
-        const imageView5 = document.getElementById("img-view5");
-
-        inputFile5.addEventListener("change", function () {
-            uploadfile(imageView5, inputFile5);
-        });
-
-        dropArea5.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea5.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        dropArea5.addEventListener("dragleave", function (e) {
-            e.preventDefault();
-            if (!dropArea5.contains(e.relatedTarget)) {
-                dropArea5.style.background = "#d1d5d9";
-            }
-        });
-
-        dropArea5.addEventListener("drop", function (e) {
-            e.preventDefault();
-            inputFile5.files = e.dataTransfer.files;
-            uploadfile(imageView5, inputFile5);
-        });
-
-        // Drop Area 6
-        const dropArea6 = document.getElementById("drop-area6");
-        const inputFile6 = document.getElementById("input-file6");
-        const imageView6 = document.getElementById("img-view6");
-
-        inputFile6.addEventListener("change", function () {
-            uploadfile(imageView6, inputFile6);
-        });
-
-        dropArea6.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea6.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        dropArea6.addEventListener("dragleave", function (e) {
-            e.preventDefault();
-            if (!dropArea6.contains(e.relatedTarget)) {
-                dropArea6.style.background = "#d1d5d9";
-            }
-        });
-
-        dropArea6.addEventListener("drop", function (e) {
-            e.preventDefault();
-            inputFile6.files = e.dataTransfer.files;
-            uploadfile(imageView6, inputFile6);
-        });
-
-        // Drop Area 7
-        const dropArea7 = document.getElementById("drop-area7");
-        const inputFile7 = document.getElementById("input-file7");
-        const imageView7 = document.getElementById("img-view7");
-
-        inputFile7.addEventListener("change", function () {
-            uploadfile(imageView7, inputFile7);
-        });
-
-        dropArea7.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea7.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        dropArea7.addEventListener("dragleave", function (e) {
-            e.preventDefault();
-            if (!dropArea7.contains(e.relatedTarget)) {
-                dropArea7.style.background = "#d1d5d9";
-            }
-        });
-
-        dropArea7.addEventListener("drop", function (e) {
-            e.preventDefault();
-            inputFile7.files = e.dataTransfer.files;
-            uploadfile(imageView7, inputFile7);
-        });
-
-
-        $(document).ready(function () {
-
-            var current_fs, next_fs, previous_fs; //fieldsets
-            var opacity;
-
-            $(".next").click(function () {
-
-                current_fs = $(this).parent();
-                next_fs = $(this).parent().next();
-
-                //Add Class Active
-                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-
-                //show the next fieldset
-                next_fs.show();
-                // window.scrollTo(0, 0);
-                //hide the current fieldset with style
-                current_fs.animate({opacity: 0}, {
-                    step: function (now) {
-                        // for making fielset appear animation
-                        opacity = 1 - now;
-
-                        current_fs.css({
-                            'display': 'none',
-                            'position': 'relative'
-                        });
-                        next_fs.css({'opacity': opacity});
-                    },
-                    duration: 600
-                });
+            // Xử lý sự kiện change của input file
+            inputFile.addEventListener("change", function () {
+                uploadfile(imageView, inputFile);
             });
 
-            $(".previous").click(function () {
-
-                current_fs = $(this).parent();
-                previous_fs = $(this).parent().prev();
-
-                //Remove class active
-                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
-
-                //show the previous fieldset
-                previous_fs.show();
-                // window.scrollTo(0, 0);
-
-                //hide the current fieldset with style
-                current_fs.animate({opacity: 0}, {
-                    step: function (now) {
-                        // for making fielset appear animation
-                        opacity = 1 - now;
-
-                        current_fs.css({
-                            'display': 'none',
-                            'position': 'relative'
-                        });
-                        previous_fs.css({'opacity': opacity});
-                    },
-                    duration: 600
-                });
+            // Xử lý sự kiện dragover
+            dropArea.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                dropArea.style.background = "rgba(0, 0, 0, 0.1)";
             });
 
-            $('.radio-group .radio').click(function () {
-                $(this).parent().find('.radio').removeClass('selected');
-                $(this).addClass('selected');
+            // Xử lý sự kiện dragleave
+            dropArea.addEventListener("dragleave", function (e) {
+                e.preventDefault();
+                if (!dropArea.contains(e.relatedTarget)) {
+                    dropArea.style.background = "#d1d5d9";
+                }
             });
 
-            $(".submit").click(function () {
-                return false;
-            })
+            // Xử lý sự kiện drop
+            dropArea.addEventListener("drop", function (e) {
+                e.preventDefault();
+                dropArea.style.background = "#d1d5d9";
 
-        });
+                const files = e.dataTransfer.files;
 
-        // Call API
-        const host = "https://provinces.open-api.vn/api/";
-        let callAPI = (api) => {
-            return axios.get(api)
-                .then((response) => {
-                    renderData(response.data, "province");
-                });
-        }
-        callAPI('https://provinces.open-api.vn/api/?depth=1');
-        let callApiDistrict = (api) => {
-            return axios.get(api)
-                .then((response) => {
-                    renderData(response.data.districts, "district");
-                });
-        }
-        let callApiWard = (api) => {
-            return axios.get(api)
-                .then((response) => {
-                    renderData(response.data.wards, "ward");
-                });
-        }
+                if (files.length > 0) {
+                    const validExtensions = ["jpg", "jpeg", "png"];
+                    const fileExtension = files[0].name.split('.').pop().toLowerCase();
+                    if(files[0].size > MAX_SIZE_BYTES){
+                        alert("File size must be less than 200MB");
+                        return;
+                    }
+                    // Kiểm tra phần mở rộng file
+                    if (!validExtensions.includes(fileExtension)) {
+                        alert("Only accept file type: .jpg, .jpeg, .png");
+                        return;
+                    }
 
-        let renderData = (array, select) => {
-            let row = ' <option disable value="">Select</option>';
-            array.forEach(element => {
-                row += `<option value="${element.code}">${element.name}</option>`
+                    inputFile.files = files; // Thiết lập files cho input
+                    uploadfile(imageView, inputFile); // Gọi hàm uploadfile
+                }
             });
-            document.querySelector("#" + select).innerHTML = row
         }
 
-        $("#province").change(() => {
-            callApiDistrict(host + "p/" + $("#province").val() + "?depth=2");
+        // Khởi tạo tất cả các vùng upload
+        for (let i = 1; i <= 7; i++) {
+            initializeDropArea(i);
+        }
+
+        // Call API to fetch provinces, districts and wards
+        // Fetch provinces and set default city
+        async function fetchProvinces(defaultCity) {
+            const response = await fetch('https://provinces.open-api.vn/api/p/');
+            const provinces = await response.json();
+            const citySelect = document.getElementById('province');
+
+            provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province.code;
+                option.textContent = province.name;
+                if (province.code == defaultCity) {
+                    option.selected = true;
+                }
+                citySelect.appendChild(option);
+            });
+
+            if (defaultCity) {
+                fetchDistricts(defaultCity, document.getElementById('district').getAttribute('data-default'));
+            }
+        }
+
+        // Fetch districts based on selected province and set default value
+        async function fetchDistricts(provinceCode, defaultDistrict) {
+            const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+            const provinceData = await response.json();
+            const districtSelect = document.getElementById('district');
+
+            districtSelect.innerHTML = '<option value="">Select District</option>';
+            provinceData.districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district.code;
+                option.textContent = district.name;
+                if (district.code == defaultDistrict) {
+                    option.selected = true;
+                }
+                districtSelect.appendChild(option);
+            });
+
+            if (defaultDistrict) {
+                fetchWards(defaultDistrict, document.getElementById('ward').getAttribute('data-default'));
+            }
+        }
+
+        // Fetch wards based on selected district and set default value
+        async function fetchWards(districtCode, defaultWard) {
+            const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+            const districtData = await response.json();
+            const wardSelect = document.getElementById('ward');
+
+            wardSelect.innerHTML = '<option value="">Select Ward</option>';
+            districtData.wards.forEach(ward => {
+                const option = document.createElement('option');
+                option.value = ward.code;
+                option.textContent = ward.name;
+                if (ward.code == defaultWard) {
+                    option.selected = true;
+                }
+                wardSelect.appendChild(option);
+            });
+        }
+
+        // Event listeners to load data on selection
+        document.getElementById('province').addEventListener('change', function () {
+            fetchDistricts(this.value);
+            document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
+            document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
+            document.getElementById('district').value = ""; // Reset district value
+            document.getElementById('ward').disabled = true; // Disable ward selection
         });
-        $("#district").change(() => {
-            callApiWard(host + "d/" + $("#district").val() + "?depth=2");
+
+        document.getElementById('district').addEventListener('change', function () {
+            fetchWards(this.value);
+            document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
         });
+
+
+        // Load provinces on page load with default values
+        document.addEventListener('DOMContentLoaded', function () {
+            const defaultCity = document.getElementById('province').getAttribute('data-default');
+            fetchProvinces(defaultCity);
+        });
+
+
+            //Load price
+            const basePrice = document.getElementById('basePrice');
+            const basePricePreview = document.getElementById('previewPrice');
+            basePrice.addEventListener('input', function () {
+                const value = parseFloat(basePrice.value) || 0;
+                basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' K/Day';
+            });
+
+            //Load location
+            const province = document.getElementById('province');
+            const district = document.getElementById('district');
+            const ward = document.getElementById('district');
+            const previewLocation = document.getElementById('previewLocation');
+            ward.addEventListener('change', function(){
+                previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
+            });
+
+            //Load car model name
+            const model = document.getElementById('model');
+            const previewName = document.getElementById('previewName');
+            model.addEventListener('input', function(){
+                previewName.textContent = model.value;
+            });
 
 
 
     </script>
+    <script src="/js/add-car-validate.js"></script>
     </body>
 </th:block>
 </html>

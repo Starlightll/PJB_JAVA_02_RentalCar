@@ -37,6 +37,7 @@
             padding: 40px 30px;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
             perspective: 2700px;
+            height: 800px;
         }
         .container .cover {
             position: absolute;
@@ -108,11 +109,13 @@
             height: 100%;
             width: 100%;
             background: #fff;
+            display: flex;
         }
         .container .form-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
         }
         .form-content .login-form,
         .form-content .signup-form {
@@ -428,6 +431,8 @@
 
 <script th:inline="javascript">
 
+    let errorFontSize = "small";
+
     function toggleSubmitButton() {
         const checkbox = document.getElementById("agree-term");
         const submitButton = document.getElementById("signup");
@@ -449,6 +454,7 @@
         } else {
             emailError.textContent = "";  // Clear error if no frontend error
         }
+        emailError.style.fontSize = errorFontSize;
     }
 
     function validatePhone() {
@@ -460,6 +466,7 @@
         } else {
             phoneError.textContent = "";  // Clear error if no frontend error
         }
+        phoneError.style.fontSize = errorFontSize;
     }
     function validatePassword() {
         const password = document.getElementById("pass").value;
@@ -467,10 +474,11 @@
         const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*(){}\[\]_\-+=~`|:;\"'<>,.\/?])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 
         if (!regex.test(password)) {
-            passwordError.textContent = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.";
+            passwordError.textContent = "Password must have (A-Z), (a-z), (0-9), a special char, and be 8+ chars.";
         } else {
             passwordError.textContent = "";
         }
+        passwordError.style.fontSize = errorFontSize;
     }
 
     function validateConfirmPassword() {
@@ -480,13 +488,15 @@
         const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*(){}\[\]_\-+=~`|:;\"'<>,.\/?])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 
         if(!regex.test(confirmPassword)) {
-            confirmPasswordError.textContent = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.";
+            confirmPasswordError.textContent = "Password must have (A-Z), (a-z), (0-9), a special char, and be 8+ chars.";
         }else if (confirmPassword !== password) {
             confirmPasswordError.textContent = "Passwords do not match.";
         } else {
             confirmPasswordError.textContent = "";
         }
+        confirmPasswordError.style.fontSize = errorFontSize;
     }
+
 </script>
 
 </body>

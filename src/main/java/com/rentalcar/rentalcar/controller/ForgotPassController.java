@@ -10,14 +10,15 @@ import com.rentalcar.rentalcar.service.RegisterUserService;
 import com.rentalcar.rentalcar.service.VerificationTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Controller
@@ -34,22 +35,28 @@ public class ForgotPassController {
     @GetMapping("/forgot-password")
     public String forgotPassWord(Model model)
     {
-        model.addAttribute(new ForgotDto());
+        model.addAttribute("forgotDto",new ForgotDto());
         return "password/ForgotPassword";
     }
 
+
+
     @PostMapping("/forgot-password")
-    public String handleForgotPassWord(@Valid  @ModelAttribute ForgotDto forgotDto, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-        if(result.hasErrors()) {
-            model.addAttribute("forgotDto", forgotDto);
-            return "password/ForgotPassword";
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> handleForgotPassWord(@Valid  @ModelAttribute("forgotDto") ForgotDto forgotDto, BindingResult result) {
+
+        Map<String, String> response = new HashMap<>();
+        if (result.hasErrors()) {
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(response); // Trả về lỗi 400 kèm thông báo lỗi
         }
+
+
 
         try {
             forgotPasswordService.forgotPassword(forgotDto.getEmail());
-            // Thêm thông báo thành công vào RedirectAttributes
-            redirectAttributes.addFlashAttribute("successMessage", "A password reset link has been sent to your email.");
-            return "redirect:/forgot-password";
+            response.put("success", "A password reset link has been sent to your email.");
+            return ResponseEntity.ok(response); // Trả về thành công
         }catch (UserException e) {
             switch (e.getMessage()) {
                 case "Account not activated":
@@ -62,8 +69,8 @@ public class ForgotPassController {
                     result.rejectValue("email", "error.email", "Your account is locked");
                     break;
             }
-            model.addAttribute("forgotDto", forgotDto);
-            return "password/ForgotPassword";
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(response); // Trả về lỗi kèm thông báo lỗi
         }
 
     }
@@ -77,10 +84,10 @@ public class ForgotPassController {
     public String resetPassWord(@RequestParam("token") String token, Model model) {
         String result = forgotPasswordService.checToken(token);
 
-        // Thêm forgotDto vào model để Thymeleaf nhận diện đối tượng này.
+        // Thêm forgotDto vào model để Thymeleaf nhận diện đối tượng này. dùng chung với forgot
         model.addAttribute("forgotDto", new ForgotDto());
         model.addAttribute("token", token);//Mỗi lần lỗi thì vẫn giữ được token này trên url
-        model.addAttribute("showResendLink", false); // display form
+
 
         if (result.equals("Token expired")) {
             model.addAttribute("error", "This link has expired. Please go back to Homepage and try again.");
@@ -101,17 +108,17 @@ public class ForgotPassController {
 
 
     @PostMapping("/reset-password")
-    public String handleResetPassWord(@Valid @ModelAttribute("forgotDto") ForgotDto forgotDto, BindingResult result, @RequestParam("token") String token, Model model) {
-        model.addAttribute("token", token);
-        model.addAttribute("showResendLink", false); // display form
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> handleResetPassWord(@Valid @ModelAttribute("forgotDto") ForgotDto forgotDto, BindingResult result, @RequestParam("token") String token, Model model) {
+
+        Map<String, String> response = new HashMap<>();
 
         // Don't need to check email
         if (result.hasFieldErrors("password") || result.hasFieldErrors("confirmPassword")) {
-            model.addAttribute("forgotDto", forgotDto);
-            return "password/ResetPassword";
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+
+            return ResponseEntity.badRequest().body(response);
         }
-
-
 
         try {
 
@@ -119,8 +126,8 @@ public class ForgotPassController {
             String email = verificationToken.getUser().getEmail();
 
             forgotPasswordService.resetPassword(email, forgotDto.getPassword(), forgotDto.getConfirmPassword());
-            model.addAttribute("success", "Reset password successful");
-            return "password/ResetPassword";
+            response.put("success", "Reset password successful.");
+            return ResponseEntity.ok(response); // Trả về thành công
         } catch (UserException e) {
             switch (e.getMessage()) {
                 case "Passwords do not match":
@@ -130,8 +137,8 @@ public class ForgotPassController {
                     result.rejectValue("email", "error.email", "The email address you’ve entered does not exist. Please try again");
                     break;
             }
-            model.addAttribute("forgotDto", forgotDto);
-            return "password/ResetPassword";
+            result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(response); // Trả về lỗi kèm thông báo lỗi
         }
 
     }

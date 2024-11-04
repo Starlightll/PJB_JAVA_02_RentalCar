@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
+    <title>Send Activation</title>
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Google Font Link */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
         body {
-            background-color: whitesmoke;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
             overflow: hidden;
+            backdrop-filter: blur(5px) brightness(0.5);
+            background: url("/images/nhatrang.jpg") no-repeat center;
         }
 
         .content-container {
             text-align: center; /* Căn giữa nội dung bên trong */
         }
-        .blur-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: whitesmoke;
-            backdrop-filter: blur(10px);
-        }
+
         .reset-password-container {
             position: relative;
             background: white;
@@ -41,7 +44,7 @@
 
         .navbar-brand {
             font-size: 30px;
-            text-align: center;
+            text-align: center; !important;
             margin-bottom: 20px;
         }
         .reset-password-container h2 {
@@ -60,22 +63,41 @@
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
+
             border-radius: 4px;
         }
         .form-button {
-            margin-top: 20px;
+            margin-top: -10px;
         }
         .form-button input {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+                height: 100%;
+                width: 100%;
+                outline: none;
+                border: none;
+                padding: 0 30px;
+                font-size: 16px;
+                font-weight: 500;
+                border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+            }
+
+        .form-button input:focus,
+        .form-button input:valid {
+            border-color: #00c86f;
+        }
+        .form-button input {
+            color: #fff;
+            background: #000000;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.4s ease;
+            padding: 10px 15px;
             width: 100%;
         }
+
+
         .form-button input:hover {
-            background-color: #4cae4c;
+            background-color: #5b13b9;
         }
         .back-to-login {
             margin-top: 15px;
@@ -109,36 +131,30 @@
 <body>
 
 <div class="content-container">
-<div>
-    <a class="navbar-brand" href="/">Car<span>Book</span></a>
-</div>
-<!--<div class="blur-background"></div>-->
+<div class="blur-background"></div>
 
 
 <div class="reset-password-container">
     <h2>Send account activation email</h2>
 
 
-    <div class="alert-success" th:if="${successMessage}">
-        <p style="color: #67c23a">
-            <i class="bi bi-check-circle"></i>
-            <span  th:text="${successMessage}"></span>
-        </p>
-    </div>
-
     <div th:if="${successMessage == null}">
         <p>
             Account activation email is sent when registering for a <strong>Car Rental</strong> account. If you do not receive it, please provide us
             with your <strong>Car Rental</strong> registered email address. We will send you an account activation email again.</p>
     </div>
+    <!--  Hiển thị thành công-->
+    <div class="alert-success" id="success-message" style="display: none;">
+        <p style="color: #67c23a;margin: 10px 20px 10px 20px;">
+            <i class="bi bi-check-circle"></i>
+            <span id="success-text"></span>
+        </p>
+    </div>
 
-
-    <form method="POST" th:action="@{/send-activation}" class="register-form" id="forgot-password-form"  th:object="${forgotDto}">
-
-        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+    <form method="POST" th:action="@{/send-activation}" id="resend-activation-form"  th:object="${forgotDto}">
 
         <div class="form-group">
-            <input type="email" name="email"  th:field="*{email}" placeholder="Your Email" required />
+            <input type="email" name="email" id="email"  th:field="*{email}" placeholder="Your Email" required />
         </div>
         <div class="form-button">
             <input type="submit" name="Send" class="form-submit" value="Send"/>
@@ -151,5 +167,40 @@
 <!-- JS -->
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="js/main.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#resend-activation-form').on('submit', function (event) {
+            event.preventDefault(); // Ngăn form submit
+
+            $.ajax({
+                type: 'POST',
+                url: '/send-activation',
+                data: $(this).serialize(),
+
+                success: function (response) {
+                    // Xóa thông báo lỗi cũ nếu có
+                    $('.error').remove();
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        $('#success-text').text(response.success);
+                        $('#success-message').show(); // Hiện thị phần thành công
+                    }
+                },
+
+                error: function (xhr) {
+                    const errors = xhr.responseJSON;
+                    $('.error').remove();
+                    $('#success-message').hide();
+                    // Hiển thị lỗi từ validation trên từng trường
+                    for (const field in errors) {
+                        $(`#${field}`).after(`<span class="error" style="color: red">${errors[field]}</span>`);
+                    }
+                }
+            });
+        });
+    });
+
+</script>
 </body>
 </html>
