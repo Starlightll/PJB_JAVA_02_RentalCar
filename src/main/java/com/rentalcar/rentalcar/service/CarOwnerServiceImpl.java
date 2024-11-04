@@ -6,16 +6,15 @@ import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
@@ -121,11 +120,15 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         try{
             Car car = new Car();
             car.setUser(user);
-//            if(carRepository.findFirstLicensePlateMatchNative(carDraft.getLicensePlate()) != null){
-//                System.out.println("License plate already exists");
-//                throw new Exception("License plate already exists");
-//            }else{
-                car.setLicensePlate(carDraft.getLicensePlate());
+               //Check if car license plate owned by other user
+                Long userOwnLicence = carRepository.findFirstUserByLicensePlate(carDraft.getLicensePlate());
+                if(userOwnLicence != null) {
+                    if(!Objects.equals(userOwnLicence, user.getId())) {
+                        throw new RuntimeException("Liscense plate already owned by another user");
+                    }else{
+                        car.setLicensePlate(carDraft.getLicensePlate());
+                    }
+                }
                 car.setModel(carDraft.getModel());
                 car.setColor(carDraft.getColor());
                 car.setSeat(carDraft.getSeat());

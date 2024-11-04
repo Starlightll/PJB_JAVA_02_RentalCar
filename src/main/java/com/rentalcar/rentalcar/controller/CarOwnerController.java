@@ -53,12 +53,13 @@ public class CarOwnerController {
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "lastModified") String sortBy,
             @RequestParam(defaultValue = "desc") String order,
-            Model model) {
-
+            Model model,
+            HttpSession session) {
+        User user = (User) session.getAttribute("user");
         Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(sorDirection, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Car> carPage = carRepository.findAll(pageable);
+        Page<Car> carPage = carRepository.findAllByUser(user, pageable);
         List<Car> cars = carPage.getContent();
 
         if(cars.isEmpty()){
