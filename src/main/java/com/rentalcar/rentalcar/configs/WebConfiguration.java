@@ -2,6 +2,7 @@ package com.rentalcar.rentalcar.configs;
 import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
 import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -49,7 +50,7 @@ public class WebConfiguration {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/homepage-guest").permitAll()
-                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
+                        .requestMatchers("/myProfile", "/change-password", "/carowner").hasAnyAuthority("Customer", "Car Owner")
                         .requestMatchers("/homepage-customer").hasAuthority("Customer")
                         .requestMatchers("/homepage-carowner").hasAuthority("Car Owner")
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
@@ -75,6 +76,7 @@ public class WebConfiguration {
 
         return http.build();
     }
+
 
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());

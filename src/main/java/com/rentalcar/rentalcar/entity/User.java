@@ -7,7 +7,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -49,6 +51,12 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany
+    @JoinColumn(name = "userId")
+    private List<CarDraft> carDrafts = new ArrayList<>();
 
+    @OneToMany
+    @JoinColumn(name = "userId")
+    private List<Car> cars = new ArrayList<>();
 
 }

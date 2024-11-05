@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rating Popup</title>
+  <style>
+    /* Popup container */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    /* Popup content */
+    .popup-content {
+      background-color: #fff;
+      width: 90%;
+      max-width: 400px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Heading */
+    .popup-content h2 {
+      margin-top: 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    /* Rating stars */
+    .star-rating {
+      font-size: 30px;
+      color: #FFD700;
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .star-rating svg {
+      cursor: pointer;
+      transition: fill 0.3s;
+      width: 30px;
+      height: 30px;
+    }
+
+    .star-rating svg:hover,
+    .star-rating svg.active {
+      fill: #FFA500;
+    }
+
+    /* Textarea for review */
+    .review-textarea {
+      width: 100%;
+      height: 80px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      resize: none;
+      font-size: 16px;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+
+    /* Buttons */
+    .popup-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    .popup-buttons button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .popup-buttons .skip-btn {
+      background-color: #ddd;
+      color: #333;
+    }
+
+    .popup-buttons .skip-btn:hover {
+      background-color: #bbb;
+    }
+
+    .popup-buttons .submit-btn {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .popup-buttons .submit-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Popup Overlay -->
+<div class="popup-overlay" id="ratingPopup">
+  <div class="popup-content">
+    <h2>Rate your trip</h2>
+    <p>Do you enjoy your trip? Please let us know what you think.</p>
+
+    <!-- Star rating -->
+    <div class="star-rating">
+      <!-- SVG stars for sharper, pointier look -->
+      <svg data-rating="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+      <svg data-rating="2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+      <svg data-rating="3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+      <svg data-rating="4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+      <svg data-rating="5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+    </div>
+
+    <!-- Review textarea -->
+    <textarea class="review-textarea" placeholder="Write your review here..."></textarea>
+
+    <!-- Buttons -->
+    <div class="popup-buttons">
+      <button class="skip-btn" onclick="closePopup()">Skip</button>
+      <button class="submit-btn">Send Review</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Star rating functionality
+  const stars = document.querySelectorAll('.star-rating svg');
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      stars.forEach(s => s.classList.remove('active'));
+      star.classList.add('active');
+      for(let i = 0; i < stars.length; i++) {
+        if (i < star.getAttribute('data-rating')) {
+          stars[i].classList.add('active');
+        }
+      }
+    });
+  });
+
+  // Close popup function
+  function closePopup() {
+    document.getElementById('ratingPopup').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>

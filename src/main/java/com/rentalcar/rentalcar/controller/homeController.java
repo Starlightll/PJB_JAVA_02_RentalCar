@@ -53,10 +53,19 @@ public class homeController {
 
 
 
-
     @GetMapping("/addcar")
     public String addCar() {
         return "carowner/AddCar";
+    }
+
+    @GetMapping("/rating-star")
+    public String ratingStar() {
+        return "feedback/ratingStar";
+    }
+
+   @GetMapping("/my-feedback")
+    public String myFeedback() {
+        return "feedback/MyFeedback";
     }
 
 }
