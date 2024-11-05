@@ -13,12 +13,12 @@ public interface FileStorageService {
 
     Resource loadAsResource(String filename);
 
-    public void deleteFolder(Path folderPath);
+    void deleteFolder(Path folderPath);
 
-    public void changeFolderName(String oldFolderName, String newFolderName);
+    void changeFolderName(String oldFolderName, String newFolderName);
 
-    public boolean moveFiles(Path sourceFolder, Path destinationFolder);
+    boolean moveFiles(Path sourceFolder, Path destinationFolder);
 
-    public void deleteFile(Path filePath);
+    void deleteFile(Path filePath);
 
 }
