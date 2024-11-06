@@ -1265,8 +1265,9 @@
             const brand = document.getElementById('brand');
             const productionYear = document.getElementById('productionYear');
             const previewName = document.getElementById('previewName');
+            let brandName = document.querySelector("#brand option:checked").textContent;
             model.addEventListener('input', function(){
-                previewName.textContent = brand.value +' '+ model.value +' '+ productionYear.value;
+                previewName.textContent = brandName +' '+ model.value +' '+ productionYear.value;
             });
 
 

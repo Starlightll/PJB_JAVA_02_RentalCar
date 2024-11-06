@@ -924,6 +924,7 @@
             const carPrice = document.getElementById('carPrice').value;
             const carId = document.getElementById('carId').value;
             const carStatus = document.getElementById('carStatus').value;
+            const document = document.getElementById('document').value;
 
             const carData = {
                 mileage: mileage,
@@ -937,7 +938,7 @@
                 deposit: deposit,
                 terms: termOfUse,
                 carPrice: carPrice,
-                description: "",
+                description: document,
             };
 
             const formData = new FormData();
