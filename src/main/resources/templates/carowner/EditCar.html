@@ -361,9 +361,9 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
                                                     <div class="row justify-content-center align-items-center align-content-center">
-                                                        <h1 class="col-lg-12 col-md-12 col-sm-12 text-center"
+                                                        <h1 th:text="${car.getCarName() == null ? car.getBrand().getBrandName()+' '+car.getModel()+' '+car.getProductionYear() :car.getCarName()}" class="col-lg-12 col-md-12 col-sm-12 text-center"
                                                             style="font-size: 2rem">
-                                                            Nissan Navara EI 2017</h1>
+                                                           </h1>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -412,7 +412,7 @@
                                                             <div class="input-group input-group-sm">
                                                                 <div class="input-group-prepend">
                                                                     <label class="input-group-text"
-                                                                           for="province">Province</label>
+                                                                           for="province">Status</label>
                                                                 </div>
                                                                 <select class="custom-select" id="carStatus">
                                                                     <th:block th:each="carStatus : ${carStatuses}">
@@ -905,7 +905,6 @@
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
-
         function updateCar(){
             const mileage = document.getElementById('mileage').value;
             const fuelConsumption = document.getElementById('fuelConsumption').value;
@@ -924,6 +923,7 @@
             const carPrice = document.getElementById('carPrice').value;
             const carId = document.getElementById('carId').value;
             const carStatus = document.getElementById('carStatus').value;
+            const description = document.getElementById('description').value;
 
             const carData = {
                 mileage: mileage,
@@ -937,7 +937,7 @@
                 deposit: deposit,
                 terms: termOfUse,
                 carPrice: carPrice,
-                description: "",
+                description: description,
             };
 
             const formData = new FormData();
@@ -1027,7 +1027,7 @@
                 }
                 // Kiểm tra phần mở rộng file
                 if (!validExtensions.includes(fileExtension)) {
-                    alert("Chỉ chấp nhận các định dạng file ảnh: .jpg, .jpeg, .png");
+                    alert("Only accept file type: .jpg, .jpeg, .png");
                     inputFile.value = ""; // Reset input nếu file không hợp lệ
                     return;
                 }

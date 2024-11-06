@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 @Configuration
 @EnableAsync
@@ -69,10 +71,10 @@ public class WebConfiguration {
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                )
-                .exceptionHandling(exception -> exception
-                        .accessDeniedPage("/403")
                 );
+//                .exceptionHandling(exception -> exception
+//                        .accessDeniedPage("/403")
+//                );
 
         return http.build();
     }
@@ -81,4 +83,5 @@ public class WebConfiguration {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
     }
+
 }

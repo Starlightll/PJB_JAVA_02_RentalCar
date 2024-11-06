@@ -2,6 +2,7 @@ package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
+import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class CarDraftServiceImpl implements CarDraftService {
     private FileStorageService fileStorageService;
     @Autowired
     private AdditionalFunctionRepository additionalFunctionRepository;
+    @Autowired
+    private BrandRepository brandRepository;
+
     @Override
     public CarDraft getDraftByLastModified(Long userId) {
         return carDraftRepository.findTopByUser_IdOrderByLastModifiedDesc(userId);
@@ -102,6 +106,8 @@ public class CarDraftServiceImpl implements CarDraftService {
             e.printStackTrace();
         }
         if(carDraft != null) {
+            String carName = brandRepository.findByBrandId(draft.getBrand().getBrandId()).getBrandName() + " " + draft.getModel() + " " + draft.getProductionYear();
+            carDraft.setCarName(carName);
             carDraft.setStep(draft.getStep());
             carDraft.setLicensePlate(draft.getLicensePlate().toUpperCase().trim());
             carDraft.setLastModified(draft.getLastModified());
@@ -167,6 +173,7 @@ public class CarDraftServiceImpl implements CarDraftService {
             car.setCarPrice(carDraft.getCarPrice());
             car.setBrand(carDraft.getBrand());
             car.setLastModified(new Date());
+            car.setDescription(carDraft.getDescription());
 //            setCarStatus(car);
             //Set car additional Functions
             setCarAdditionalFunction(carDraft, car);
