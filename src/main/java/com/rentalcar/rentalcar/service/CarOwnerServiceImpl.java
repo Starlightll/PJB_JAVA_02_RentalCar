@@ -2,6 +2,7 @@ package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
+import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class CarOwnerServiceImpl implements CarOwnerService {
     private FileStorageService fileStorageService;
     @Autowired
     private CarDraftService carDraftService;
+    @Autowired
+    private BrandRepository brandRepository;
 
     @Override
     public Set<Car> listCars() {
@@ -136,7 +139,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 }else{
                     car.setLicensePlate(carDraft.getLicensePlate());
                 }
-                String carName = carDraft.getBrand() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
+                String carName =  brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName()+ " " + carDraft.getModel() + " " + carDraft.getProductionYear();
                 car.setCarName(carName);
                 car.setModel(carDraft.getModel());
                 car.setColor(carDraft.getColor());
