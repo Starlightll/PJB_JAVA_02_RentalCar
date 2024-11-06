@@ -412,7 +412,7 @@
                                                             <div class="input-group input-group-sm">
                                                                 <div class="input-group-prepend">
                                                                     <label class="input-group-text"
-                                                                           for="province">Province</label>
+                                                                           for="province">Status</label>
                                                                 </div>
                                                                 <select class="custom-select" id="carStatus">
                                                                     <th:block th:each="carStatus : ${carStatuses}">
@@ -1027,7 +1027,7 @@
                 }
                 // Kiểm tra phần mở rộng file
                 if (!validExtensions.includes(fileExtension)) {
-                    alert("Chỉ chấp nhận các định dạng file ảnh: .jpg, .jpeg, .png");
+                    alert("Only accept file type: .jpg, .jpeg, .png");
                     inputFile.value = ""; // Reset input nếu file không hợp lệ
                     return;
                 }
