@@ -16,6 +16,21 @@
             font-size: 80%;
             margin-top: 0.25rem;
         }
+
+        ::placeholder {
+            color: #a9adb3 !important;
+        }
+
+        .btn-danger{
+            color: #fff !important;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover{
+            color: #fff;
+            background-color: #c82333 !important;
+            border-color: #bd2130;
+        }
     </style>
 </head>
 <th:block layout:fragment="content">
@@ -56,10 +71,11 @@
             </div>
         </div>
     </section>
-    <section class="ftco-section">
+    <section class="ftco-section pt-0">
         <div class="container-fluid" id="grad1">
             <div class="row justify-content-center mt-0">
                 <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
+
                     <div class="card px-0 pt-4 pb-0 mt-3 mb-3 mt-lg-5">
                         <h2><strong>Add Car</strong></h2>
                         <p>Fill all form field to go to next step</p>
@@ -275,6 +291,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                                onclick="window.location.href='/'">Cancel</a>
                                         <input type="button" name="next" class="next action-button"
                                                value="Next Step"/>
                                     </fieldset>
@@ -284,9 +302,9 @@
                                                  style="">
                                                 <div class="card-body text-left w-100">
                                                     <h5 class="card-title">Car details</h5>
-                                                    <div>
-                                                        <div class="row">
-                                                            <div class="col-lg-6 mb-3 required-label">
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-6 p-0">
+                                                            <div class="col-lg-12 mb-3 required-label">
                                                                 <div class="input-group input-group-sm">
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text">Mileage</span>
@@ -298,8 +316,7 @@
                                                                 </div>
                                                                 <a class="validate-msg" id="mileageValidate">Invalid</a>
                                                             </div>
-
-                                                            <div class="col-lg-6 mb-3 required-label">
+                                                            <div class="col-lg-12 mb-3 required-label">
                                                                 <div class="input-group input-group-sm">
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text">Fuel consumption</span>
@@ -314,6 +331,10 @@
                                                                 </div>
                                                                 <a class="validate-msg" id="fuelConsumptionValidate">Invalid</a>
                                                             </div>
+                                                        </div>
+                                                        <div class="input-group col-12 col-sm-12 col-md-6 col-lg-6" style="min-height: 94px;">
+                                                            <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Description</span>
+                                                            <textarea class="form-control" id="description" aria-label="With textarea" style="font-size: 16px;" placeholder="Description of your vehicle"></textarea>
                                                         </div>
                                                     </div>
                                                     <h5 class="card-title">Car address</h5>
@@ -377,7 +398,7 @@
                                                     <div>
                                                         <div class="row">
                                                             <th:block th:each="function : ${additionalFunction}">
-                                                                <div class="form-check col-lg-3 col-md-6">
+                                                                <div class="form-check col-lg-3 col-md-4 col-6">
                                                                     <input class="form-check-input" type="checkbox"
                                                                            th:value="${function.functionId}"
                                                                            name="additionalFunction"
@@ -463,6 +484,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                                onclick="window.location.href='/'">Cancel</a>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
                                         <input type="button" name="next" class="next action-button"
@@ -544,6 +567,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                                onclick="window.location.href='/'">Cancel</a>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
                                         <input type="button" name="make_payment" class="next action-button"
@@ -639,6 +664,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                                onclick="window.location.href='/'">Cancel</a>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
                                         <input type="button" name="next" class="action-button" onclick="showConfirm()"
@@ -803,6 +830,7 @@
             const termOfUse = document.getElementById('termOfUse').value;
             const lastModified = new Date();
             const carPrice = document.getElementById('carPrice').value;
+            const description = document.getElementById('description').value;
 
             const brand = {
                 brandId: document.getElementById('brand').value,
@@ -842,6 +870,7 @@
                 transmission: transmissionType,
                 fuelType: fuelType,
                 mileage: mileage,
+                description: description,
                 fuelConsumption: fuelConsumption,
                 additionalFunction: additionalFunction.join(','), // Chuyển sang chuỗi
                 province: province,
@@ -852,7 +881,6 @@
                 deposit: deposit,
                 terms: termOfUse,
                 carPrice: carPrice,
-                description: "",
                 brand: brand,
             };
             console.log(carDraft);

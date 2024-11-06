@@ -91,6 +91,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
             //Details Information
             car.setMileage(carUpdate.getMileage());
             car.setFuelConsumption(carUpdate.getFuelConsumption());
+            car.setDescription(carUpdate.getDescription());
             //Set car Address
             setCarAddress(car, carUpdate);
             //Set car Additional Functions

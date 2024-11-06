@@ -112,6 +112,7 @@ public class CarDraftServiceImpl implements CarDraftService {
             carDraft.setTransmission(draft.getTransmission().trim());
             carDraft.setFuelType(draft.getFuelType().trim());
             carDraft.setMileage(draft.getMileage());
+            carDraft.setDescription(draft.getDescription().trim());
             carDraft.setFuelConsumption(draft.getFuelConsumption());
             carDraft.setAdditionalFunction(draft.getAdditionalFunction().trim());
             carDraft.setProvince(draft.getProvince().trim());

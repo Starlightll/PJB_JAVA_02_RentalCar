@@ -703,6 +703,12 @@
                                                     </div>
                                                     <a class="validate-msg">Invalid</a>
                                                 </div>
+
+                                                <div class="input-group col-lg-6" style="min-height: 56px">
+                                                    <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Description</span>
+                                                    <textarea class="form-control" id="description" aria-label="With textarea" th:text="${car.getDescription()}" style="font-size: 14px;" placeholder="Description of your vehicle"></textarea>
+                                                </div>
+
                                                 <div style="padding:10px">
                                                     <div class="row">
                                                         <th:block th:each="function : ${additionalFunction}">
