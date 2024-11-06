@@ -215,8 +215,8 @@
                 <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
                     <option value="newestToLatest" th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to Latest</option>
                     <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">Latest to Newest</option>
-                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>
-                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>
+<!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
+<!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
                     <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price: Low to High</option>
                     <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price: High to Low</option>
                 </select>
