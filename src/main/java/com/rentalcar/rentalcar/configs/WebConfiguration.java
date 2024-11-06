@@ -69,10 +69,10 @@ public class WebConfiguration {
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                )
-                .exceptionHandling(exception -> exception
-                        .accessDeniedPage("/403")
                 );
+//                .exceptionHandling(exception -> exception
+//                        .accessDeniedPage("/403")
+//                );
 
         return http.build();
     }
