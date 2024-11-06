@@ -44,6 +44,9 @@
                                             <div class="form-group">
                                                 <label for="" class="label">Pick-up location</label>
                                                 <input type="text" class="form-control" name="name" placeholder="City, Airport, Station, etc" required>
+                                                <div th:if="${sendLocation != null}">
+                                                    <p th:text="${sendLocation}" style="color: red;"></p>
+                                                </div>
                                             </div>
                                             <div class="d-flex">
                                                 <div class="form-group mr-2">
@@ -121,17 +124,21 @@
           <div class="carousel-car owl-carousel">
             <div class="item" th:each="list : ${list}">
               <div class="car-wrap rounded ftco-animate">
-                <div class="img rounded d-flex align-items-end" th:style="'background-image: url(' + @{${list.frontImage}} + ');'">
+                <div class="img rounded d-flex align-items-end">
+                    <img th:src="'/'+${list.getFrontImage()}"
+                         style="background: #1a1a1a" alt="">
                 </div>
                 <div class="text" >
-                  <h2 class="mb-0"><a href="@{/carDetail/{id}(id=${list.carId})}" th:text =${list.carName}></a></h2>
+                  <h2 class="mb-0"><a th:href="'/carDetail/' + ${list.getCarId()}" th:text =${list.carName}></a></h2>
                   <div class="d-flex mb-3">
                     <span class="cat" th:text="${list.brand.brandName}"></span>
-                    <p class="price ml-auto" th:text="${list.basePrice}"><span>/day</span></p>
+                    <p class="price ml-auto" th:text="${list.basePrice + ' VND/Day'}"></p>
 
                   </div>
                     <h5 class="icon-local_car_wash" th:text="${list.address.province}"></h5>
-                  <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="@{/carDetail/{id}(id=${list.carId})}" class="btn btn-secondary py-2 ml-1">Details</a></p>
+                    <h6 th:text="${list.address.district}"></h6>
+                    <h6 th:text="${list.carStatus.name}" style="color: green"></h6>
+                  <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a th:href="'/carDetail/' + ${list.getCarId()}" class="btn btn-secondary py-2 ml-1">Details</a></p>
                 </div>
               </div>
             </div>
