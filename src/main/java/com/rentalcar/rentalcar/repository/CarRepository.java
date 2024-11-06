@@ -28,4 +28,14 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     @Query(value = "SELECT * FROM Car WHERE Car.statusId = :statusId AND Car.userId = :userId", nativeQuery = true)
     Page<Car> findAllByCarStatusAndUser(Integer statusId, Long userId, Pageable pageable);
 
+    @Query(value = "SELECT c.*, cd.province, cd.provinceId, cd.district, cd.districtId, cd.ward, cd.wardId, cd.street " +
+            "FROM Car c " +
+            "INNER JOIN CarAddress cd ON c.carId = cd.carId " +
+            "WHERE (cd.province LIKE %:province% OR cd.district LIKE %:district%)",
+            nativeQuery = true)
+    List<Car> findCarByCarName(@Param("province") String province, @Param("district") String district);
+
+
+
+
 }
