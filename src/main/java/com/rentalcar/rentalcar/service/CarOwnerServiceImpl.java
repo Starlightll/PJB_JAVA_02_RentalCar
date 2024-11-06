@@ -136,7 +136,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 }else{
                     car.setLicensePlate(carDraft.getLicensePlate());
                 }
-                String carName = car.getBrand() + " " + car.getModel() + " " + car.getProductionYear();
+                String carName = carDraft.getBrand() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
                 car.setCarName(carName);
                 car.setModel(carDraft.getModel());
                 car.setColor(carDraft.getColor());
