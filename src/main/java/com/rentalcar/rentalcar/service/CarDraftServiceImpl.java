@@ -173,6 +173,7 @@ public class CarDraftServiceImpl implements CarDraftService {
             car.setCarPrice(carDraft.getCarPrice());
             car.setBrand(carDraft.getBrand());
             car.setLastModified(new Date());
+            car.setDescription(carDraft.getDescription());
 //            setCarStatus(car);
             //Set car additional Functions
             setCarAdditionalFunction(carDraft, car);
