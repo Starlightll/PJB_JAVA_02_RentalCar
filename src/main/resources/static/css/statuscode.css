@@ -6,11 +6,6 @@
     --green: #2ccf6d;
 }
 
-html,
-body {
-    height: 100%;
-}
-
 button {
     font-family: "Nunito Sans", serif;
 }
@@ -83,15 +78,4 @@ p {
 
 .btn.green:hover:before {
     width: 100%;
-}
-
-@media screen and (max-width: 768px) {
-    body {
-        display: block;
-    }
-
-    .container {
-        margin-top: 70px;
-        margin-bottom: 70px;
-    }
 }
