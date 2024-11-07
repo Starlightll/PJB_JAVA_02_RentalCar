@@ -148,7 +148,7 @@
     loadFeedbacks(currentStarRating, currentPage);
 }
 
-    // Cập nhật giá trị `currentStarRating` khi chọn số sao và tải lại feedbacks
+
     function updateRatingAndLoadFeedbacks(starRating) {
     currentStarRating = starRating; // Cập nhật số sao hiện tại
     currentPage = 1; // Reset về trang 1

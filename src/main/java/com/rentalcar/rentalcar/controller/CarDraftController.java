@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
+import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +36,9 @@ public class CarDraftController {
     @Autowired
     private CarDraftRepository carDraftRepository;
 
+    @Autowired
+    CarRepository carRepository;
+
     @GetMapping("/check-draft")
     public ResponseEntity<?> checkDraft(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -46,6 +51,8 @@ public class CarDraftController {
         }
         return ResponseEntity.ok(Map.of("hasDraft", false));
     }
+
+
 
 
     @PostMapping("/save-draft")
@@ -102,9 +109,16 @@ public class CarDraftController {
             String licensePlate = carDraft.getLicensePlate();
             pattern = Pattern.compile(LICENSE_PLATE_REGEX);
             matcher = pattern.matcher(licensePlate);
-
             if (!licensePlate.isEmpty() && !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid license plate");
+            }else{
+                Long userOwnLicence = carRepository.findFirstUserByLicensePlate(licensePlate);
+                if(userOwnLicence != null) {
+                    User user = (User) session.getAttribute("user");
+                    if(!Objects.equals(userOwnLicence, user.getId())) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Liscense plate already owned by another user");
+                    }
+                }
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data");

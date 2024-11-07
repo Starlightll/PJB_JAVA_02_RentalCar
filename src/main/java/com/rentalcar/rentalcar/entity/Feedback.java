@@ -24,7 +24,7 @@ public class Feedback {
 
     private LocalDateTime dateTime;
 
-    @ManyToOne
-    @JoinColumn(name = "bookingId", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "bookingId", nullable = false,  unique = true)
     private Booking booking;
 }

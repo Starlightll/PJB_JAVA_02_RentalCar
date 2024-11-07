@@ -36,94 +36,68 @@ const resourcePatterns = {
 
 
 
+// Hàm setup validation cho License Plate
 const setupLicensePlateValidation = (inputElement, msgElement) => {
+    // Thêm class ẩn cho message ban đầu
     msgElement.style.display = 'none';
 
-    const validateLicensePlate = async (value) => {
+    const validateLicensePlate = (value) => {
+        // Xóa khoảng trắng và chuyển sang chữ hoa
         const cleanValue = value.trim().toUpperCase();
 
-        // Kiểm tra pattern trước khi gọi AJAX
+        // Kiểm tra với pattern
         if (!licensePlatePatterns.civilian.test(cleanValue)) {
             return {
                 isValid: false,
                 message: 'Invalid license plate. Required format: XXG-XXXXX'
             };
-        } else {
-            // Kiểm tra license plate qua AJAX
-            try {
-                const exists = await checkLicensePlate(cleanValue);
-                if (exists) {
-                    return {
-                        isValid: false,
-                        message: 'License plate already owned by other'
-                    };
-                } else {
-                    return {
-                        isValid: true,
-                        value: cleanValue
-                    };
-                }
-            } catch (error) {
-                return {
-                    isValid: false,
-                    message: 'Error checking license plate'
-                };
-            }
         }
+
+        return {
+            isValid: true,
+            value: cleanValue
+        };
     };
 
+    // Hàm update UI
     const updateUI = (result) => {
         if (result.isValid) {
+            // Success state
             inputElement.classList.remove('is-invalid');
             inputElement.classList.add('is-valid');
             msgElement.style.display = 'none';
             msgElement.textContent = '';
         } else {
+            // Error state
             inputElement.classList.remove('is-valid');
             inputElement.classList.add('is-invalid');
             msgElement.style.display = 'block';
-            msgElement.style.color = '#dc3545';
+            msgElement.style.color = '#dc3545';  // Bootstrap danger color
             msgElement.style.fontSize = '80%';
             msgElement.style.marginTop = '0.25rem';
             msgElement.textContent = result.message;
         }
     };
 
-    inputElement.addEventListener('input', async (e) => {
-        const result = await validateLicensePlate(e.target.value);
+    // Validate on input
+    inputElement.addEventListener('input', (e) => {
+        const result = validateLicensePlate(e.target.value);
         updateUI(result);
     });
 
-    inputElement.addEventListener('blur', async (e) => {
-        const result = await validateLicensePlate(e.target.value);
+    // Validate on blur
+    inputElement.addEventListener('blur', (e) => {
+        const result = validateLicensePlate(e.target.value);
         updateUI(result);
     });
 
-    return async () => {
-        const result = await validateLicensePlate(inputElement.value);
+    // Return validate function for external use (e.g., form submit)
+    return () => {
+        const result = validateLicensePlate(inputElement.value);
         updateUI(result);
         return result.isValid;
     };
 };
-
-function checkLicensePlate(licensePlate) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/api/car/check-license-plate',
-            type: 'GET',
-            data: {
-                licensePlate: licensePlate
-            },
-            success: function(response) {
-                resolve(!!response.licensePlateOwnedByOther);
-            },
-            error: function(error) {
-                console.error('Error checking license plate:', error);
-                reject(false);
-            }
-        });
-    });
-}
 
 // Hàm setup validation cho Money
 const setupMoneyValidation = (inputElement, msgElement) => {
@@ -315,75 +289,72 @@ const setupMaterialValidation = (inputElement, msgElement) => {
 };
 
 
-//Validate for Model
-const setupModelValidation = (inputElement, msgElement) => {
-    // Thêm class ẩn cho message ban đầu
-    msgElement.style.display = 'none';
-
-    const validateModel = (value) => {
-        // Xóa khoảng trắng và chuyển sang chữ hoa
-        const cleanValue = value.trim();
-
-        // Kiểm tra với pattern
-        if (cleanValue === '') {
-            return {
-                isValid: false,
-                message: 'Model cannot be empty'
-            };
-        }
-
-        return {
-            isValid: true,
-            value: cleanValue
-        };
-    };
-
-    // Hàm update UI
-    const updateUI = (result) => {
-        if (result.isValid) {
-            // Success state
-            inputElement.classList.remove('is-invalid');
-            inputElement.classList.add('is-valid');
-            msgElement.style.display = 'none';
-            msgElement.textContent = '';
-        } else {
-            // Error state
-            inputElement.classList.remove('is-valid');
-            inputElement.classList.add('is-invalid');
-            msgElement.style.display = 'block';
-            msgElement.style.color = '#dc3545';  // Bootstrap danger color
-            msgElement.style.fontSize = '80%';
-            msgElement.style.marginTop = '0.25rem';
-            msgElement.textContent = result.message;
-        }
-    };
-
-    // Validate on input
-    inputElement.addEventListener('input', (e) => {
-        const result = validateModel(e.target.value);
-        updateUI(result);
-    });
-
-    // Validate on blur
-    inputElement.addEventListener('blur', (e) => {
-        const result = validateModel(e.target.value);
-        updateUI(result);
-    });
-
-    // Return validate function for external use (e.g., form submit)
-    return () => {
-        const result = validateModel(inputElement.value);
-        updateUI(result);
-        return result.isValid;
-    };
-};
-
-
+// //Validate for Model
+// const setupModelValidation = (inputElement, msgElement) => {
+//     // Thêm class ẩn cho message ban đầu
+//     msgElement.style.display = 'none';
+//
+//     const validateModel = (value) => {
+//         // Xóa khoảng trắng và chuyển sang chữ hoa
+//         const cleanValue = value.trim();
+//
+//         // Kiểm tra với pattern
+//         if (cleanValue === '') {
+//             return {
+//                 isValid: false,
+//                 message: 'Model cannot be empty'
+//             };
+//         }
+//
+//         return {
+//             isValid: true,
+//             value: cleanValue
+//         };
+//     };
+//
+//     // Hàm update UI
+//     const updateUI = (result) => {
+//         if (result.isValid) {
+//             // Success state
+//             inputElement.classList.remove('is-invalid');
+//             inputElement.classList.add('is-valid');
+//             msgElement.style.display = 'none';
+//             msgElement.textContent = '';
+//         } else {
+//             // Error state
+//             inputElement.classList.remove('is-valid');
+//             inputElement.classList.add('is-invalid');
+//             msgElement.style.display = 'block';
+//             msgElement.style.color = '#dc3545';  // Bootstrap danger color
+//             msgElement.style.fontSize = '80%';
+//             msgElement.style.marginTop = '0.25rem';
+//             msgElement.textContent = result.message;
+//         }
+//     };
+//
+//     // Validate on input
+//     inputElement.addEventListener('input', (e) => {
+//         const result = validateModel(e.target.value);
+//         updateUI(result);
+//     });
+//
+//     // Validate on blur
+//     inputElement.addEventListener('blur', (e) => {
+//         const result = validateModel(e.target.value);
+//         updateUI(result);
+//     });
+//
+//     // Return validate function for external use (e.g., form submit)
+//     return () => {
+//         const result = validateModel(inputElement.value);
+//         updateUI(result);
+//         return result.isValid;
+//     };
+// };
 
 
-
-let pageStep = 1;
 // Initialize validation when document is ready
+
     const licensePlateInput = document.getElementById('licensePlate');
     const validateMsg = document.getElementById('LicensePlateValidate');
     const carPriceInput = document.getElementById('carPrice');
@@ -411,7 +382,7 @@ let pageStep = 1;
     // Setup validation for material
     const validateFuelConsumption = setupMaterialValidation(fuelConsumptionInput, fuelConsumptionValidateMsg);
     // Setup validation for model
-    const validateModel = setupModelValidation(modelInput, modelValidateMsg);
+    // const validateModel = setupModelValidation(modelInput, modelValidateMsg);
 
 
     // Optional: Validate on form submit
@@ -426,127 +397,12 @@ let pageStep = 1;
         });
     }
 
-    let currentStep = document.getElementById('currentStep').value;
-    goToStep(currentStep ? parseInt(currentStep) : 1);
-    $(document).ready(function () {
-
-        let current_fs, next_fs, previous_fs; //fieldsets
-        let opacity;
-
-        $(".next").click(async function () {
-            console.log(pageStep);
-            if (pageStep === 1) {
-                const isLicensePlateValid = await validateLicensePlate();
-                const isStep1Valid = checkStep1();
-                const isModelValid = validateModel();
-                if (!isLicensePlateValid || !isStep1Valid || !isModelValid) {
-                    console.log('fail step 1');
-                    return;
-                }
-                saveDraft();
-                pageStep++;
-            }else if (pageStep === 2) {
-                if (!checkStep2() || !validateMileage() || !validateFuelConsumption()) {
-                    console.log('fail step 2');
-                    return;
-                }
-                saveDraft();
-                pageStep++;
-            }else if (pageStep === 3) {
-                if (!checkStep3() || !validateCarPrice() || !validateBasePrice() || !validateDeposit()) {
-                    console.log('fail step 3');
-                    return;
-                }
-                saveDraft();
-                pageStep++;
-            }else if (pageStep === 4) {
-                if (!checkStep4()) {
-                    console.log('fail step 4');
-                    return;
-                }
-            }
-
-            current_fs = $(this).parent();
-            next_fs = $(this).parent().next();
-
-            //Add Class Active
-            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-
-            //show the next fieldset
-            next_fs.show();
-            // window.scrollTo(0, 0);
-            //hide the current fieldset with style
-            current_fs.animate({opacity: 0}, {
-                step: function (now) {
-                    // for making fielset appear animation
-                    opacity = 1 - now;
-
-                    current_fs.css({
-                        'display': 'none',
-                        'position': 'relative'
-                    });
-                    next_fs.css({'opacity': opacity});
-                },
-                duration: 600
-            });
-        });
-
-        $(".previous").click(function () {
-            pageStep--;
-            current_fs = $(this).parent();
-            previous_fs = $(this).parent().prev();
-
-            //Remove class active
-            $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
-
-            //show the previous fieldset
-            previous_fs.show();
-            // window.scrollTo(0, 0);
-
-            //hide the current fieldset with style
-            current_fs.animate({opacity: 0}, {
-                step: function (now) {
-                    // for making fielset appear animation
-                    opacity = 1 - now;
-
-                    current_fs.css({
-                        'display': 'none',
-                        'position': 'relative'
-                    });
-                    previous_fs.css({'opacity': opacity});
-                },
-                duration: 600
-            });
-        });
-
-        // $('.radio-group .radio').click(function () {
-        //     $(this).parent().find('.radio').removeClass('selected');
-        //     $(this).addClass('selected');
-        // });
-
-        $(".submit").click(function () {
-            return false;
-        })
-
-    });
-
-    function goToStep(targetStep) {
-        if(targetStep > 4){
-            targetStep = 4;
-        }
-        if(targetStep < 1){
-            targetStep = 1;
-        }
-        pageStep = targetStep;
-
-        // Cập nhật progress bar
-        $("#progressbar li").removeClass("active");
-        for (let i = 0; i < targetStep; i++) {
-            $("#progressbar li").eq(i).addClass("active");
-        }
-
-        $("fieldset").hide();
-        $("fieldset").eq(targetStep - 1).show();
+    function validate(){
+    if(!checkDetails() || !validateCarPrice() || !validateBasePrice() || !validateDeposit() || !validateFuelConsumption() || !validateMileage()) {
+        console.log("Invalid data");
+        return false
+    }
+    return true;
     }
 
 

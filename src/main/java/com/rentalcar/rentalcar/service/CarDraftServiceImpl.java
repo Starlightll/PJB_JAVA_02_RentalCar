@@ -1,7 +1,8 @@
 package com.rentalcar.rentalcar.service;
 
-import com.rentalcar.rentalcar.entity.CarDraft;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
+import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
@@ -24,6 +27,11 @@ public class CarDraftServiceImpl implements CarDraftService {
     private CarDraftRepository carDraftRepository;
     @Autowired
     private FileStorageService fileStorageService;
+    @Autowired
+    private AdditionalFunctionRepository additionalFunctionRepository;
+    @Autowired
+    private BrandRepository brandRepository;
+
     @Override
     public CarDraft getDraftByLastModified(Long userId) {
         return carDraftRepository.findTopByUser_IdOrderByLastModifiedDesc(userId);
@@ -34,8 +42,8 @@ public class CarDraftServiceImpl implements CarDraftService {
         //Delete all files in the folder
         CarDraft carDraft = getDraftByLastModified(userId);
         if (carDraft != null) {
-            String folderName = String.format("%s_%d_%s", carDraft.getUser().getUsername(), carDraft.getUser().getId(), carDraft.getDraftId());
-            Path draftFolderPath = Paths.get("uploads", folderName);
+            String folderName = String.format("%s", carDraft.getDraftId()+"");
+            Path draftFolderPath = Paths.get("uploads/CarOwner/"+userId+"/Draft/", folderName);
             fileStorageService.deleteFolder(draftFolderPath);
         }
         carDraftRepository.deleteDraftByUserId(userId);
@@ -47,8 +55,8 @@ public class CarDraftServiceImpl implements CarDraftService {
         String draftId = carDraft != null ? carDraft.getDraftId().toString() : UUID.randomUUID().toString();
 
         // Create folder path
-        String folderName = String.format("%s_%d_%s", user.getUsername(), user.getId(), draftId);
-        Path draftFolderPath = Paths.get("uploads", folderName);
+        String folderName = String.format("%s", draftId);
+        Path draftFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", folderName);
 
         try {
 
@@ -68,7 +76,7 @@ public class CarDraftServiceImpl implements CarDraftService {
             //Left image
             if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
                 files[2].getSize();
-                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "backImage."+getExtension(files[2].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "leftImage."+getExtension(files[2].getOriginalFilename()));
                 carDraft.setLeftImage(storedPath);
             }
             //Right image
@@ -108,6 +116,7 @@ public class CarDraftServiceImpl implements CarDraftService {
             carDraft.setTransmission(draft.getTransmission().trim());
             carDraft.setFuelType(draft.getFuelType().trim());
             carDraft.setMileage(draft.getMileage());
+            carDraft.setDescription(draft.getDescription().trim());
             carDraft.setFuelConsumption(draft.getFuelConsumption());
             carDraft.setAdditionalFunction(draft.getAdditionalFunction().trim());
             carDraft.setProvince(draft.getProvince().trim());
@@ -120,6 +129,8 @@ public class CarDraftServiceImpl implements CarDraftService {
             carDraft.setTerms(draft.getTerms().trim());
             carDraft.setCarPrice(draft.getCarPrice());
             carDraft.setBrand(draft.getBrand());
+            String carName = brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
+            carDraft.setCarName(carName);
         } else {
             carDraft = draft;
             carDraft.setUser(user);
@@ -141,6 +152,103 @@ public class CarDraftServiceImpl implements CarDraftService {
             return carDraft;
         }
     }
+
+    @Override
+    public Car convertCarDraftToCar(CarDraft carDraft) {
+        try{
+            Car car = new Car();
+            car.setLicensePlate(carDraft.getLicensePlate());
+            car.setModel(carDraft.getModel());
+            car.setColor(carDraft.getColor());
+            car.setSeat(carDraft.getSeat());
+            car.setProductionYear(carDraft.getProductionYear());
+            car.setTransmission(carDraft.getTransmission());
+            car.setFuelType(carDraft.getFuelType());
+            car.setMileage(carDraft.getMileage());
+            car.setFuelConsumption(carDraft.getFuelConsumption());
+            car.setBasePrice(carDraft.getBasePrice());
+            car.setDeposit(carDraft.getDeposit());
+            car.setDescription(carDraft.getDescription());
+            car.setTerms(carDraft.getTerms());
+            car.setCarPrice(carDraft.getCarPrice());
+            car.setBrand(carDraft.getBrand());
+            car.setLastModified(new Date());
+            car.setDescription(carDraft.getDescription());
+//            setCarStatus(car);
+            //Set car additional Functions
+            setCarAdditionalFunction(carDraft, car);
+            //Set Address for car
+            setCarAddress(carDraft, car);
+            //Set car files
+            car.setFrontImage(carDraft.getFrontImage());
+            car.setBackImage(carDraft.getBackImage());
+            car.setLeftImage(carDraft.getLeftImage());
+            car.setRightImage(carDraft.getRightImage());
+            car.setRegistration(carDraft.getRegistration());
+            car.setCertificate(carDraft.getCertificate());
+            car.setInsurance(carDraft.getInsurance());
+            return car;
+        }catch (Exception e){
+            System.out.println("Something wrong when convert car draft to car in car owner service" + e.getMessage());
+            return null;
+        }
+    }
+
+
+    private void setCarStatus(Car car){
+        CarStatus carStatus = new CarStatus();
+        carStatus.setStatusId(1);
+        car.setCarStatus(carStatus);
+    }
+
+    private void setCarAddress(CarDraft carDraft, Car car){
+        int provinceId = 0;
+        int districtId = 0;
+        int wardId = 0;
+        String province = "";
+        String district = "";
+        String ward = "";
+        String home = carDraft.getHome();
+        try{
+            provinceId = Integer.parseInt(carDraft.getProvince().split(",")[0]);
+            districtId = Integer.parseInt(carDraft.getDistrict().split(",")[0]);
+            wardId = Integer.parseInt(carDraft.getWard().split(",")[0]);
+            province = carDraft.getProvince().split(",")[1];
+            district = carDraft.getDistrict().split(",")[1];
+            ward = carDraft.getWard().split(",")[1];
+        }catch (Exception e){
+            System.out.println("Something wrong when parse Integer with the address Ids");
+        }
+        CarAddress address = new CarAddress();
+        address.setProvinceId(provinceId);
+        address.setDistrictId(districtId);
+        address.setWardId(wardId);
+        address.setProvince(province);
+        address.setDistrict(district);
+        address.setWard(ward);
+        address.setStreet(home);
+        car.setAddress(address);
+    }
+
+    private void setCarAdditionalFunction(CarDraft carDraft, Car car) {
+        try {
+            Set<AdditionalFunction> additionalFunctions = new HashSet<>();
+            String[] functionIds = carDraft.getAdditionalFunction().split(",");
+            for (String idStr : functionIds) {
+                try {
+                    Integer functionId = Integer.parseInt(idStr.trim());
+                    additionalFunctionRepository.findById(functionId).ifPresent(additionalFunctions::add);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid function ID: " + idStr);
+                }
+            }
+            car.setAdditionalFunctions(additionalFunctions);
+        }catch (Exception e){
+            System.out.println("Something wrong when set additional function for car in car owner service" + e.getMessage());
+        }
+    }
+
+
 
 
 }

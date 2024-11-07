@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+>
+<head>
+    <title>403</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <link rel="stylesheet" href="/css/statuscode.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        #planet ellipse {
+            stroke: white;
+        }
+
+        #planet circle {
+            stroke: white;
+        }
+
+        #planet path {
+            stroke: white;
+        }
+
+        #planet line {
+            stroke: white;
+        }
+
+        #stars ellipse {
+            stroke: white;
+        }
+
+        #stars circle {
+            stroke: white;
+        }
+
+        #stars path {
+            stroke: white;
+        }
+
+        #stars line {
+            stroke: white;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body>
+    <section class="ftco-section d-flex align-items-center" style="min-height: 700px !important; background: black">
+        <div class="container">
+            <main>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 align-self-center">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 800 600">
+                                <g>
+                                    <defs>
+                                        <clipPath id="GlassClip">
+                                            <path
+                                                    d="M380.857,346.164c-1.247,4.651-4.668,8.421-9.196,10.06c-9.332,3.377-26.2,7.817-42.301,3.5
+                s-28.485-16.599-34.877-24.192c-3.101-3.684-4.177-8.66-2.93-13.311l7.453-27.798c0.756-2.82,3.181-4.868,6.088-5.13
+                c6.755-0.61,20.546-0.608,41.785,5.087s33.181,12.591,38.725,16.498c2.387,1.682,3.461,4.668,2.705,7.488L380.857,346.164z"/>
+                                        </clipPath>
+                                        <clipPath id="cordClip">
+                                            <rect width="800" height="600"/>
+                                        </clipPath>
+                                    </defs>
+
+
+                                    <g id="stars">
+                                        <g id="starsBig">
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="518.07" y1="245.375" x2="518.07" y2="266.581"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="508.129" y1="255.978" x2="528.01" y2="255.978"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="154.55" y1="231.391" x2="154.55" y2="252.598"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="144.609" y1="241.995" x2="164.49" y2="241.995"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="320.135" y1="132.746" x2="320.135" y2="153.952"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="310.194" y1="143.349" x2="330.075" y2="143.349"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="200.67" y1="483.11" x2="200.67" y2="504.316"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="210.611" y1="493.713" x2="190.73" y2="493.713"/>
+                                            </g>
+                                        </g>
+                                        <g id="starsSmall">
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="432.173" y1="380.52" x2="432.173" y2="391.83"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="426.871" y1="386.175" x2="437.474" y2="386.175"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="489.555" y1="299.765" x2="489.555" y2="308.124"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="485.636" y1="303.945" x2="493.473" y2="303.945"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="231.468" y1="291.009" x2="231.468" y2="299.369"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="227.55" y1="295.189" x2="235.387" y2="295.189"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="244.032" y1="547.539" x2="244.032" y2="555.898"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="247.95" y1="551.719" x2="240.113" y2="551.719"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="186.359" y1="406.967" x2="186.359" y2="415.326"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="190.277" y1="411.146" x2="182.44" y2="411.146"/>
+                                            </g>
+                                            <g>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="480.296" y1="406.967" x2="480.296" y2="415.326"/>
+
+                                                <line fill="none" stroke="#0E0620" stroke-width="3"
+                                                      stroke-linecap="round" stroke-miterlimit="10"
+                                                      x1="484.215" y1="411.146" x2="476.378" y2="411.146"/>
+                                            </g>
+                                        </g>
+                                        <g id="circlesBig">
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="588.977" cy="255.978" r="7.952"/>
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="450.066" cy="320.259" r="7.952"/>
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="168.303" cy="353.753" r="7.952"/>
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="429.522" cy="201.185" r="7.952"/>
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="200.67" cy="176.313" r="7.952"/>
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="133.343" cy="477.014" r="7.952"/>
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="283.521" cy="568.033" r="7.952"/>
+
+                                            <circle fill="none" stroke="#0E0620" stroke-width="3" stroke-linecap="round"
+                                                    stroke-miterlimit="10"
+                                                    cx="413.618" cy="482.387" r="7.952"/>
+                                        </g>
+                                        <g id="circlesSmall">
+                                            <circle fill="#0E0620" cx="549.879" cy="296.402" r="2.651"/>
+                                            <circle fill="#0E0620" cx="253.29" cy="229.24" r="2.651"/>
+                                            <circle fill="#0E0620" cx="434.824" cy="263.931" r="2.651"/>
+                                            <circle fill="#0E0620" cx="183.708" cy="544.176" r="2.651"/>
+                                            <circle fill="#0E0620" cx="382.515" cy="530.923" r="2.651"/>
+                                            <circle fill="#0E0620" cx="130.693" cy="305.608" r="2.651"/>
+                                            <circle fill="#0E0620" cx="480.296" cy="477.014" r="2.651"/>
+                                        </g>
+                                    </g>
+                                    <g id="planet">
+                                        <circle cx="534.5" cy="237.5" r="109.5" stroke="white" stroke-width="2"/>
+                                        <circle cx="554" cy="161" r="12.5" stroke="white"/>
+                                        <circle cx="519" cy="239" r="6.5" stroke="white"/>
+                                        <circle cx="515" cy="295" r="22.5" stroke="white"/>
+                                        <path d="M159.105 179C134.563 135.182 124.914 101.268 136.927 91.7302C156.217 76.4152 224.052 129.745 288.442 210.846C352.831 291.947 389.391 370.108 370.101 385.423C357.905 395.105 323.365 376.364 285.5 341.5" stroke="white" stroke-width="3" fill="none" transform="translate(281, 0)"/>
+                                        <path d="M359.105 179C134.563 135.182 124.914 101.268 136.927 91.7302C156.217 76.4152 224.052 129.745 288.442 210.846C352.831 291.947 389.391 370.108 370.101 385.423C357.905 395.105 323.365 376.364 285.5 341.5" stroke="white" stroke-width="3" fill="none" transform="translate(70, 90)"/>
+                                    </g>
+                                    <g id="spaceman" clip-path="url(cordClip)">
+
+                                            <path d="M400.5 239L402.408 244.873L408.584 244.873L403.588 248.503L405.496 254.377L400.5 250.747L395.504 254.377L397.412 248.503L392.416 244.873L398.592 244.873L400.5 239Z" fill="white" transform="translate(150, 200) scale(1)"/>
+                                            <path d="M271 421L273.919 429.983H283.364L275.723 435.534L278.641 444.517L271 438.966L263.359 444.517L266.277 435.534L258.636 429.983H268.081L271 421Z" fill="white" transform="translate(150, 200) scale(1)"/>
+                                            <path d="M58.5 78L60.4084 83.8734L66.584 83.8734L61.5878 87.5033L63.4962 93.3766L58.5 89.7467L53.5038 93.3766L55.4122 87.5033L50.416 83.8734L56.5916 83.8734L58.5 78Z" fill="white" transform="translate(120, 200) scale(1)"/>
+                                            <path d="M374.5 0L375.959 4.49139H380.682L376.861 7.26722L378.321 11.7586L374.5 8.98278L370.679 11.7586L372.139 7.26722L368.318 4.49139H373.041L374.5 0Z" fill="white" transform="translate(90, 90) scale(1.2)"/>
+                                            <path d="M8.5 318L10.4084 323.873L16.584 323.873L11.5878 327.503L13.4962 333.377L8.5 329.747L3.50383 333.377L5.41219 327.503L0.416019 323.873L6.59163 323.873L8.5 318Z" fill="white" transform="translate(90, 90) scale(1.2)"/>
+                                            <path d="M50 278V357C50 370.255 60.7452 381 74 381H208C221.255 381 232 370.255 232 357V278C232 264.745 221.255 254 208 254H74C60.7452 254 50 264.745 50 278Z" fill="black" stroke="white" stroke-width="4" transform="translate(90, 90) scale(1.2)"/>
+                                            <path d="M80 254V217.5C80 184.087 107.087 157 140.5 157V157C173.913 157 201 184.087 201 217.5V254" stroke="white" stroke-width="20" fill="none" transform="translate(90, 90) scale(1.2)"/>
+                                            <path d="M139.768 339L122.014 308.25C121.245 306.917 122.207 305.25 123.746 305.25L159.254 305.25C160.793 305.25 161.755 306.917 160.986 308.25L143.232 339C142.462 340.333 140.538 340.333 139.768 339Z" stroke="white" stroke-width="6" transform="translate(90, 90) scale(1.2)"/>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="col-md-6 align-self-center align-items--center align-items-sm-center align-items-md-start d-flex flex-column">
+                            <h1>403</h1>
+                            <h2>Access Denied!</h2>
+                            <p>Oops! You don't have permission to access this page.
+                                It seems you're trying to go somewhere restricted. If you think this is an error, please
+                                contact support.
+                                Otherwise, you can click the button below to return to the homepage.
+                            </p>
+                            <button class="btn green" onclick="location.href='/'">HOME</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+    <script>
+        gsap.set("svg", {visibility: "visible"});
+        gsap.to("#headStripe", {
+            y: 0.5,
+            rotation: 1,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+            duration: 1
+        });
+        gsap.to("#spaceman", {
+            y: 0.5,
+            rotation: 1,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+            duration: 1
+        });
+        gsap.to("#craterSmall", {
+            x: -3,
+            yoyo: true,
+            repeat: -1,
+            duration: 1,
+            ease: "sine.inOut"
+        });
+        gsap.to("#craterBig", {
+            x: 3,
+            yoyo: true,
+            repeat: -1,
+            duration: 1,
+            ease: "sine.inOut"
+        });
+        gsap.to("#planet", {
+            rotation: -2,
+            yoyo: true,
+            repeat: -1,
+            duration: 1,
+            ease: "sine.inOut",
+            transformOrigin: "50% 50%"
+        });
+
+        gsap.to("#starsBig g", {
+            rotation: "random(-30,30)",
+            transformOrigin: "50% 50%",
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut"
+        });
+        gsap.fromTo(
+            "#starsSmall g",
+            {scale: 0, transformOrigin: "50% 50%"},
+            {scale: 1, transformOrigin: "50% 50%", yoyo: true, repeat: -1, stagger: 0.1}
+        );
+        gsap.to("#circlesSmall circle", {
+            y: -4,
+            yoyo: true,
+            duration: 1,
+            ease: "sine.inOut",
+            repeat: -1
+        });
+        gsap.to("#circlesBig circle", {
+            y: -2,
+            yoyo: true,
+            duration: 1,
+            ease: "sine.inOut",
+            repeat: -1
+        });
+
+        gsap.set("#glassShine", {x: -68});
+
+        gsap.to("#glassShine", {
+            x: 80,
+            duration: 2,
+            rotation: -30,
+            ease: "expo.inOut",
+            transformOrigin: "50% 50%",
+            repeat: -1,
+            repeatDelay: 8,
+            delay: 2
+        });
+
+    </script>
+    </body>
+</th:block>
+</body>
+</html>
+
+
+

@@ -13,5 +13,12 @@ public interface FileStorageService {
 
     Resource loadAsResource(String filename);
 
-    public void deleteFolder(Path folderPath);
+    void deleteFolder(Path folderPath);
+
+    void changeFolderName(String oldFolderName, String newFolderName);
+
+    boolean moveFiles(Path sourceFolder, Path destinationFolder);
+
+    void deleteFile(Path filePath);
+
 }
