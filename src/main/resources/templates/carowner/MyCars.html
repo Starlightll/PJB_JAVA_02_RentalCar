@@ -310,7 +310,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
                                                     <div class="row justify-content-center align-items-center align-content-center">
-                                                        <h4 class="col-lg-12 col-md-12 col-sm-12 text-center" style="" th:text="${car.getCarName() == null ? car.getBrand().getBrandName()+' '+car.getModel()+' '+car.getProductionYear() :car.getCarName()}">No Name</h4>
+                                                        <h4 class="col-lg-12 col-md-12 col-sm-12 text-center" style="" th:text="${car.getCarName() == null ? 'NULL' :car.getCarName()}">No Name</h4>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
