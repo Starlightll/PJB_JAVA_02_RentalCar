@@ -646,9 +646,8 @@
                                                                    for="province">Province</label>
                                                         </div>
                                                         <select class="custom-select" id="province"
-                                                                th:value="${car.getAddress().getProvince()}"
-                                                                th:data-default="${car.getAddress().getProvinceId()}" disabled>
-                                                            <option value="">Select</option>
+                                                                 disabled>
+                                                            <option value="" th:text="${car.getAddress().province}"></option>
                                                         </select>
                                                     </div>
                                                     <a class="validate-msg">Invalid</a>
@@ -661,9 +660,8 @@
                                                                    for="district">District</label>
                                                         </div>
                                                         <select class="custom-select" id="district"
-                                                                th:value="${car.getAddress().getDistrict()}"
-                                                                th:data-default="${car.getAddress().getDistrictId()}" disabled>
-                                                            <option value="">Select</option>
+                                                                 disabled>
+                                                            <option value="" th:text="${car.getAddress().district}">Select</option>
                                                         </select>
                                                     </div>
                                                     <a class="validate-msg">Invalid</a>
@@ -676,9 +674,8 @@
                                                                    for="ward">Ward</label>
                                                         </div>
                                                         <select class="custom-select" id="ward"
-                                                                th:value="${car.getAddress().getWard()}"
-                                                                th:data-default="${car.getAddress().getWardId()}" disabled>
-                                                            <option value="">Select</option>
+                                                                 disabled>
+                                                            <option value="" th:text="${car.getAddress().ward}">Select</option>
                                                         </select>
                                                     </div>
                                                     <a class="validate-msg">Invalid</a>
