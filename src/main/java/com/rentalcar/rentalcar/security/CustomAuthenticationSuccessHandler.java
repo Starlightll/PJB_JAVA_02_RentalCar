@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,11 +19,12 @@ import java.util.Collection;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Setter
     private UserDetailsServiceImpl userDetailsService;
 
-    private final SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
 
+    public void setUserDetailsService(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         HttpSession session = request.getSession();
@@ -34,8 +34,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         try {
             user = userDetailsService.loadUserByEmail(email);
         } catch (Exception e) {
-            // Log the error for troubleshooting
-            e.printStackTrace();
+            // Xử lý lỗi ở đây, ví dụ như ghi log hoặc chuyển hướng về trang lỗi
             response.sendRedirect("/error");
             return;
         }
@@ -44,26 +43,29 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             session.setAttribute("user", user);
         }
 
-        // Set the default redirect URL based on user role
-        String redirectUrl = determineRedirectUrl(authentication.getAuthorities());
-        successHandler.setDefaultTargetUrl(redirectUrl);
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String redirectUrl = "/homepage-guest";  // Giá trị chuyển hướng mặc định
 
-        // Redirect after login
-        successHandler.onAuthenticationSuccess(request, response, authentication);
-    }
-
-    private String determineRedirectUrl(Collection<? extends GrantedAuthority> authorities) {
         for (GrantedAuthority authority : authorities) {
             String role = authority.getAuthority();
 
             if (role.equals("Customer")) {
-                return "/homepage-customer";
+                redirectUrl = "/homepage-customer";
+                break;
             } else if (role.equals("Car Owner")) {
-                return "/homepage-carowner";
+                redirectUrl = "/homepage-carowner";
+                break;
             } else if (role.equals("Admin")) {
-                return "/add-car";
+                redirectUrl = "/add-car";
+                break;
             }
         }
-        return "/homepage-guest"; // Default redirect URL
+
+//        response.sendRedirect(redirectUrl);
+
+        // Thêm chuyển hướng sau login
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setDefaultTargetUrl(redirectUrl);
+        successHandler.onAuthenticationSuccess(request, response, authentication);
     }
 }

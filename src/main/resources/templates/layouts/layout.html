@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="/css/magnific-popup.css">
 
-    <link rel="stylesheet" href="/css/aos.css">
+<!--    <link rel="stylesheet" href="/css/aos.css">-->
 
     <link rel="stylesheet" href="/css/ionicons.min.css">
 
@@ -33,6 +33,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body style="height: 100vh">
 <header>
@@ -46,7 +47,7 @@
 <footer>
     <div th:replace="fragments/footer :: footer"></div>
 </footer>
-<script src="/js/aos.js"></script>
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script src="/js/jquery-3.7.1.min.js"></script>
 <script src="/js/jquery-migrate-3.0.1.min.js"></script>
 <script src="/js/popper.min.js"></script>
@@ -63,26 +64,28 @@
 <script src="/js/main.js"></script>
 
 <script>
-    document.getElementById("logout-link").addEventListener("click", function(event) {
-        event.preventDefault();
-
-        Swal.fire({
-            title: "Are you sure want to logout?",
-            icon: "question",
-            iconHtml: "؟",
-            confirmButtonText: "OK",
-            cancelButtonText:"Cancel",
-            showCancelButton: true,
-            showCloseButton: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log("Người dùng đã chọn tiếp tục");
-                window.location.href = "/logout";
-            } else if (result.isDismissed) {
-                console.log("Người dùng đã hủy hành động");
-            }
+    const logoutLink = document.getElementById('logout-link');
+    if(logoutLink) {
+        logoutLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure want to logout?',
+                icon: 'question',
+                iconHtml: '<i class="fas fa-question"></i>',
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                showCloseButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('Người dùng đã chọn tiếp tục');
+                    window.location.href = '/logout';
+                } else if (result.isDismissed) {
+                    console.log('Người dùng đã hủy hành động');
+                }
+            });
         });
-    });
+    }
 </script>
 </body>
 </html>
