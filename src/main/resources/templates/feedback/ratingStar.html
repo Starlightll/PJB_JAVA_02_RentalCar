@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rating Popup</title>
+
+  <!-- iziToast CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+
+  <!-- iziToast JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
   <style>
     /* Popup container */
     .popup-overlay {
@@ -66,7 +72,7 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       padding: 10px;
-      resize: none;
+      /*resize: none;*/
       font-size: 16px;
       margin-top: 10px;
       box-sizing: border-box;
@@ -107,6 +113,12 @@
     .popup-buttons .submit-btn:hover {
       background-color: #218838;
     }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 <body>
@@ -116,10 +128,13 @@
   <div class="popup-content">
     <h2>Rate your trip</h2>
     <p>Do you enjoy your trip? Please let us know what you think.</p>
+    <form id="ratingStarForm" method="post" th:action="@{/homepage-customer/rating-star}" th:object="${feedbackDto}" onsubmit="return validateForm()">
+
+      <input type="hidden" name="bookingId" th:value="${bookingId}">
+      <input type="hidden" id="ratingValue" name="rating" value="0">
 
     <!-- Star rating -->
     <div class="star-rating">
-      <!-- SVG stars for sharper, pointier look -->
       <svg data-rating="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
       <svg data-rating="2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
       <svg data-rating="3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
@@ -128,36 +143,123 @@
     </div>
 
     <!-- Review textarea -->
-    <textarea class="review-textarea" placeholder="Write your review here..."></textarea>
+    <textarea class="review-textarea" id="content" name="content" placeholder="Write your review here..." oninput="validateContent()"></textarea>
 
     <!-- Buttons -->
     <div class="popup-buttons">
-      <button class="skip-btn" onclick="closePopup()">Skip</button>
-      <button class="submit-btn">Send Review</button>
+      <button type="button" class="skip-btn" onclick="closePopup()">Skip</button>
+      <button class="submit-btn" id="sendButton">Send Review</button>
     </div>
+</form>
   </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   // Star rating functionality
   const stars = document.querySelectorAll('.star-rating svg');
+  const ratingValueInput = document.getElementById('ratingValue');
+
   stars.forEach(star => {
     star.addEventListener('click', () => {
       stars.forEach(s => s.classList.remove('active'));
       star.classList.add('active');
+      const rating = star.getAttribute('data-rating');
       for(let i = 0; i < stars.length; i++) {
         if (i < star.getAttribute('data-rating')) {
           stars[i].classList.add('active');
         }
       }
+      ratingValueInput.value = rating;
     });
   });
+
+  // Validate form before submission
+  function validateForm() {
+    if (!ratingValueInput.value) {
+      iziToast.error({
+        title: 'Error',
+        message: 'Vui lòng chọn một ngôi sao để đánh giá!',
+        position: 'topRight',
+        transitionIn: 'fadeInDown',
+        transitionOut: 'fadeOutUp'
+      });
+      return false;
+    }
+    return true;
+  }
 
   // Close popup function
   function closePopup() {
     document.getElementById('ratingPopup').style.display = 'none';
   }
+
+  function validateContent() {
+    const content = document.getElementById("content").value;
+    const sendButton = document.getElementById("sendButton");
+
+    if (content.length > 1000) {
+      iziToast.error({
+        title: 'Error',
+        message: 'Content must not exceed 1000 characters.',
+        position: 'topRight',
+        transitionIn: 'fadeInDown',
+        transitionOut: 'fadeOutUp'
+      });
+      sendButton.disabled = true;
+    } else {
+      sendButton.disabled = false;
+    }
+  }
+
+
 </script>
 
+<script>
+
+  $(document).ready(function () {
+    $('#ratingStarForm').on('submit', function (event) {
+      event.preventDefault(); // Ngăn form submit
+
+      $.ajax({
+        type: 'POST',
+        url: '/homepage-customer/rating-star',
+        data: $(this).serialize(),
+        success: function (response) {
+          // Xóa thông báo lỗi cũ nếu có
+          $('.error').remove();
+          if (response.success) {
+            iziToast.success({
+              title: 'Success',
+              message: response.success,
+              position: 'topRight',
+              transitionIn: 'fadeInDown',
+              transitionOut: 'fadeOutUp',
+            });
+            window.location.href = "/";
+          }
+        },
+
+        error: function (xhr) {
+          const errors = xhr.responseJSON;
+          $('.error').remove();
+          $('#success-message').hide();
+
+          let errorMessage = '';
+          for (const field in errors) {
+            errorMessage += `${errors[field]}<br>`;
+          }
+
+          iziToast.error({
+            title: 'Error',
+            message: errorMessage,
+            position: 'topRight',
+            transitionIn: 'fadeInDown',
+            transitionOut: 'fadeOutUp',
+          });
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>
