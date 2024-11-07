@@ -59,6 +59,11 @@ public class SearchCarController {
         else {
             List<Car> list = searchCarService.findCars(name);
             model.addAttribute("list", list);
+            if (list != null) {
+                model.addAttribute("size", list.size());
+            } else {
+                model.addAttribute("size", 0);
+            }
         }
 
         return "HomePageForCustomer";
