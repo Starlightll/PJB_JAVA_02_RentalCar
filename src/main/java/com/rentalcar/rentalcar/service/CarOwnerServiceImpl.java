@@ -90,7 +90,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 String storedPath = fileStorageService.storeFile(files[3], carFolderPath, "rightImage."+getExtension(files[3].getOriginalFilename()));
                 car.setRightImage(storedPath);
             }
-
             //Details Information
             car.setMileage(carUpdate.getMileage());
             car.setFuelConsumption(carUpdate.getFuelConsumption());
@@ -112,6 +111,8 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 carStatus.setStatusId(1);
                 car.setCarStatus(carStatus);
             }
+            String carName =  brandRepository.findByBrandId(car.getBrand().getBrandId()).getBrandName()+ " " + car.getModel() + " " + car.getProductionYear();
+            car.setCarName(carName);
             carRepository.save(car);
         }catch (Exception e){
             System.out.println("Something wrong when update car in car owner service" + e.getMessage());
@@ -139,8 +140,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 }else{
                     car.setLicensePlate(carDraft.getLicensePlate());
                 }
-                String carName =  brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName()+ " " + carDraft.getModel() + " " + carDraft.getProductionYear();
-                car.setCarName(carName);
                 car.setModel(carDraft.getModel());
                 car.setColor(carDraft.getColor());
                 car.setSeat(carDraft.getSeat());
@@ -156,6 +155,8 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 car.setCarPrice(carDraft.getCarPrice());
                 car.setBrand(carDraft.getBrand());
                 car.setLastModified(new Date());
+                String carName =  brandRepository.findByBrandId(car.getBrand().getBrandId()).getBrandName()+ " " + car.getModel() + " " + car.getProductionYear();
+                car.setCarName(carName);
                 setCarStatus(car);
                 //Set car additional Functions
                 setCarAdditionalFunction(carDraft, car);

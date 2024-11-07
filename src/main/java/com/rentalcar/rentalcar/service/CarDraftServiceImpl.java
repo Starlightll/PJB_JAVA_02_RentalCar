@@ -106,8 +106,6 @@ public class CarDraftServiceImpl implements CarDraftService {
             e.printStackTrace();
         }
         if(carDraft != null) {
-            String carName = brandRepository.findByBrandId(draft.getBrand().getBrandId()).getBrandName() + " " + draft.getModel() + " " + draft.getProductionYear();
-            carDraft.setCarName(carName);
             carDraft.setStep(draft.getStep());
             carDraft.setLicensePlate(draft.getLicensePlate().toUpperCase().trim());
             carDraft.setLastModified(draft.getLastModified());
@@ -131,6 +129,8 @@ public class CarDraftServiceImpl implements CarDraftService {
             carDraft.setTerms(draft.getTerms().trim());
             carDraft.setCarPrice(draft.getCarPrice());
             carDraft.setBrand(draft.getBrand());
+            String carName = brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
+            carDraft.setCarName(carName);
         } else {
             carDraft = draft;
             carDraft.setUser(user);

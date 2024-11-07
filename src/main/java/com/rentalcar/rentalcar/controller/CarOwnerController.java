@@ -194,7 +194,7 @@ public class CarOwnerController {
     }
 
     @PostMapping("/update-car")
-    public ResponseEntity<?> saveDraft(
+    public ResponseEntity<?> updateCar(
             @RequestParam(value = "carId") Integer carId,
             @RequestParam(value = "carStatus") Integer carStatus,
             @RequestParam(value = "carData") String carJson,
@@ -252,7 +252,7 @@ public class CarOwnerController {
         //Update car
         MultipartFile[] files = {frontImage, backImage, leftImage, rightImage};
         carOwnerService.updateCar(carUpdate, files, user, carId, carStatus);
-        return ResponseEntity.ok("Draft saved successfully");
+        return ResponseEntity.ok("Car updated successfully");
     }
 
 
