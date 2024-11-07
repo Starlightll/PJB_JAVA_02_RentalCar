@@ -6,7 +6,7 @@
 <head>
     <title>Add Car</title>
     <meta name="_csrf" th:content="${_csrf.token}">
-    <link rel="stylesheet" href="/css/addcar.css">
+    <link rel="stylesheet" href="/css/carowner/add-car.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
@@ -396,17 +396,18 @@
                                                     </div>
                                                     <h5 class="card-title">Additional functions</h5>
                                                     <div>
-                                                        <div class="row">
+                                                        <div class="row pl-3 pr-3">
                                                             <th:block th:each="function : ${additionalFunction}">
-                                                                <div class="form-check col-lg-3 col-md-4 col-6">
-                                                                    <input class="form-check-input" type="checkbox"
+                                                                <label class="checkbox bounce col-lg-3 col-md-4 col-6 p-0 d-flex" style="align-items: center;column-gap: 6px;">
+                                                                    <input type="checkbox"
                                                                            th:value="${function.functionId}"
                                                                            name="additionalFunction"
                                                                            th:checked="${carDraft.additionalFunction != null && #lists.contains(carDraft.additionalFunction, function.functionId.toString())}">
-                                                                    <label class="form-check-label">
-                                                                        <span th:text="${function.functionName}"></span>
-                                                                    </label>
-                                                                </div>
+                                                                    <svg viewBox="0 0 21 21">
+                                                                        <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                    </svg>
+                                                                    <span th:text="${function.functionName}"></span>
+                                                                </label>
                                                             </th:block>
                                                         </div>
                                                     </div>
