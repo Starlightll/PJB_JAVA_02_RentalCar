@@ -58,14 +58,5 @@ public class homeController {
         return "carowner/AddCar";
     }
 
-    @GetMapping("/rating-star")
-    public String ratingStar() {
-        return "feedback/ratingStar";
-    }
-
-   @GetMapping("/my-feedback")
-    public String myFeedback() {
-        return "feedback/MyFeedback";
-    }
 
 }
