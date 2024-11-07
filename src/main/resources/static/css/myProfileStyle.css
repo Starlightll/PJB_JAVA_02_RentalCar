@@ -51,10 +51,15 @@ body {
         display: flex;
         justify-content: space-around;
         align-items: center;
-        margin-bottom: 15px;
+        margin-bottom: 30px;
     }
 
     .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 30px;
+        height: 80px; /* Chiều cao cố định cho mỗi form-group để giữ vị trí */
+        justify-content: space-between; /* Giúp các phần tử cách đều nhau */
         width: 30%;
     }
 
