@@ -34,6 +34,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        .custom-confirm-btn, .custom-cancel-btn {
+            width: 100px; /* Make both buttons the same width */
+            padding: 10px; /* Add padding for better appearance */
+        }
+
+        .custom-confirm-btn {
+            background-color: #333; /* Set OK button color to black */
+            color: white;
+            border: none;
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .custom-confirm-btn:hover {
+            background-color: #01d28e; /* Change OK button to green on hover */
+        }
+
+
+
+    </style>
 </head>
 <body style="height: 100vh">
 <header>
@@ -69,13 +89,17 @@
         logoutLink.addEventListener('click', function(event) {
             event.preventDefault();
             Swal.fire({
-                title: 'Are you sure want to logout?',
+                title: 'Are you sure you want to logout?',
                 icon: 'question',
                 iconHtml: '<i class="fas fa-question"></i>',
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 showCancelButton: true,
-                showCloseButton: true
+                showCloseButton: true,
+                customClass: {
+                    confirmButton: 'custom-confirm-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     console.log('Người dùng đã chọn tiếp tục');
@@ -84,6 +108,7 @@
                     console.log('Người dùng đã hủy hành động');
                 }
             });
+
         });
     }
 </script>
