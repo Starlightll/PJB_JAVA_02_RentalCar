@@ -31,16 +31,17 @@
     function loadFeedbacks(starRating = currentStarRating, page = currentPage) {
     const limit = document.getElementById("limit").value;
 
-    fetch(`/homepage-customer/my-feedback/data?rating=${starRating}&page=${page}&limit=${limit}`)
+    fetch(`/homepage-carowner/my-feedback/data?rating=${starRating}&page=${page}&limit=${limit}`)
     .then(response => response.json())
     .then(data => {
     const feedbackList = document.querySelector('.feedback-list');
     feedbackList.innerHTML = ''; // Clear the list before loading new data
 
-    data.feedbacks.forEach(feedback => {
-    const feedbackItem = document.createElement('div');
-    feedbackItem.classList.add('feedback-item');
-    feedbackItem.innerHTML = `
+    if (data.feedbacks && data.feedbacks.length > 0) {
+        data.feedbacks.forEach(feedback => {
+            const feedbackItem = document.createElement('div');
+            feedbackItem.classList.add('feedback-item');
+            feedbackItem.innerHTML = `
                     <div class="user-info">
                         <div>
                             <span style="font-size: 20px"> <i class="material-icons">person</i>${feedback.username}</span>
@@ -62,8 +63,11 @@
                         </div>
                     </div>
                 `;
-    feedbackList.appendChild(feedbackItem);
-});
+            feedbackList.appendChild(feedbackItem);
+        });
+    } else {
+        feedbackList.innerHTML = '<p>No feedbacks found.</p>';
+    }
 
     // Update the current page display
 

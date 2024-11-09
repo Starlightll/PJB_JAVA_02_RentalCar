@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.controller;
 
 import com.rentalcar.rentalcar.dto.FeedbackDto;
 import com.rentalcar.rentalcar.entity.Feedback;
+import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.service.FeedbackService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -14,24 +15,24 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/homepage-customer")
 public class FeedbackController {
 
     @Autowired FeedbackService feedbackService;
 
-    @GetMapping("/rating-star")
+    @GetMapping("/homepage-customer/rating-star")
     public String ratingStar(@RequestParam("bookingId") Long bookingId, Model model) {
         model.addAttribute("bookingId", bookingId);
         model.addAttribute("feedbackDto", new FeedbackDto());
         return "feedback/ratingStar";
     }
 
-    @PostMapping("/rating-star")
+    @PostMapping("/homepage-customer/rating-star")
     @ResponseBody
     public ResponseEntity<Map<String, String>> handelRatingStar(@Valid @ModelAttribute FeedbackDto feedbackDto, BindingResult  result, HttpSession session) {
         Map<String, String> response = new HashMap<>();
@@ -59,22 +60,22 @@ public class FeedbackController {
 
     }
 
-    @GetMapping("/my-feedback")
+    @GetMapping("/homepage-carowner/my-feedback")
     public String myFeedback(Model model, HttpSession session) {
 
         Double avg = feedbackService.avgOfRating(session);
         int[] counts = feedbackService.getRatingCount(session);
 
 
-        model.addAttribute("counts", counts);
-        model.addAttribute("avg", avg);
+        model.addAttribute("counts", counts == null ? 0 : counts);
+        model.addAttribute("avg", avg == null ? 0 : avg);
 
 
         return "feedback/MyFeedback";
     }
 
 
-    @GetMapping("/my-feedback/data")
+    @GetMapping("/homepage-carowner/my-feedback/data")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getFeedbackData(
             HttpSession session,
@@ -87,10 +88,14 @@ public class FeedbackController {
             // Fetch paginated feedback data
              feedbackList = feedbackService.findData(rating != null ? rating : 0, page - 1, validLimit,session);
              Map<String, Object> response = new HashMap<>();
-            response.put("feedbacks", feedbackList);
+            response.put("feedbacks",  feedbackList != null ? feedbackList : new ArrayList<>());
             response.put("currentPage", page);
-            response.put("totalPages", feedbackService.getTotalPages(rating, validLimit, session));
-            response.put("totalFeedbacks", feedbackService.getTotalElements(rating, session));
+
+            int totalPages = feedbackService.getTotalPages(rating, validLimit, session);
+            response.put("totalPages", totalPages > 0 ? totalPages : 1); // Đảm bảo ít nhất là 1 trang
+
+            long totalFeedbacks = feedbackService.getTotalElements(rating, session);
+            response.put("totalFeedbacks", totalFeedbacks > 0 ? totalFeedbacks : 0); // Đảm bảo không bị null
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
