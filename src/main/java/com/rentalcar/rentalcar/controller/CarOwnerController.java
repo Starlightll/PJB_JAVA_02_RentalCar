@@ -146,7 +146,7 @@ public class CarOwnerController {
     public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
         if(car == null){
-            return "redirect:/my-cars";
+            return "redirect:/car-owner/my-cars";
         }else{
             User user = (User) session.getAttribute("user");
             model.addAttribute("brands", brandRepository.findAll());
