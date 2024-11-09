@@ -33,7 +33,7 @@
     max-height: 540px;
     width: 100%;
     max-width: 1050px;
-    background-color: #eaeaea;
+    background-color: #23292e;
     border-radius: 15px;
     overflow: hidden;
 }
@@ -111,6 +111,6 @@ thead tr{
     background: linear-gradient(90deg, rgba(0,123,255,1) 0%, rgba(82,199,209,1) 100%);
 }
 
-.table-dark thead th{
+.table-dark th{
     border: none;
 }
