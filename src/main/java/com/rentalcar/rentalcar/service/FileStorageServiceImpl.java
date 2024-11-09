@@ -96,7 +96,6 @@ public class FileStorageServiceImpl implements FileStorageService{
     }
 
 
-
     @Override
     public void changeFolderName(String oldFolderName, String newFolderName) {
     }

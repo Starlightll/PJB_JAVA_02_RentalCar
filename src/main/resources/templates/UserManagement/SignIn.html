@@ -263,20 +263,22 @@
         .form-group {
             margin-top: 10px;
         }
-
-        .my-custom-button {
-            background-color: #000000 !important;
-            color: #fff !important;
-            padding: 10px 20px !important;
-            border: none !important;
-            border-radius: 6px !important;
-            transition: all 0.4s ease !important;
-            cursor: pointer !important;
+        .custom-confirm-btn, .custom-cancel-btn {
+            width: 100px; /* Make both buttons the same width */
+            padding: 10px; /* Add padding for better appearance */
         }
 
-        .my-custom-button:hover {
-            background-color: #5b13b9 !important;
+        .custom-confirm-btn {
+            background-color: #333; /* Set OK button color to black */
+            color: white;
+            border: none;
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
         }
+
+        .custom-confirm-btn:hover {
+            background-color: #01d28e; /* Change OK button to green on hover */
+        }
+
 
     </style>
 </head>
@@ -315,7 +317,7 @@
                                 icon: 'success',
                                 confirmButtonText: 'OK',
                                 customClass: {
-                                    confirmButton: 'my-custom-button'
+                                    confirmButton: 'custom-confirm-btn'
                                 }
                             });
                         });
