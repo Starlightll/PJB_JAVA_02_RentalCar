@@ -91,7 +91,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new RuntimeException("User not found");
         }
         List<FeedbackDto> feedbackDtos = new ArrayList<>();
-        Pageable pageable = PageRequest.of(page, limit);
+        Pageable pageable = PageRequest.of(page, limit); // ho tro phan trang
         Page<Object[]> resultsPage;
 
         if (rating != 0) {

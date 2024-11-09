@@ -34,23 +34,23 @@ public interface RatingStarRepository extends JpaRepository<Feedback, Long> {
     List<Object[]> getRatingCountByUserId(@Param("userId") Long userId);
 
 
-    @Query(value = "SELECT f.content, f.dateTime, f.rating, f.bookingId, b.actualEndDate, b.startDate, b.userId, c.front, c.name, u.username\n" +
-            "FROM [dbo].[Feedback] f\n" +
-            "JOIN [dbo].[Booking] b ON f.bookingId = b.bookingId\n" +
-            "JOIN [dbo].[BookingCar] bc ON b.bookingId = bc.bookingId\n" +
-            "JOIN [dbo].[Car] c ON bc.carId = c.carId\n" +
-            "JOIN [dbo].[Users] u ON b.userId = u.userId\n" +
-            "WHERE c.userId = :userId AND f.rating = :rating", nativeQuery = true)
-    List<Object[]> findByRating(@Param("userId") Long userId, @Param("rating") Integer rating);
-
-    @Query(value = "SELECT f.content, f.dateTime, f.rating, f.bookingId, b.actualEndDate, b.startDate, b.userId, c.front, c.name, u.username\n" +
-            "FROM [dbo].[Feedback] f\n" +
-            "JOIN [dbo].[Booking] b ON f.bookingId = b.bookingId\n" +
-            "JOIN [dbo].[BookingCar] bc ON b.bookingId = bc.bookingId\n" +
-            "JOIN [dbo].[Car] c ON bc.carId = c.carId\n" +
-            "JOIN [dbo].[Users] u ON b.userId = u.userId\n" +
-            "WHERE c.userId = :userId ", nativeQuery = true)
-    List<Object[]> findAll(@Param("userId") Long userId);
+//    @Query(value = "SELECT f.content, f.dateTime, f.rating, f.bookingId, b.actualEndDate, b.startDate, b.userId, c.front, c.name, u.username\n" +
+//            "FROM [dbo].[Feedback] f\n" +
+//            "JOIN [dbo].[Booking] b ON f.bookingId = b.bookingId\n" +
+//            "JOIN [dbo].[BookingCar] bc ON b.bookingId = bc.bookingId\n" +
+//            "JOIN [dbo].[Car] c ON bc.carId = c.carId\n" +
+//            "JOIN [dbo].[Users] u ON b.userId = u.userId\n" +
+//            "WHERE c.userId = :userId AND f.rating = :rating", nativeQuery = true)
+//    List<Object[]> findByRating(@Param("userId") Long userId, @Param("rating") Integer rating);
+//
+//    @Query(value = "SELECT f.content, f.dateTime, f.rating, f.bookingId, b.actualEndDate, b.startDate, b.userId, c.front, c.name, u.username\n" +
+//            "FROM [dbo].[Feedback] f\n" +
+//            "JOIN [dbo].[Booking] b ON f.bookingId = b.bookingId\n" +
+//            "JOIN [dbo].[BookingCar] bc ON b.bookingId = bc.bookingId\n" +
+//            "JOIN [dbo].[Car] c ON bc.carId = c.carId\n" +
+//            "JOIN [dbo].[Users] u ON b.userId = u.userId\n" +
+//            "WHERE c.userId = :userId ", nativeQuery = true)
+//    List<Object[]> findAll(@Param("userId") Long userId);
 
     @Query(value = "SELECT f.content, f.dateTime, f.rating, f.bookingId, b.actualEndDate, b.startDate, b.userId, c.front, c.name, u.username " +
             "FROM [dbo].[Feedback] f " +

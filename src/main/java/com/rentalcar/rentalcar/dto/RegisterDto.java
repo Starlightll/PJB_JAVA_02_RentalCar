@@ -24,15 +24,14 @@ public class RegisterDto {
     private  String email;
     @NotBlank(message = "Phone number cannot be blank.")
     @Pattern(regexp = "^\\+?[0-9]\\d{1,14}$", message = "Invalid phone number format.")
-    private String phoneNumber;// Thêm trường số điện thoại
-    // Mật khẩu bao gồm cả chữ hoa, chữ thường, số, ký tự đặc biệt và ít nhất 8 ký tự
+    private String phoneNumber;
+
     @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
             message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.")
     private String password;
 
-    // Mật khẩu bao gồm cả chữ hoa, chữ thường, số, ký tự đặc biệt và ít nhất 8 ký tự
     @Pattern(regexp = "(?=.*[0-9])(?=.*[!@#$%^&*()\\[\\]{}\\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=.*[A-Z]).{8,}",
-            message = "Password must contain at least 1 uppercase, 1 lowercase letter, 1 digit, and 1 special character and 8 characters.")
+            message = "Password must have (A-Z), (a-z), (0-9), a special char, and be 8+ chars.")
     private String confirmPassword;
     private int role;
     private boolean agreedTerms;
