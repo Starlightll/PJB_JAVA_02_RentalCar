@@ -258,9 +258,9 @@
                                 <div class="card align-items-start display-flex-center"
                                      style="">
 
-                                        <div class="row d-flex justify-content-center" th:if="${carList != null}">
+                                        <div class="row d-flex justify-content-center" th:if="${bookingList != null}">
 
-                                            <th:block th:each="car, iterStat: ${carList}">
+                                            <th:block th:each="booking, iterStat: ${bookingList}">
                                                 <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
                                                     <div class="col-lg-6 col-md-6 d-flex align-items-center">
                                                         <div class="wrapper" style="max-height: 270px">
@@ -273,19 +273,19 @@
                                                             <input type="radio" th:name="'slide-'+ ${iterStat.index}"
                                                                    th:id="'four-' + ${iterStat.index}">
                                                             <div class="img img-1">
-                                                                <img th:src="'/'+${car.getFrontImage()}"
+                                                                <img th:src="'/'+${booking.frontImage}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-2">
-                                                                <img th:src="'/'+${car.getBackImage()}"
+                                                                <img th:src="'/'+${booking.backImage}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-3">
-                                                                <img th:src="'/'+${car.getLeftImage()}"
+                                                                <img th:src="'/'+${booking.leftImage}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-4">
-                                                                <img th:src="'/'+${car.getRightImage()}"
+                                                                <img th:src="'/'+${booking.rightImage}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="sliders">
@@ -306,7 +306,7 @@
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
                                                         <div class="row justify-content-center align-items-center align-content-center">
-                                                            <h4 class="col-lg-12 col-md-12 col-sm-12 text-center" style="" th:text="${car.getCarName() == null ? 'NULL' :car.getCarName()}">No Name</h4>
+                                                            <h4 class="col-lg-12 col-md-12 col-sm-12 text-center" style="" th:text="${booking.carname == null ? 'NULL' : booking.carname}">No Name</h4>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
 
@@ -318,13 +318,14 @@
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Number of days: </p>
-                                                                <p>0</p>
+                                                                <p th:text="${booking.numberOfDays}">0</p>
+
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Base price: </p>
-                                                                <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                                <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
                                                                    id="previewBasePrice">0k/Day</p>
                                                             </div>
                                                             <div class="col-lg-12 row"
@@ -334,7 +335,7 @@
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                    id="previewTotal"
                                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${}">No</p>
+                                                                   th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">No</p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -343,7 +344,7 @@
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                    id="previewDeposit"
                                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${}">No</p>
+                                                                   th:text="${#numbers.formatDecimal(booking.deposit, 0, 'COMMA', 0, 'POINT')}">No</p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -352,41 +353,19 @@
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                    id="previewBookingNo"
                                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${}">No</p>
+                                                                   th:text="${booking.bookingId}">No</p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Booking status: </p>
-                                                                <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
                                                                     <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #00d79d">Confirmed</p>
-                                                                </th:block>
-                                                                <th:block th:if="${car.getCarStatus().getStatusId() == 2}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #0080ff">In-Progress</p>
-                                                                </th:block>
-                                                                <th:block th:if="${car.getCarStatus().getStatusId() == 3}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #ff0000">Pending Deposit</p>
-                                                                </th:block>
-                                                                <th:block th:if="${car.getCarStatus().getStatusId() == 4}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #303030">Completed</p>
-                                                                </th:block>
-                                                                <th:block th:if="${car.getCarStatus().getStatusId() == 5}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #303030">Cancelled</p>
-                                                                </th:block>
-                                                                <th:block th:if="${car.getCarStatus().getStatusId() == 6}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #303030">Pending Payment</p>
-                                                                </th:block>
+                                                                       th:text="${booking.bookingStatus}"  style="color: #00d79d">Confirmed</p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
-                                                        <a th:href="'/edit-car/' + ${car.getCarId()}"
+                                                        <a th:href="'/edit-car/' + ${booking.bookingId}"
                                                            class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                             Details</a>
                                                         <a th:href="'#'"
@@ -401,12 +380,12 @@
                             </div>
                         </div>
                     </div>
-                    <nav th:if="${carList != null}" class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center" aria-label="Page navigation example" style="column-gap: 10px">
+                    <nav th:if="${bookingList != null}" class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center" aria-label="Page navigation example" style="column-gap: 10px">
                         <ul class="pagination m-0">
                             <!-- Previous button - note currentPage is already 1-based -->
                             <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-cars(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-booking(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage <= 1} ? 'disabled'"
                                    aria-label="Previous">
                                     <span aria-hidden="true">Previous</span>
@@ -418,14 +397,14 @@
                                 th:each="i : ${#numbers.sequence(1, totalPages)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/my-cars(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-booking(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:text="${i}"></a>
                             </li>
 
                             <!-- Next button -->
                             <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-cars(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-booking(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage >= totalPages} ? 'disabled'"
                                    aria-label="Next">
                                     <span aria-hidden="true">Next</span>
@@ -467,60 +446,60 @@
             const sortBy = document.getElementById('sortBy').value;
             const pageSize = document.getElementById('pageSize').value;
 
-            window.location.href = '/my-cars?sortBy=' + sortBy + '&size=' + pageSize;
+            window.location.href = '/my-booking?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
-        $(document).ready(function () {
-            $('#addCarBtn').click(function (event) {
-                event.preventDefault();
-
-                $.ajax({
-                    url: '/check-draft',
-                    type: 'GET',
-                    success: function (response) {
-                        if (response.hasDraft === true) {
-                            $('#hasDraftModal').modal('show');
-                            $('#hasDraftModalTitle').text("Draft found!");
-                            $('#hasDraftModalBody').html("You have a car draft in <b>" + response.lastModified + "</b>. Do you want to continue with it?");
-                            $('#carAddNew').click(function () {
-                                deleteDraft();
-                                addCar();
-                            });
-                            $('#carContinues').click(function () {
-                                addCar();
-                            });
-                        } else {
-                            window.location.href = '/add-car';
-                        }
-                    },
-                    error: function (error) {
-                        console.log("Error");
-                    }
-                });
-            });
-        });
-
-        function addCar() {
-            window.location.href = '/add-car';
-        }
-
-
-        function deleteDraft() {
-            $.ajax({
-                url: '/delete-draft',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
-                },
-                success: function (response) {
-                    alert("Draft deleted.");
-                },
-                error: function (error) {
-                    console.error("Error:", error);
-                    alert("Error deleting draft.");
-                }
-            });
-        }
+        // $(document).ready(function () {
+        //     $('#addCarBtn').click(function (event) {
+        //         event.preventDefault();
+        //
+        //         $.ajax({
+        //             url: '/check-draft',
+        //             type: 'GET',
+        //             success: function (response) {
+        //                 if (response.hasDraft === true) {
+        //                     $('#hasDraftModal').modal('show');
+        //                     $('#hasDraftModalTitle').text("Draft found!");
+        //                     $('#hasDraftModalBody').html("You have a car draft in <b>" + response.lastModified + "</b>. Do you want to continue with it?");
+        //                     $('#carAddNew').click(function () {
+        //                         deleteDraft();
+        //                         addCar();
+        //                     });
+        //                     $('#carContinues').click(function () {
+        //                         addCar();
+        //                     });
+        //                 } else {
+        //                     window.location.href = '/add-car';
+        //                 }
+        //             },
+        //             error: function (error) {
+        //                 console.log("Error");
+        //             }
+        //         });
+        //     });
+        // });
+        //
+        // function addCar() {
+        //     window.location.href = '/add-car';
+        // }
+        //
+        //
+        // function deleteDraft() {
+        //     $.ajax({
+        //         url: '/delete-draft',
+        //         type: 'POST',
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
+        //         },
+        //         success: function (response) {
+        //             alert("Draft deleted.");
+        //         },
+        //         error: function (error) {
+        //             console.error("Error:", error);
+        //             alert("Error deleting draft.");
+        //         }
+        //     });
+        // }
 
     </script>
     </body>
