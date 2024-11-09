@@ -52,9 +52,9 @@ public class WebConfiguration {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/homepage-guest").permitAll()
-                        .requestMatchers("/myProfile", "/change-password", "/carowner").hasAnyAuthority("Customer", "Car Owner")
+                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
                         .requestMatchers("/homepage-customer").hasAuthority("Customer")
-                        .requestMatchers("/homepage-carowner").hasAuthority("Car Owner")
+                        .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
                         .anyRequest().authenticated()
