@@ -23,7 +23,7 @@ public class RentalCarController {
     @Autowired
     RentalCarService rentalCarService;
 
-    @GetMapping("/my-booking")
+    @GetMapping("/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "5") int size,
                             @RequestParam(defaultValue = "lastModified") String sortBy,
@@ -46,4 +46,10 @@ public class RentalCarController {
         }
         return "customer/MyBookings";
     }
+
+    @GetMapping("/booking-car")
+    public String bookingDetail() {
+        return "customer/booking";
+    }
+
 }

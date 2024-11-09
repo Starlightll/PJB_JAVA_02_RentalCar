@@ -462,7 +462,7 @@
             const sortBy = document.getElementById('sortBy').value;
             const pageSize = document.getElementById('pageSize').value;
 
-            window.location.href = '/my-cars?sortBy=' + sortBy + '&size=' + pageSize;
+            window.location.href = '/car-owner/my-cars?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
         $(document).ready(function () {
@@ -470,7 +470,7 @@
                 event.preventDefault();
 
                 $.ajax({
-                    url: '/check-draft',
+                    url: 'car-draft/check-draft',
                     type: 'GET',
                     success: function (response) {
                         if (response.hasDraft === true) {

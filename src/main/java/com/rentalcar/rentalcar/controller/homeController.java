@@ -51,12 +51,4 @@ public class homeController {
         return "redirect:/";
     }
 
-
-
-    @GetMapping("/addcar")
-    public String addCar() {
-        return "carowner/AddCar";
-    }
-
-
 }
