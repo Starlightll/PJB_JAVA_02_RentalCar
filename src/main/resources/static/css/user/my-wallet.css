@@ -23,6 +23,7 @@
 .balance {
     width: 100%;
     max-width: 350px;
+    min-width: 200px;
     background-color: #404040;
     border-radius: 15px;
     overflow: hidden;
@@ -33,6 +34,7 @@
     max-height: 540px;
     width: 100%;
     max-width: 1050px;
+    min-width: 200px;
     background-color: #23292e;
     border-radius: 15px;
     overflow: hidden;
@@ -113,4 +115,10 @@ h5{
 
 .history .table-dark thead th{
     border: none;
+}
+
+@media(max-width: 759px){
+    .w--100{
+        width: 100% !important;
+    }
 }
