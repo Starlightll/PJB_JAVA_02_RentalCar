@@ -402,12 +402,12 @@
                 <tbody>
                 <!-- Sample Rows -->
 
-                <tr th:each="list : ${list}">
-                  <td style="color: #0b0b0b">1</td>
+                <tr th:each="list, count : ${list}">
+                  <td style="color: #0b0b0b" th:text="${count.index + 1}"></td>
                   <td style="color: #0b0b0b" th:text="${list.getCarName()}"></td>
                   <td>
-                    <div class="car-image"><img th:src="'/'+${list.getFrontImage()}"
-                                                style="background: #1a1a1a" alt=""></div>
+                    <div class="car-image" style="width: 100px"><img th:src="'/'+${list.getFrontImage()} "
+                                                style="background: #1a1a1a; width: 90px" alt=""></div>
                   </td>
                   <td style="color: #0b0b0b">No ratings</td>
                   <td style="color: #0b0b0b">0</td>

@@ -112,7 +112,6 @@ public class SearchCarController {
         } else if (pickDate.isAfter(dropDate)) {
             model.addAttribute("sendCondition", "Drop-off date and time must be later than Pick-up date and time");
         }else {
-
             model.addAttribute("list", list);
             model.addAttribute("totalPage", list.getTotalPages());
             model.addAttribute("currentPage", pageNo);
@@ -122,7 +121,7 @@ public class SearchCarController {
             model.addAttribute("dropTime",dropTime);
             model.addAttribute("pickTime",pickTime);
             model.addAttribute("sortBy", sortBy);
-           model.addAttribute("size", list.getTotalElements());
+            model.addAttribute("size", list.getTotalElements());
         }
 
         return "products/Search_Car";
