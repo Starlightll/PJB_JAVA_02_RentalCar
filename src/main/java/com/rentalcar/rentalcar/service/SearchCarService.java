@@ -3,10 +3,7 @@ package com.rentalcar.rentalcar.service;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,18 +18,21 @@ public class SearchCarService implements SearchCarImp{
     }
 
     @Override
-    public List<Car> findCars(String name) {
-        return carRepository.findCarByCarName(name,name);
+    public List<Car> findCars(String name, Pageable pageable) {
+        return carRepository.findCarByCarName(name,name, pageable);
     }
 
+
+
     @Override
-    public Page<Car> findCars(String name, Integer pageNo) {
-        List<Car> list = this.findCars(name);
-        Pageable pageable = PageRequest.of(pageNo-1,5);
-        Integer start = (int) pageable.getOffset();
-        Integer end = (pageable.getOffset() + pageable.getPageSize()) >list.size() ? list.size() : (int) (pageable.getOffset() + pageable.getPageSize());
+    public Page<Car> findCars(String name, Integer pageNo , Sort sort) {
+        Pageable pageable = PageRequest.of(pageNo-1,5, sort);
+
+        List<Car> list = this.findCars(name , pageable);
+        int start = (int) pageable.getOffset();
+        int end = (pageable.getOffset() + pageable.getPageSize()) >list.size() ? list.size() : (int) (pageable.getOffset() + pageable.getPageSize());
         list = list.subList(start, end);
-        return new PageImpl<Car>(list,pageable,list.size());
+        return new PageImpl<Car>(list,pageable,this.findCars(name,pageable).size());
     }
 
     @Override
@@ -40,4 +40,6 @@ public class SearchCarService implements SearchCarImp{
         Pageable pageable = PageRequest.of(pageNo-1,5);
         return this.carRepository.findAll(pageable);
     }
+
+
 }

@@ -33,5 +33,5 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
             "INNER JOIN CarAddress cd ON c.carId = cd.carId " +
             "WHERE (cd.province LIKE %:province% OR cd.district LIKE %:district%)",
             nativeQuery = true)
-    List<Car> findCarByCarName(@Param("province") String province, @Param("district") String district);
+    List<Car> findCarByCarName(@Param("province") String province, @Param("district") String district, Pageable pageable);
 }

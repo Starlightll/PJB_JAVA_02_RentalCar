@@ -49,13 +49,35 @@ public class SearchCarController {
                             @RequestParam(value = "dropDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dropDate,
                             @RequestParam(value = "pickTime", required = false) @DateTimeFormat(pattern = "HH:mm") LocalTime pickTime,
                             @RequestParam(value = "dropTime", required = false) @DateTimeFormat(pattern = "HH:mm") LocalTime dropTime,
-                            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo) {
+                            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo ,
+                            @RequestParam(defaultValue = "lastModified") String sortBy
+                           ) {
+        Sort sort;
+        boolean findByStatus = false;
+          switch (sortBy){
+              case "newestToLatest":
+                  sort = Sort.by(Sort.Direction.DESC, "lastModified");
+                  break;
+              case "latestToNewest":
+                  sort = Sort.by(Sort.Direction.ASC, "lastModified");
+                  break;
+              case "priceLowToHigh":
+                  sort = Sort.by(Sort.Direction.ASC, "basePrice");
+                  break;
+              case "priceHighToLow":
+                  sort = Sort.by(Sort.Direction.DESC, "basePrice");
+                  break;
+              default:
+                  sort = Sort.by(Sort.Direction.DESC, "lastModified");
+                  break;
+          }
 
         LocalDate today = LocalDate.now();
         LocalTime defaultTime = LocalTime.of(0, 0);
 
-        List<Car> carList = searchCarService.findCars(name);
-        Page<Car> list = searchCarService.findCars(name,pageNo);
+       // List<Car> carList = searchCarService.findCars(name);
+        Page<Car> list = searchCarService.findCars(name,pageNo, sort);
+
         if (name.trim().isEmpty()) {
             model.addAttribute("sendLocation", "Please enter location");
 
@@ -76,7 +98,12 @@ public class SearchCarController {
                 model.addAttribute("totalPage", list.getTotalPages());
                 model.addAttribute("currentPage", pageNo);
                 model.addAttribute("name", name);
-                model.addAttribute("size", carList.size());
+                model.addAttribute("pickDate",pickDate);
+                model.addAttribute("dropDate",dropDate);
+                model.addAttribute("dropTime",dropTime);
+                model.addAttribute("pickTime",pickTime);
+                model.addAttribute("sortBy", sortBy);
+                model.addAttribute("size", list.getTotalElements());
             }
         } else if (pickDate.isBefore(today)) {
             model.addAttribute("sendCondition", "Pick-up date must not be in the past");
@@ -94,7 +121,8 @@ public class SearchCarController {
             model.addAttribute("dropDate",dropDate);
             model.addAttribute("dropTime",dropTime);
             model.addAttribute("pickTime",pickTime);
-            model.addAttribute("size", carList.size());
+            model.addAttribute("sortBy", sortBy);
+           model.addAttribute("size", list.getTotalElements());
         }
 
         return "products/Search_Car";

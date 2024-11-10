@@ -366,21 +366,19 @@
             <h2 style="color: #00c86f">Search Results</h2>
 
             <div style="display: flex; justify-content: flex-end ; width: 20%; margin-left: 70%">
+              <input type="hidden" id="currentPage" th:value="${currentPage}">
+              <input type="hidden" id="name" th:value="${name}">
+              <input type="hidden" id="pickDate" th:value="${pickDate}">
+              <input type="hidden" id="dropDate" th:value="${dropDate}">
+              <input type="hidden" id="pickTime" th:value="${pickTime}">
+              <input type="hidden" id="dropTime" th:value="${dropTime}">
               <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
-                <option value="newestToLatest"
-                        th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to Latest
-                </option>
-                <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">Latest to
-                  Newest
-                </option>
+                <option value="newestToLatest" th:selected="${ sortBy == 'newestToLatest' }">Newest to Latest</option>
+                <option value="latestToNewest" th:selected="${sortBy == 'latestToNewest'}">Latest to Newest</option>
                 <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
                 <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
-                <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price: Low to
-                  High
-                </option>
-                <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price: High to
-                  Low
-                </option>
+                <option value="priceLowToHigh" th:selected="${sortBy == 'priceLowToHigh' }">Price: Low to High</option>
+                <option value="priceHighToLow" th:selected="${sortBy == 'priceHighToLow'}">Price: High to Low</option>
               </select>
             </div>
 
@@ -431,11 +429,11 @@
           </div>
           <div class="box-footer clearfix">
             <ul class="pagination pagination-sm no-margin pull-right">
-              <li th:if="${currentPage >1}"><a th:href="@{'?pageNo='+${currentPage -1}}"> << </a></li>
+              <li th:if="${currentPage >1}"><a th:href="@{'?pageNo='+${currentPage - 1} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}"> << </a></li>
               <li th:each="i:${#numbers.sequence(1,totalPage)}"
                   th:classappend="${currentPage == i ? 'active' : ''}"><a
                       th:href="@{'?pageNo='+${i} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}" th:text="${i}"></a></li>
-              <li th:if="${currentPage < totalPage}"><a th:href="@{'?pageNo='+${currentPage +1}}"> >> </a></li>
+              <li th:if="${currentPage < totalPage}"><a th:href="@{'?pageNo='+${currentPage +1} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}"> >> </a></li>
             </ul>
           </div>
         </div>
@@ -453,6 +451,30 @@
 
 
   <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+  <script>
+    function navigateToFilteredCars() {
+      // Get the selected sort option
+      const sortBy = document.getElementById("sortBy").value;
+
+      // Define sort and order based on the selected option
+
+
+      // Get the values from the hidden fields
+      const pageNo = document.getElementById('currentPage').value;
+      const name = document.getElementById('name').value;
+      const pickDate = document.getElementById('pickDate').value;
+      const dropDate = document.getElementById('dropDate').value;
+      const pickTime = document.getElementById('pickTime').value;
+      const dropTime = document.getElementById('dropTime').value;
+
+      // Construct the search URL with query parameters
+      const url = `/searchCar?sortBy=${sortBy}&pageNo=${pageNo}&name=${name}&pickDate=${pickDate}&dropDate=${dropDate}&pickTime=${pickTime}&dropTime=${dropTime}`;
+
+      // Redirect to the constructed URL
+      window.location.href = url;
+    }
+  </script>
 
 
 
