@@ -265,7 +265,7 @@
                                     <div class="row d-flex justify-content-center" th:if="${carList != null}">
 
                                         <th:block th:each="car, iterStat: ${carList}">
-                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
+                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e" data-aos="fade-up">
                                                 <div class="col-lg-6 col-md-6 d-flex align-items-center">
                                                     <div class="wrapper" style="max-height: 270px">
                                                         <input type="radio" th:name="'slide-'+ ${iterStat.index}"
@@ -310,7 +310,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
                                                     <div class="row justify-content-center align-items-center align-content-center">
-                                                        <h4 class="col-lg-12 col-md-12 col-sm-12 text-center" style="" th:text="${car.getCarName() == null ? 'NULL' :car.getCarName()}">No Name</h4>
+                                                        <h4 class="col-lg-12 col-md-12 col-sm-12 text-center" style="" th:text="${car.getCarName() == null ? 'NULL' :car.getCarName()}" data-aos="zoom-out-up">No Name</h4>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -318,18 +318,18 @@
                                                             <div class="rating">
                                                                 <div class="star"
                                                                      th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="100"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="200"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="300"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="400"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="500"></i>
                                                                 </div>
                                                                 <div class="star-base">
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="100"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="200"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="300"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="400"></i>
+                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="500"></i>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -337,14 +337,14 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 No. of rides: </p>
-                                                            <p>0</p>
+                                                            <p >0</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Price: </p>
                                                             <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
-                                                               id="previewPrice">0k/Day</p>
+                                                               id="previewPrice" >0k/Day</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
@@ -353,7 +353,7 @@
                                                             <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                id="previewLocation"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${car.getAddress().getProvince()}">No</p>
+                                                               th:text="${car.getAddress().getProvince()}" >No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
@@ -369,7 +369,7 @@
                                                             </th:block>
                                                             <th:block th:if="${car.getCarStatus().getStatusId() == 3}">
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #ff0000">Stopped</p>
+                                                                   style="color: #ff0000" >Stopped</p>
                                                             </th:block>
                                                             <th:block th:if="${car.getCarStatus().getStatusId() == 4}">
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
@@ -401,7 +401,7 @@
                         <!-- Previous button - note currentPage is already 1-based -->
                         <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
                             <a class="page-link"
-                               th:href="@{/my-cars(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                               th:href="@{/car-owner/my-cars(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                th:classappend="${currentPage <= 1} ? 'disabled'"
                                aria-label="Previous">
                                 <span aria-hidden="true">Previous</span>
@@ -413,14 +413,14 @@
                             th:each="i : ${#numbers.sequence(1, totalPages)}"
                             th:classappend="${i == currentPage} ? 'active'">
                             <a class="page-link"
-                               th:href="@{/my-cars(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                               th:href="@{/car-owner/my-cars(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                th:text="${i}"></a>
                         </li>
 
                         <!-- Next button -->
                         <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
                             <a class="page-link"
-                               th:href="@{/my-cars(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                               th:href="@{/car-owner/my-cars(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                th:classappend="${currentPage >= totalPages} ? 'disabled'"
                                aria-label="Next">
                                 <span aria-hidden="true">Next</span>
@@ -458,11 +458,12 @@
 
 
     <script>
+
         function navigateToFilteredCars() {
             const sortBy = document.getElementById('sortBy').value;
             const pageSize = document.getElementById('pageSize').value;
 
-            window.location.href = '/my-cars?sortBy=' + sortBy + '&size=' + pageSize;
+            window.location.href = '/car-owner/my-cars?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
         $(document).ready(function () {
@@ -470,7 +471,7 @@
                 event.preventDefault();
 
                 $.ajax({
-                    url: '/check-draft',
+                    url: '/car-draft/check-draft',
                     type: 'GET',
                     success: function (response) {
                         if (response.hasDraft === true) {
@@ -485,7 +486,7 @@
                                 addCar();
                             });
                         } else {
-                            window.location.href = '/add-car';
+                            window.location.href = '/car-owner/add-car';
                         }
                     },
                     error: function (error) {
@@ -496,13 +497,13 @@
         });
 
         function addCar() {
-            window.location.href = '/add-car';
+            window.location.href = '/car-owner/add-car';
         }
 
 
         function deleteDraft() {
             $.ajax({
-                url: '/delete-draft',
+                url: '/car-draft/delete-draft',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')

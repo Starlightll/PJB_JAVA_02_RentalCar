@@ -1,6 +1,9 @@
  AOS.init({
- 	duration: 800,
- 	easing: 'slide'
+	 offset: 0,
+	 duration: 800,
+	 easing: 'slide',
+	 once: true,
+	 startEvent: 'DOMContentLoaded',
  });
 
 (function($) {
