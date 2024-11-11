@@ -92,7 +92,10 @@ public class SearchCarController {
         } else if (pickDate.isEqual(dropDate)) {
             if (pickTime.isAfter(dropTime) || pickTime.equals(dropTime)) {
                 model.addAttribute("sendCondition", "Drop-time must be after pick time");
-            }else{
+            }else if (pickTime.plusHours(1).isAfter(dropTime)) {
+                model.addAttribute("sendCondition", "Drop-time must be at least 1 hour after pick time");
+            }
+            else{
 
                 model.addAttribute("list", list);
                 model.addAttribute("totalPage", list.getTotalPages());
