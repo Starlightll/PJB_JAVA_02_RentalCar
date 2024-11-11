@@ -1,0 +1,136 @@
+/* Search Results Styles */
+.search-results {
+    margin-top: 20px;
+}
+
+.search-results h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.results-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results-table th, .results-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.results-table th {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+
+.results-table td {
+    background-color: #f9f9f9;
+}
+
+.car-image {
+    width: 50px;
+    height: 50px;
+    background-color: #ccc;
+    display: inline-block;
+    border-radius: 4px;
+}
+
+.btn-rent, .btn-view {
+
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-rent {
+    background-color: #28a745;
+    color: white;
+    width: 85px;
+
+}
+
+.btn-rent:hover {
+    background-color: #218838;
+}
+
+.btn-view {
+    background-color: #007bff;
+    color: white;
+
+}
+
+.btn-view:hover {
+    background-color: #0056b3;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.pagination p {
+    font-size: 14px;
+}
+
+.pagination select {
+    padding: 5px;
+    font-size: 14px;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 4px;
+}
+
+.pagination-sm li {
+    margin: 0 5px;
+}
+
+.pagination-sm a {
+    color: #007bff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-sm a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.pagination-sm .active a {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.pull-right {
+    float: right;
+}
+
+
+@media (min-width: 768px){
+    .container{
+        max-width: 820px !important;
+    } !important;
+}
+
+@media (min-width: 992px){
+    .container{
+        max-width: 1000px !important;
+    } !important;
+}

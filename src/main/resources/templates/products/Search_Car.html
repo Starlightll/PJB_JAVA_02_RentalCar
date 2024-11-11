@@ -5,228 +5,14 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
   <title>Search Car</title>
-  <style>
-    /* General Styles */
-    /* General Styles */
-    body, h1, h2, p {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    /* Header Styles */
-    .header {
-      background-color: #333;
-      color: white;
-      padding: 10px 0;
-      text-align: center;
-    }
-
-    .header .menu {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 5px;
-    }
-
-    .header a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      font-size: 16px;
-    }
-
-    /* Search Form Styles */
-    .search-form {
-      background-color: #666;
-      padding: 20px 0;
-      color: white;
-      margin-top: 10%;
-      display: flex;
-
-    }
-
-    .search-form form {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .search-form .form-row {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-    }
-
-    .search-form label {
-      font-size: 14px;
-    }
-
-    .search-form input[type="text"],
-    .search-form input[type="date"],
-    .search-form input[type="time"] {
-      width: 200px;
-      padding: 8px;
-      margin-top: 5px;
-      font-size: 16px;
-      border-radius: 4px;
-      border: none;
-    }
-
-    .btn-search {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .btn-search:hover {
-      background-color: #0056b3;
-    }
-
-    /* Search Results Styles */
-    .search-results {
-      margin-top: 20px;
-    }
-
-    .search-results h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .results-table table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .results-table th, .results-table td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-
-    .results-table th {
-      background-color: #333;
-      color: white;
-      font-weight: bold;
-    }
-
-    .results-table td {
-      background-color: #f9f9f9;
-    }
-
-    .car-image {
-      width: 50px;
-      height: 50px;
-      background-color: #ccc;
-      display: inline-block;
-      border-radius: 4px;
-    }
-
-    .btn-rent, .btn-view {
-
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .btn-rent {
-      background-color: #28a745;
-      color: white;
-      width: 85px;
-
-    }
-
-    .btn-rent:hover {
-      background-color: #218838;
-    }
-
-    .btn-view {
-      background-color: #007bff;
-      color: white;
-
-    }
-
-    .btn-view:hover {
-      background-color: #0056b3;
-    }
-
-    /* Pagination */
-    .pagination {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .pagination p {
-      font-size: 14px;
-    }
-
-    .pagination select {
-      padding: 5px;
-      font-size: 14px;
-    }
-
-    .pagination {
-      display: flex;
-      padding-left: 0;
-      list-style: none;
-      border-radius: 4px;
-    }
-
-    .pagination-sm li {
-      margin: 0 5px;
-    }
-
-    .pagination-sm a {
-      color: #007bff;
-      text-decoration: none;
-      padding: 8px 12px;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .pagination-sm a:hover {
-      background-color: #007bff;
-      color: #fff;
-    }
-
-    .pagination-sm .active a {
-      background-color: #007bff;
-      color: #fff;
-      border-color: #007bff;
-    }
-
-    .no-margin {
-      margin: 0;
-    }
-
-    .pull-right {
-      float: right;
-    }
-
-
-  </style>
+    <link rel="stylesheet" href="/css/customer/search-car.css">
 </head>
 
 <body>
 <th:block layout:fragment="content">
   <body>
 
-  <div class="hero-wrap ftco-degree-bg" style="background-image: url('images/bg_1.jpg');" data-stellar-background-ratio="0.5">
+  <div class="hero-wrap ftco-degree-bg" style="background-image: url('/images/bg_1.jpg');" data-stellar-background-ratio="0.5">
     <div class="overlay"></div>
     <div class="container">
       <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
@@ -248,49 +34,50 @@
     </div>
   </div>
 
+
   <section class="ftco-section ftco-no-pt bg-light">
-    <div class="container">
+    <div class="container" style="">
       <div class="row no-gutters">
         <div class="col-md-12	featured-top">
           <div class="row no-gutters">
-            <div class="col-md-4 d-flex align-items-center">
-              <form th:action="@{/searchCar}" class="request-form ftco-animate bg-primary" method="get">
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+              <form th:action="@{/searchCar}" class="request-form ftco-animate bg-primary" method="get" style=" height: 550px;align-items: center;align-content: center;gap: 20px;display: flex;flex-flow: column;">
                 <h2>Make your trip</h2>
                 <div class="form-group">
-                  <label for="" class="label">Pick-up location</label>
-                  <input type="text" class="form-control" placeholder="City,District " name="name" required>
+                  <label for="pick-location" class="label">Pick-up location</label>
+                  <input name="name" type="text" class="form-control" placeholder="City, District, etc" id="pick-location">
                   <div th:if="${sendLocation != null}">
                     <p th:text="${sendLocation}" style="color: red;"></p>
                   </div>
                 </div>
-
                 <div class="d-flex">
                   <div class="form-group mr-2">
-                    <label for="" class="label">Pick-up date</label>
-                    <input type="date" class="form-control"  placeholder="Date" name="pickDate">
+                    <label for="book_pick_date" class="label">Pick-up date</label>
+                    <input name="pickDate" type="text" class="form-control" id="book_pick_date" placeholder="Date">
                     <div th:if="${sendPickDate != null}">
                       <p th:text="${sendPickDate}" style="color: red;"></p>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="" class="label">Pick-up Time</label>
-                    <input type="time" class="form-control"  name="pickTime">
-                    <div th:if="${sendPickTime != null}">
-                      <p th:text="${sendPickTime}" style="color: red;"></p>
+                    <label for="time_pick" class="label">Pick-up time</label>
+                    <input name="pickTime" type="text" class="form-control" id="time_pick" placeholder="Time">
+                    <div th:if="${sendPickDate != null}">
+                      <p th:text="${sendPickDate}" style="color: red;"></p>
                     </div>
                   </div>
                 </div>
+
                 <div class="d-flex">
-                  <div class="form-group ml-2">
-                    <label for="" class="label">Drop-off date</label>
-                    <input type="date" class="form-control" placeholder="Date" name="dropDate">
+                  <div class="form-group mr-2">
+                    <label for="book_drop_date" class="label">Drop date</label>
+                    <input name="dropDate" type="text" class="form-control" id="book_drop_date" placeholder="Date">
                     <div th:if="${sendDropDate != null}">
                       <p th:text="${sendDropDate}" style="color: red;"></p>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="" class="label">Drop-off Time</label>
-                    <input type="time" class="form-control" name="dropTime">
+                    <label for="time_drop" class="label">Drop time</label>
+                    <input name="dropTime" type="text" class="form-control" id="time_drop" placeholder="Time">
                     <div th:if="${sendDropTime != null}">
                       <p th:text="${sendDropTime}" style="color: red;"></p>
                     </div>
@@ -299,15 +86,13 @@
                 <div th:if="${sendCondition != null}">
                   <p th:text="${sendCondition}" style="color: red;"></p>
                 </div>
-
-
                 <div class="form-group">
                   <input type="submit" value="Rent A Car Now" class="btn btn-secondary py-3 px-4">
                 </div>
               </form>
             </div>
             <div class="col-md-8 d-flex align-items-center">
-              <div class="services-wrap rounded-right w-100">
+              <div class="services-wrap rounded-right w-100" style="text-align: center;">
                 <h3 class="heading-section mb-4">Better Way to Rent Your Perfect Cars</h3>
                 <div class="row d-flex mb-4">
                   <div class="col-md-4 d-flex align-self-stretch ftco-animate">
@@ -341,8 +126,8 @@
           </div>
         </div>
       </div>
+    </div>
   </section>
-
 
   <section class="ftco-section ftco-no-pt bg-light">
     <div class="container">
