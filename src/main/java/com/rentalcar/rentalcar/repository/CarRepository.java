@@ -7,6 +7,7 @@ import com.rentalcar.rentalcar.entity.User;
 import jakarta.persistence.SqlResultSetMapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +32,7 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     Page<Car> findAllByCarStatusAndUser(Integer statusId, Long userId, Pageable pageable);
 
 
+
     @Query(value = "SELECT c.[carId], [name], [licensePlate], [model], [color], [seatNo], [productionYear], " +
             "[transmission], [fuel], [mileage], [fuelConsumption], [basePrice], [deposit], [description], " +
             "[termOfUse], [carPrice], [front], [back], [left], [right], [registration], [certificate], " +
@@ -46,5 +48,13 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
             "[insurance], [lastModified], [userId], [brandId], [statusId]",
             nativeQuery = true)
     Object[] findCarByCarId(@Param("carId") Integer carId);
+
+
+    @Query(value = "SELECT c.*, cd.province, cd.provinceId, cd.district, cd.districtId, cd.ward, cd.wardId, cd.street " +
+            "FROM Car c " +
+            "INNER JOIN CarAddress cd ON c.carId = cd.carId " +
+            "WHERE (cd.province LIKE %:province% OR cd.district LIKE %:district%)",
+            nativeQuery = true)
+    List<Car> findCarByCarName(@Param("province") String province, @Param("district") String district, Sort sort);
 
 }

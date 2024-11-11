@@ -72,8 +72,8 @@
         </div>
     </section>
     <section class="ftco-section pt-0">
-        <div class="container-fluid" id="grad1">
-            <div class="row justify-content-center mt-0">
+        <div class="container-fluid d-flex justify-content-center" id="grad1">
+            <div class="add-car-section row justify-content-center mt-0">
                 <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
 
                     <div class="card px-0 pt-4 pb-0 mt-3 mb-3 mt-lg-5">
@@ -243,7 +243,7 @@
                                                                     <input type="file" id="input-file1"
                                                                            accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view1" th:data-image-url="${carDraft.getRegistration()}">
+                                                                    <div class="img-view" id="img-view1" th:data-image-url="'/'+${carDraft.getRegistration()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -260,7 +260,7 @@
                                                                     <input type="file" id="input-file2"
                                                                            accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view2" th:data-image-url="${carDraft.getCertificate()}">
+                                                                    <div class="img-view" id="img-view2" th:data-image-url="'/'+${carDraft.getCertificate()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -277,7 +277,7 @@
                                                                     <input type="file" id="input-file3"
                                                                            accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view3" th:data-image-url="${carDraft.getInsurance()}">
+                                                                    <div class="img-view" id="img-view3" th:data-image-url="'/'+${carDraft.getInsurance()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -422,7 +422,7 @@
                                                                     <input type="file" id="input-file4"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view4" th:data-image-url="${carDraft.getFrontImage()}">
+                                                                    <div class="img-view" id="img-view4" th:data-image-url="'/'+${carDraft.getFrontImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -439,7 +439,7 @@
                                                                     <input type="file" id="input-file5"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view5" th:data-image-url="${carDraft.getBackImage()}">
+                                                                    <div class="img-view" id="img-view5" th:data-image-url="'/'+${carDraft.getBackImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -456,7 +456,7 @@
                                                                     <input type="file" id="input-file6"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view6" th:data-image-url="${carDraft.getLeftImage()}">
+                                                                    <div class="img-view" id="img-view6" th:data-image-url="'/'+${carDraft.getLeftImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -472,7 +472,7 @@
                                                                     <input type="file" id="input-file7"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view7" th:data-image-url="${carDraft.getRightImage()}">
+                                                                    <div class="img-view" id="img-view7" th:data-image-url="'/'+${carDraft.getRightImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -589,16 +589,16 @@
                                                                 <input type="radio" name="slide" id="three">
                                                                 <input type="radio" name="slide" id="four">
                                                                 <div class="img img-1">
-                                                                    <img id="carFrontImage" th:src="${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carFrontImage" th:src="'/'+${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-2">
-                                                                    <img id="carBackImage" th:src="${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carBackImage" th:src="'/'+${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-3">
-                                                                    <img id="carLeftImage" th:src="${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carLeftImage" th:src="'/'+${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-4">
-                                                                    <img id="carRightImage" th:src="${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carRightImage" th:src="'/'+${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="sliders">
                                                                     <label for="one" class="one"></label>
