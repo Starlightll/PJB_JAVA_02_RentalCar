@@ -1,7 +1,7 @@
 /* Search Results Styles */
 
 .validate-msg{
-    color: #acffee !important;
+    color: red !important;
     font-size: 0.9rem;
     margin: 0;
 }
