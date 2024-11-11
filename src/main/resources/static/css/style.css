@@ -10332,6 +10332,127 @@ button.bg-dark:focus {
         margin-left: 3rem !important;
     }
 
+    /* add m from 6 to 10*/
+    .m-lg-6 {
+        margin: 4rem !important;
+    }
+
+    .mt-lg-6,
+    .my-lg-6 {
+        margin-top: 4rem !important;
+    }
+
+    .mr-lg-6,
+    .mx-lg-6 {
+        margin-right: 4rem !important;
+    }
+
+    .mb-lg-6,
+    .my-lg-6 {
+        margin-bottom: 4rem !important;
+    }
+
+    .ml-lg-6,
+    .mx-lg-6 {
+        margin-left: 4rem !important;
+    }
+
+    .m-lg-7 {
+        margin: 5rem !important;
+    }
+
+    .mt-lg-7,
+    .my-lg-7 {
+        margin-top: 5rem !important;
+    }
+
+    .mr-lg-7,
+    .mx-lg-7 {
+        margin-right: 5rem !important;
+    }
+
+    .mb-lg-7,
+    .my-lg-7 {
+        margin-bottom: 5rem !important;
+    }
+
+    .ml-lg-7,
+    .mx-lg-7 {
+        margin-left: 5rem !important;
+    }
+
+    .m-lg-8 {
+        margin: 6rem !important;
+    }
+
+    .mt-lg-8,
+    .my-lg-8 {
+        margin-top: 6rem !important;
+    }
+
+    .mr-lg-8,
+    .mx-lg-8 {
+        margin-right: 6rem !important;
+    }
+
+    .mb-lg-8,
+    .my-lg-8 {
+        margin-bottom: 6rem !important;
+    }
+
+    .ml-lg-8,
+    .mx-lg-8 {
+        margin-left: 6rem !important;
+    }
+
+    .m-lg-9 {
+        margin: 7rem !important;
+    }
+
+    .mt-lg-9,
+    .my-lg-9 {
+        margin-top: 7rem !important;
+    }
+
+    .mr-lg-9,
+    .mx-lg-9 {
+        margin-right: 7rem !important;
+    }
+
+    .mb-lg-9,
+    .my-lg-9 {
+        margin-bottom: 7rem !important;
+    }
+
+    .ml-lg-9,
+    .mx-lg-9 {
+        margin-left: 7rem !important;
+    }
+
+    .m-lg-10 {
+        margin: 10rem !important;
+    }
+
+    .mt-lg-10,
+    .my-lg-10 {
+        margin-top: 10rem !important;
+    }
+
+    .mr-lg-10,
+    .mx-lg-10 {
+        margin-right: 10rem !important;
+    }
+
+    .mb-lg-10,
+    .my-lg-10 {
+        margin-bottom: 10rem !important;
+    }
+
+    .ml-lg-10,
+    .mx-lg-10 {
+        margin-left: 10rem !important;
+    }
+
     .p-lg-0 {
         padding: 0 !important;
     }
