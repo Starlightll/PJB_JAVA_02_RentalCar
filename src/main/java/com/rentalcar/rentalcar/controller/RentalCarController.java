@@ -57,4 +57,19 @@ public class RentalCarController {
         return "customer/booking";
     }
 
+    @GetMapping("/cancel-booking")
+    public String cancelBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
+        boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
+
+        if (isCancelled) {
+            model.addAttribute("message", "Booking has been successfully cancelled.");
+        } else {
+            model.addAttribute("error", "Unable to cancel the booking. Please try again.");
+        }
+
+        return "redirect:/my-bookings";
+    }
+
+
+
 }

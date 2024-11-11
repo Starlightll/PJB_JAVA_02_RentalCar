@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RentalCarServiceImpl implements RentalCarService {
@@ -87,4 +88,40 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         return new PageImpl<>(bookingDtos, pageable, resultsPage.getTotalElements());
     }
+
+    @Override
+    public boolean cancelBooking(Long bookingId, HttpSession session) {
+        // Retrieve the current user from the session
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        // Ensure the bookingId is the correct type (Long) and pass it to the repository
+        System.out.println("Attempting to cancel booking with ID: " + bookingId);
+
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);  // Ensure this returns Optional<Booking>
+
+        // Debugging: Check if Optional is present
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+
+            // Verify that the booking belongs to the user and is in a cancellable state
+            if (booking.getUserId().equals(user.getId()) &&
+                    List.of("Confirmed", "In-Progress", "Pending deposit", "Pending payment").contains(booking.getBookingStatus())) {
+
+                // Update the status to "Cancelled"
+                booking.setBookingStatus("Cancelled");
+                rentalCarRepository.save(booking);  // Save the updated Booking entity
+                return true;
+            } else {
+                System.out.println("Booking does not belong to the user or is not in a cancellable state.");
+            }
+        } else {
+            System.out.println("Booking with ID " + bookingId + " not found.");
+        }
+
+        return false;  // Return false if the booking is not found or can't be cancelled
+    }
+
 }

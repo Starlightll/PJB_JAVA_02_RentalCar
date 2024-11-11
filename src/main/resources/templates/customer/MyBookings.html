@@ -213,12 +213,21 @@
                 <span>You have <span th:text="${filteredCount}">0</span> on-going bookings</span>
                 <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
                     <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
-                            <option value="newestToLatest" th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to Latest</option>
-                        <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">Latest to Newest</option>
+                        <option value="newestToLatest"
+                                th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to
+                            Latest
+                        </option>
+                        <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
+                            Latest to Newest
+                        </option>
                         <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
                         <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
-                        <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price: Low to High</option>
-                        <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price: High to Low</option>
+                        <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price:
+                            Low to High
+                        </option>
+                        <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price:
+                            High to Low
+                        </option>
                     </select>
                 </div>
                 <!-- Modal -->
@@ -257,139 +266,172 @@
                             <div class="d-flex justify-content-center">
                                 <div class="card align-items-start display-flex-center" style="">
 
-                                        <div class="row d-flex justify-content-center" th:if="${bookingList != null}">
+                                    <div class="row d-flex justify-content-center" th:if="${bookingList != null}">
 
-                                            <th:block th:each="booking, iterStat: ${bookingList}">
-                                                <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
-                                                    <div class="col-lg-6 col-md-6 d-flex align-items-center">
-                                                        <div class="wrapper" style="max-height: 270px">
-                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                                   th:id="'one-' + ${iterStat.index}" checked>
-                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                                   th:id="'two-' + ${iterStat.index}">
-                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                                   th:id="'three-' + ${iterStat.index}">
-                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                                   th:id="'four-' + ${iterStat.index}">
-                                                            <div class="img img-1">
-                                                                <img th:src="'/'+${booking.frontImage}"
-                                                                     style="background: #1a1a1a" alt="">
-                                                            </div>
-                                                            <div class="img img-2">
-                                                                <img th:src="'/'+${booking.backImage}"
-                                                                     style="background: #1a1a1a" alt="">
-                                                            </div>
-                                                            <div class="img img-3">
-                                                                <img th:src="'/'+${booking.leftImage}"
-                                                                     style="background: #1a1a1a" alt="">
-                                                            </div>
-                                                            <div class="img img-4">
-                                                                <img th:src="'/'+${booking.rightImage}"
-                                                                     style="background: #1a1a1a" alt="">
-                                                            </div>
-                                                            <div class="sliders">
-                                                                <label th:for="'one-' + ${iterStat.index}"
-                                                                       th:id="'label-one-' + ${iterStat.index}"
-                                                                       class="one"></label>
-                                                                <label th:for="'two-' + ${iterStat.index}"
-                                                                       th:id="'label-two-' + ${iterStat.index}"
-                                                                       class="two"></label>
-                                                                <label th:for="'three-' + ${iterStat.index}"
-                                                                       th:id="'label-three-' + ${iterStat.index}"
-                                                                       class="three"></label>
-                                                                <label th:for="'four-' + ${iterStat.index}"
-                                                                       th:id="'label-four-' + ${iterStat.index}"
-                                                                       class="four"></label>
-                                                            </div>
+                                        <th:block th:each="booking, iterStat: ${bookingList}">
+                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
+                                                <div class="col-lg-6 col-md-6 d-flex align-items-center">
+                                                    <div class="wrapper" style="max-height: 270px">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'one-' + ${iterStat.index}" checked>
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'two-' + ${iterStat.index}">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'three-' + ${iterStat.index}">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'four-' + ${iterStat.index}">
+                                                        <div class="img img-1">
+                                                            <img th:src="'/'+${booking.frontImage}"
+                                                                 style="background: #1a1a1a" alt="">
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
-                                                        <div class="row justify-content-center align-items-center align-content-center">
-                                                            <h4 class="col-lg-12 col-md-12 col-sm-12" style="" th:text="${booking.carname == null ? 'NULL' : booking.carname}">No Name</h4>
-
-                                                            <div>
-                                                                <span></span>
-                                                            </div>
-                                                            <!-- From Date and To Date Section -->
-                                                            <div class="col-lg-12 row mt-2">
-                                                                <div class="col-lg-6 col-md-6 col-sm-6">
-                                                                    <label for="fromDate-${iterStat.index}">From Date:</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-12 row mt-2">
-                                                                <div class="col-lg-6 col-md-6 col-sm-6">
-                                                                    <label for="fromDate-${iterStat.index}">To Date:</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
-                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                    Number of days: </p>
-                                                                <p th:text="${booking.numberOfDays}">0</p>
-
-                                                            </div>
-                                                            <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
-                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                    Base price: </p>
-                                                                <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
-                                                                   id="previewBasePrice">0k/Day</p>
-                                                            </div>
-                                                            <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
-                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                    Total: </p>
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   id="previewTotal"
-                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">No</p>
-                                                            </div>
-                                                            <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
-                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                    Deposit: </p>
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   id="previewDeposit"
-                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${#numbers.formatDecimal(booking.deposit, 0, 'COMMA', 0, 'POINT')}">No</p>
-                                                            </div>
-                                                            <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
-                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                    Booking No: </p>
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   id="previewBookingNo"
-                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${booking.bookingId}">No</p>
-                                                            </div>
-                                                            <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
-                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                    Booking status: </p>
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       th:text="${booking.bookingStatus}"  style="color: #00d79d">Confirmed</p>
-                                                            </div>
+                                                        <div class="img img-2">
+                                                            <img th:src="'/'+${booking.backImage}"
+                                                                 style="background: #1a1a1a" alt="">
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
-                                                        <a th:href="'/edit-car/' + ${booking.bookingId}"
-                                                           class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
-                                                            Details</a>
-                                                        <a th:href="'#'"
-                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
-                                                            Deposit</a>
-                                                        <a th:href="'#'"
-                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Cancel Booking</a>
+                                                        <div class="img img-3">
+                                                            <img th:src="'/'+${booking.leftImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-4">
+                                                            <img th:src="'/'+${booking.rightImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="sliders">
+                                                            <label th:for="'one-' + ${iterStat.index}"
+                                                                   th:id="'label-one-' + ${iterStat.index}"
+                                                                   class="one"></label>
+                                                            <label th:for="'two-' + ${iterStat.index}"
+                                                                   th:id="'label-two-' + ${iterStat.index}"
+                                                                   class="two"></label>
+                                                            <label th:for="'three-' + ${iterStat.index}"
+                                                                   th:id="'label-three-' + ${iterStat.index}"
+                                                                   class="three"></label>
+                                                            <label th:for="'four-' + ${iterStat.index}"
+                                                                   th:id="'label-four-' + ${iterStat.index}"
+                                                                   class="four"></label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </th:block>
-                                        </div>
+                                                <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                    <div class="row justify-content-center align-items-center align-content-center">
+                                                        <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
+                                                            th:text="${booking.carname == null ? 'NULL' : booking.carname}">
+                                                            No Name</h4>
+
+                                                        <div>
+                                                            <span></span>
+                                                        </div>
+                                                        <!-- From Date and To Date Section -->
+                                                        <div class="col-lg-12 row mt-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label for="fromDate-${iterStat.index}">From
+                                                                    Date:</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12 row mt-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label for="fromDate-${iterStat.index}">To Date:</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Number of days: </p>
+                                                            <p th:text="${booking.numberOfDays}">0</p>
+
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Base price: </p>
+                                                            <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                               id="previewBasePrice">0k/Day</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Total: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewTotal"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Deposit: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewDeposit"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.deposit, 0, 'COMMA', 0, 'POINT')}">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Booking No: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewBookingNo"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${booking.bookingId}">No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row" style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Booking status:
+                                                            </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               th:text="${booking.bookingStatus}"
+                                                               th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
+                 : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+                 : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
+                 : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
+                 : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' : 'font-weight: bold;' }">
+                                                            </p>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+                                                    <!-- View Details button: always visible -->
+                                                    <a th:href="'/edit-car/' + ${booking.bookingId}"
+                                                       class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
+                                                        Details</a>
+
+                                                    <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
+                                                    <a th:href="'#'"
+                                                       th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending Payment' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
+                                                        Deposit</a>
+
+                                                    <!-- Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses -->
+                                                    <a th:href="'#'"
+                                                       th:if="${(booking.bookingStatus == 'Confirmed' or booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Stopped')
+                                                            and booking.bookingStatus != 'Pending Payment' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed' and booking.bookingStatus != 'In-Progress'}"
+                                                       id="cancel-booking-btn"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Cancel
+                                                        Booking</a>
+
+                                                    <!-- Return Car button: visible only if status is In-Progress -->
+                                                    <a th:href="'#'"
+                                                       th:if="${booking.bookingStatus == 'In-Progress'}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Return
+                                                        Car</a>
+                                                </div>
+
+
+                                            </div>
+                                        </th:block>
+                                    </div>
 
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <nav th:if="${bookingList != null}" class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center" aria-label="Page navigation example" style="column-gap: 10px">
+                    <nav th:if="${bookingList != null}"
+                         class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
+                         aria-label="Page navigation example" style="column-gap: 10px">
                         <ul class="pagination m-0">
                             <!-- Previous button - note currentPage is already 1-based -->
                             <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
@@ -458,57 +500,36 @@
             window.location.href = '/my-booking?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
-        // $(document).ready(function () {
-        //     $('#addCarBtn').click(function (event) {
-        //         event.preventDefault();
-        //
-        //         $.ajax({
-        //             url: '/check-draft',
-        //             type: 'GET',
-        //             success: function (response) {
-        //                 if (response.hasDraft === true) {
-        //                     $('#hasDraftModal').modal('show');
-        //                     $('#hasDraftModalTitle').text("Draft found!");
-        //                     $('#hasDraftModalBody').html("You have a car draft in <b>" + response.lastModified + "</b>. Do you want to continue with it?");
-        //                     $('#carAddNew').click(function () {
-        //                         deleteDraft();
-        //                         addCar();
-        //                     });
-        //                     $('#carContinues').click(function () {
-        //                         addCar();
-        //                     });
-        //                 } else {
-        //                     window.location.href = '/add-car';
-        //                 }
-        //             },
-        //             error: function (error) {
-        //                 console.log("Error");
-        //             }
-        //         });
-        //     });
-        // });
-        //
-        // function addCar() {
-        //     window.location.href = '/add-car';
-        // }
-        //
-        //
-        // function deleteDraft() {
-        //     $.ajax({
-        //         url: '/delete-draft',
-        //         type: 'POST',
-        //         headers: {
-        //             'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
-        //         },
-        //         success: function (response) {
-        //             alert("Draft deleted.");
-        //         },
-        //         error: function (error) {
-        //             console.error("Error:", error);
-        //             alert("Error deleting draft.");
-        //         }
-        //     });
-        // }
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            const cancelBookingBtn = document.getElementById('cancel-booking-btn');
+            if (cancelBookingBtn) {
+                cancelBookingBtn.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    Swal.fire({
+                        title: 'Are you sure you want to cancel this booking?',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User chose to cancel the booking');
+                            window.location.href = '/cancel-booking';
+                        } else if (result.isDismissed) {
+                            console.log('User canceled the booking action');
+                        }
+                    });
+                });
+            }
+        });
+
 
     </script>
     </body>
