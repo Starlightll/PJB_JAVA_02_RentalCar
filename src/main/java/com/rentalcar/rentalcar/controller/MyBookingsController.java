@@ -48,7 +48,7 @@ public class MyBookingsController {
     private CarRepository carRepository;
 
 
-    @GetMapping("/my-bookings")
+    @GetMapping("/my-booking")
     public String myBooking(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,

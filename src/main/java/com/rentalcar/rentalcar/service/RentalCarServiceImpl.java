@@ -2,7 +2,9 @@ package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.dto.BookingDto;
 
+import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.RentalCarRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,6 +24,9 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     @Autowired
     RentalCarRepository rentalCarRepository;
+
+    @Autowired
+    CarRepository carRepository;
 
     @Override
     public  Page<BookingDto> getBookings(int page, int size,  String sortBy, String order, HttpSession session) {
@@ -86,5 +92,43 @@ public class RentalCarServiceImpl implements RentalCarService {
 
 
         return new PageImpl<>(bookingDtos, pageable, resultsPage.getTotalElements());
+    }
+
+    @Override
+    public CarDto getCarDetails(Integer carId) {
+        Object[] result = carRepository.findCarByCarId(carId);
+        Object[] nestedArray = (Object[]) result[0];
+        Long carid = nestedArray[0] instanceof Integer ? Long.valueOf((Integer) nestedArray[0]) : null;
+        // Ánh xạ từng giá trị từ result vào CarDto
+        return new CarDto(
+                carid,  // carId
+                (String) nestedArray[1],   // name
+                (String) nestedArray[2],   // licensePlate
+                (String) nestedArray[3],   // model
+                (String) nestedArray[4],   // color
+                (Integer) nestedArray[5],  // seatNo
+                (Integer) nestedArray[6],  // productionYear
+                (String) nestedArray[7],   // transmission
+                (String) nestedArray[8],   // fuel
+                ((BigDecimal) nestedArray[9]).doubleValue(),  // mileage
+                ((BigDecimal) nestedArray[10]).doubleValue(),  // fuelConsumption
+                ((BigDecimal) nestedArray[11]).doubleValue(),  // basePrice
+                ((BigDecimal) nestedArray[12]).doubleValue(),  // deposit
+                (String) nestedArray[13],  // description
+                (String) nestedArray[14],  // termOfUse
+                ((BigDecimal) nestedArray[15]).doubleValue(),  // carPrice
+                (String) nestedArray[16],  // front
+                (String) nestedArray[17],  // back
+                (String) nestedArray[18],  // left
+                (String) nestedArray[19],  // right
+                (String) nestedArray[20],  // registration
+                (String) nestedArray[21],  // certificate
+                (String) nestedArray[22],  // insurance
+                (Date) nestedArray[23],  // lastModified
+                (Integer) nestedArray[24], // userId
+                (Integer) nestedArray[25], // brandId
+                (Integer) nestedArray[26], // statusId
+                (Double) nestedArray[27]   // averageRating
+        );
     }
 }

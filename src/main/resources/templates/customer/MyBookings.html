@@ -210,7 +210,7 @@
     <section class="ftco-section p-0" style="min-height: 500px !important;">
         <form style="font-size: 14px; color: #405057; margin-top: 20px;">
             <div class="container row d-flex m-auto justify-content-between">
-                <span >You have 4 on-going bookings</span>
+                <span th:text="'You have ' + ${totalElement} + ' on-going bookings'"></span>
                 <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
                     <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
                             <option value="newestToLatest" th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to Latest</option>
@@ -385,7 +385,7 @@
                             <!-- Previous button - note currentPage is already 1-based -->
                             <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-booking(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage <= 1} ? 'disabled'"
                                    aria-label="Previous">
                                     <span aria-hidden="true">Previous</span>
@@ -397,14 +397,14 @@
                                 th:each="i : ${#numbers.sequence(1, totalPages)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/my-booking(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:text="${i}"></a>
                             </li>
 
                             <!-- Next button -->
                             <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-booking(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage >= totalPages} ? 'disabled'"
                                    aria-label="Next">
                                     <span aria-hidden="true">Next</span>
@@ -446,7 +446,7 @@
             const sortBy = document.getElementById('sortBy').value;
             const pageSize = document.getElementById('pageSize').value;
 
-            window.location.href = '/my-booking?sortBy=' + sortBy + '&size=' + pageSize;
+            window.location.href = '/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
         // $(document).ready(function () {

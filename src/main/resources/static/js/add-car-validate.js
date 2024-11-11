@@ -109,7 +109,7 @@ const setupLicensePlateValidation = (inputElement, msgElement) => {
 function checkLicensePlate(licensePlate) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: '/api/car/check-license-plate',
+            url: '/carAPI/api/car/check-license-plate',
             type: 'GET',
             data: {
                 licensePlate: licensePlate
