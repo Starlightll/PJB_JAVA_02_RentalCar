@@ -82,16 +82,16 @@ public class SearchCarController {
             model.addAttribute("sendLocation", "Please enter location");
 
         } else if (pickDate == null) {
-            model.addAttribute("sendPickDate", "Please enter pick-up date");
+            model.addAttribute("sendPickDate", "Please enter pick date");
         } else if (pickTime == null ) {
-            model.addAttribute("sendPickTime", "Please enter pick-up  time");
+            model.addAttribute("sendPickTime", "Please enter pick time");
         } else if (dropDate == null) {
-            model.addAttribute("sendDropDate", "Please enter drop-off date");
+            model.addAttribute("sendDropDate", "Please enter drop date");
         } else if (dropTime == null) {
-            model.addAttribute("sendDropTime", "Please enter drop-off  time");
+            model.addAttribute("sendDropTime", "Please enter drop time");
         } else if (pickDate.isEqual(dropDate)) {
             if (pickTime.isAfter(dropTime) || pickTime.equals(dropTime)) {
-                model.addAttribute("sendCondition", "Drop-time must be after pick-time");
+                model.addAttribute("sendCondition", "Drop-time must be after pick time");
             }else{
 
                 model.addAttribute("list", list);

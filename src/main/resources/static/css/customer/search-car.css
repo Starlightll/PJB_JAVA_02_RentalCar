@@ -1,4 +1,11 @@
 /* Search Results Styles */
+
+.validate-msg{
+    color: #acffee !important;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
 .search-results {
     margin-top: 20px;
 }

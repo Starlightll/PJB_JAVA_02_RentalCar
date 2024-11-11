@@ -41,13 +41,13 @@
         <div class="col-md-12	featured-top">
           <div class="row no-gutters">
             <div class="col-md-4 d-flex align-items-center justify-content-center">
-              <form th:action="@{/searchCar}" class="request-form ftco-animate bg-primary" method="get" style=" height: 550px;align-items: center;align-content: center;gap: 20px;display: flex;flex-flow: column;">
+              <form th:action="@{/searchCar}" class="request-form ftco-animate bg-primary" method="get" style="min-height: 550px;align-items: center;align-content: center;gap: 20px;display: flex;flex-flow: column;">
                 <h2>Make your trip</h2>
                 <div class="form-group">
                   <label for="pick-location" class="label">Pick-up location</label>
                   <input name="name" type="text" class="form-control" placeholder="City, District, etc" id="pick-location">
                   <div th:if="${sendLocation != null}">
-                    <p th:text="${sendLocation}" style="color: red;"></p>
+                    <p class="validate-msg" th:text="${sendLocation}"></p>
                   </div>
                 </div>
                 <div class="d-flex">
@@ -55,14 +55,14 @@
                     <label for="book_pick_date" class="label">Pick-up date</label>
                     <input name="pickDate" type="text" class="form-control" id="book_pick_date" placeholder="Date">
                     <div th:if="${sendPickDate != null}">
-                      <p th:text="${sendPickDate}" style="color: red;"></p>
+                      <p class="validate-msg" th:text="${sendPickDate}"></p>
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="time_pick" class="label">Pick-up time</label>
                     <input name="pickTime" type="text" class="form-control" id="time_pick" placeholder="Time">
-                    <div th:if="${sendPickDate != null}">
-                      <p th:text="${sendPickDate}" style="color: red;"></p>
+                    <div th:if="${sendPickTime != null}">
+                      <p class="validate-msg" th:text="${sendPickDate}"></p>
                     </div>
                   </div>
                 </div>
@@ -72,19 +72,19 @@
                     <label for="book_drop_date" class="label">Drop date</label>
                     <input name="dropDate" type="text" class="form-control" id="book_drop_date" placeholder="Date">
                     <div th:if="${sendDropDate != null}">
-                      <p th:text="${sendDropDate}" style="color: red;"></p>
+                      <p class="validate-msg" th:text="${sendDropDate}" ></p>
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="time_drop" class="label">Drop time</label>
                     <input name="dropTime" type="text" class="form-control" id="time_drop" placeholder="Time">
                     <div th:if="${sendDropTime != null}">
-                      <p th:text="${sendDropTime}" style="color: red;"></p>
+                      <p class="validate-msg" th:text="${sendDropTime}"></p>
                     </div>
                   </div>
                 </div>
                 <div th:if="${sendCondition != null}">
-                  <p th:text="${sendCondition}" style="color: red;"></p>
+                  <p class="validate-msg" th:text="${sendCondition}"></p>
                 </div>
                 <div class="form-group">
                   <input type="submit" value="Rent A Car Now" class="btn btn-secondary py-3 px-4">
