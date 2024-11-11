@@ -91,28 +91,24 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     @Override
     public boolean cancelBooking(Long bookingId, HttpSession session) {
-        // Retrieve the current user from the session
         User user = (User) session.getAttribute("user");
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        // Ensure the bookingId is the correct type (Long) and pass it to the repository
         System.out.println("Attempting to cancel booking with ID: " + bookingId);
 
-        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);  // Ensure this returns Optional<Booking>
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
 
-        // Debugging: Check if Optional is present
         if (bookingOptional.isPresent()) {
             Booking booking = bookingOptional.get();
 
-            // Verify that the booking belongs to the user and is in a cancellable state
             if (booking.getUserId().equals(user.getId()) &&
                     List.of("Confirmed", "In-Progress", "Pending deposit", "Pending payment").contains(booking.getBookingStatus())) {
 
                 // Update the status to "Cancelled"
                 booking.setBookingStatus("Cancelled");
-                rentalCarRepository.save(booking);  // Save the updated Booking entity
+                rentalCarRepository.save(booking);
                 return true;
             } else {
                 System.out.println("Booking does not belong to the user or is not in a cancellable state.");
@@ -121,7 +117,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             System.out.println("Booking with ID " + bookingId + " not found.");
         }
 
-        return false;  // Return false if the booking is not found or can't be cancelled
+        return false;
     }
 
 }
