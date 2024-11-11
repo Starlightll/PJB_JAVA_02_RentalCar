@@ -51,7 +51,32 @@
             background-color: #01d28e; /* Change OK button to green on hover */
         }
 
+        /* Áp dụng cho toàn bộ trang */
+        body {
+            overflow-y: auto;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: #01d28e transparent;
+        }
 
+        /* Cho các trình duyệt Webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #01d28e;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #00b377;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
     </style>
 </head>
@@ -68,6 +93,7 @@
     <div th:replace="fragments/footer :: footer"></div>
 </footer>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<!--<script src="/js/aos.js"></script>-->
 <script src="/js/jquery-3.7.1.min.js"></script>
 <script src="/js/jquery-migrate-3.0.1.min.js"></script>
 <script src="/js/popper.min.js"></script>

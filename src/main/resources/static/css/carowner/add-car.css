@@ -492,3 +492,10 @@ input[type="radio"]{
     }
 }
 
+
+@media (min-width: 992px){
+    .add-car-section{
+        width: 1250px;
+    }
+}
+
