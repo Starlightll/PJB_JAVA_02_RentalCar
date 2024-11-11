@@ -12,5 +12,5 @@ public interface RentalCarService {
 
     Page<BookingDto> getBookings(int page, int limit, String sortBy, String order, HttpSession session);
     boolean cancelBooking(Long bookingId, HttpSession session);
-
+    boolean confirmPickupBooking(Long bookingId, HttpSession session);
 }
