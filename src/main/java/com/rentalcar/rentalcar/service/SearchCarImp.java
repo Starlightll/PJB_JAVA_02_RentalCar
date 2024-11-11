@@ -10,7 +10,7 @@ import java.util.List;
 public interface SearchCarImp {
     List<Car> getCarList();
 
-    List<Car> findCars(String name, Sort sort);
+    List<Car> findCarList(String name, Sort sort);
 
     Page<Car> findCars(String name, Integer pageNo , Sort sort);
     Page<Car> getAllCars(Integer pageNo);
