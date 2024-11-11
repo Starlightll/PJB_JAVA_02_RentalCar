@@ -11440,7 +11440,7 @@ h1, h2, h3, h4, h5,
     top: 20px;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 3;
 }
 
 @media (max-width: 991.98px) {
@@ -11473,10 +11473,7 @@ h1, h2, h3, h4, h5,
 
 .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
     font-size: 17px;
-    padding-top: .9rem;
-    padding-bottom: .9rem;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: .9rem 20px;
     color: #fff;
     font-weight: 400;
     opacity: 1 !important;
@@ -12839,7 +12836,7 @@ textarea.form-control {
 }
 
 .ftco-section {
-
+    padding: 6em 0;
     position: relative;
 }
 
