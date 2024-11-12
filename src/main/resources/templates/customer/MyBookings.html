@@ -210,7 +210,7 @@
     <section class="ftco-section p-0" style="min-height: 500px !important;">
         <form style="font-size: 14px; color: #405057; margin-top: 20px;">
             <div class="container row d-flex m-auto justify-content-between">
-                <span>You have <span th:text="${filteredCount}">0</span> on-going bookings</span>
+                <span>You have <span th:text="${totalElement}">0</span> on-going bookings</span>
                 <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
                     <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
                         <option value="newestToLatest"
@@ -324,14 +324,18 @@
                                                         <!-- From Date and To Date Section -->
                                                         <div class="col-lg-12 row mt-2">
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
-                                                                <label for="fromDate-${iterStat.index}">From
+                                                                <label >From
                                                                     Date:</label>
+
                                                             </div>
+                                                            <p th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
                                                         <div class="col-lg-12 row mt-2">
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
-                                                                <label for="fromDate-${iterStat.index}">To Date:</label>
+                                                                <label>To Date:</label>
                                                             </div>
+                                                            <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+
                                                         </div>
                                                         <input type="hidden" id="bookingId" th:value="${booking.getBookingId()}">
                                                         <div class="col-lg-12 row"
@@ -438,7 +442,7 @@
                             <!-- Previous button - note currentPage is already 1-based -->
                             <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-booking(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage <= 1} ? 'disabled'"
                                    aria-label="Previous">
                                     <span aria-hidden="true">Previous</span>
@@ -450,14 +454,14 @@
                                 th:each="i : ${#numbers.sequence(1, totalPages)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/my-booking(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:text="${i}"></a>
                             </li>
 
                             <!-- Next button -->
                             <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-booking(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage >= totalPages} ? 'disabled'"
                                    aria-label="Next">
                                     <span aria-hidden="true">Next</span>
@@ -499,7 +503,7 @@
             const sortBy = document.getElementById('sortBy').value;
             const pageSize = document.getElementById('pageSize').value;
 
-            window.location.href = '/my-booking?sortBy=' + sortBy + '&size=' + pageSize;
+            window.location.href = '/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
 

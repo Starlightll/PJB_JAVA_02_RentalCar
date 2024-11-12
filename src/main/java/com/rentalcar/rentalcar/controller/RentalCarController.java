@@ -58,20 +58,17 @@ public class RentalCarController {
         Page<BookingDto>  bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
 
         List<BookingDto> bookingList = bookingPages.getContent();
-        long filteredCount = bookingList.stream()
-                .filter(booking -> List.of("Confirmed", "In-Progress", "Pending deposit", "Pending payment")
-                        .contains(booking.getBookingStatus()))
-                .count();
+
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");
         }else {
             model.addAttribute("bookingList", bookingList);
-            model.addAttribute("filteredCount", filteredCount);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", bookingPages.getTotalPages());
             model.addAttribute("sortBy", sortBy);
             model.addAttribute("order", order);
             model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
         }
         return "customer/MyBookings";
     }
