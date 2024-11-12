@@ -261,6 +261,19 @@ INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('
 
 INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED');
 
+-- Transaction table
+CREATE TABLE [dbo].[Transaction] (
+                                     transactionId   INT IDENTITY (1,1) PRIMARY KEY,
+                                     transactionType VARCHAR(20) NOT NULL CHECK (transactionType IN ('Withdraw', 'Top-up', 'Pay deposit', 'Receive deposit', 'Refund deposit', 'Offset final payment')),
+                                     amount          DECIMAL(18, 2) NOT NULL,
+                                     transactionDate DATETIME DEFAULT GETDATE(),
+                                     userId          INT NOT NULL,
+                                     bookingId       INT NULL, -- Used for booking-related transactions like deposits
+                                     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
+                                     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
+);
+
+
 
 -- SQL to delete all information of carDraft, Car and relative information of Car
 -- DELETE FROM CarDraft WHERE CarDraft.draftId > 0;
