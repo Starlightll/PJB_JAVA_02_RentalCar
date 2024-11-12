@@ -40,7 +40,7 @@
             <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs">
-                        <span class="mr-2"><a href="/static">HOME <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span class="mr-2"><a href="/">HOME <i class="ion-ios-arrow-forward"></i></a></span>
                         <span class="mr-2">MY WALLET <i class="ion-ios-arrow-forward"></i></span>
                     </p>
                     <h1 class="mb-3 bread">MY WALLET</h1>
@@ -51,58 +51,66 @@
     <section class="ftco-section p-0" style="min-height: 400px">
         <div class="container-fluid" id="grad1">
             <div class="row d-flex justify-content-center pl-lg-5 pr-lg-5" style="">
-                <div class="col-12 col-sm-12 col-md-4 col-lg-3 p-3 d-flex justify-content-center">
-                    <div class="balance">
-                        <div class="balance-title-secondary align-content-center">
+                <div class=" p-3 d-flex justify-content-center">
+                    <div class="balance" data-aos="fade-up" data-aos-duration="1000">
+                        <!-- Balance Title -->
+                        <div class="balance-title-secondary align-content-center" data-aos="fade-down" data-aos-duration="800">
                             <h5 class="m-0">Balance</h5>
                         </div>
-                        <div class="input-group mb-4 mt-4 pl-3 pr-3" style="height: 66px">
+
+                        <!-- Balance Input -->
+                        <div class="input-group mb-4 mt-4 pl-3 pr-3" style="height: 66px" >
                             <input type="text" class="form-control" value="9999999999" placeholder="..." aria-label="Recipient's username" aria-describedby="basic-addon2" readonly style="font-size: large;">
                             <div class="input-group-append">
-                                <span class="input-group-text" id="basic-addon2" style="">VND</span>
+                                <span class="input-group-text" id="basic-addon2">VND</span>
                             </div>
                         </div>
-                        <div class="balance-title-primary align-content-center ">
+
+                        <!-- Transaction Title -->
+                        <div class="balance-title-primary align-content-center" data-aos="fade-down" data-aos-delay="200" data-aos-duration="800">
                             <h5 class="m-0">Transaction</h5>
                         </div>
+
+                        <!-- Transaction Input Fields -->
                         <div class="mt-2 mb-5 d-flex flex-column p-3">
+                            <!-- From Date -->
                             <div class="mb-3 required-label">
                                 <div class="input-group" style="height: 45px">
-                                    <div class="input-group-prepend" >
+                                    <div class="input-group-prepend">
                                         <span class="input-group-text">From</span>
                                     </div>
-                                    <input type="text" class="form-control"
-                                           aria-label="Sizing example input"
-                                           aria-describedby="inputGroup-sizing-default"
-                                           id="book_pick_date1">
+                                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="book_pick_date">
                                 </div>
-                                <a class="validate-msg" id="fromDateValidate">Invalid</a>
+                                <a class="validate-msg" id="fromDateValidate" >Invalid</a>
                             </div>
-                            <div class=" mb-3 required-label">
+
+                            <!-- To Date -->
+                            <div class="mb-3 required-label">
                                 <div class="input-group" style="height: 45px">
-                                    <div class="input-group-prepend" >
+                                    <div class="input-group-prepend">
                                         <span class="input-group-text">To</span>
                                     </div>
-                                    <input type="text" class="form-control"
-                                           aria-label="Sizing example input"
-                                           aria-describedby="inputGroup-sizing-default"
-                                           id="book_pick_date2">
+                                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="book_pick_date">
                                 </div>
-                                <a class="validate-msg" id="toDateValidate">Invalid</a>
+                                <a class="validate-msg" id="toDateValidate" >Invalid</a>
                             </div>
-                            <button class="btn btn-primary" id="search" style="align-self: end">Search</button>
+
+                            <!-- Search Button -->
+                            <button class="btn btn-primary" id="search" style="align-self: end" >Search</button>
                         </div>
-                        <div class=" justify-content-around mt-5 mb-3 ml-3 mr-3 row" style="gap: 20px">
-                            <button class="btn btn-primary col-12 col-sm-12 col-md-5" style="width: 100%">Withdraw</button>
-                            <button class="btn btn-secondary col-12 col-sm-12 col-md-5"  style="width: 100%">Top-up</button>
+
+                        <!-- Withdraw and Top-up Buttons -->
+                        <div class="justify-content-around mt-5 mb-3 ml-3 mr-3 row" style="gap: 20px">
+                            <button class="btn btn-primary col-12 col-sm-12 col-md-5" style="width: 100%" >Withdraw</button>
+                            <button class="btn btn-secondary col-12 col-sm-12 col-md-5" style="width: 100%" >Top-up</button>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-8 col-lg-8 p-3 d-flex justify-content-center">
-                    <div class="history">
-                        <table class="table table-hover table-dark">
+                <div class="p-3 d-flex justify-content-center w--100" style="width: 50%">
+                    <div class="history" data-aos="fade-up" data-aos-duration="1000">
+                        <table class="table table-hover table-dark" data-aos="zoom-in" data-aos-duration="800">
                             <thead>
-                            <tr>
+                            <tr data-aos="fade-down" data-aos-duration="600">
                                 <th scope="col">#</th>
                                 <th scope="col">First</th>
                                 <th scope="col">Last</th>
@@ -110,19 +118,19 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
+                            <tr data-aos="fade-right" data-aos-duration="500">
                                 <th scope="row">1</th>
                                 <td>Mark</td>
                                 <td>Otto</td>
                                 <td>@mdo</td>
                             </tr>
-                            <tr>
+                            <tr data-aos="fade-right" data-aos-delay="200" data-aos-duration="500">
                                 <th scope="row">2</th>
                                 <td>Jacob</td>
                                 <td>Thornton</td>
                                 <td>@fat</td>
                             </tr>
-                            <tr>
+                            <tr data-aos="fade-right" data-aos-delay="400" data-aos-duration="500">
                                 <th scope="row">3</th>
                                 <td>Larry the Bird</td>
                                 <td>@twitter</td>
@@ -134,6 +142,10 @@
             </div>
         </div>
     </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+
+    </script>
     </body>
 </th:block>
 </html>

@@ -65,7 +65,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         // Thêm chuyển hướng sau login
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-        successHandler.setDefaultTargetUrl(redirectUrl);
         successHandler.onAuthenticationSuccess(request, response, authentication);
     }
 }

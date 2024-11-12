@@ -50,6 +50,8 @@ public class WebConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service"))  // Tắt CSRF cho các URL này
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/homepage-guest").permitAll()
                         .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
@@ -57,6 +59,7 @@ public class WebConfiguration {
                         .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -71,7 +74,8 @@ public class WebConfiguration {
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                );
+                )
+                ;
 //                .exceptionHandling(exception -> exception
 //                        .accessDeniedPage("/403")
 //                );

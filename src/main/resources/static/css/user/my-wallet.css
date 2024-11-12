@@ -23,6 +23,7 @@
 .balance {
     width: 100%;
     max-width: 350px;
+    min-width: 200px;
     background-color: #404040;
     border-radius: 15px;
     overflow: hidden;
@@ -33,6 +34,7 @@
     max-height: 540px;
     width: 100%;
     max-width: 1050px;
+    min-width: 200px;
     background-color: #23292e;
     border-radius: 15px;
     overflow: hidden;
@@ -98,19 +100,25 @@ h5{
     color: #eeeeee;
 }
 
-.table{
+.history .table{
     min-width: 100% !important;
 }
 
-td{
+.history td{
     padding: 0 !important;
 }
 
-thead tr{
+.history thead tr{
     background: rgb(0,123,255);
     background: linear-gradient(90deg, rgba(0,123,255,1) 0%, rgba(82,199,209,1) 100%);
 }
 
-.table-dark th{
+.history .table-dark thead th{
     border: none;
+}
+
+@media(max-width: 759px){
+    .w--100{
+        width: 100% !important;
+    }
 }
