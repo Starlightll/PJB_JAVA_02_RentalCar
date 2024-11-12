@@ -13,9 +13,9 @@ $(document).ready(function () {
                 console.log("fail step 1");
                 return;
             }
+            saveStep1();
             pageStep++;
         }else if (pageStep === 2) {
-
             pageStep++;
         }else if (pageStep === 3) {
 

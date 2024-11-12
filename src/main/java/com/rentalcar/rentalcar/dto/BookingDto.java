@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -37,6 +40,35 @@ public class BookingDto {
     private String backImage;
     private String leftImage;
     private String rightImage;
+
+    private String fullname;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dob;
+    private String email;
+    private String nationalId;
+    private String phone;
+    private String drivingLicense;
+    private BigDecimal wallet;
+    private String city;
+    private String district;
+    private String ward;
+    private String street;
+    private String driverFullName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate driverDob;
+    private String driverEmail;
+    private String driverNationalId;
+    private String driverPhone;
+    private String driverDrivingLicense;
+    private String driverCity;
+    private String driverDistrict;
+    private String driverWard;
+    private String driverStreet;
+    private String Address;
+
+
+
+
 
     public BookingDto (Long id,String carname, LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId, int numberOfDays,Integer paymentMethod, double basePrice,
                        double deposit,  String bookingStatus, String frontImage, String backImage, String leftImage, String rightImage) {

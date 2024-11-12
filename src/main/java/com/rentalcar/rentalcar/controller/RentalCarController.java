@@ -1,13 +1,16 @@
 package com.rentalcar.rentalcar.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
+import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.service.RentalCarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +19,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.rentalcar.rentalcar.common.Regex.*;
 
 @Controller
 public class RentalCarController {
@@ -65,34 +77,70 @@ public class RentalCarController {
         return "customer/booking";
     }
 
-    @PostMapping("/booking-car/step1")
-    public ResponseEntity<?> validateStep1(@RequestParam Map<String, String> formData,
-                                           @RequestParam("drivingLicense") MultipartFile drivingLicense,
-                                           @RequestParam("carId") Integer carId) {
-        // Kiểm tra các trường dữ liệu bắt buộc
-        if (formData.get("fullName") == null || formData.get("fullName").isEmpty()) {
-            return ResponseEntity.badRequest().body("Full Name is required.");
+    @PostMapping("/booking-car")
+    public ResponseEntity<?> validateStep1(
+            @RequestParam(value = "booking") String BookingJson,
+            @RequestParam(value = "drivingLicense", required = false) MultipartFile rentImage,
+            @RequestParam(value = "driverDrivingLicense", required = false) MultipartFile driverImage
+            ) throws IOException {
+
+
+        // Parse carDraft JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        BookingDto bookingInfor = objectMapper.readValue(BookingJson, BookingDto.class);
+        DecimalFormat df = new DecimalFormat("#.##");
+        String formattedBasePrice = df.format(bookingInfor.getBasePrice() == null ? 0 : bookingInfor.getBasePrice());
+        String fullName = bookingInfor.getFullname();
+        if(fullName == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Full Name is required");
         }
-        if (formData.get("bookPickDate") == null || formData.get("bookPickDate").isEmpty()) {
-            return ResponseEntity.badRequest().body("Booking Date is required.");
+        String email = bookingInfor.getEmail();
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(email);
+        if(email.isEmpty() || !matcher.matches()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Email");
         }
-        if (formData.get("phone") == null || formData.get("phone").isEmpty()) {
-            return ResponseEntity.badRequest().body("Phone is required.");
+
+        String phone = bookingInfor.getPhone();
+        pattern = Pattern.compile(PHONE_REGEX);
+        matcher = pattern.matcher(phone);
+        if(phone.isEmpty() || !matcher.matches()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Phone");
         }
-        if (formData.get("email") == null || formData.get("email").isEmpty()) {
-            return ResponseEntity.badRequest().body("Email is required.");
+        String nationalId = bookingInfor.getPhone();
+        pattern = Pattern.compile(NATIONAL_ID_REGEX);
+        matcher = pattern.matcher(nationalId);
+        if(nationalId.isEmpty() || !matcher.matches()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid nationalId");
         }
-        if (formData.get("nationalId") == null || formData.get("nationalId").isEmpty()) {
-            return ResponseEntity.badRequest().body("National ID is required.");
+
+        LocalDate dob = bookingInfor.getDob();
+//        pattern = Pattern.compile(NATIONAL_ID_REGEX);
+//        matcher = pattern.matcher(nationalId);
+        if(dob == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Date");
+        }
+        LocalDate today = LocalDate.now();
+        int age = Period.between(dob, today).getYears();
+
+        if (age < 18) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 18 years old");
         }
 
 
-        // Kiểm tra các trường khác...
-
-        // Xử lý file nếu có
-        if (drivingLicense != null && !drivingLicense.isEmpty()) {
-            // Xử lý file driving license
+        LocalDateTime startDate = bookingInfor.getStartDate();
+        if(startDate == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Start Date");
         }
+
+        LocalDateTime endDate = bookingInfor.getEndDate();
+        if(endDate == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid End Date");
+        }
+
+
+
+
 
         // Nếu tất cả dữ liệu hợp lệ
         return ResponseEntity.ok("Step 1 validated successfully.");
