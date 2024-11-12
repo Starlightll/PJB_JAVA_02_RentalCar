@@ -102,10 +102,14 @@ public class WalletController {
                            @RequestParam(value = "toDate", required = false) String toDate,
                            @RequestParam(value = "page", defaultValue = "0", required = false) int page) {
         User user = (User) session.getAttribute("user");
+        if(user.getWallet() == null) {
+            user.setWallet(BigDecimal.valueOf(0));
+            userRepo.save(user);
+        }
         user = userRepo.getUserByEmail(user.getEmail());
         String formattedWallet = formatWallet(user.getWallet());
 
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 5);
         Page<Transaction> transactions = Page.empty();
 
         try {
