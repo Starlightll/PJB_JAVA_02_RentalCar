@@ -78,7 +78,6 @@ public class RentalCarController {
             model.addAttribute("sortBy", sortBy);
             model.addAttribute("order", order);
             model.addAttribute("size", size);
-            model.addAttribute("totalElement", bookingPages.getTotalElements());
         }
         return "customer/MyBookings";
     }
@@ -98,7 +97,7 @@ public class RentalCarController {
             model.addAttribute("error", "Unable to cancel the booking. Please try again.");
         }
 
-        return "redirect:/my-bookings";
+        return "customer/MyBookings";
     }
 
     @GetMapping("/confirm-pickup-booking")
@@ -111,7 +110,7 @@ public class RentalCarController {
             model.addAttribute("error", "Unable to confirm the booking. Please try again.");
         }
 
-        return "redirect:/my-bookings";
+        return "customer/MyBookings";
     }
 
 }
