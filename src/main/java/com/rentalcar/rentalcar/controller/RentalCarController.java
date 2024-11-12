@@ -3,7 +3,6 @@ package com.rentalcar.rentalcar.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
-import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.service.RentalCarService;
@@ -37,18 +36,51 @@ public class RentalCarController {
     @Autowired
     RentalCarService rentalCarService;
 
-
     @GetMapping("/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
-                            @RequestParam(defaultValue = "5") int size,
+                            @RequestParam(defaultValue = "10") int size,
                             @RequestParam(defaultValue = "lastModified") String sortBy,
                             @RequestParam(defaultValue = "desc") String order,
                             Model model,
                             HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+
 
         Page<BookingDto>  bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
 
         List<BookingDto> bookingList = bookingPages.getContent();
+        //check so on-going bookings
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");
         }else {
@@ -58,10 +90,11 @@ public class RentalCarController {
             model.addAttribute("sortBy", sortBy);
             model.addAttribute("order", order);
             model.addAttribute("size", size);
-            model.addAttribute("totalElement",bookingPages.getTotalElements());
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
         }
         return "customer/MyBookings";
     }
+
 
 
 
@@ -82,7 +115,7 @@ public class RentalCarController {
             @RequestParam(value = "booking") String BookingJson,
             @RequestParam(value = "drivingLicense", required = false) MultipartFile rentImage,
             @RequestParam(value = "driverDrivingLicense", required = false) MultipartFile driverImage
-            ) throws IOException {
+    ) throws IOException {
 
 
         // Parse carDraft JSON
@@ -91,33 +124,33 @@ public class RentalCarController {
         DecimalFormat df = new DecimalFormat("#.##");
         String formattedBasePrice = df.format(bookingInfor.getBasePrice() == null ? 0 : bookingInfor.getBasePrice());
         String fullName = bookingInfor.getFullname();
-        if(fullName == null) {
+        if (fullName == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Full Name is required");
         }
         String email = bookingInfor.getEmail();
         Pattern pattern = Pattern.compile(EMAIL_REGEX);
         Matcher matcher = pattern.matcher(email);
-        if(email.isEmpty() || !matcher.matches()) {
+        if (email.isEmpty() || !matcher.matches()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Email");
         }
 
         String phone = bookingInfor.getPhone();
         pattern = Pattern.compile(PHONE_REGEX);
         matcher = pattern.matcher(phone);
-        if(phone.isEmpty() || !matcher.matches()) {
+        if (phone.isEmpty() || !matcher.matches()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Phone");
         }
         String nationalId = bookingInfor.getPhone();
         pattern = Pattern.compile(NATIONAL_ID_REGEX);
         matcher = pattern.matcher(nationalId);
-        if(nationalId.isEmpty() || !matcher.matches()) {
+        if (nationalId.isEmpty() || !matcher.matches()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid nationalId");
         }
 
         LocalDate dob = bookingInfor.getDob();
 //        pattern = Pattern.compile(NATIONAL_ID_REGEX);
 //        matcher = pattern.matcher(nationalId);
-        if(dob == null) {
+        if (dob == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Date");
         }
         LocalDate today = LocalDate.now();
@@ -129,23 +162,46 @@ public class RentalCarController {
 
 
         LocalDateTime startDate = bookingInfor.getStartDate();
-        if(startDate == null) {
+        if (startDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Start Date");
         }
 
         LocalDateTime endDate = bookingInfor.getEndDate();
-        if(endDate == null) {
+        if (endDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid End Date");
         }
 
-
-
-
-
-        // Nếu tất cả dữ liệu hợp lệ
         return ResponseEntity.ok("Step 1 validated successfully.");
     }
 
 
+
+
+        @GetMapping("/cancel-booking")
+    public String cancelBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
+        boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
+
+        if (isCancelled) {
+            model.addAttribute("message", "Booking has been successfully cancelled.");
+        } else {
+            model.addAttribute("error", "Unable to cancel the booking. Please try again.");
+        }
+
+        return "redirect:/my-bookings";
+
+    }
+
+    @GetMapping("/confirm-pickup-booking")
+    public String confirmPickupBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
+        boolean isConfirm = rentalCarService.confirmPickupBooking(bookingId, session);
+
+        if (isConfirm) {
+            model.addAttribute("message", "Booking has been successfully confirm pick-up.");
+        } else {
+            model.addAttribute("error", "Unable to confirm the booking. Please try again.");
+        }
+
+        return "redirect:/my-bookings";
+    }
 
 }

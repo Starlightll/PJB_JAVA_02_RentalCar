@@ -3,7 +3,10 @@ package com.rentalcar.rentalcar.service;
 import com.rentalcar.rentalcar.dto.BookingDto;
 
 import com.rentalcar.rentalcar.dto.CarDto;
+import com.rentalcar.rentalcar.entity.Booking;
+import com.rentalcar.rentalcar.entity.BookingStatus;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.repository.BookingStatusRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.RentalCarRepository;
 import jakarta.servlet.http.HttpSession;
@@ -18,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RentalCarServiceImpl implements RentalCarService {
@@ -27,6 +31,8 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     @Autowired
     CarRepository carRepository;
+    @Autowired
+    private BookingStatusRepository bookingStatusRepository;
 
     @Override
     public  Page<BookingDto> getBookings(int page, int size,  String sortBy, String order, HttpSession session) {
@@ -95,11 +101,97 @@ public class RentalCarServiceImpl implements RentalCarService {
     }
 
     @Override
+    public boolean cancelBooking(Long bookingId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        System.out.println("Attempting to cancel booking with ID: " + bookingId);
+
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
+
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+
+            // Check if the booking belongs to the user and is in a cancellable state
+            if (booking.getUser().getId().equals(user.getId()) &&
+                    (booking.getBookingStatus().getName().equals("Confirmed") ||
+                            booking.getBookingStatus().getName().equals("Pending deposit") ||
+                            booking.getBookingStatus().getName().equals("Stopped"))) {
+
+                // Fetch the "Cancelled" BookingStatus from the database
+                Optional<BookingStatus> cancelledStatusOptional = bookingStatusRepository.findByName("Cancelled");
+
+                if (cancelledStatusOptional.isPresent()) {
+                    BookingStatus cancelledStatus = cancelledStatusOptional.get();
+                    booking.setBookingStatus(cancelledStatus); // Update the status of the booking
+
+                    // Save the updated booking
+                    rentalCarRepository.save(booking);
+                    System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
+                    return true;
+                } else {
+                    System.out.println("Cancelled status not found.");
+                }
+            } else {
+                System.out.println("Booking does not belong to the user or is not in a cancellable state.");
+            }
+        } else {
+            System.out.println("Booking with ID " + bookingId + " not found.");
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean confirmPickupBooking(Long bookingId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        System.out.println("Booking has been update to In-Progress: " + bookingId);
+
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
+
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+
+            // Check if the booking belongs to the user and is in a cancellable state
+            if (booking.getUser().getId().equals(user.getId()) &&
+                    (booking.getBookingStatus().getName().equals("Confirmed") )){
+
+                // Fetch the "Cancelled" BookingStatus from the database
+                Optional<BookingStatus> cancelledStatusOptional = bookingStatusRepository.findByName("In-Progress");
+
+                if (cancelledStatusOptional.isPresent()) {
+                    BookingStatus cancelledStatus = cancelledStatusOptional.get();
+                    booking.setBookingStatus(cancelledStatus); // Update the status of the booking
+
+                    // Save the updated booking
+                    rentalCarRepository.save(booking);
+                    System.out.println("Booking with ID " + bookingId + " has been update to In-Progress.");
+                    return true;
+                } else {
+                    System.out.println("In-Progress status not found.");
+                }
+            } else {
+                System.out.println("Booking does not belong to the user or is not in a update state.");
+            }
+        } else {
+            System.out.println("Booking with ID " + bookingId + " not found.");
+        }
+
+        return false;
+    }
+
+    @Override
     public CarDto getCarDetails(Integer carId) {
         Object[] result = carRepository.findCarByCarId(carId);
         Object[] nestedArray = (Object[]) result[0];
         Long carid = nestedArray[0] instanceof Integer ? Long.valueOf((Integer) nestedArray[0]) : null;
-        Double averageRating = nestedArray[27] != null ? (Double) nestedArray[27] : 0;
+        Double averageRating =  nestedArray[27] != null ? (Double) nestedArray[27] : 0;
 
 
         // Ánh xạ từng giá trị từ result vào CarDto
