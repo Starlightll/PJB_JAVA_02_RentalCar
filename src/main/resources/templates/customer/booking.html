@@ -219,7 +219,7 @@
                                                                     Ratings: </p>
                                                                 <div class="rating">
                                                                     <div class="star"
-                                                                         th:style="'width:' + (${car.getAverageRating()} != null ? car.getAverageRating() * 20 : 0) + '%'">
+                                                                         th:style="'width:' + (${car.getAverageRating()} * 20) + '%'">
 
                                                                     <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
@@ -849,7 +849,7 @@
             }
             console.log(formData);
             $.ajax({
-                url: '/booking-car/data',
+                url: 'http://localhost:8080/booking-car/data',
                 type: 'post',
                 data: formData,
                 processData: false,

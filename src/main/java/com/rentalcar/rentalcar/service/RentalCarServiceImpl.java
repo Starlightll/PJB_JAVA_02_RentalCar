@@ -99,6 +99,9 @@ public class RentalCarServiceImpl implements RentalCarService {
         Object[] result = carRepository.findCarByCarId(carId);
         Object[] nestedArray = (Object[]) result[0];
         Long carid = nestedArray[0] instanceof Integer ? Long.valueOf((Integer) nestedArray[0]) : null;
+        Double averageRating = nestedArray[27] != null ? (Double) nestedArray[27] : 0;
+
+
         // Ánh xạ từng giá trị từ result vào CarDto
         return new CarDto(
                 carid,  // carId
@@ -128,7 +131,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                 (Integer) nestedArray[24], // userId
                 (Integer) nestedArray[25], // brandId
                 (Integer) nestedArray[26], // statusId
-                (Double) nestedArray[27]   // averageRating
+                averageRating   // averageRating
         );
     }
 }

@@ -53,7 +53,7 @@ public class WebConfiguration {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service"))  // Tắt CSRF cho các URL này
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/homepage-guest").permitAll()
+                        .requestMatchers("/", "/homepage-guest","booking-car/data").permitAll()
                         .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
                         .requestMatchers("/homepage-customer").hasAuthority("Customer")
                         .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
