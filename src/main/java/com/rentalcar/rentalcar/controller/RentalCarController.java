@@ -77,8 +77,8 @@ public class RentalCarController {
         return "customer/booking";
     }
 
-    @PostMapping("/booking-car")
-    public ResponseEntity<?> validateStep1(
+    @PostMapping("/booking-car/data")
+    public ResponseEntity<?> saveBooking(
             @RequestParam(value = "booking") String BookingJson,
             @RequestParam(value = "drivingLicense", required = false) MultipartFile rentImage,
             @RequestParam(value = "driverDrivingLicense", required = false) MultipartFile driverImage

@@ -219,8 +219,9 @@
                                                                     Ratings: </p>
                                                                 <div class="rating">
                                                                     <div class="star"
-                                                                         th:style="'width:' + (${car.getAverageRating()} * 20) + '%'">
-                                                                        <i class="fa fa-star"></i>
+                                                                         th:style="'width:' + (${car.getAverageRating()} != null ? car.getAverageRating() * 20 : 0) + '%'">
+
+                                                                    <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
@@ -794,7 +795,7 @@
             }else if(actualStep < 1){
                 actualStep = 1;
             }
-            const bookingStep1 = {
+            const bookingInfor = {
                 location : pickUpLocation,
                 pickUpDate : pickUpDateTime,
                 returnDate : returnDateTime,
@@ -812,24 +813,23 @@
                 rentDistrict: district,
                 rentWard: ward,
                 rentStreet: street,
-
-                dName: driverFullName,
-                dPickDate: driverBookPickDate,
-                dPhone: driverPhone,
-                dMail: driverEmail,
-                dNationalId: driverNationalId,
-                dDrivingLicence: driverDrivingLicense,
-                dProvince: driverProvince,
-                dDistrict: driverDistrict,
-                dWard: driverWard,
-                dStreet: driverStreet,
+                //
+                // dName: driverFullName,
+                // dPickDate: driverBookPickDate,
+                // dPhone: driverPhone,
+                // dMail: driverEmail,
+                // dNationalId: driverNationalId,
+                // dDrivingLicence: driverDrivingLicense,
+                // dProvince: driverProvince,
+                // dDistrict: driverDistrict,
+                // dWard: driverWard,
+                // dStreet: driverStreet,
             };
-            console.log(bookingStep1);
+            console.log(bookingInfor);
 
             const formData = new FormData();
-
             // Add the carDraft object as JSON string
-            formData.append("booking", JSON.stringify(bookingStep1));
+            formData.append("booking", JSON.stringify(bookingInfor));
 
             // Add files only if they exist
             const fileInputs = {
@@ -849,8 +849,8 @@
             }
             console.log(formData);
             $.ajax({
-                url: '/booking-car',
-                type: 'POST',
+                url: '/booking-car/data',
+                type: 'post',
                 data: formData,
                 processData: false,
                 contentType: false,
