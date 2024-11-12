@@ -55,9 +55,19 @@ public class RentalCarController {
                 break;
         }
 
+
         Page<BookingDto>  bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
 
         List<BookingDto> bookingList = bookingPages.getContent();
+        //check so on-going bookings
+        long totalElement = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("totalElement", totalElement);
 
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");

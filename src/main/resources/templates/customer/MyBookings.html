@@ -210,7 +210,7 @@
     <section class="ftco-section p-0" style="min-height: 500px !important;">
         <form style="font-size: 14px; color: #405057; margin-top: 20px;">
             <div class="container row d-flex m-auto justify-content-between">
-                <span>You have <span th:text="${totalElement}">0</span> on-going bookings</span>
+                <span>You have <span th:text="${onGoingBookings}">0</span> on-going bookings</span>
                 <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
                     <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
                         <option value="newestToLatest"
@@ -324,9 +324,7 @@
                                                         <!-- From Date and To Date Section -->
                                                         <div class="col-lg-12 row mt-2">
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
-                                                                <label >From
-                                                                    Date:</label>
-
+                                                                <label >From Date:</label>
                                                             </div>
                                                             <p th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
