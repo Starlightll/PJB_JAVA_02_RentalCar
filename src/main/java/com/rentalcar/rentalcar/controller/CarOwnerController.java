@@ -107,7 +107,7 @@ public class CarOwnerController {
             model.addAttribute("totalPages", carPage.getTotalPages());
             model.addAttribute("sortBy", sortBy);
             model.addAttribute("order", order);
-            model.addAttribute("size", size);
+                model.addAttribute("size", size);
         }
         return "/carowner/MyCars";
     }

@@ -51,15 +51,14 @@ public class WebConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service"))  // Tắt CSRF cho các URL này
+                        .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service")) // Tắt CSRF cho các URL này
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/homepage-guest").permitAll()
+                        .requestMatchers("/", "/homepage-guest", "/error", "/faq", "/contacts", "privacy").permitAll()
                         .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
                         .requestMatchers("/homepage-customer").hasAuthority("Customer")
                         .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
-                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
