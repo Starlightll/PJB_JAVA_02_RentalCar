@@ -18,7 +18,7 @@ public class SearchCarService implements SearchCarImp{
     }
 
     @Override
-    public List<Car> findCars(String name, Sort sort) {
+    public List<Car> findCarList(String name, Sort sort) {
         return carRepository.findCarByCarName(name,name, sort);
     }
 
@@ -29,7 +29,7 @@ public class SearchCarService implements SearchCarImp{
         Pageable pageable = PageRequest.of(pageNo - 1, 5, sort);
 
         // Fetch the entire list of cars that match the name
-        List<Car> fullList = this.findCars(name, sort);  // Assuming this fetches all matches without pagination
+        List<Car> fullList = findCarList(name, sort);  // Assuming this fetches all matches without pagination
 
         // Apply pagination
         int start = (int) pageable.getOffset();

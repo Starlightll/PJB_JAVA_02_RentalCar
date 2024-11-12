@@ -8,10 +8,17 @@ $(document).ready(function () {
     $(".next").click(async function () {
         console.log(pageStep);
         if (pageStep === 1) {
+            console.log('Step1')
+            if(!checkStep1()) {
+                console.log("fail step 1");
+                return;
+            }
             pageStep++;
         }else if (pageStep === 2) {
+
             pageStep++;
         }else if (pageStep === 3) {
+
             pageStep++;
         }
 
@@ -99,3 +106,118 @@ function goToStep(targetStep) {
     $("fieldset").hide();
     $("fieldset").eq(targetStep - 1).show();
 }
+
+// Call API to fetch provinces, districts and wards
+// Function to create province/district/ward handlers for a specific form
+function createLocationHandlers(formId) {
+    console.log(formId);
+    const provinceSelect = document.getElementById('province' + formId);
+    const districtSelect = document.getElementById('district'+ formId);
+    const wardSelect = document.getElementById('ward' + formId);
+
+    // Fetch provinces
+    async function fetchProvinces(defaultCity) {
+        try {
+            const response = await fetch('https://provinces.open-api.vn/api/p/');
+            const provinces = await response.json();
+
+            provinceSelect.innerHTML = '<option value="">Select Province</option>';
+            provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province.code;
+                option.textContent = province.name;
+                if (province.code == defaultCity) {
+                    option.selected = true;
+                }
+                provinceSelect.appendChild(option);
+            });
+
+            if (defaultCity) {
+                fetchDistricts(defaultCity, districtSelect.getAttribute('data-default'));
+            }
+        } catch (error) {
+            console.error('Error fetching provinces:', error);
+        }
+    }
+
+    // Fetch districts
+    async function fetchDistricts(provinceCode, defaultDistrict) {
+        try {
+            const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+            const provinceData = await response.json();
+
+            districtSelect.innerHTML = '<option value="">Select District</option>';
+            provinceData.districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district.code;
+                option.textContent = district.name;
+                if (district.code == defaultDistrict) {
+                    option.selected = true;
+                }
+                districtSelect.appendChild(option);
+            });
+
+            if (defaultDistrict) {
+                fetchWards(defaultDistrict, wardSelect.getAttribute('data-default'));
+            }
+        } catch (error) {
+            console.error('Error fetching districts:', error);
+        }
+    }
+
+    // Fetch wards
+    async function fetchWards(districtCode, defaultWard) {
+        try {
+            const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+            const districtData = await response.json();
+
+            wardSelect.innerHTML = '<option value="">Select Ward</option>';
+            districtData.wards.forEach(ward => {
+                const option = document.createElement('option');
+                option.value = ward.code;
+                option.textContent = ward.name;
+                if (ward.code == defaultWard) {
+                    option.selected = true;
+                }
+                wardSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching wards:', error);
+        }
+    }
+
+    // Add event listeners
+    provinceSelect.addEventListener('change', function() {
+        fetchDistricts(this.value);
+        wardSelect.innerHTML = '<option value="">Select Ward</option>';
+        districtSelect.disabled = this.value === "";
+        districtSelect.value = "";
+        wardSelect.disabled = true;
+    });
+
+    districtSelect.addEventListener('change', function() {
+        fetchWards(this.value);
+        wardSelect.disabled = this.value === "";
+    });
+
+    // Initial load
+    const defaultCity = provinceSelect.getAttribute('data-default');
+    fetchProvinces(defaultCity);
+
+    return {
+        fetchProvinces,
+        fetchDistricts,
+        fetchWards
+    };
+}
+
+// Hàm khởi tạo cho nhiều form
+document.addEventListener("DOMContentLoaded", function () {
+    const formIds = ['1', '2'];  // List các form ID bạn muốn xử lý
+    formIds.forEach(formId => {
+        console.log(formId);
+        console.log(formIds);
+
+        createLocationHandlers(formId);
+    });
+});

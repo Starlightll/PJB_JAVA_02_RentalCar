@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- iziToast CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+    <!-- iziToast JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+
     <style>
         .validate-msg {
             display: none;
@@ -61,26 +68,26 @@
 <th:block layout:fragment="content">
     <body>
     <!-- Modal -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ModalTitle">No Title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="ModalBody">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-warning" data-dismiss="modal" id="close">Close</button>
-                    <button type="button" class="btn btn-primary" id="confirm">Yes</button>
-                    <button type="button" class="btn btn-danger" id="notConfirm">No</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<!--    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">-->
+<!--        <div class="modal-dialog modal-dialog-centered" role="document">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="ModalTitle">No Title</h5>-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                <div class="modal-body" id="ModalBody">-->
+<!--                    ...-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-warning" data-dismiss="modal" id="close1">Close</button>-->
+<!--                    <button type="button" class="btn btn-primary" id="confirm">Yes</button>-->
+<!--                    <button type="button" class="btn btn-danger" id="notConfirm">No</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -106,14 +113,50 @@
                         </div>
                         <div class="card-body">
                             <ul class="pl-2" style="font-size: 15px;color: #01d28e;font-weight: bold;">
-                                <li class="card-text">Pickup location: <span style="color: white; font-weight: normal;">Trung Kinh, Cau Giay, Hanoi</span></li>
-                                <li class="card-text">Pickup date and time: <span style="color: white; font-weight: normal;">13/02/2024 - 12:00 PM</span></li>
-                                <li class="card-text">Return date and time: <span style="color: white; font-weight: normal;">23/02/2024 - 14:00 PM</span></li>
+                                <li class="card-text">Pickup location: <span id="pickupLocation" style="color: white; font-weight: normal;">Trung Kinh, Cau Giay, Hanoi</span></li>
+                                <li class="card-text">Pickup date and time: <span id="pickupDate" style="color: white; font-weight: normal;">13/02/2024 - 12:00 PM</span></li>
+                                <li class="card-text">Return date and time: <span id="returnDate"  style="color: white; font-weight: normal;">23/02/2024 - 14:00 PM</span></li>
                             </ul>
                             <button href="#" class="btn btn-primary" onclick="changeDetail()">Change details</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal để chỉnh sửa chi tiết -->
+                <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="ModalTitle" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ModalTitle">Booking Details!</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Form để chỉnh sửa thông tin -->
+                                <div class="form-group">
+                                    <label for="editPickupLocation">Pickup location:</label>
+                                    <input type="text" class="form-control" id="editPickupLocation">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editPickupDate">Pickup date and time:</label>
+                                    <input type="datetime-local" class="form-control" id="editPickupDate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editReturnDate">Return date and time:</label>
+                                    <input type="datetime-local" class="form-control" id="editReturnDate">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="saveChanges()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="carId" th:value="${car.getCarId()}"/>
+
                 <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
 
                     <div class="card px-0 pt-4 pb-0 mb-3">
@@ -132,7 +175,7 @@
                                         <div class="col-12 col-sm-12 col-md-6 col-lg-6 p-3">
                                             <th:block th:if="${car != null}" th:object="${car}">
                                             </th:block>
-                                            <th:block th:if="${car == null}">
+                                            <th:block>
                                                 <div class="col-lg-12 row p-0 m-auto">
                                                     <div class="col-12 d-flex align-items-center">
                                                         <div class="wrapper" style="max-height: 270px">
@@ -149,7 +192,7 @@
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-3">
-                                                                <img src="/images/car-3.jpg"
+                                                                <img th:src="'/'+${car.getLeft()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-4">
@@ -168,7 +211,7 @@
                                                     <div class="col-12 justify-content-center align-items-center">
                                                         <div class="row justify-content-center align-items-center align-content-center" style="text-align: start">
                                                             <h1 class="col-lg-12 col-md-12 col-sm-12 text-center"
-                                                                style="font-size: 1.5rem">NO CAR
+                                                                style="font-size: 1.5rem" th:text="${car.getName()}">
                                                             </h1>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -176,7 +219,7 @@
                                                                     Ratings: </p>
                                                                 <div class="rating">
                                                                     <div class="star"
-                                                                         th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
+                                                                         th:style="'width:' + (${car.getAverageRating()} * 20) + '%'">
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
@@ -196,13 +239,13 @@
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
                                                                     No. of rides: </p>
-                                                                <p class="m-0">0</p>
+                                                                <p class="m-0" th:text="${car.getMileage()}"></p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
                                                                     Price: </p>
-                                                                <p class="m-0">0k/Day</p>
+                                                                <p  th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" class="m-0"></p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -211,11 +254,29 @@
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0 m-0"
                                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' ">No</p>
                                                             </div>
-                                                            <div class="col-lg-12 mb-3">
-                                                                <div class="input-group input-group-sm">
+                                                            <div class="col-lg-12 mb-3"  style="display: flex; justify-content: center">
+                                                                <div class="input-group input-group-sm" >
                                                                     <p class="m-0">No Status</p>
                                                                 </div>
-                                                                <a class="validate-msg">Invalid</a>
+
+                                                                <th:block th:if="${car.getStatusId() == 1}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #00d79d">Available</p>
+                                                                </th:block>
+                                                                <th:block th:if="${car.getStatusId()  == 2}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #0080ff">Booked</p>
+                                                                </th:block>
+                                                                <th:block th:if="${car.getStatusId()  == 3}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #ff0000" >Stopped</p>
+                                                                </th:block>
+                                                                <th:block th:if="${car.getStatusId()  == 4}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #303030">Deleted</p>
+                                                                </th:block>
+
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -241,22 +302,22 @@
                                                 <tr>
                                                     <th scope="row">1</th>
                                                     <td>Number of days</td>
-                                                    <td>15</td>
+                                                    <td id="numberOfDays">0</td> <!-- Số ngày thuê -->
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">2</th>
                                                     <td>Price per day</td>
-                                                    <td>900,000 VND</td>
+                                                    <td  th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">3</th>
                                                     <td>Deposit</td>
-                                                    <td>1,500,000 VND</td>
+                                                    <td th:text="${#numbers.formatDecimal(car.getDeposit(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">4</th>
                                                     <td>Total</td>
-                                                    <td style="color: #00ff86">15,000,000 VND</td>
+                                                    <td id="totalPrice" style="color: #00ff86">0</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -278,7 +339,7 @@
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               id="fullName1">
+                                                                              th:value="${user.getFullName()}" oninput="validateFullName()" id="fullName1">
                                                                     </div>
                                                                     <a class="validate-msg" id="fullNameValidate1">Invalid</a>
                                                                 </div>
@@ -287,11 +348,12 @@
                                                                         <div class="input-group-prepend" >
                                                                             <span class="input-group-text ">Date of birth</span>
                                                                         </div>
-                                                                        <input type="text" class="form-control"
+                                                                        <input type="date" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               id="book_pick_date">
+                                                                               th:value="${user.getDob()}" oninput="validateDob()" id="book_pick_date1">
                                                                     </div>
+                                                                    <div id="dateError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="dateOfBirthValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
@@ -302,8 +364,9 @@
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               id="phone1">
+                                                                               th:value="${user.getPhone()}" oninput="validatePhone()" id="phone1">
                                                                     </div>
+                                                                    <div id="phoneError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="phoneValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
@@ -314,8 +377,9 @@
                                                                         <input type="email" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               id="email1">
+                                                                               th:value="${user.getEmail()}" oninput="validateEmail()" id="email1">
                                                                     </div>
+                                                                    <div id="emailError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="emailValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
@@ -326,8 +390,9 @@
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               id="nationalId1">
+                                                                               th:value="${user.getNationalId()}" oninput="validateNationalId()" id="nationalId1">
                                                                     </div>
+                                                                    <div id="nationalIdError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="nationalIdValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
@@ -336,18 +401,20 @@
                                                                             <span class="input-group-text" id="inputGroupFileAddon011" >Driving license</span>
                                                                         </div>
                                                                         <div class="custom-file">
-                                                                            <input type="file" class="custom-file-input" id="inputGroupFile011" aria-describedby="inputGroupFileAddon01">
-                                                                            <label class="custom-file-label" for="inputGroupFile01" style="font-size: small !important;" id="fileName1">Choose file</label>
+                                                                            <input type="file" accept="image/*" class="custom-file-input" th:value="${user.getDrivingLicense()}" id="inputGroupFile011"
+                                                                                   aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()" >
+                                                                            <label class="custom-file-label" for="inputGroupFile011" style="font-size: small !important;" id="fileName1">Choose file</label>
                                                                         </div>
                                                                     </div>
+                                                                    <div id="drivingLicenseError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="drivingLicenseValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="province">Province</label>
+                                                                            <label class="input-group-text" for="province1">Province</label>
                                                                         </div>
-                                                                        <select class="custom-select" id="province1">
+                                                                        <select class="custom-select" th:data-default="${user.getCity()}"  id="province1">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -356,9 +423,9 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="district">District</label>
+                                                                            <label class="input-group-text" for="district1">District</label>
                                                                         </div>
-                                                                        <select class="custom-select" id="district1">
+                                                                        <select class="custom-select" th:data-default="${user.getDistrict()}" id="district1">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -369,9 +436,9 @@
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
                                                                             <label class="input-group-text"
-                                                                                   for="ward">Ward</label>
+                                                                                   for="ward1">Ward</label>
                                                                         </div>
-                                                                        <select class="custom-select" id="ward1">
+                                                                        <select class="custom-select" th:data-default="${user.getWard()}"  id="ward1">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -386,7 +453,7 @@
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               id="street1">
+                                                                               th:value="${user.getStreet()}" id="street1">
                                                                     </div>
                                                                     <a class="validate-msg">Invalid</a>
                                                                 </div>
@@ -396,8 +463,8 @@
                                                             <h5 class="card-title">Driver's information</h5>
                                                             <div class="row">
                                                                         <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
-                                                                            <input type="checkbox" value="true"
-                                                                                   name="additionalFunction">
+                                                                            <input type="checkbox" id="differentInfoCheckbox"
+                                                                                   name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
                                                                             <svg viewBox="0 0 21 21">
                                                                                 <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                                                             </svg>
@@ -480,9 +547,9 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="province">Province</label>
+                                                                            <label class="input-group-text" for="province2">Province</label>
                                                                         </div>
-                                                                        <select class="custom-select" id="province">
+                                                                        <select class="custom-select" id="province2">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -491,9 +558,9 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="district">District</label>
+                                                                            <label class="input-group-text" for="district2">District</label>
                                                                         </div>
-                                                                        <select class="custom-select" id="district">
+                                                                        <select class="custom-select" id="district2">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -504,9 +571,9 @@
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
                                                                             <label class="input-group-text"
-                                                                                   for="ward">Ward</label>
+                                                                                   for="ward2">Ward</label>
                                                                         </div>
-                                                                        <select class="custom-select" id="ward">
+                                                                        <select class="custom-select" id="ward2">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -521,7 +588,7 @@
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               id="street">
+                                                                               id="street2">
                                                                     </div>
                                                                     <a class="validate-msg">Invalid</a>
                                                                 </div>
@@ -533,7 +600,7 @@
                                         </div>
                                         <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
                                            onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
-                                        <input type="button" name="next" class="next btn-secondary btn"
+                                        <input type="button" id="nextButton" name="next" class="next btn-secondary btn"
                                                value="Next Step"/>
                                     </fieldset>
                                     <fieldset>
@@ -601,24 +668,77 @@
     </section>
 
     <script>
+
         function checkStep1() {
+
+            // Thu thập dữ liệu cho renter
+            const formData = {
+                carId: document.getElementById("carId").value,
+                fullName: document.getElementById("fullName1").value,
+                bookPickDate: document.getElementById("book_pick_date1").value,
+                phone: document.getElementById("phone1").value,
+                email: document.getElementById("email1").value,
+                nationalId: document.getElementById("nationalId1").value,
+                drivingLicense: document.getElementById("inputGroupFile011").value,
+                province: document.getElementById("province1").value,
+                district: document.getElementById("district1").value,
+                ward: document.getElementById("ward1").value,
+                street: document.getElementById("street1").value
+            };
+
+            console.log(formData);
+
+            // Kiểm tra từng thuộc tính xem có bị trống không
+            for (const key in formData) {
+                if (formData[key] === '') {
+                    console.log(`Trường ${key} đang bị trống.`);
+                    // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
+                    alert(`Vui lòng điền thông tin vào trường: ${key}`);
+                    return false;
+
+                }
+            }
+
+            // Kiểm tra xem checkbox có được chọn không
+            let driverData = null;
+            if (document.getElementById("differentInfoCheckbox").checked) {
+                driverData = {
+                    driverFullName: document.getElementById("fullName").value,
+                    driverBookPickDate: document.getElementById("book_pick_date").value,
+                    driverPhone: document.getElementById("phone").value,
+                    driverEmail: document.getElementById("email").value,
+                    driverNationalId: document.getElementById("nationalId").value,
+                    driverDrivingLicense: document.getElementById("inputGroupFile01").files[0],
+                    driverProvince: document.getElementById("province2").value,
+                    driverDistrict: document.getElementById("district2").value,
+                    driverWard: document.getElementById("ward2").value,
+                    driverStreet: document.getElementById("street2").value
+                };
+
+            }
+
+
+            for (const key in driverData) {
+                if (driverData[key] === '') {
+                    console.log(`Trường ${key} đang bị trống.`);
+                    // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
+                    alert(`Vui lòng điền thông tin vào trường: ${key}`);
+                    return false;
+
+                }
+            }
             return true;
         }
 
-        function checkStep2(){
-            return true;
-        }
 
-        function checkStep3(){
-            return true;
-        }
+
     </script>
     <script type="text/javascript">
     </script>
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
     </script>
-    <script>
+    <script th:inline="javascript">
         function confirmBooking(){
             const previewSection = document.getElementById('previewSection');
             const bookingDetail = document.getElementById('bookingDetail');
@@ -626,15 +746,99 @@
             bookingDetail.style.display = 'none';
         }
 
-        function changeDetail(){
+        function changeDetail() {
+            // Lấy giá trị hiện tại và định dạng lại cho phù hợp với `datetime-local`
+            const pickupDate = document.getElementById('pickupDate').innerText;
+            const returnDate = document.getElementById('returnDate').innerText;
+
+            document.getElementById('editPickupLocation').value = document.getElementById('pickupLocation').innerText;
+            document.getElementById('editPickupDate').value = formatToDatetimeLocal(pickupDate);
+            document.getElementById('editReturnDate').value = formatToDatetimeLocal(returnDate);
+
+            // Hiển thị modal
             $('#confirmModal').modal('show');
-            $('#ModalTitle').text("Booking Details!");
-            $('#confirm').click(function () {
-            }).text("Save");
-            $('#notConfirm').hide()
-            $('#close').text("Cancel");
         }
 
+
+
+        function saveChanges() {
+            // Lấy giá trị từ các input
+            const newPickupLocation = document.getElementById('editPickupLocation').value;
+            const newPickupDate = document.getElementById('editPickupDate').value;
+            const newReturnDate = document.getElementById('editReturnDate').value;
+
+            // Kiểm tra tính hợp lệ của dữ liệu
+            if (!newPickupLocation || !newPickupDate || !newReturnDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Vui lòng điền đầy đủ thông tin.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                // alert("Vui lòng điền đầy đủ thông tin.");
+                return;
+            }
+
+
+            // Chuyển đổi chuỗi thời gian thành đối tượng Date để so sánh
+            const pickupDateObj = new Date(newPickupDate);
+            const returnDateObj = new Date(newReturnDate);
+
+
+            if (returnDateObj <= pickupDateObj) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Ngày trả xe phải lớn hơn ngày lấy xe.!',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+            // Tính số ngày
+            const days = calculateNumberOfDays(newPickupDate, newReturnDate);
+
+            // Cập nhật lại nội dung của các `span`
+            document.getElementById('pickupLocation').innerText = newPickupLocation;
+            document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDate);
+            document.getElementById('returnDate').innerText = formatToDisplay(newReturnDate);
+            document.getElementById('numberOfDays').innerText = days;
+            console.log("Số ngày: " + days);
+            const totalPrice = days * car.basePrice;
+            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString() + ' VND';
+            console.log("Tổng tiền: " + totalPrice);
+
+            // Đóng modal
+            $('#confirmModal').modal('hide');
+        }
+
+        // Hàm để chuyển định dạng `datetime-local` thành định dạng hiển thị
+        function formatToDisplay(datetime) {
+            const date = new Date(datetime);
+            return date.toLocaleDateString("en-GB") + ' - ' + date.toLocaleTimeString("en-US", {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true // Chuyển sang định dạng 12 giờ với AM/PM
+            }).toUpperCase();
+        }
+
+        // Hàm để chuyển định dạng hiển thị thành `datetime-local`
+        function formatToDatetimeLocal(displayDate) {
+            const [date, time] = displayDate.split(" - ");
+            const [day, month, year] = date.split("/");
+            const [hour, minute] = time.split(":");
+            return `${year}-${month}-${day}T${hour}:${minute}`;
+        }
+
+        // Hàm để tính số ngày giữa 2 ngày
+        function calculateNumberOfDays(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const timeDiff = end - start;
+            return Math.ceil(timeDiff / (1000 * 3600 * 24));  // Chuyển đổi ms thành số ngày
+        }
         function showConfirm(){
             $('#confirmModal').modal('show');
             $('#ModalTitle').text("Confirm!");
@@ -649,82 +853,42 @@
             });
         }
 
-        // Call API to fetch provinces, districts and wards
-        // Fetch provinces and set default city
-        async function fetchProvinces(defaultCity) {
-            const response = await fetch('https://provinces.open-api.vn/api/p/');
-            const provinces = await response.json();
-            const citySelect = document.getElementById('province');
 
-            provinces.forEach(province => {
-                const option = document.createElement('option');
-                option.value = province.code;
-                option.textContent = province.name;
-                if (province.code == defaultCity) {
-                    option.selected = true;
+
+        // Initialize both forms when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize for Renter Information (form with ID '1')
+            const renterLocationHandlers = createLocationHandlers('1');
+
+            // Initialize for Driver Information (form with no ID suffix)
+            const driverLocationHandlers = createLocationHandlers('');
+
+            // Handle the checkbox for copying renter's information
+            const checkbox = document.querySelector('input[name="additionalFunction"]');
+            checkbox.addEventListener('change', function() {
+                if (!this.checked) {
+                    // When unchecked, reset driver's form
+                    document.getElementById('province').value = '';
+                    document.getElementById('district').value = '';
+                    document.getElementById('ward').value = '';
+                    document.getElementById('district').disabled = true;
+                    document.getElementById('ward').disabled = true;
+                } else {
+                    // When checked, copy values from renter's form
+                    const province1 = document.getElementById('province1');
+                    const district1 = document.getElementById('district1');
+                    const ward1 = document.getElementById('ward1');
+
+                    document.getElementById('province').value = province1.value;
+                    if (province1.value) {
+                        driverLocationHandlers.fetchDistricts(province1.value, district1.value);
+                    }
+                    if (district1.value) {
+                        driverLocationHandlers.fetchWards(district1.value, ward1.value);
+                    }
                 }
-                citySelect.appendChild(option);
             });
-
-            if (defaultCity) {
-                fetchDistricts(defaultCity, document.getElementById('district').getAttribute('data-default'));
-            }
-        }
-
-        // Fetch districts based on selected province and set default value
-        async function fetchDistricts(provinceCode, defaultDistrict) {
-            const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-            const provinceData = await response.json();
-            const districtSelect = document.getElementById('district');
-
-            districtSelect.innerHTML = '<option value="">Select District</option>';
-            provinceData.districts.forEach(district => {
-                const option = document.createElement('option');
-                option.value = district.code;
-                option.textContent = district.name;
-                if (district.code == defaultDistrict) {
-                    option.selected = true;
-                }
-                districtSelect.appendChild(option);
-            });
-
-            if (defaultDistrict) {
-                fetchWards(defaultDistrict, document.getElementById('ward').getAttribute('data-default'));
-            }
-        }
-
-        // Fetch wards based on selected district and set default value
-        async function fetchWards(districtCode, defaultWard) {
-            const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
-            const districtData = await response.json();
-            const wardSelect = document.getElementById('ward');
-
-            wardSelect.innerHTML = '<option value="">Select Ward</option>';
-            districtData.wards.forEach(ward => {
-                const option = document.createElement('option');
-                option.value = ward.code;
-                option.textContent = ward.name;
-                if (ward.code == defaultWard) {
-                    option.selected = true;
-                }
-                wardSelect.appendChild(option);
-            });
-        }
-
-        // Event listeners to load data on selection
-        document.getElementById('province').addEventListener('change', function () {
-            fetchDistricts(this.value);
-            document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
-            document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
-            document.getElementById('district').value = ""; // Reset district value
-            document.getElementById('ward').disabled = true; // Disable ward selection
         });
-
-        document.getElementById('district').addEventListener('change', function () {
-            fetchWards(this.value);
-            document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
-        });
-
 
         // Load provinces on page load with default values
         document.addEventListener('DOMContentLoaded', function () {
@@ -749,6 +913,121 @@
         });
 
 
+        // Check if all fields are valid before enabling the "Next" button
+        function checkAllValidations() {
+            const nextButton = document.getElementById("nextButton");
+
+            // Collect error messages
+            const emailError = document.getElementById("emailError1").textContent;
+            const phoneError1 = document.getElementById("phoneError1").textContent;
+            const dobError = document.getElementById("dateError1").textContent;
+            const nationalIdError = document.getElementById("nationalIdError1").textContent;
+            const fileNameError = document.getElementById("drivingLicenseError1").textContent;
+
+            // If all error messages are empty, enable the button; otherwise, disable it
+            if (!emailError && !phoneError1 && !dobError && !nationalIdError && !fileNameError) {
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
+        }
+
+        // Email Validation
+        function validateEmail() {
+            const email = document.getElementById("email1").value;
+            const emailError = document.getElementById("emailError1");
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email)) {
+                emailError.textContent = "Please enter a valid email address.";
+            } else {
+                emailError.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // Phone Validation
+        function validatePhone() {
+            const phone1 = document.getElementById("phone1").value;
+            const phoneError1 = document.getElementById("phoneError1");
+            const phonePattern = /^(0|(\+84))?(3|5|7|8|9)\d{8}$/;
+            if (!phonePattern.test(phone1)) {
+                phoneError1.textContent = "Invalid phone number format.";
+            } else {
+                phoneError1.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // Date of Birth Validation with 18+ Age Check
+        function validateDob() {
+            const dob = document.getElementById("book_pick_date1").value;
+            const dobError = document.getElementById("dateError1");
+            const dobDate = new Date(dob);
+            const today = new Date();
+            const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+            if (!dob || dobDate > minAgeDate) {
+                dobError.textContent = "You must be at least 18 years old.";
+            } else {
+                dobError.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // National ID Validation
+        function validateNationalId() {
+            const nationalId = document.getElementById("nationalId1").value;
+            const nationalIdError = document.getElementById("nationalIdError1");
+            const nationalIdPattern = /^[0-9]{9,}$/;
+            if (!nationalIdPattern.test(nationalId)) {
+                nationalIdError.textContent = "Please enter a valid national ID.";
+            } else {
+                nationalIdError.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // Driving License Validation
+        function validateDrivingLicense() {
+            const fileInput = document.getElementById("inputGroupFile011");
+            const fileNameErrorInner = document.getElementById("fileName1");
+            const fileNameError = document.getElementById("drivingLicenseError1");
+            const file = fileInput.files[0];
+            const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+
+            if (file) {
+                if (!validImageTypes.includes(file.type)) {
+                    fileNameErrorInner.textContent = "Please upload an image file (JPEG, PNG, GIF).";
+                    fileNameErrorInner.style.color = "red";
+                    fileInput.value = "";
+                    fileNameError.textContent = "Invalid file type.";
+                } else {
+                    fileNameErrorInner.textContent = "File selected";
+                    fileNameErrorInner.style.color = "green";
+                    fileNameError.textContent = "";
+                }
+            } else {
+                fileNameError.textContent = "Please upload a driving license image.";
+            }
+            checkAllValidations();
+        }
+        // Enable or disable driver information fields based on checkbox state
+        function toggleDriverInfoFields() {
+            const isChecked = document.getElementById("differentInfoCheckbox").checked;
+            const driverFields = document.querySelectorAll("#fullName, #book_pick_date, #phone, #email, #nationalId, #inputGroupFile01, #province2,#district2,#ward2, #street2");
+
+            driverFields.forEach(field => {
+                field.disabled = !isChecked; // Disable if checkbox is unchecked
+            });
+        }
+
+        // Khi trang được tải lại, kiểm tra trạng thái checkbox
+        document.addEventListener("DOMContentLoaded", function() {
+            // Kiểm tra xem checkbox có được lưu trữ không và cập nhật lại trạng thái của nó
+            const isChecked = localStorage.getItem('differentInfoCheckbox') === 'true';
+            document.getElementById("differentInfoCheckbox").checked = isChecked;
+            toggleDriverInfoFields();
+        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/customer/book-car.js"></script>

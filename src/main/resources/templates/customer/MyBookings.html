@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+>
+<head>
+    <title>My Bookings</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <style>
+        .hero-wrap {
+            height: 200px !important;
+            position: relative;
+            background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 200px !important;
+        }
+
+        .slider-text {
+            height: 200px !important;
+        }
+
+        /*  Preview part */
+
+        .wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+
+        .wrapper .img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .wrapper .img img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            clip-path: circle(0% at 0% 100%);
+            transition: all 0.7s;
+        }
+
+        /* CSS cho dynamic ID */
+        [id^="one-"]:checked ~ .img-1 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+
+        [id^="two-"]:checked ~ .img-1 img,
+        [id^="two-"]:checked ~ .img-2 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+
+        [id^="three-"]:checked ~ .img-1 img,
+        [id^="three-"]:checked ~ .img-2 img,
+        [id^="three-"]:checked ~ .img-3 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+
+        [id^="four-"]:checked ~ .img-1 img,
+        [id^="four-"]:checked ~ .img-2 img,
+        [id^="four-"]:checked ~ .img-3 img,
+        [id^="four-"]:checked ~ .img-4 img {
+            clip-path: circle(150% at 0% 100%);
+        }
+
+
+        /* Slider controls với ID động */
+        .wrapper .sliders {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 99;
+            display: flex;
+        }
+
+        .wrapper .sliders label {
+            border: 2px solid rgb(255, 255, 255);
+            width: 13px;
+            height: 13px;
+            margin: 0 3px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #one:checked ~ .sliders label.one,
+        #two:checked ~ .sliders label.two,
+        #three:checked ~ .sliders label.three,
+        #four:checked ~ .sliders label.four,
+        #five:checked ~ .sliders label.five {
+            width: 35px;
+            border-radius: 14px;
+            background: rgb(26, 255, 149);
+        }
+
+        /* Khi các nút được chọn, thay đổi kích thước và màu sắc */
+        input[id^="one-"]:checked ~ .sliders label[id^="label-one"],
+        input[id^="two-"]:checked ~ .sliders label[id^="label-two"],
+        input[id^="three-"]:checked ~ .sliders label[id^="label-three"],
+        input[id^="four-"]:checked ~ .sliders label[id^="label-four"] {
+            width: 35px;
+            border-radius: 14px;
+            background: rgb(26, 255, 149);
+        }
+
+        .sliders label:hover {
+            background: rgb(26, 255, 149);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+
+        /*Rating star*/
+
+        .rating {
+            display: flex;
+            align-items: center;
+            height: 0;
+            margin-bottom: 1.2rem;
+            width: 116.05px;
+        }
+
+        .rating i {
+            font-size: 1.2rem;
+        }
+
+        .star {
+            color: #00d79d;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+            width: 20%;
+        }
+
+        .star-base {
+            position: absolute;
+            color: #3d3d3d;
+            overflow: hidden;
+            z-index: 0;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+        }
+
+        .required-label::after {
+            content: "*";
+            color: red;
+            font-size: 1rem;
+            position: absolute;
+            top: -3px;
+            left: 1px
+        }
+
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body>
+
+    <div th:if="${success}">
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    title: 'Registered successfully!',
+                    text: '\n' +
+                        'We have sent an account activation link to your email, please check your email and activate your account.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'my-custom-button'
+                    }
+                });
+            });
+        </script>
+    </div>
+
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span>MY BOOKINGS <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-3 bread">My Bookings!</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ftco-section p-0" style="min-height: 500px !important;">
+        <form style="font-size: 14px; color: #405057; margin-top: 20px;">
+            <div class="container row d-flex m-auto justify-content-between">
+                <span>You have <span th:text="${onGoingBookings}">0</span> on-going bookings</span>
+                <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
+                    <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
+                        <option value="newestToLatest"
+                                th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to
+                            Latest
+                        </option>
+                        <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
+                            Latest to Newest
+                        </option>
+                        <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
+                        <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
+                        <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price:
+                            Low to High
+                        </option>
+                        <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price:
+                            High to Low
+                        </option>
+                    </select>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="hasDraftModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="hasDraftModalTitle">No Title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="hasDraftModalBody">
+                                ...
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" id="carContinues">Yes</button>
+                                <button type="button" class="btn btn-secondary" id="carAddNew">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="container pb-5" style="padding-top:20px">
+                <!--            <div style="display: flex; justify-content: end;">-->
+                <!--                <a class="sort-asc"><i class="fa fa-sort-amount-desc" aria-hidden="true"></i></a>-->
+                <!--            </div>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-wrap">
+                            <div class="d-flex justify-content-center">
+                                <div class="card align-items-start display-flex-center" style="">
+
+                                    <div class="row d-flex justify-content-center" th:if="${bookingList != null}">
+
+                                        <th:block th:each="booking, iterStat: ${bookingList}">
+                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
+                                                <div class="col-lg-6 col-md-6 d-flex align-items-center">
+                                                    <div class="wrapper" style="max-height: 270px">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'one-' + ${iterStat.index}" checked>
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'two-' + ${iterStat.index}">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'three-' + ${iterStat.index}">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'four-' + ${iterStat.index}">
+                                                        <div class="img img-1">
+                                                            <img th:src="'/'+${booking.frontImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-2">
+                                                            <img th:src="'/'+${booking.backImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-3">
+                                                            <img th:src="'/'+${booking.leftImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-4">
+                                                            <img th:src="'/'+${booking.rightImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="sliders">
+                                                            <label th:for="'one-' + ${iterStat.index}"
+                                                                   th:id="'label-one-' + ${iterStat.index}"
+                                                                   class="one"></label>
+                                                            <label th:for="'two-' + ${iterStat.index}"
+                                                                   th:id="'label-two-' + ${iterStat.index}"
+                                                                   class="two"></label>
+                                                            <label th:for="'three-' + ${iterStat.index}"
+                                                                   th:id="'label-three-' + ${iterStat.index}"
+                                                                   class="three"></label>
+                                                            <label th:for="'four-' + ${iterStat.index}"
+                                                                   th:id="'label-four-' + ${iterStat.index}"
+                                                                   class="four"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                    <div class="row justify-content-center align-items-center align-content-center">
+                                                        <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
+                                                            th:text="${booking.carname == null ? 'NULL' : booking.carname}">
+                                                            No Name</h4>
+
+                                                        <div>
+                                                            <span></span>
+                                                        </div>
+                                                        <!-- From Date and To Date Section -->
+                                                        <div class="col-lg-12 row mt-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label >From Date:</label>
+                                                            </div>
+                                                            <p th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                        </div>
+                                                        <div class="col-lg-12 row mt-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label>To Date:</label>
+                                                            </div>
+                                                            <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+
+                                                        </div>
+                                                        <input type="hidden" id="bookingId" th:value="${booking.getBookingId()}">
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Number of days: </p>
+                                                            <p th:text="${booking.numberOfDays}">0</p>
+
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Base price: </p>
+                                                            <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                               id="previewBasePrice">0k/Day</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Total: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewTotal"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Deposit: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewDeposit"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.deposit, 0, 'COMMA', 0, 'POINT')}">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Booking No: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewBookingNo"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${booking.bookingId}">No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row" style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Booking status:
+                                                            </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               th:text="${booking.bookingStatus}"
+                                                               th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
+                 : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+                 : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
+                 : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
+                 : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' : 'font-weight: bold;' }">
+                                                            </p>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+                                                    <!-- View Details button: always visible -->
+                                                    <a th:href="'/edit-car/' + ${booking.bookingId}"
+                                                       class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
+                                                        Details</a>
+
+                                                    <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
+                                                    <a th:href="'#'"  style="background: #d5dcd5 !important; color: black !important;"
+                                                       th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                       th:id="'confirm-booking-btn-' + ${iterStat.index}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
+                                                        Pick-up</a>
+
+                                                    <!-- Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses -->
+                                                    <a th:href="'#'" style="background: #e82b46 !important;"
+                                                       th:if="${(booking.bookingStatus == 'Confirmed' or booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Stopped')
+                                                        and booking.bookingStatus != 'Pending payment' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed' and booking.bookingStatus != 'In-Progress'}"
+                                                       th:id="'cancel-booking-btn-' + ${iterStat.index}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Cancel Booking</a>
+
+
+                                                    <!-- Return Car button: visible only if status is In-Progress -->
+                                                    <a th:href="'#'" style="background: #707070 !important;"
+                                                       th:if="${booking.bookingStatus == 'In-Progress'}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Return
+                                                        Car</a>
+                                                </div>
+
+
+                                            </div>
+                                        </th:block>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <nav th:if="${bookingList != null}"
+                         class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
+                         aria-label="Page navigation example" style="column-gap: 10px">
+                        <ul class="pagination m-0">
+                            <!-- Previous button - note currentPage is already 1-based -->
+                            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:classappend="${currentPage <= 1} ? 'disabled'"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">Previous</span>
+                                </a>
+                            </li>
+
+                            <!-- Page numbers -->
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:text="${i}"></a>
+                            </li>
+
+                            <!-- Next button -->
+                            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:classappend="${currentPage >= totalPages} ? 'disabled'"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="input-group input-group-sm" style="width: 100px">
+                            <div class="input-group-prepend" style="max-height: 31px">
+                                <label class="input-group-text"
+                                       for="pageSize">Size</label>
+                            </div>
+                            <select class="custom-select" id="pageSize" name="size" onchange="navigateToFilteredCars()">
+                                <option value="5" th:selected="${size == null || size == 5}">5</option>
+                                <option value="10" th:selected="${size == 10}">10</option>
+                                <option value="15" th:selected="${size == 15}">15</option>
+                                <option value="20" th:selected="${size == 20}">20</option>
+                                <option value="30" th:selected="${size == 30}">30</option>
+                            </select>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </form>
+    </section>
+
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen">
+        <svg class="circular" width="48px" height="48px">
+            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+                    stroke="#F96D00"/>
+        </svg>
+    </div>
+
+
+    <script>
+        function navigateToFilteredCars() {
+            const sortBy = document.getElementById('sortBy').value;
+            const pageSize = document.getElementById('pageSize').value;
+
+            window.location.href = '/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Chọn tất cả các nút Cancel
+            const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn-"]');
+
+            cancelBookingBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Lấy bookingId từ nút hiện tại
+                    const bookingId = this.closest('.row').querySelector("#bookingId").value;
+
+                    Swal.fire({
+                        title: 'Are you sure you want to cancel this booking?',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User chose to cancel the booking with ID:', bookingId);
+                            window.location.href = '/cancel-booking?bookingId=' + bookingId;
+                        } else if (result.isDismissed) {
+                            console.log('User canceled the booking action');
+                        }
+                    });
+                });
+            });
+
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+        const cancelBookingBtns = document.querySelectorAll('[id^="confirm-booking-btn-"]');
+
+        cancelBookingBtns.forEach(btn => {
+            btn.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // Lấy bookingId từ nút hiện tại
+                const bookingId = this.closest('.row').querySelector("#bookingId").value;
+
+                Swal.fire({
+                    title: 'Are you sure you want to confirm pick-up booking?',
+                    icon: 'warning',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    showCancelButton: true,
+                    customClass: {
+                        confirmButton: 'custom-confirm-btn',
+                        cancelButton: 'custom-cancel-btn'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        console.log('User chose to cancel the booking with ID:', bookingId);
+                        window.location.href = '/confirm-pickup-booking?bookingId=' + bookingId;
+                    } else if (result.isDismissed) {
+                        console.log('User canceled the booking action');
+                    }
+                });
+            });
+        });
+        });
+
+    </script>
+    </body>
+</th:block>
+</body>
+</html>
