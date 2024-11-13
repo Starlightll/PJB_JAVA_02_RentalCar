@@ -292,7 +292,7 @@
                                             </div>
                                         </div>
                                         <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                onclick="window.location.href='/my-cars'">Cancel</a>
+                                                onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
                                         <input type="button" name="next" class="next action-button"
                                                value="Next Step"/>
                                     </fieldset>
@@ -1204,7 +1204,7 @@
         function displayExistingImage(imageView, imageUrl) {
             if (imageUrl) {
                 if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {
-                    imageView.style.backgroundImage = 'url('+ imageUrl.replaceAll("\\", "/")+')';
+                    imageView.style.backgroundImage = 'url(/'+ imageUrl.replaceAll("\\", "/")+')';
                     imageView.style.backgroundSize = "cover";
                     imageView.style.backgroundPosition = "center";
                     imageView.innerHTML = "";
