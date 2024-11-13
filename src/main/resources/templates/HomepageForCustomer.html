@@ -478,7 +478,7 @@
                 const dropDateTime = new Date(`${dropDate}T${dropTime}`);
 
                 if (pickDateTime >= dropDateTime) {
-                    document.getElementById('error-messages').textContent = 'Drop-off date and time must be after pick-up date and time.';
+                    document.getElementById('error-messages').textContent = 'Drop-off time must be after pick-up time if on the same day.';
                     valid = false;
                 } else if (pickDate === dropDate && pickDateTime.getHours() + 1 > dropDateTime.getHours()) {
                     document.getElementById('error-messages').textContent = 'Drop-off time must be at least 1 hour after pick-up time if on the same day.';

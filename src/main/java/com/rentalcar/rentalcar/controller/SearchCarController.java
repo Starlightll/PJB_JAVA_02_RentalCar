@@ -91,7 +91,7 @@ public class SearchCarController {
             model.addAttribute("sendDropTime", "Please enter drop time");
         } else if (pickDate.isEqual(dropDate)) {
             if (pickTime.isAfter(dropTime) || pickTime.equals(dropTime)) {
-                model.addAttribute("sendCondition", "Drop-time must be after pick time");
+                model.addAttribute("sendCondition", "Drop-off time must be after pick-up time if on the same day");
             }else if (pickTime.plusHours(1).isAfter(dropTime)) {
                 model.addAttribute("sendCondition", "Drop-off time must be at least 1 hour after pick-up time if on the same day");
             }
