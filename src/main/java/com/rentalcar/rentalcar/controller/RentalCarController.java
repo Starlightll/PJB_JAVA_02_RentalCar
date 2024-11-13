@@ -275,11 +275,26 @@ public class RentalCarController {
                                        Model model) {
         String responseMessage = returnCarService.returnCar(bookingId, session);
 
-        // Return a success message with HTTP 200 status
         return ResponseEntity.ok(responseMessage);
 
+    }
+
+    @GetMapping("/confirm-return-car")
+    public  ResponseEntity<?>  confirmReturnCar(@RequestParam("bookingId") Long bookingId,
+                                   HttpSession session, @RequestParam(defaultValue = "1") int page,
+                                   @RequestParam(defaultValue = "10") int size,
+                                   @RequestParam(defaultValue = "lastModified") String sortBy,
+                                   @RequestParam(defaultValue = "desc") String order,
+                                   Model model) {
+        User user = (User) session.getAttribute("user");
+//        if(user.getWallet().doubleValue() < returnCarService.calculateTotalPrice(bookingId)) {
+        return ResponseEntity.ok("Your wallet doesn’t have enough balance. Please top-up your wallet and try again!");
+//        }
 
 
+//        model.addAttribute("errorPayment", "Your wallet doesn’t have enough balance. Please top-up your wallet and try again!");
+
+//        return "redirect:wallet/my-wallet";
     }
 
 }
