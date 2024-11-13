@@ -113,7 +113,7 @@ public class SearchCarController {
         } else if (dropDate.isBefore(today)) {
             model.addAttribute("sendCondition", "Drop-off date must not be in the past");
         } else if (pickDate.isAfter(dropDate)) {
-            model.addAttribute("sendCondition", "Drop-off date and time must be later than Pick-up date and time");
+            model.addAttribute("sendCondition", "Drop-off date  must be later than Pick-up date ");
         }else {
             model.addAttribute("list", list);
             model.addAttribute("totalPage", list.getTotalPages());

@@ -21,11 +21,22 @@ CREATE TABLE [dbo].[Users]
     street         NVARCHAR(255),
     fullName       NVARCHAR(100),
     agreeTerms     int                not null,
-    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED'))
+    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED')),
+    driverId INT,
+    statusDriverId INT foreign key REFERENCES statusDriver(statusDriverId) ,
     PRIMARY KEY (userId)
+
     );
 
-
+CREATE TABLE statusDriver (
+    statusDriverId INT  IDENTITY (1,1) PRIMARY KEY NOT NULL,
+    statusDriverName nvarchar(50)
+)
+    INSERT INTO statusDriver (statusDriverName)
+VALUES
+    ('Available'),  -- Available
+    (N'Rented'),      -- Rented
+    (N'Maintenance');    -- Maintenance
 
 CREATE TABLE VerificationToken
 (
@@ -153,7 +164,7 @@ insert into [Role]
 values ('Admin'),
     ('Car Owner'),
     ('Customer')
-
+    ('Driver')
 
 -- Booking Status table
 CREATE TABLE [dbo].[BookingStatus]
@@ -260,6 +271,31 @@ INSERT INTO Brand (brandName) VALUES ('Toyota'), ('Honda'), ('Hyundai'), ('Kia')
 INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('Sun roof'), ('DVD'), ('Ski Rack'), ('Car Cover'), ('Car Wash'), ('Car Wax'), ('Car Polish'), ('Car Vacuum'), ('Car Freshener'), ('Car Shampoo');
 
 INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED');
+
+-- Transaction table
+CREATE TABLE [dbo].[Transaction] (
+                                     transactionId   INT IDENTITY (1,1) PRIMARY KEY,
+                                     transactionType VARCHAR(20) NOT NULL CHECK (transactionType IN ('Withdraw', 'Top-up', 'Pay deposit', 'Receive deposit', 'Refund deposit', 'Offset final payment')),
+                                     amount          DECIMAL(18, 2) NOT NULL,
+                                     transactionDate DATETIME DEFAULT GETDATE(),
+                                     userId          INT NOT NULL,
+                                     bookingId       INT NULL, -- Used for booking-related transactions like deposits
+                                     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
+                                     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
+);
+
+
+
+
+
+
+-- ĐÂY LÀ DỮ LIỆU TEST DRIVER, ANH EM TỤ THÊM TRONG BẢNG USER ROLE NHÉ , ROLE LÀ DRIVER(4)
+
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, driverId, statusDriverId)
+VALUES
+    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'Ho Chi Minh', N'District 1', N'Ward 3', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED', 1, 1),
+    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'Hanoi', N'District 5', N'Ward 7', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 2, 1),
+    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'Da Nang', N'District 3', N'Ward 2', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 3, 1);
 
 
 -- SQL to delete all information of carDraft, Car and relative information of Car
