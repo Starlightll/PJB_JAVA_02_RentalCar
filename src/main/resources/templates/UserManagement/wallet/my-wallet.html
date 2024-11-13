@@ -116,7 +116,8 @@
 
                         <ul class="pagination justify-content-center" th:if="${fromDate == null || toDate == null}">
                             <li th:classappend="${currentPage == 1} ? 'disabled' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${currentPage - 1})}" class="page-link">Previous</a>
+                                <a th:href="@{/wallet/my-wallet(page=${currentPage - 1})}"
+                                   class="page-link">Previous</a>
                             </li>
                             <li th:each="i : ${#numbers.sequence(1, totalPages)}"
                                 th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
@@ -247,7 +248,6 @@
         </div>
     </div>
 
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
@@ -284,7 +284,6 @@
                     document.getElementById('toDateError').style.display = 'none';
                     return;
                 }
-
 
                 const url = `/wallet/my-wallet?fromDate=${fromDate}&toDate=${toDate}`;
                 window.location.href = url;
@@ -443,7 +442,6 @@
 
         });
     </script>
-
 
     </body>
 </th:block>

@@ -1,19 +1,18 @@
 package com.rentalcar.rentalcar.controller;
 
-import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.entity.Transaction;
-import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.TransactionRepository;
+import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.MyWalletService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -24,9 +23,6 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/wallet")
