@@ -100,14 +100,6 @@ h5{
 /*    color: #eeeeee;*/
 /*}*/
 
-.history .table{
-    min-width: 100% !important;
-}
-
-.history td{
-    padding: 0 !important;
-}
-
 .history thead tr{
     background: rgb(0,123,255);
     background: linear-gradient(90deg, rgba(0,123,255,1) 0%, rgba(82,199,209,1) 100%);
@@ -117,8 +109,3 @@ h5{
     border: none;
 }
 
-@media(max-width: 759px){
-    .w--100{
-        width: 100% !important;
-    }
-}

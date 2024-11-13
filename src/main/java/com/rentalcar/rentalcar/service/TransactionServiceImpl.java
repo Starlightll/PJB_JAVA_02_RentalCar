@@ -2,7 +2,6 @@ package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Transaction;
-import com.rentalcar.rentalcar.entity.TransactionType;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transaction> getTransactionsByDateRange(Long userId, LocalDate fromDate, LocalDate toDate) {
-        return transactionRepository.findByUserIdAndTransactionDateBetween(userId, fromDate, toDate);
-    }
+        LocalDateTime fromDateTime = fromDate.atStartOfDay();
+        LocalDateTime toDateTime = toDate.atTime(23, 59, 59);
 
+        return transactionRepository.findByUserIdAndTransactionDateBetween(userId, fromDateTime, toDateTime);
+    }
 
     @Override
     public void saveTransaction(User user, BigDecimal amount, String type, Booking booking) {
