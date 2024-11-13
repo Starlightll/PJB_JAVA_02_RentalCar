@@ -769,6 +769,13 @@
                             }
 
                         }
+                        if(message === "Step 2 validated successfully.") {
+                            const previewSection = document.getElementById('previewSection');
+                            const bookingDetail = document.getElementById('bookingDetail');
+                            previewSection.style.display = 'none';
+                            bookingDetail.style.display = 'none';
+                        }
+
                         console.log("Booking saved successfully", message);
                         resolve(true); // Thành công
                     },
@@ -804,10 +811,7 @@
     </script>
     <script th:inline="javascript">
         function confirmBooking(){
-            const previewSection = document.getElementById('previewSection');
-            const bookingDetail = document.getElementById('bookingDetail');
-            previewSection.style.display = 'none';
-            bookingDetail.style.display = 'none';
+
         }
 
         function changeDetail() {

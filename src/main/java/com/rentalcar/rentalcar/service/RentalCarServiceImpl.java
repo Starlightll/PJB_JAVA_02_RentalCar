@@ -335,15 +335,18 @@ public class RentalCarServiceImpl implements RentalCarService {
             driverDetail.setBooking(booking);
             driverDetailRepository.save(driverDetail);
 
-            if(bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
-                //Xử lý driver khi ấn tích
-                users.setDriverId(bookingDto.getSelectedUserId());
-                userRepository.save(users);
 
-                //THAY ĐỔI TRẠNG THÁI CHO DRIVER
-                User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId()));
-                driver.setStatusDriverId(2);
-                userRepository.save(driver);
+            if (bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
+                // Xử lý driver khi ấn tích
+                User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId())); // Lấy đối tượng User của Driver
+                if (driver != null) {
+                    booking.setDriver(driver);
+                    bookingRepository.save(booking);
+
+                    // THAY ĐỔI TRẠNG THÁI CHO DRIVER
+                    driver.setStatusDriverId(2);
+                    userRepository.save(driver);
+                }
             }
 
 

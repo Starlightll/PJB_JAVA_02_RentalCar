@@ -22,8 +22,7 @@ CREATE TABLE [dbo].[Users]
     fullName       NVARCHAR(100),
     agreeTerms     int                not null,
     status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED')),
-    driverId INT,
-    statusDriverId INT foreign key REFERENCES statusDriver(statusDriverId) ,
+    statusDriverId INT foreign key REFERENCES statusDriver(statusDriverId),
     PRIMARY KEY (userId)
 
     );
@@ -221,6 +220,7 @@ CREATE TABLE [dbo].[Booking]
     userId          INT,
     bookingStatusId INT,
     paymentMethodId INT,
+    driverId INT foreign key references [dbo].[Users] (userId) Null,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (bookingStatusId) REFERENCES [dbo].[BookingStatus] (BookingStatusId),
     FOREIGN KEY (paymentMethodId) REFERENCES [dbo].[PaymentMethod] (PaymentMethodId)

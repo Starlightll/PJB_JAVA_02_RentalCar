@@ -29,8 +29,13 @@ public class Booking {
     private Double totalPrice;
 
     @ManyToOne
+    @JoinColumn(name = "driverId")
+    private User driver; // Liên kết với entity User (là tài xế)
+
+    @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user; // Liên kết với entity User
+
 
     @ManyToOne
     @JoinColumn(name = "bookingStatusId", nullable = false)
