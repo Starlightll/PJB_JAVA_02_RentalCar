@@ -43,9 +43,15 @@
             <div class="col-md-4 d-flex align-items-center justify-content-center">
               <form th:action="@{/searchCar}" class="request-form ftco-animate bg-primary" method="get" style="min-height: 550px;align-items: center;align-content: center;gap: 20px;display: flex;flex-flow: column;">
                 <h2>Make your trip</h2>
+                <div th:if="${sendCondition != null}">
+                  <p class="validate-msg" th:text="${sendCondition}"></p>
+                </div>
+                <div id="error-messages" style="color: red;"></div>
+
                 <div class="form-group">
                   <label for="pick-location" class="label">Pick-up location</label>
-                  <input name="name" type="text" class="form-control" placeholder="City, District, etc" id="pick-location">
+                  <input name="name" type="text" class="form-control" placeholder="City, District" id="pick-location">
+                  <small id="pick-location-error" style="color: red;"></small>
                   <div th:if="${sendLocation != null}">
                     <p class="validate-msg"  th:text="${sendLocation}"></p>
                   </div>
@@ -53,39 +59,43 @@
                 <div class="d-flex">
                   <div class="form-group mr-2">
                     <label for="book_pick_date" class="label">Pick-up date</label>
-                    <input name="pickDate" type="date" class="form-control"  placeholder="Date">
+                    <input name="pickDate" type="date" class="form-control"  placeholder="Date" id="book_pick_dates">
                     <div th:if="${sendPickDate != null}">
                       <p class="validate-msg" th:text="${sendPickDate}"></p>
                     </div>
+                    <small id="pick-date-error" style="color: red;"></small>
+
                   </div>
                   <div class="form-group">
                     <label for="time_pick" class="label">Pick-up time</label>
-                    <input name="pickTime" type="time" class="form-control"  placeholder="Time">
+                    <input name="pickTime" type="time" class="form-control"  placeholder="Time" id="time_picks">
                     <div th:if="${sendPickTime != null}">
                       <p class="validate-msg" th:text="${sendPickDate}"></p>
                     </div>
+                    <small id="pick-time-error" style="color: red;"></small>
+
                   </div>
                 </div>
 
                 <div class="d-flex">
                   <div class="form-group mr-2">
                     <label for="book_drop_date" class="label">Drop date</label>
-                    <input name="dropDate" type="date" class="form-control" placeholder="Date">
+                    <input name="dropDate" type="date" class="form-control" placeholder="Date" id="book_drop_dates">
                     <div th:if="${sendDropDate != null}">
                       <p class="validate-msg" th:text="${sendDropDate}" ></p>
                     </div>
+                    <small id="drop-date-error" style="color: red;"></small>
                   </div>
                   <div class="form-group">
                     <label for="time_drop" class="label">Drop time</label>
-                    <input name="dropTime" type="time" class="form-control"  placeholder="Time">
+                    <input name="dropTime" type="time" class="form-control"  placeholder="Time" id="time_drops">
                     <div th:if="${sendDropTime != null}">
                       <p class="validate-msg" th:text="${sendDropTime}"></p>
                     </div>
+                    <small id="drop-time-error" style="color: red;"></small>
                   </div>
                 </div>
-                <div th:if="${sendCondition != null}">
-                  <p class="validate-msg" th:text="${sendCondition}"></p>
-                </div>
+
                 <div class="form-group">
                   <input type="submit" value="Rent A Car Now" class="btn btn-secondary py-3 px-4">
                 </div>
@@ -199,9 +209,9 @@
                   <td style="color: #0b0b0b">No ratings</td>
                   <td style="color: #0b0b0b">0</td>
                   <td style="color: #0b0b0b" th:text="${list.getBasePrice() + ' VND/Day'}"></td>
-                  <td style="color: #0b0b0b"
-                      th:text="${list.getAddress().province + ',' + list.getAddress().district}"></td>
-                  <td style="color: #0b0b0b" th:text="${list.getCarStatus().name}"></td>
+                  <td style="color: black" th:utext="${list.getAddress().province +','+ '<br>' + list.getAddress().district +','+ '<br>' + list.getAddress().ward + '.'}"></td>
+
+                  <td style="color: green" th:text="${list.getCarStatus().name}"></td>
                   <td>
                     <button class="btn-rent">Rent now</button>
                     <button class="btn-view"><a th:href="@{/carDetail/{id}(id=${list.getCarId()})}"
@@ -240,6 +250,83 @@
   <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
 
   <script>
+    document.querySelector('.request-form').addEventListener('submit', function(event) {
+      event.preventDefault();  // Prevent form submission for validation
+
+      // Clear previous error messages
+      document.getElementById('pick-location-error').textContent = '';
+      document.getElementById('pick-date-error').textContent = '';
+      document.getElementById('pick-time-error').textContent = '';
+      document.getElementById('drop-date-error').textContent = '';
+      document.getElementById('drop-time-error').textContent = '';
+      document.getElementById('error-messages').textContent = '';
+
+      // Get field values
+      const pickLocation = document.getElementById('pick-location').value.trim();
+      const pickDate = document.getElementById('book_pick_dates').value;
+      const pickTime = document.getElementById('time_picks').value;
+      const dropDate = document.getElementById('book_drop_dates').value;
+      const dropTime = document.getElementById('time_drops').value;
+
+      let valid = true;
+
+      // Get current date for comparison
+      const today = new Date();
+      const currentDate = today.toISOString().split('T')[0];
+
+      // Pick-up location validation
+      if (!pickLocation) {
+        document.getElementById('pick-location-error').textContent = 'Please enter location';
+        valid = false;
+      }
+
+      // Date and Time fields validation
+      if (!pickDate) {
+        document.getElementById('pick-date-error').textContent = 'Please enter pick-up date';
+        valid = false;
+      } else if (pickDate < currentDate) {
+        document.getElementById('pick-date-error').textContent = 'Pick-up date must not be in the past';
+        valid = false;
+      }
+
+      if (!pickTime) {
+        document.getElementById('pick-time-error').textContent = 'Please enter pick-up time';
+        valid = false;
+      }
+
+      if (!dropDate) {
+        document.getElementById('drop-date-error').textContent = 'Please enter drop-off date';
+        valid = false;
+      } else if (dropDate < currentDate) {
+        document.getElementById('drop-date-error').textContent = 'Drop-off date must not be in the past';
+        valid = false;
+      }
+
+      if (!dropTime) {
+        document.getElementById('drop-time-error').textContent = 'Please enter drop-off time';
+        valid = false;
+      }
+
+      // Validate date and time relationship between pick-up and drop-off
+      if (pickDate && pickTime && dropDate && dropTime) {
+        const pickDateTime = new Date(`${pickDate}T${pickTime}`);
+        const dropDateTime = new Date(`${dropDate}T${dropTime}`);
+
+        if (pickDateTime >= dropDateTime) {
+          document.getElementById('error-messages').textContent = 'Drop-off date and time must be after pick-up date and time.';
+          valid = false;
+        } else if (pickDate === dropDate && pickDateTime.getHours() + 1 > dropDateTime.getHours()) {
+          document.getElementById('error-messages').textContent = 'Drop-off time must be at least 1 hour after pick-up time if on the same day.';
+          valid = false;
+        }
+      }
+
+      // Submit the form if validation passes
+      if (valid) {
+        event.target.submit();
+      }
+    });
+
     function navigateToFilteredCars() {
       // Get the selected sort option
       const sortBy = document.getElementById("sortBy").value;
