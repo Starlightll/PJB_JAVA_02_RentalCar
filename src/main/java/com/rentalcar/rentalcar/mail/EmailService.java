@@ -2,6 +2,9 @@ package com.rentalcar.rentalcar.mail;
 
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.TimeFormatter;
+import com.rentalcar.rentalcar.dto.BookingDto;
+import com.rentalcar.rentalcar.entity.Booking;
+import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -11,6 +14,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 
 @Service
@@ -88,6 +95,52 @@ public class EmailService {
 
             mailSender.send(message);
         }catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Async
+    public void sendBookingConfirmation(User user, BookingDto bookingdto, Booking booking, Car car) {
+        String recipientAddress = user.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        String carName = car.getCarName();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String  fromDate = bookingdto.getPickUpDate().format(dateTimeFormatter);
+        String  toDate = bookingdto.getReturnDate().format(dateTimeFormatter);
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String  pricePerDay = currencyFormatter.format(car.getBasePrice());
+        String  totalPrice =currencyFormatter.format(booking.getTotalPrice());
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Booking Confirmation</h2>" +
+                    "<p>Dear " + user.getUsername() + ",</p>" +
+                    "<p>Thank you for booking with us! Here are your booking details:</p>" +
+                    "<ul>" +
+                    "<li><strong>Booking Number:</strong> " + bookingNumber + "</li>" +
+                    "<li><strong>Car Name:</strong> " + carName + "</li>" +
+                    "<li><strong>From:</strong> " + fromDate + "</li>" +
+                    "<li><strong>To:</strong> " + toDate + "</li>" +
+                    "<li><strong>Price per Day:</strong> $" + pricePerDay + "</li>" +
+                    "<li><strong>Total Price:</strong> $" + totalPrice + "</li>" +
+                    "</ul>" +
+                    "<p>We look forward to serving you. If you have any questions, please contact our support team.</p>" +
+                    "<p>Best regards,<br>The Support Team</p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you did not make this booking, please contact our support team immediately.</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Booking Confirmation - Booking No. " + bookingNumber);
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
     }

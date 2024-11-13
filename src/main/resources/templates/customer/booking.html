@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- iziToast CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
     <!-- iziToast JavaScript -->
@@ -184,11 +184,11 @@
                                                             <input type="radio" name="slide-1" id="three-1">
                                                             <input type="radio" name="slide-1" id="four-1">
                                                             <div class="img img-1">
-                                                                <img src="/images/car-3.jpg"
+                                                                <img th:src="'/'+${car.getFront()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-2">
-                                                                <img src="/images/car-3.jpg"
+                                                                <img th:src="'/'+${car.getBack()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-3">
@@ -196,7 +196,7 @@
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-4">
-                                                                <img src="/images/car-3.jpg"
+                                                                <img th:src="'/'+${car.getRight()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="sliders">
@@ -220,7 +220,8 @@
                                                                 <div class="rating">
                                                                     <div class="star"
                                                                          th:style="'width:' + (${car.getAverageRating()} * 20) + '%'">
-                                                                        <i class="fa fa-star"></i>
+
+                                                                    <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
@@ -312,7 +313,7 @@
                                                 <tr>
                                                     <th scope="row">3</th>
                                                     <td>Deposit</td>
-                                                    <td th:text="${#numbers.formatDecimal(car.getDeposit(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
+                                                    <td id="deposite" th:text="${#numbers.formatDecimal(car.getDeposit(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">4</th>
@@ -471,128 +472,35 @@
                                                                             <span>Different than Renter's information</span>
                                                                         </label>
                                                             </div>
-                                                            <div class="row">
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
-                                                                            <span class="input-group-text ">Full name</span>
-                                                                        </div>
-                                                                        <input type="text" class="form-control"
-                                                                               aria-label="Sizing example input"
-                                                                               aria-describedby="inputGroup-sizing-default"
-                                                                               id="fullName">
-                                                                    </div>
-                                                                    <a class="validate-msg" id="fullNameValidate">Invalid</a>
-                                                                </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
-                                                                            <span class="input-group-text ">Date of birth</span>
-                                                                        </div>
-                                                                        <input type="text" class="form-control"
-                                                                               aria-label="Sizing example input"
-                                                                               aria-describedby="inputGroup-sizing-default"
-                                                                               id="book_pick_date">
-                                                                    </div>
-                                                                    <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>
-                                                                </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
-                                                                            <span class="input-group-text ">Phone</span>
-                                                                        </div>
-                                                                        <input type="text" class="form-control"
-                                                                               aria-label="Sizing example input"
-                                                                               aria-describedby="inputGroup-sizing-default"
-                                                                               id="phone">
-                                                                    </div>
-                                                                    <a class="validate-msg" id="phoneValidate">Invalid</a>
-                                                                </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
-                                                                            <span class="input-group-text ">email</span>
-                                                                        </div>
-                                                                        <input type="email" class="form-control"
-                                                                               aria-label="Sizing example input"
-                                                                               aria-describedby="inputGroup-sizing-default"
-                                                                               id="email">
-                                                                    </div>
-                                                                    <a class="validate-msg" id="emailValidate">Invalid</a>
-                                                                </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
-                                                                            <span class="input-group-text ">National ID</span>
-                                                                        </div>
-                                                                        <input type="text" class="form-control"
-                                                                               aria-label="Sizing example input"
-                                                                               aria-describedby="inputGroup-sizing-default"
-                                                                               id="nationalId">
-                                                                    </div>
-                                                                    <a class="validate-msg" id="nationalIdValidate">Invalid</a>
-                                                                </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" style="max-height: 33.5px;">
-                                                                            <span class="input-group-text" id="inputGroupFileAddon01" >Driving license</span>
-                                                                        </div>
-                                                                        <div class="custom-file">
-                                                                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-                                                                            <label class="custom-file-label" for="inputGroupFile01" style="font-size: small !important;" id="fileName">Choose file</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <a class="validate-msg" id="drivingLicenseValidate">Invalid</a>
-                                                                </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="province2">Province</label>
-                                                                        </div>
-                                                                        <select class="custom-select" id="province2">
-                                                                            <option value="">Select</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <a class="validate-msg">Invalid</a>
-                                                                </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="district2">District</label>
-                                                                        </div>
-                                                                        <select class="custom-select" id="district2">
-                                                                            <option value="">Select</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <a class="validate-msg">Invalid</a>
-                                                                </div>
+                                                            <div id="driverInfoTable" style="display: none; width: 100%">
+                                                                <div>
+                                                                    <table class="table table-dark table-hover">
+                                                                        <thead>
+                                                                        <tr>
+<!--                                                                            <th scope="col">-->
+<!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
+<!--                                                                            </th>-->
+                                                                            <th></th>
 
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend">
-                                                                            <label class="input-group-text"
-                                                                                   for="ward2">Ward</label>
-                                                                        </div>
-                                                                        <select class="custom-select" id="ward2">
-                                                                            <option value="">Select</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <a class="validate-msg">Invalid</a>
-                                                                </div>
+                                                                            <th scope="col">Name</th>
+                                                                            <th scope="col">Date</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        <tr th:each="user : ${users}">
+                                                                            <th scope="row">
+                                                                                <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow" onclick="selectOnlyOne(this)" />
+                                                                            </th>
+                                                                            <td th:text="${user.getFullName()}"></td>
+                                                                            <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
+                                                                        </tr>
 
-                                                                <div class="col-lg-6 mb-3">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text">Home</span>
-                                                                        </div>
-                                                                        <input type="text" class="form-control"
-                                                                               aria-label="Sizing example input"
-                                                                               aria-describedby="inputGroup-sizing-default"
-                                                                               id="street2">
-                                                                    </div>
-                                                                    <a class="validate-msg">Invalid</a>
+                                                                        <!-- Các hàng khác... -->
+                                                                        </tbody>
+                                                                    </table>
                                                                 </div>
                                                             </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -626,6 +534,8 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <!-- Vùng thông báo lỗi -->
+                                                    <div id="error-message" class="text-danger mt-3"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -641,13 +551,13 @@
                                             <div class="card align-items-start display-flex-center" style="">
                                                 <div class="card-body text-left w-80" style="align-self: center; color: #5d5d5d">
                                                     <p>You have successfully booked
-                                                        <span style="color: #00c86f">Nissan 2017</span>
+                                                        <span style="color: #00c86f" th:text="${car.getName()}"></span>
                                                         from
-                                                        <span style="color: #ffb300">13/02/2024 - 12:00 PM</span>
+                                                        <span class="start-date" style="color: #ffb300"></span>
                                                         to
-                                                        <span style="color: #ffb300">23/02/2024 - 14:00 PM</span>
+                                                        <span class="end-date" style="color: #ffb300"></span>
                                                     </p>
-                                                    <p>Your booking number is: <span style="color: royalblue">999999</span></p>
+                                                    <p>Your booking number is: <span class="booking-number" style="color: royalblue"></span></p>
                                                     <p>Our operator will contact you soon to guidance you pick up.</p>
                                                     <p>Thank you for choosing our service!</p>
                                                 </div>
@@ -669,10 +579,22 @@
 
     <script>
 
+        function selectOnlyOne(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="selectRow"]');
+            checkboxes.forEach((cb) => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+        }
+
+
         function checkStep1() {
 
             // Thu thập dữ liệu cho renter
             const formData = {
+                pickUpLocation: document.getElementById("editPickupLocation").value,
+                pickUpDateTime: document.getElementById("editPickupDate").value,
+                returnDateTime: document.getElementById("editReturnDate").value,
+
                 carId: document.getElementById("carId").value,
                 fullName: document.getElementById("fullName1").value,
                 bookPickDate: document.getElementById("book_pick_date1").value,
@@ -698,52 +620,198 @@
 
                 }
             }
-
-            // Kiểm tra xem checkbox có được chọn không
-            let driverData = null;
-            if (document.getElementById("differentInfoCheckbox").checked) {
-                driverData = {
-                    driverFullName: document.getElementById("fullName").value,
-                    driverBookPickDate: document.getElementById("book_pick_date").value,
-                    driverPhone: document.getElementById("phone").value,
-                    driverEmail: document.getElementById("email").value,
-                    driverNationalId: document.getElementById("nationalId").value,
-                    driverDrivingLicense: document.getElementById("inputGroupFile01").files[0],
-                    driverProvince: document.getElementById("province2").value,
-                    driverDistrict: document.getElementById("district2").value,
-                    driverWard: document.getElementById("ward2").value,
-                    driverStreet: document.getElementById("street2").value
-                };
-
-            }
-
-
-            for (const key in driverData) {
-                if (driverData[key] === '') {
-                    console.log(`Trường ${key} đang bị trống.`);
-                    // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
-                    alert(`Vui lòng điền thông tin vào trường: ${key}`);
-                    return false;
-
-                }
-            }
             return true;
         }
 
 
+            let selectedPaymentMethod = 1;
+
+// Lắng nghe sự kiện khi người dùng thay đổi tab
+            $('#v-pills-tab button').on('click', function (e) {
+                // Lấy ID của tab đã chọn
+                var selectedTab = $(this).attr('id');
+
+                // Kiểm tra tab được chọn và xử lý
+                if (selectedTab === 'v-pills-home-tab') {
+                    selectedPaymentMethod = 1;
+                    console.log("User selected: My Wallet");
+                    // Xử lý My Wallet
+                } else if (selectedTab === 'v-pills-profile-tab') {
+                    selectedPaymentMethod = 2;
+                    console.log("User selected: Cash");
+                    // Xử lý Cash
+                } else if (selectedTab === 'v-pills-messages-tab') {
+                    selectedPaymentMethod = 3;
+                    console.log("User selected: Bank Transfer");
+                    // Xử lý Bank Transfer
+                }
+            });
+
+            // Hiển thị hoặc sử dụng phương thức thanh toán được chọn
+            console.log("Selected Payment Method:", selectedPaymentMethod);
+
+        let depositText = document.getElementById("deposite").textContent;
+
+        function saveBooking() {
+            return new Promise((resolve, reject) => {
+                const pickUpLocation = document.getElementById("editPickupLocation").value;
+                const pickUpDateTime = document.getElementById("editPickupDate").value;
+                const returnDateTime = document.getElementById("editReturnDate").value;
+                const depositValue = depositText.replace(/[^0-9]/g, '');
+                const checked = document.getElementById("differentInfoCheckbox").checked;
+                const carId = document.getElementById("carId").value;
+                const fullName = document.getElementById('fullName1').value;
+                const bookPickDate = document.getElementById('book_pick_date1').value;
+                const phone = document.getElementById('phone1').value;
+                const email = document.getElementById('email1').value;
+                const nationalId = document.getElementById("nationalId1").value;
+                const drivingLicense = document.getElementById("inputGroupFile011").value;
+                const province =  document.getElementById('province1').options[document.getElementById('province1').selectedIndex].text;
+                const district =  document.getElementById('district1').options[document.getElementById('district1').selectedIndex].text;
+                const ward =  document.getElementById('ward1').options[document.getElementById('ward1').selectedIndex].text;
+                const street = document.getElementById('street1').value;
+
+                // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
+                let selectedUserId = null;
+                const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
+
+                if (selectedCheckbox) {
+                    selectedUserId = selectedCheckbox.value;
+                }
+
+                console.log("Selected User IDs:", selectedUserId);
+
+
+                // Tạo thông tin booking
+                let actualStep = pageStep + 1;
+                if (actualStep > 3) {
+                    actualStep = 3;
+                } else if (actualStep < 1) {
+                    actualStep = 1;
+                }
+
+                const bookingInfor = {
+                    location: pickUpLocation,
+                    pickUpDate: pickUpDateTime,
+                    returnDate: returnDateTime,
+                    deposit: depositValue,
+                    step: actualStep,
+                    isCheck: checked,
+                    carID: carId,
+                    rentFullName: fullName,
+                    rentBookPickDate: bookPickDate,
+                    rentPhone: phone,
+                    rentMail: email,
+                    rentNationalId: nationalId,
+                    rentDrivingLicense: drivingLicense,
+                    rentProvince: province,
+                    rentDistrict: district,
+                    rentWard: ward,
+                    rentStreet: street,
+                    selectedPaymentMethod : selectedPaymentMethod,
+                    selectedUserId: selectedUserId,
+                };
+
+                // Tạo FormData
+                const formData = new FormData();
+                formData.append("booking", JSON.stringify(bookingInfor));
+
+                const fileInputs = {
+                    "drivingLicense": document.getElementById("inputGroupFile011"),
+                    "driverDrivingLicense": document.getElementById("inputGroupFile01"),
+                };
+
+                // Kiểm tra các file và thêm vào FormData
+                for (const [key, input] of Object.entries(fileInputs)) {
+                    if (input && input.files && input.files[0]) {
+                        formData.append(key, input.files[0]);
+                    } else {
+                        formData.append(key, new Blob([], { type: 'application/octet-stream' }));
+                    }
+                }
+
+                // Gửi AJAX request
+                $.ajax({
+                    url: '/booking-car',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function (response) {
+
+                        // Lấy thông tin từ Map
+                        const message = response.message;
+
+                        if(message === "Step 2 validated successfully.") {
+                            const bookingInfo = response.bookingInfo;
+                            try {
+                                console.log("Response:", response);
+                                // Định dạng ngày bắt đầu và kết thúc
+                                const formattedStartDate = new Date(bookingInfo.startDate).toLocaleString('vi-VN', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short'
+                                });
+                                const formattedEndDate = new Date(bookingInfo.endDate).toLocaleString('vi-VN', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short'
+                                });
+                                const formattedBookingNumber = bookingInfo.id;
+
+                                // Cập nhật từng phần tử cụ thể
+                                $('.start-date').text(formattedStartDate);
+                                $('.end-date').text(formattedEndDate);
+                                $('.booking-number').text(formattedBookingNumber);
+                            } catch (error) {
+                                console.error("JSON parse error:", error);
+                            }
+
+                        }
+                        if(message === "Step 2 validated successfully.") {
+                            const previewSection = document.getElementById('previewSection');
+                            const bookingDetail = document.getElementById('bookingDetail');
+                            previewSection.style.display = 'none';
+                            bookingDetail.style.display = 'none';
+                        }
+
+                        console.log("Booking saved successfully", message);
+                        resolve(true); // Thành công
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 400) {
+                            if(xhr.responseText === "Your wallet must be greater than deposit") {
+
+                                const topUpLink = `<a href="/top-up-wallet" style="color: blue; text-decoration: underline;">Nạp tiền</a>`;
+                                const errorMessage = `Ví của bạn không đủ tiền để đặt xe. ${topUpLink} để tiếp tục.`;
+
+                                $('#error-message').html(errorMessage);
+                            }
+                            alert(xhr.responseText); // Hiển thị lỗi nếu có
+                        } else {
+                            console.log("Other Error:", error);
+                        }
+                        resolve(false); // Thất bại
+                    }
+                });
+            });
+        }
+
+
+
 
     </script>
-    <script type="text/javascript">
+    <script th:inline="javascript">
+        var car = /*[[${car}]]*/ {};
     </script>
+
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
     </script>
     <script th:inline="javascript">
         function confirmBooking(){
-            const previewSection = document.getElementById('previewSection');
-            const bookingDetail = document.getElementById('bookingDetail');
-            previewSection.style.display = 'none';
-            bookingDetail.style.display = 'none';
+
         }
 
         function changeDetail() {
@@ -776,7 +844,6 @@
                     transitionIn: 'fadeInDown',
                     transitionOut: 'fadeOutUp'
                 });
-                // alert("Vui lòng điền đầy đủ thông tin.");
                 return;
             }
 
@@ -839,19 +906,7 @@
             const timeDiff = end - start;
             return Math.ceil(timeDiff / (1000 * 3600 * 24));  // Chuyển đổi ms thành số ngày
         }
-        function showConfirm(){
-            $('#confirmModal').modal('show');
-            $('#ModalTitle').text("Confirm!");
-            $('#ModalBody').html("Do you want to save the car? <br> <p style='color: indianred'>If you don't save, all data will be lost.</p>");
-            $('#confirm').click(function () {
-                addCar();
 
-            });
-            $('#notConfirm').click(function () {
-                deleteDraft();
-                window.location.href = '/car-owner/my-cars';
-            });
-        }
 
 
 
@@ -1011,23 +1066,15 @@
             }
             checkAllValidations();
         }
-        // Enable or disable driver information fields based on checkbox state
-        function toggleDriverInfoFields() {
-            const isChecked = document.getElementById("differentInfoCheckbox").checked;
-            const driverFields = document.querySelectorAll("#fullName, #book_pick_date, #phone, #email, #nationalId, #inputGroupFile01, #province2,#district2,#ward2, #street2");
 
-            driverFields.forEach(field => {
-                field.disabled = !isChecked; // Disable if checkbox is unchecked
-            });
+        function toggleDriverInfoFields() {
+            const checkbox = document.getElementById('differentInfoCheckbox');
+            const table = document.getElementById('driverInfoTable');
+
+            // Hiển thị bảng nếu checkbox được chọn
+            table.style.display = checkbox.checked ? 'block' : 'none';
         }
 
-        // Khi trang được tải lại, kiểm tra trạng thái checkbox
-        document.addEventListener("DOMContentLoaded", function() {
-            // Kiểm tra xem checkbox có được lưu trữ không và cập nhật lại trạng thái của nó
-            const isChecked = localStorage.getItem('differentInfoCheckbox') === 'true';
-            document.getElementById("differentInfoCheckbox").checked = isChecked;
-            toggleDriverInfoFields();
-        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/customer/book-car.js"></script>
