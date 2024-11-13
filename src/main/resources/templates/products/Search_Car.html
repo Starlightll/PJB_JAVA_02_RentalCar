@@ -213,7 +213,7 @@
 
                   <td style="color: green" th:text="${list.getCarStatus().name}"></td>
                   <td>
-                    <button class="btn-rent"><a th:href="${'/booking-car?CarId='+ list.getCarId()}"
+                    <button class="btn-rent"><a th:href="${'/booking-car?CarId='+ list.getCarId()+ '&startDate=' + pickDate+' - '+pickTime +'&enDate=' + dropDate +' - '+ dropTime + '&address=' + name + '&beforeNavigate=search'  }"
                                                 class="btn-view">Rent now</a></button>
                     <button class="btn-view"><a th:href="@{/carDetail/{id}(id=${list.getCarId()})}"
                                                 class="btn-view">View details</a></button>
