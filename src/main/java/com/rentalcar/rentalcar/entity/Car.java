@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -87,6 +88,7 @@ public class Car {
 
     @ManyToOne
     @JoinColumn(name = "userId")
+    @JsonBackReference
     private User user;
 
 }

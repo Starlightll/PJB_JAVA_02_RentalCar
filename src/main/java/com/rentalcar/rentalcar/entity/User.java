@@ -1,7 +1,8 @@
 package com.rentalcar.rentalcar.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rentalcar.rentalcar.common.UserStatus;
-import lombok.Data;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
@@ -12,7 +13,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Users")
 public class User {
@@ -41,6 +45,7 @@ public class User {
     private UserStatus status;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private VerificationToken verificationToken; // Tham chiếu đến VerificationToken
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -53,10 +58,12 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "userId")
+    @JsonIgnore
     private List<CarDraft> carDrafts = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "userId")
+    @JsonIgnore
     private List<Car> cars = new ArrayList<>();
 
 }

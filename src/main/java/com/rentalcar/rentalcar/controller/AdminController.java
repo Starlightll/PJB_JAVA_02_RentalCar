@@ -17,4 +17,9 @@ public class AdminController {
     public String userList() {
         return "/admin/app-user-list";
     }
+
+    @GetMapping("/admin/my-profile")
+    public String myProfile() {
+        return "/admin/pages-profile-user";
+    }
 }
