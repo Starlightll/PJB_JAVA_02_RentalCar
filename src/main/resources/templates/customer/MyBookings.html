@@ -420,8 +420,9 @@
                                                     <!-- Return Car button: visible only if status is In-Progress -->
                                                     <a th:href="'#'" style="background: #707070 !important;"
                                                        th:if="${booking.bookingStatus == 'In-Progress'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Return
-                                                        Car</a>
+                                                       th:id="'return-booking-btn-' + ${iterStat.index}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                       th:onclick="'returnCar(' + ${booking.bookingId} + ')'">Return Car</a>
                                                 </div>
 
 
@@ -504,16 +505,16 @@
             window.location.href = '/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
-
+        //cancel button
         document.addEventListener('DOMContentLoaded', function () {
-            // Chọn tất cả các nút Cancel
-            const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn-"]');
+            console.log("DOM fully loaded and parsed");
 
+            // Cancel Booking Button Event
+            const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn-"]');
             cancelBookingBtns.forEach(btn => {
                 btn.addEventListener('click', function (event) {
                     event.preventDefault();
 
-                    // Lấy bookingId từ nút hiện tại
                     const bookingId = this.closest('.row').querySelector("#bookingId").value;
 
                     Swal.fire({
@@ -530,7 +531,7 @@
                         if (result.isConfirmed) {
                             console.log('User chose to cancel the booking with ID:', bookingId);
                             window.location.href = '/cancel-booking?bookingId=' + bookingId;
-                        } else if (result.isDismissed) {
+                        } else {
                             console.log('User canceled the booking action');
                         }
                     });
@@ -541,39 +542,91 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-        const cancelBookingBtns = document.querySelectorAll('[id^="confirm-booking-btn-"]');
+            // Confirm Booking Button Event
+            const confirmBookingBtns = document.querySelectorAll('[id^="confirm-booking-btn-"]');
+            confirmBookingBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
 
-        cancelBookingBtns.forEach(btn => {
-            btn.addEventListener('click', function (event) {
-                event.preventDefault();
+                    const bookingId = this.closest('.row').querySelector("#bookingId").value;
 
-                // Lấy bookingId từ nút hiện tại
-                const bookingId = this.closest('.row').querySelector("#bookingId").value;
-
-                Swal.fire({
-                    title: 'Are you sure you want to confirm pick-up booking?',
-                    icon: 'warning',
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No',
-                    showCancelButton: true,
-                    customClass: {
-                        confirmButton: 'custom-confirm-btn',
-                        cancelButton: 'custom-cancel-btn'
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        console.log('User chose to cancel the booking with ID:', bookingId);
-                        window.location.href = '/confirm-pickup-booking?bookingId=' + bookingId;
-                    } else if (result.isDismissed) {
-                        console.log('User canceled the booking action');
-                    }
+                    Swal.fire({
+                        title: 'Are you sure you want to confirm pick-up booking?',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User chose to confirm the pick-up with ID:', bookingId);
+                            window.location.href = '/confirm-pickup-booking?bookingId=' + bookingId;
+                        } else {
+                            console.log('User canceled the pick-up confirmation');
+                        }
+                    });
                 });
             });
         });
-        });
+        document.addEventListener('DOMContentLoaded', function () {
 
-    </script>
-    </body>
+            // const returnCarBtns = document.querySelectorAll('[id^="return-booking-btn-"]');
+            //
+            // returnCarBtns.forEach(btn => {
+            //     btn.addEventListener('click', function (event) {
+            //         event.preventDefault();
+            //
+            //         const bookingRow = this.closest('.row');
+            //         const bookingId = bookingRow.querySelector("#bookingId").value;
+            //
+            //         // Get the dates from the HTML (Ensure correct format)
+            //         const fromDateText = bookingRow.querySelector('.from-date').textContent; // e.g., '18/10/2024 09:00'
+            //         const toDateText = bookingRow.querySelector('.to-date').textContent; // e.g., '19/10/2024 09:00'
+            //
+            //         // Manually parse the dates from the correct format (dd/MM/yyyy HH:mm)
+            //         const fromDateParts = fromDateText.split(' ')[0].split('/');
+            //         const fromTimeParts = fromDateText.split(' ')[1].split(':');
+            //         const fromDate = new Date(fromDateParts[2], fromDateParts[1] - 1, fromDateParts[0], fromTimeParts[0], fromTimeParts[1]);
+            //
+            //         const toDateParts = toDateText.split(' ')[0].split('/');
+            //         const toTimeParts = toDateText.split(' ')[1].split(':');
+            //         const toDate = new Date(toDateParts[2], toDateParts[1] - 1, toDateParts[0], toTimeParts[0], toTimeParts[1]);
+            //
+            //         const today = new Date();
+            //
+            //         // Get the other values
+            //         const basePrice = parseFloat(bookingRow.querySelector("#previewBasePrice").textContent.replace(/[^\d]/g, '')) * 1000;
+            //         const deposit = parseFloat(bookingRow.querySelector("#previewDeposit").textContent.replace(/[^\d]/g, '')) * 1000;
+            //
+            //         console.log('Base Price:', basePrice);
+            //         console.log('Deposit:', deposit);
+            //
+            //         let total = 0;
+            //         const daysOverdue = Math.ceil((today - fromDate) / (1000 * 60 * 60 * 24)); // Calculate days overdue
+            //         console.log('daysOverdue:', daysOverdue);
+            //
+            //         total = daysOverdue * basePrice;
+            //         console.log('Total due:', total);
+            //     });
+            // });
+
+
+        });
+        function returnCar(bookingId){
+            console.log(bookingId);
+            $.ajax({
+                url:'/return-car',
+                type:'get',
+                data:{bookingId : bookingId}
+
+            })
+        }
+
+
+    </script>    </body>
 </th:block>
 </body>
 </html>
