@@ -334,5 +334,4 @@ INSERT INTO [dbo].[UserRole] (userId, roleId)
 SELECT userId, 1 -- 1 == Admin
 FROM @InsertedUsers;
 
--- HOW TO GET USER ID after INSERT AND INSERT INTO USER ROLE
 
