@@ -260,4 +260,6 @@ public class RentalCarController {
         return "redirect:/my-bookings";
     }
 
+
+
 }

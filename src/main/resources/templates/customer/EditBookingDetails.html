@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+>
+<head>
+    <title>Edit Booking Details</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/css/carowner/edit-car.css">
+    <style>
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalTitle">No Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="ModalBody">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="confirm">Yes</button>
+                    <button type="button" class="btn btn-secondary" id="notConfirm">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span class="mr-2"><a href="/car-owner/my-cars">MY BOOKINGS <i
+                                class="ion-ios-arrow-forward"></i></a></span><span>CAR DETAILS <i
+                                class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-3 bread">Booking Detail</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ftco-section p-0" style="min-height: 500px !important;">
+        <div class="container">
+            <!-- Modal -->
+            <div class="modal fade" id="hasDraftModal" tabindex="-1" role="dialog"
+                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="hasDraftModalTitle">No Title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="hasDraftModalBody">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" id="carContinues">Yes</button>
+                            <button type="button" class="btn btn-secondary" id="carAddNew">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="container pb-5">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <div class="d-flex justify-content-center">
+                            <div class="card align-items-start display-flex-center align-items-center"
+                                 style="">
+                                <div class="card-body text-left w-100">
+                                    <h5 class="card-title"></h5>
+                                    <div class="row d-flex justify-content-center">
+                                        <th:block th:object="${booking}">
+                                            <input type="text" th:value="${car.getCarId()}" th:id="bookingId" hidden>
+                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
+                                                <div class="col-lg-6 col-md-6 d-flex align-items-center">
+                                                    <div class="wrapper" style="max-height: 270px">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'one-' + ${iterStat.index}" checked>
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'two-' + ${iterStat.index}">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'three-' + ${iterStat.index}">
+                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                               th:id="'four-' + ${iterStat.index}">
+                                                        <div class="img img-1">
+                                                            <img th:src="'/'+${booking.frontImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-2">
+                                                            <img th:src="'/'+${booking.backImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-3">
+                                                            <img th:src="'/'+${booking.leftImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="img img-4">
+                                                            <img th:src="'/'+${booking.rightImage}"
+                                                                 style="background: #1a1a1a" alt="">
+                                                        </div>
+                                                        <div class="sliders">
+                                                            <label th:for="'one-' + ${iterStat.index}"
+                                                                   th:id="'label-one-' + ${iterStat.index}"
+                                                                   class="one"></label>
+                                                            <label th:for="'two-' + ${iterStat.index}"
+                                                                   th:id="'label-two-' + ${iterStat.index}"
+                                                                   class="two"></label>
+                                                            <label th:for="'three-' + ${iterStat.index}"
+                                                                   th:id="'label-three-' + ${iterStat.index}"
+                                                                   class="three"></label>
+                                                            <label th:for="'four-' + ${iterStat.index}"
+                                                                   th:id="'label-four-' + ${iterStat.index}"
+                                                                   class="four"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                    <div class="row justify-content-center align-items-center align-content-center">
+                                                        <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
+                                                            th:text="${booking.carname == null ? 'NULL' : booking.carname}">
+                                                            No Name</h4>
+
+                                                        <div>
+                                                            <span></span>
+                                                        </div>
+                                                        <!-- From Date and To Date Section -->
+                                                        <div class="col-lg-12 row mt-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label>From Date:</label>
+                                                            </div>
+                                                            <p th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                        </div>
+                                                        <div class="col-lg-12 row mt-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label>To Date:</label>
+                                                            </div>
+                                                            <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+
+                                                        </div>
+                                                        <input type="hidden" id="bookingId"
+                                                               th:value="${booking.getBookingId()}">
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Number of days: </p>
+                                                            <p th:text="${booking.numberOfDays}">0</p>
+
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Base price: </p>
+                                                            <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                               id="previewBasePrice">0k/Day</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Total: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewTotal"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Deposit: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewDeposit"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.deposit, 0, 'COMMA', 0, 'POINT')}">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Booking No: </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewBookingNo"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${booking.bookingId}">No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Booking status:
+                                                            </p>
+                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                               th:text="${booking.bookingStatus}"
+                                                               th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
+                 : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+                 : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
+                 : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
+                 : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' : 'font-weight: bold;' }">
+                                                            </p>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+                                                    <!-- View Details button: always visible -->
+                                                    <a th:href="'/edit-car/' + ${booking.bookingId}"
+                                                       class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
+                                                        Details</a>
+
+                                                    <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
+                                                    <a th:href="'#'"
+                                                       style="background: #d5dcd5 !important; color: black !important;"
+                                                       th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                       th:id="'confirm-booking-btn-' + ${iterStat.index}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
+                                                        Pick-up</a>
+
+                                                    <!-- Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses -->
+                                                    <a th:href="'#'" style="background: #e82b46 !important;"
+                                                       th:if="${(booking.bookingStatus == 'Confirmed' or booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Stopped')
+                                                        and booking.bookingStatus != 'Pending payment' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed' and booking.bookingStatus != 'In-Progress'}"
+                                                       th:id="'cancel-booking-btn-' + ${iterStat.index}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Cancel
+                                                        Booking</a>
+
+
+                                                    <!-- Return Car button: visible only if status is In-Progress -->
+                                                    <a th:href="'#'" style="background: #707070 !important;"
+                                                       th:if="${booking.bookingStatus == 'In-Progress'}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Return
+                                                        Car</a>
+                                                </div>
+
+
+                                            </div>
+                                        </th:block>
+                                    </div>
+
+                                </div>
+                                <div class="card-body text-left w-100">
+                                    <nav class="mb-3">
+                                        <div class="nav nav-tabs" id="nav-tab" role="tablist" style="column-gap: 4px">
+                                            <button class="nav-link active" id="nav-home-tab" data-toggle="tab"
+                                                    data-target="#nav-home" type="button" role="tab"
+                                                    aria-controls="nav-home" aria-selected="true">Booking Information
+                                            </button>
+                                            <button class="nav-link" id="nav-profile-tab" data-toggle="tab"
+                                                    data-target="#nav-profile" type="button" role="tab"
+                                                    aria-controls="nav-profile" aria-selected="false">Car Information
+                                            </button>
+                                            <button class="nav-link" id="nav-contact-tab" data-toggle="tab"
+                                                    data-target="#nav-contact" type="button" role="tab"
+                                                    aria-controls="nav-contact" aria-selected="false">Payment
+                                                Information
+                                            </button>
+                                        </div>
+                                    </nav>
+                                    <div class="tab-content" id="nav-tabContent">
+                                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                             aria-labelledby="nav-home-tab">
+                                            <div class="row">
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <h5>Renter's Information</h5>
+
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Full Name</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="fullName" name="fullName">
+                                                    </div>
+                                                    <a class="validate-msg" id="FullNameValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Date Of Birth</span>
+                                                        </div>
+                                                        <input type="date" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="dateOfBirth" name="dateOfBirth">
+                                                        <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Phone Number</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="phoneNumber" name="phoneNumber">
+                                                    </div>
+                                                    <a class="validate-msg" id="phoneNumberValidate">Invalid</a>
+
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Email Address</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="emailAddress" name="emailAddress">
+                                                    </div>
+                                                    <a class="validate-msg" id="emailAddressValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >National ID No:</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="nationalIDNo" name="nationalIDNo">
+                                                    </div>
+                                                    <a class="validate-msg" id="nationalIDNoValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Driving License</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="drivingLicense" name="drivingLicense">
+                                                    </div>
+                                                    <a class="validate-msg" id="drivingLicenseValidate">Invalid</a>
+                                                </div>
+
+                                                <div style="width: 100%; overflow: auto">
+                                                    <div class="col-lg-6 mb-3 ">
+                                                        <h6>Address</h6>
+
+                                                        <div class="col-lg-6 mb-3">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="province">Province</label>
+                                                                </div>
+                                                                <select class="custom-select" id="province"
+                                                                        th:value="${car.getAddress().getProvince()}"
+                                                                        th:data-default="${car.getAddress().getProvinceId()}">
+                                                                    <option value="">Select</option>
+                                                                </select>
+                                                            </div>
+                                                            <a class="validate-msg">Invalid</a>
+                                                        </div>
+
+                                                        <div class="col-lg-6 mb-3">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="district">District</label>
+                                                                </div>
+                                                                <select class="custom-select" id="district"
+                                                                        th:value="${car.getAddress().getDistrict()}"
+                                                                        th:data-default="${car.getAddress().getDistrictId()}">
+                                                                    <option value="">Select</option>
+                                                                </select>
+                                                            </div>
+                                                            <a class="validate-msg">Invalid</a>
+                                                        </div>
+
+                                                        <div class="col-lg-6 mb-3">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text"
+                                                                           for="ward">Ward</label>
+                                                                </div>
+                                                                <select class="custom-select" id="ward"
+                                                                        th:value="${car.getAddress().getWard()}"
+                                                                        th:data-default="${car.getAddress().getWardId()}">
+                                                                    <option value="">Select</option>
+                                                                </select>
+                                                            </div>
+                                                            <a class="validate-msg">Invalid</a>
+                                                        </div>
+
+                                                        <div class="col-lg-6 mb-3">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Home</span>
+                                                                </div>
+                                                                <input type="text" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="street"
+                                                                       th:value="${car.getAddress().getStreet()}">
+                                                            </div>
+                                                            <a class="validate-msg">Invalid</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade show active" id="nav-profile" role="tabpanel"
+                                             aria-labelledby="nav-home-tab">
+                                            <div class="row">
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >License plate</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="licensePlate" name="licensePlate"
+                                                               th:value="${car.licensePlate}" readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="LicensePlateValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <label class="input-group-text "
+                                                                   for="color"
+                                                            >Color</label>
+                                                        </div>
+                                                        <select class="custom-select"
+                                                                id="color" name="color" disabled>
+                                                            <option value="" th:selected="${car.color == null}">
+                                                                Choose...
+                                                            </option>
+                                                            <option value="Red" th:selected="${car.color == 'Red'}">
+                                                                Red
+                                                            </option>
+                                                            <option value="Green" th:selected="${car.color == 'Green'}">
+                                                                Green
+                                                            </option>
+                                                            <option value="Blue" th:selected="${car.color == 'Blue'}">
+                                                                Blue
+                                                            </option>
+                                                            <option value="Black" th:selected="${car.color == 'Black'}">
+                                                                Black
+                                                            </option>
+                                                            <option value="Grey" th:selected="${car.color == 'Grey'}">
+                                                                Grey
+                                                            </option>
+                                                            <option value="Gold" th:selected="${car.color == 'Gold'}">
+                                                                Gold
+                                                            </option>
+                                                            <option value="Silver"
+                                                                    th:selected="${car.color == 'Silver'}">Silver
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <a class="validate-msg">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <label class="input-group-text "
+                                                                   for="brand">Brand
+                                                                Name</label>
+                                                        </div>
+                                                        <select class="custom-select" id="brand" name="brand" disabled>
+                                                            <option value="">Choose...</option>
+                                                            <th:block th:each="brand : ${brands}">
+                                                                <option th:value="${brand.brandId}"
+                                                                        th:text="${brand.brandName}"
+                                                                        th:selected="${car.brand?.brandId == brand.brandId}"></option>
+                                                            </th:block>
+                                                        </select>
+                                                    </div>
+                                                    <a class="validate-msg">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Model</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="model" name="licensePlate" th:value="${car.model}"
+                                                               readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="ModelValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Production Year</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="productionYear" name="licensePlate"
+                                                               th:value="${car.productionYear}" readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="productionYearValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >No Seats</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="seat" name="licensePlate" th:value="${car.seat}"
+                                                               readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="seatValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Transmission</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="transmission" name="licensePlate"
+                                                               th:value="${car.transmission}" readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="TransmissionValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Fuel</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="fuel" name="licensePlate" th:value="${car.fuelType}"
+                                                               readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="fuelValidate">Invalid</a>
+                                                </div>
+                                                <div style="width: 100%; overflow: auto">
+                                                    <h5>Documents</h5>
+                                                    <table class="table table-striped col-lg-12">
+                                                        <thead class="thead-dark">
+                                                        <tr>
+                                                            <th scope="col">No</th>
+                                                            <th scope="col">Name</th>
+                                                            <th scope="col">Note</th>
+                                                            <th scope="col">Link</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <th scope="row">1</th>
+                                                            <td>Registration</td>
+                                                            <td>Verified</td>
+                                                            <td><a th:href="${registrationUrl}"
+                                                                   download>Registration</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">2</th>
+                                                            <td>Certification</td>
+                                                            <td>Verified</td>
+                                                            <td><a th:href="${certificateUrl}"
+                                                                   download>Certification</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">3</th>
+                                                            <td>Insurance</td>
+                                                            <td>Verified</td>
+                                                            <td><a th:href="${insuranceUrl}" download>Insurance</a></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Mileage</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="mileage" name="mileage" th:value="${car.model}"
+                                                               readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="mileageValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Fuel consumption</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="fuelConsumption" name="fuelConsumption" th:value="${car.model}"
+                                                               readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="fuelConsumptionValidate">Invalid</a>
+                                                </div>
+                                                <div class="col-lg-6 mb-3 ">
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Address</span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                               aria-label="Sizing example input"
+                                                               aria-describedby="inputGroup-sizing-default"
+                                                               id="address" name="address" th:value="${car.model}"
+                                                               readonly>
+                                                    </div>
+                                                    <a class="validate-msg" id="addressValidate">Invalid</a>
+                                                </div>
+                                                <div class="input-group col-lg-6" style="min-height: 56px">
+                                                    <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Description</span>
+                                                    <textarea class="form-control" id="description" aria-label="With textarea" th:text="${car.getDescription()}" style="font-size: 14px;" placeholder="Description of your vehicle"></textarea>
+                                                </div>
+
+                                                <div style="padding: 10px">
+                                                    <div class="row pl-4 pr-4">
+                                                        <th:block th:each="function : ${additionalFunction}">
+                                                            <label class="checkbox bounce col-lg-3 col-md-4 col-6 p-0 d-flex" style="align-items: center;column-gap: 6px;">
+                                                                <input type="checkbox"
+                                                                       th:value="${function.functionId}"
+                                                                       name="additionalFunction"
+                                                                       th:checked="${car.getAdditionalFunctions() != null && car.additionalFunctions.contains(function)}">
+                                                                <svg viewBox="0 0 21 21">
+                                                                    <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                </svg>
+                                                                <span th:text="${function.functionName}"></span>
+                                                            </label>
+                                                        </th:block>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 mb-3">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    <label class="form-check-label"
+                                                                           style="padding: 0 10px;">
+                                                                        Write here
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control"
+                                                                   aria-label="Text input with checkbox" id="termOfUse" th:value="${car.terms}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="nav-contact" role="tabpanel"
+                                             aria-labelledby="nav-contact-tab">
+                                            <div>
+                                                <div class="row">
+
+                                                </div>
+                                            </div>
+                                            <h5 class="card-title">My Wallet</h5>
+                                            <div>
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 mb-3">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    <label class="form-check-label"
+                                                                           style="padding: 0 10px;">
+                                                                        Current balance
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control"
+                                                                   aria-label="Text input with checkbox" id="currentBalance"
+                                                                   th:value="${car.terms}">
+                                                        </div>
+                                                    </div>
+                                                    <span>Please make sure to have sufficient balance the car.</span>
+
+                                                    <a href="#">My Wallet</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                                            onclick="window.history.back()">Back
+                                    </button>
+                                    <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                                            onclick="window.location.reload()">Discard
+                                    </button>
+                                    <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                                            onclick="updateCar()">Save
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen">
+        <svg class="circular" width="48px" height="48px">
+            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+                    stroke="#F96D00"/>
+        </svg>
+    </div>
+
+
+    <script>
+        const csrfToken = $('meta[name="_csrf"]').attr('content');
+
+
+        function updateCar() {
+            const mileage = document.getElementById('mileage').value;
+            const fuelConsumption = document.getElementById('fuelConsumption').value;
+            const province = document.getElementById('province').value + "," + document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
+            const district = document.getElementById('district').value + "," + document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
+            const ward = document.getElementById('ward').value + "," + document.getElementById('ward').options[document.getElementById('ward').selectedIndex].text;
+            const street = document.getElementById('street').value;
+            const checkboxes = document.querySelectorAll('input[name="additionalFunction"]:checked');
+            const additionalFunction = [];
+            checkboxes.forEach((checkbox) => {
+                additionalFunction.push(checkbox.value);
+            });
+            const basePrice = document.getElementById('basePrice').value;
+            const deposit = document.getElementById('deposit').value;
+            const termOfUse = document.getElementById('termOfUse').value;
+            const carPrice = document.getElementById('carPrice').value;
+            const carId = document.getElementById('carId').value;
+            const carStatus = document.getElementById('carStatus').value;
+            const description = document.getElementById('description').value;
+
+            const carData = {
+                mileage: mileage,
+                fuelConsumption: fuelConsumption,
+                additionalFunction: additionalFunction.join(','),
+                province: province,
+                district: district,
+                ward: ward,
+                home: street,
+                basePrice: basePrice,
+                deposit: deposit,
+                terms: termOfUse,
+                carPrice: carPrice,
+                description: description,
+            };
+
+            const formData = new FormData();
+            //Add carId to formData
+            formData.append("carId", carId);
+            //Add carStatus to formData
+            formData.append("carStatus", carStatus);
+            // Add the carDraft object as JSON string
+            formData.append("carData", JSON.stringify(carData));
+
+            const fileInputs = {
+                "frontImage": document.getElementById("input-file4"),
+                "backImage": document.getElementById("input-file5"),
+                "leftImage": document.getElementById("input-file6"),
+                "rightImage": document.getElementById("input-file7")
+            };
+
+            // Check if files exist before adding to FormData
+            for (const [key, input] of Object.entries(fileInputs)) {
+                if (input && input.files && input.files[0]) {
+                    formData.append(key, input.files[0]);
+                } else {
+                    // If file is not selected, append null or empty file to maintain the structure
+                    formData.append(key, new Blob([], {type: 'application/octet-stream'}));
+                }
+            }
+            console.log(carData);
+            console.log(fileInputs);
+            if (!validate()) {
+                console.warn("Validation failed, try again!.");
+                alert("Validation failed");
+                return false;
+            } else {
+                $.ajax({
+                    url: '/car-owner/update-car',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function (response) {
+                        console.log("Car updated successfully", response);
+                        Swal.fire({
+                            title: 'Updated!',
+                            text: '' +
+                                '',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                confirmButton: 'my-custom-button'
+                            }
+                        });
+                        return true;
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 400) {
+                            // Display the custom error message from the server
+                            $('#confirmModal').modal('show');
+                            $('#ModalTitle').text("Format!");
+                            $('#ModalBody').html(xhr.responseText);
+                            $('#confirm').text("OK").click(function () {
+                                $('#confirmModal').modal('hide');
+                            });
+                            $('#notConfirm').hide();
+                        } else {
+                            console.log("Other Error:", error);
+                        }
+                        return false;
+                    }
+                });
+            }
+        }
+
+        const MAX_FILE_MB = 200;
+        const MAX_SIZE_BYTES = MAX_FILE_MB * 1024 * 1024;
+
+        function uploadfile(imageView, inputFile) {
+            const file = inputFile.files[0];
+            if (file) {
+                const validExtensions = ["jpg", "jpeg", "png"];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if (file.size > MAX_SIZE_BYTES) {
+                    alert("File size must be less than 200MB");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+                // Kiểm tra phần mở rộng file
+                if (!validExtensions.includes(fileExtension)) {
+                    alert("Only accept file type: .jpg, .jpeg, .png");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+
+                const fileReader = new FileReader();
+                fileReader.onload = function (e) {
+                    imageView.style.backgroundImage = `url(${e.target.result})`;
+                    imageView.style.backgroundSize = "cover";
+                    imageView.style.backgroundPosition = "center";
+                    imageView.innerHTML = "";
+                };
+                fileReader.readAsDataURL(file); // Đọc file dưới dạng URL để hiển thị
+            }
+        }
+
+
+        function displayExistingImage(imageView, imageUrl) {
+            if (imageUrl) {
+                if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {
+                    imageView.style.backgroundImage = 'url(/' + imageUrl.replaceAll("\\", "/") + ')';
+                    imageView.style.backgroundSize = "cover";
+                    imageView.style.backgroundPosition = "center";
+                    imageView.innerHTML = "";
+                } else {
+                    imageView.style.backgroundImage = "none";
+                    imageView.innerHTML = `
+                <i class="fa-solid fa-file fa-2x"></i>
+                <p>File đã tải lên</p>
+            `;
+                }
+                imageView.style.border = "none";
+            }
+        }
+
+        function initializeDropArea(index) {
+            const dropArea = document.getElementById(`drop-area${index}`);
+            const inputFile = document.getElementById(`input-file${index}`);
+            const imageView = document.getElementById(`img-view${index}`);
+
+            // Hiển thị ảnh đã có nếu có
+            const existingImageUrl = imageView.getAttribute('data-image-url');
+            if (existingImageUrl) {
+                displayExistingImage(imageView, existingImageUrl);
+            }
+
+            // Xử lý sự kiện change của input file
+            inputFile.addEventListener("change", function () {
+                uploadfile(imageView, inputFile);
+            });
+
+            // Xử lý sự kiện dragover
+            dropArea.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                dropArea.style.background = "rgba(0, 0, 0, 0.1)";
+            });
+
+            // Xử lý sự kiện dragleave
+            dropArea.addEventListener("dragleave", function (e) {
+                e.preventDefault();
+                if (!dropArea.contains(e.relatedTarget)) {
+                    dropArea.style.background = "#d1d5d9";
+                }
+            });
+
+            // Xử lý sự kiện drop
+            dropArea.addEventListener("drop", function (e) {
+                e.preventDefault();
+                dropArea.style.background = "#d1d5d9";
+
+                const files = e.dataTransfer.files;
+
+                if (files.length > 0) {
+                    const validExtensions = ["jpg", "jpeg", "png"];
+                    const fileExtension = files[0].name.split('.').pop().toLowerCase();
+                    if (files[0].size > MAX_SIZE_BYTES) {
+                        alert("File size must be less than 200MB");
+                        return;
+                    }
+                    // Kiểm tra phần mở rộng file
+                    if (!validExtensions.includes(fileExtension)) {
+                        alert("Only accept file type: .jpg, .jpeg, .png");
+                        return;
+                    }
+
+                    inputFile.files = files; // Thiết lập files cho input
+                    uploadfile(imageView, inputFile); // Gọi hàm uploadfile
+                }
+            });
+        }
+
+        // Khởi tạo tất cả các vùng upload
+        for (let i = 4; i <= 7; i++) {
+            initializeDropArea(i);
+        }
+
+
+        //API
+        // Call API to fetch provinces, districts and wards
+        // Fetch provinces and set default city
+        async function fetchProvinces(defaultCity) {
+            const response = await fetch('https://provinces.open-api.vn/api/p/');
+            const provinces = await response.json();
+            const citySelect = document.getElementById('province');
+
+            provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province.code;
+                option.textContent = province.name;
+                if (province.code == defaultCity) {
+                    option.selected = true;
+                }
+                citySelect.appendChild(option);
+            });
+
+            if (defaultCity) {
+                fetchDistricts(defaultCity, document.getElementById('district').getAttribute('data-default'));
+            }
+        }
+
+        // Fetch districts based on selected province and set default value
+        async function fetchDistricts(provinceCode, defaultDistrict) {
+            const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+            const provinceData = await response.json();
+            const districtSelect = document.getElementById('district');
+
+            districtSelect.innerHTML = '<option value="">Select District</option>';
+            provinceData.districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district.code;
+                option.textContent = district.name;
+                if (district.code == defaultDistrict) {
+                    option.selected = true;
+                }
+                districtSelect.appendChild(option);
+            });
+
+            if (defaultDistrict) {
+                fetchWards(defaultDistrict, document.getElementById('ward').getAttribute('data-default'));
+            }
+        }
+
+        // Fetch wards based on selected district and set default value
+        async function fetchWards(districtCode, defaultWard) {
+            const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+            const districtData = await response.json();
+            const wardSelect = document.getElementById('ward');
+
+            wardSelect.innerHTML = '<option value="">Select Ward</option>';
+            districtData.wards.forEach(ward => {
+                const option = document.createElement('option');
+                option.value = ward.code;
+                option.textContent = ward.name;
+                if (ward.code == defaultWard) {
+                    option.selected = true;
+                }
+                wardSelect.appendChild(option);
+            });
+        }
+
+        // Event listeners to load data on selection
+        document.getElementById('province').addEventListener('change', function () {
+            fetchDistricts(this.value);
+            document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
+            document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
+            document.getElementById('district').value = ""; // Reset district value
+            document.getElementById('ward').disabled = true; // Disable ward selection
+        });
+
+        document.getElementById('district').addEventListener('change', function () {
+            fetchWards(this.value);
+            document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
+        });
+
+
+        // Load provinces on page load with default values
+        document.addEventListener('DOMContentLoaded', function () {
+            const defaultCity = document.getElementById('province').getAttribute('data-default');
+            fetchProvinces(defaultCity);
+        });
+
+
+        //Load price
+        const basePrice = document.getElementById('basePrice');
+        const basePricePreview = document.getElementById('previewPrice');
+        basePrice.addEventListener('input', function () {
+            const value = parseFloat(basePrice.value) || 0;
+            basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' K/Day';
+        });
+
+        const province = document.getElementById('province');
+        const district = document.getElementById('district');
+        const ward = document.getElementById('district');
+        const previewLocation = document.getElementById('previewLocation');
+        ward.addEventListener('change', function () {
+            previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
+        });
+
+
+        function checkDetails() {
+            const mileage = document.getElementById('mileage').value;
+            const fuelConsumption = document.getElementById('fuelConsumption').value;
+            const province = document.getElementById('province').value;
+            const district = document.getElementById('district').value;
+            const ward = document.getElementById('ward').value;
+            const street = document.getElementById('street').value;
+            const checkedValues = [];
+            const frontImage = document.getElementById("input-file4");
+            const backImage = document.getElementById("input-file5");
+            const leftImage = document.getElementById("input-file6")
+            const rightImage = document.getElementById("input-file7")
+            const frontImageUrl = document.getElementById('frontImage').value;
+            const backImageUrl = document.getElementById('backImage').value;
+            const leftImageUrl = document.getElementById('leftImage').value;
+            const rightImageUrl = document.getElementById('rightImage').value;
+
+
+            console.log(checkedValues);
+
+            if (mileage === ''
+                || fuelConsumption === ''
+                || province === ''
+                || district === ''
+                || ward === ''
+                || (frontImage.files.length === 0 && frontImageUrl === '')
+                || (backImage.files.length === 0 && backImageUrl === '')
+                || (leftImage.files.length === 0 && leftImageUrl === '')
+                || (rightImage.files.length === 0 && rightImageUrl === '')) {
+                alert('Please fill all required fields');
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script src="/js/update-car-validate.js"></script>
+    </body>
+</th:block>
+</body>
+</html>
