@@ -15,5 +15,7 @@ public interface RentalCarService {
     boolean confirmPickupBooking(Long bookingId, HttpSession session);
     CarDto getCarDetails(Integer carId);
     Booking saveBooking(BookingDto BookingDto, MultipartFile[] files, HttpSession session);
+    boolean returnCar(Long bookingId, HttpSession session);
+    Double calculateTotalPrice(Long bookingId);
 
 }

@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -51,14 +52,17 @@ public class RentalCarServiceImpl implements RentalCarService {
     @Autowired
     private BookingCarRepository bookingCarRepository;
 
-    @Autowired PhoneNumberStandardService phoneNumberStandardService;
+    @Autowired
+    PhoneNumberStandardService phoneNumberStandardService;
 
-    @Autowired DriverDetailRepository driverDetailRepository;
+    @Autowired
+    DriverDetailRepository driverDetailRepository;
 
     @Autowired
     EmailService emailService;
 
-    @Autowired UserRepo userRepository;
+    @Autowired
+    UserRepo userRepository;
 
     @Override
     public Page<MyBookingDto> getBookings(int page, int size, String sortBy, String order, HttpSession session) {
@@ -337,7 +341,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         //CHỌN VÍ ĐỂ TRẢ CỌC
         User users = userRepository.getUserById(user.getId());
-        if(bookingDto.getSelectedPaymentMethod() == 1) {
+        if (bookingDto.getSelectedPaymentMethod() == 1) {
             //KIỂM TRA TIỀN TRONG VÍ CÓ ĐỦ ĐỂ ĐẶT CỌC HAY KHÔNG
 
             BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
@@ -355,10 +359,40 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
         //MAIL TO USER
-        emailService.sendBookingConfirmation(user, bookingDto, booking,car);
+        emailService.sendBookingConfirmation(user, bookingDto, booking, car);
 
 
         return booking;
+    }
+
+    @Override
+    public boolean returnCar(Long bookingId, HttpSession session) {
+        return false;
+    }
+
+    @Override
+    public Double calculateTotalPrice(Long bookingId) {
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
+
+
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+
+
+            LocalDateTime currentDate = LocalDateTime.now();
+            long numberOfDays = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate());
+
+            long numberOfDaysOverdue = ChronoUnit.DAYS.between(booking.getEndDate(), currentDate);
+            if (currentDate.isAfter(booking.getEndDate())) {
+                return booking.getTotalPrice();
+            } else {
+                return numberOfDaysOverdue * (booking.getTotalPrice() / numberOfDays) +  booking.getTotalPrice();
+            }
+
+        }
+
+
+        return 0.0;
     }
 
 

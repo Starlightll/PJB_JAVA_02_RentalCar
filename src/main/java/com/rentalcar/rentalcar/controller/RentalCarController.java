@@ -19,12 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import static com.rentalcar.rentalcar.common.Regex.*;
+
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -76,7 +75,7 @@ public class RentalCarController {
         }
 
 
-        Page<MyBookingDto>  bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
 
         List<MyBookingDto> bookingList = bookingPages.getContent();
         //check so on-going bookings
@@ -91,7 +90,7 @@ public class RentalCarController {
 
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");
-        }else {
+        } else {
             model.addAttribute("bookingList", bookingList);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", bookingPages.getTotalPages());
@@ -102,8 +101,6 @@ public class RentalCarController {
         }
         return "customer/MyBookings";
     }
-
-
 
 
     //Add
@@ -206,16 +203,16 @@ public class RentalCarController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid End Date");
         }
 
-        if(bookingInfor.getStep() == 2) {
+        if (bookingInfor.getStep() == 2) {
             response.put("message", "Step 1 validated successfully.");
             return ResponseEntity.ok(response);
         } else {
             MultipartFile[] files = {rentImage, driverImage};
             try {
-              Booking booking =  rentalCarService.saveBooking(bookingInfor, files, session);
+                Booking booking = rentalCarService.saveBooking(bookingInfor, files, session);
                 response.put("message", "Step 2 validated successfully.");
-                response.put("bookingInfo", Map.of("id",booking.getBookingId(),"startDate", booking.getStartDate(), "endDate", booking.getEndDate()));
-            }catch (RuntimeException e) {
+                response.put("bookingInfo", Map.of("id", booking.getBookingId(), "startDate", booking.getStartDate(), "endDate", booking.getEndDate()));
+            } catch (RuntimeException e) {
                 switch (e.getMessage()) {
                     case "Your wallet must be greater than deposit":
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your wallet must be greater than deposit");
@@ -231,9 +228,7 @@ public class RentalCarController {
     }
 
 
-
-
-        @GetMapping("/cancel-booking")
+    @GetMapping("/cancel-booking")
     public String cancelBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
         boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
 
@@ -247,8 +242,15 @@ public class RentalCarController {
 
     }
 
+
     @GetMapping("/confirm-pickup-booking")
-    public String confirmPickupBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
+    public String confirmPickupBooking(@RequestParam("bookingId") Long bookingId,
+                                       HttpSession session,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "lastModified") String sortBy,
+                                       @RequestParam(defaultValue = "desc") String order,
+                                       Model model) {
         boolean isConfirm = rentalCarService.confirmPickupBooking(bookingId, session);
 
         if (isConfirm) {
@@ -258,6 +260,19 @@ public class RentalCarController {
         }
 
         return "redirect:/my-bookings";
+    }
+
+    @GetMapping("/return-car")
+    public ResponseEntity<?> returnCar(@RequestParam("bookingId")
+                                       Long bookingId,
+                                       HttpSession session, @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "lastModified") String sortBy,
+                                       @RequestParam(defaultValue = "desc") String order,
+                                       Model model) {
+
+
+        return null;
     }
 
 }
