@@ -365,35 +365,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         return booking;
     }
 
-    @Override
-    public boolean returnCar(Long bookingId, HttpSession session) {
-        return false;
-    }
 
-    @Override
-    public Double calculateTotalPrice(Long bookingId) {
-        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
-
-
-        if (bookingOptional.isPresent()) {
-            Booking booking = bookingOptional.get();
-
-
-            LocalDateTime currentDate = LocalDateTime.now();
-            long numberOfDays = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate());
-
-            long numberOfDaysOverdue = ChronoUnit.DAYS.between(booking.getEndDate(), currentDate);
-            if (currentDate.isAfter(booking.getEndDate())) {
-                return booking.getTotalPrice();
-            } else {
-                return numberOfDaysOverdue * (booking.getTotalPrice() / numberOfDays) +  booking.getTotalPrice();
-            }
-
-        }
-
-
-        return 0.0;
-    }
 
 
 }

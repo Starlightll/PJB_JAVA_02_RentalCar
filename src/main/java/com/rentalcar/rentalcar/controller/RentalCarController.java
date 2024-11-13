@@ -12,6 +12,7 @@ import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.RentalCarService;
+import com.rentalcar.rentalcar.service.ReturnCarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,9 @@ public class RentalCarController {
 
     @Autowired
     UserRepo userRepo;
+
+    @Autowired
+    ReturnCarService returnCarService;
 
     @GetMapping("/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -263,16 +267,19 @@ public class RentalCarController {
     }
 
     @GetMapping("/return-car")
-    public ResponseEntity<?> returnCar(@RequestParam("bookingId")
-                                       Long bookingId,
+    public ResponseEntity<?> returnCar(@RequestParam("bookingId") Long bookingId,
                                        HttpSession session, @RequestParam(defaultValue = "1") int page,
                                        @RequestParam(defaultValue = "10") int size,
                                        @RequestParam(defaultValue = "lastModified") String sortBy,
                                        @RequestParam(defaultValue = "desc") String order,
                                        Model model) {
+        String responseMessage = returnCarService.returnCar(bookingId, session);
+
+        // Return a success message with HTTP 200 status
+        return ResponseEntity.ok(responseMessage);
 
 
-        return null;
+
     }
 
 }
