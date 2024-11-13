@@ -318,3 +318,21 @@ VALUES
 -- DELETE FROM CarAdditionalFunction WHERE CarAdditionalFunction.AdditionalFunctionId > 0;
 -- DELETE FROM CarAddress WHERE CarAddress.addressId > 0;
 -- DELETE FROM Car WHERE Car.carId > 0;
+
+
+-- SQL to INSERT AN ADMIN
+-- password: 123
+DECLARE @InsertedUsers TABLE (userId BIGINT);
+
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, statusDriverId)
+OUTPUT inserted.userId INTO @InsertedUsers
+VALUES (N'admin', '1990-01-15', N'admin@gmail.com', N'123456789', N'0123456789', N'DL123456', 9999999999.00,
+        N'$2a$10$zTJMk41R7yUiRWED31NbtueNZTaIOV8mJm4HGavw2KIZVmCKgA8MW', N'Ha Noi', N'District 1',
+        N'Ward 3', N'Cau Giay', N'Admin', 1, N'ACTIVATED', 1);
+
+INSERT INTO [dbo].[UserRole] (userId, roleId)
+SELECT userId, 1 -- 1 == Admin
+FROM @InsertedUsers;
+
+-- HOW TO GET USER ID after INSERT AND INSERT INTO USER ROLE
+
