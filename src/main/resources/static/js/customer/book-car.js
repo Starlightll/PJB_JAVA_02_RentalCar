@@ -13,12 +13,28 @@ $(document).ready(function () {
                 console.log("fail step 1");
                 return;
             }
-            saveStep1();
+            // if (!await saveStep1()) {
+            //     console.log("fail step 1 in AJAX");
+            //     return;
+            // }
+            // Chờ kết quả từ saveBooking
+            const success = await saveBooking();
+            if (!success) {
+                console.log("Booking save failed, stay at Step 1");
+                return;
+            }
+
             pageStep++;
         }else if (pageStep === 2) {
+
+            // Chờ kết quả từ saveBooking
+            const success = await saveBooking();
+            if (!success) {
+                console.log("Booking save failed, stay at Step 2");
+                return; // Không chuyển bước nếu save thất bại
+            }
             pageStep++;
         }else if (pageStep === 3) {
-
             pageStep++;
         }
 

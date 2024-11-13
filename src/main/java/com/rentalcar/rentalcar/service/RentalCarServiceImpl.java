@@ -1,20 +1,23 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.Constants;
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.BookingDto;
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 
 import com.rentalcar.rentalcar.dto.CarDto;
-import com.rentalcar.rentalcar.entity.Booking;
-import com.rentalcar.rentalcar.entity.BookingStatus;
-import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.repository.BookingStatusRepository;
-import com.rentalcar.rentalcar.repository.CarRepository;
-import com.rentalcar.rentalcar.repository.RentalCarRepository;
+import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.mail.EmailService;
+import com.rentalcar.rentalcar.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -23,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.commons.io.FilenameUtils.getExtension;
+
 @Service
 public class RentalCarServiceImpl implements RentalCarService {
 
@@ -30,12 +35,33 @@ public class RentalCarServiceImpl implements RentalCarService {
     RentalCarRepository rentalCarRepository;
 
     @Autowired
+    private FileStorageService fileStorageService;
+
+    @Autowired
     CarRepository carRepository;
     @Autowired
     private BookingStatusRepository bookingStatusRepository;
 
+    @Autowired
+    private PaymentMethodRepository paymentMethodRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private BookingCarRepository bookingCarRepository;
+
+    @Autowired PhoneNumberStandardService phoneNumberStandardService;
+
+    @Autowired DriverDetailRepository driverDetailRepository;
+
+    @Autowired
+    EmailService emailService;
+
+    @Autowired UserRepo userRepository;
+
     @Override
-    public  Page<BookingDto> getBookings(int page, int size,  String sortBy, String order, HttpSession session) {
+    public Page<MyBookingDto> getBookings(int page, int size, String sortBy, String order, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
             throw new RuntimeException("User not found");
@@ -60,21 +86,21 @@ public class RentalCarServiceImpl implements RentalCarService {
             default:
                 break;
         }
-        List<BookingDto> bookingDtos = new ArrayList<>();
+        List<MyBookingDto> bookingDtos = new ArrayList<>();
         Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(sorDirection, sortBy);
-        Pageable pageable = PageRequest.of(page-1, size, sort);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
         Page<Object[]> resultsPage;
         resultsPage = rentalCarRepository.findAllWithPagination(user.getId(), pageable);
 
-        for(Object[] result : resultsPage.getContent() ) {
+        for (Object[] result : resultsPage.getContent()) {
             LocalDateTime startDate = ((Timestamp) result[2]).toLocalDateTime();
             LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
 
             // Tính toán số ngày giữa startDate và actualEndDate
             int numberOfDays = (int) ChronoUnit.DAYS.between(startDate, actualEndDate);
 
-            BookingDto bookingDto = new BookingDto (
+            MyBookingDto bookingDto = new MyBookingDto(
                     Long.valueOf((Integer) result[0]),
                     (String) result[1],
                     ((Timestamp) result[2]).toLocalDateTime(), //start date
@@ -82,8 +108,8 @@ public class RentalCarServiceImpl implements RentalCarService {
                     (String) result[4], // driverInfo
                     ((Timestamp) result[5]).toLocalDateTime(),//actualEndDate
                     ((BigDecimal) result[6]).doubleValue(), // total price
-                    Long.valueOf((Integer) result[7]) , //userId
-                    numberOfDays , //numberOfDays
+                    Long.valueOf((Integer) result[7]), //userId
+                    numberOfDays, //numberOfDays
                     (Integer) result[8], //paymentMethod
                     ((BigDecimal) result[9]).doubleValue(), // basePrice
                     ((BigDecimal) result[10]).doubleValue(), // deposit
@@ -160,7 +186,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
             // Check if the booking belongs to the user and is in a cancellable state
             if (booking.getUser().getId().equals(user.getId()) &&
-                    (booking.getBookingStatus().getName().equals("Confirmed") )){
+                    (booking.getBookingStatus().getName().equals("Confirmed"))) {
 
                 // Fetch the "Cancelled" BookingStatus from the database
                 Optional<BookingStatus> cancelledStatusOptional = bookingStatusRepository.findByName("In-Progress");
@@ -191,7 +217,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         Object[] result = carRepository.findCarByCarId(carId);
         Object[] nestedArray = (Object[]) result[0];
         Long carid = nestedArray[0] instanceof Integer ? Long.valueOf((Integer) nestedArray[0]) : null;
-        Double averageRating =  nestedArray[27] != null ? (Double) nestedArray[27] : 0;
+        Double averageRating = nestedArray[27] != null ? (Double) nestedArray[27] : 0;
 
 
         // Ánh xạ từng giá trị từ result vào CarDto
@@ -226,4 +252,113 @@ public class RentalCarServiceImpl implements RentalCarService {
                 averageRating   // averageRating
         );
     }
+
+    @Override
+    public Booking saveBooking(BookingDto bookingDto, MultipartFile[] files, HttpSession session) {
+        Booking booking = new Booking();
+        DriverDetail driverDetail = new DriverDetail();
+        Car car = carRepository.getCarByCarId(bookingDto.getCarID());
+
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        String folderName = String.format("%s", user.getId());
+        Path draftFolderPath = Paths.get("uploads/Driver/" + user.getId() + "/Detail/", folderName);
+
+
+        try {
+            if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
+                files[0].getSize();
+                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "drivingLicense." + getExtension(files[0].getOriginalFilename()));
+                driverDetail.setDrivingLicense(storedPath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //CHỌN VÍ ĐỂ TRẢ CỌC
+        User users = userRepository.getUserById(user.getId());
+        if(bookingDto.getSelectedPaymentMethod() == 1) {
+            //KIỂM TRA TIỀN TRONG VÍ CÓ ĐỦ ĐỂ ĐẶT CỌC HAY KHÔNG
+
+            BigDecimal deposit = BigDecimal.valueOf(Long.parseLong(bookingDto.getDeposit()));
+            BigDecimal myWallet = user.getWallet() != null ? users.getWallet() : BigDecimal.ZERO;
+            if (myWallet.compareTo(deposit) < 0) {
+                throw new RuntimeException("Your wallet must be greater than deposit");
+            } else {
+                BigDecimal depositedMoney = myWallet.subtract(deposit);
+                user.setWallet(depositedMoney);
+                userRepository.save(user);
+                session.setAttribute("user", user);
+            }
+        } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
+            throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
+        }
+        try {
+
+            long numberOfDays = ChronoUnit.DAYS.between(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
+            Double totalPrice = car.getBasePrice() * numberOfDays;
+            booking.setStartDate(bookingDto.getPickUpDate());
+            booking.setEndDate(bookingDto.getReturnDate());
+            booking.setDriverInfo(bookingDto.getRentFullName());
+            booking.setActualEndDate(bookingDto.getReturnDate());
+            booking.setTotalPrice(totalPrice);
+            booking.setUser(user);
+            // Cập nhật BookingStatus
+            BookingStatus bookingStatus = bookingStatusRepository.findById(1L) // 1L là ID của status mà bạn muốn
+                    .orElseThrow(() -> new RuntimeException("BookingStatus not found"));
+            booking.setBookingStatus(bookingStatus);
+            // Cập nhật PaymentMethod
+            PaymentMethod paymentMethod = paymentMethodRepository.findById((long) bookingDto.getSelectedPaymentMethod())
+                    .orElseThrow(() -> new RuntimeException("PaymentMethod not found"));
+            booking.setPaymentMethod(paymentMethod);
+            bookingRepository.save(booking);
+
+            //Lưu booking car
+            BookingCar bookingCar = new BookingCar();
+            bookingCar.setBookingId(booking.getBookingId());
+            bookingCar.setCarId(Long.valueOf(bookingDto.getCarID()));
+            bookingCarRepository.save(bookingCar);
+
+            //Lưu thông tin người thuê xe
+            String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+            driverDetail.setFullName(bookingDto.getRentFullName());
+            driverDetail.setEmail(bookingDto.getRentMail());
+            driverDetail.setPhone(normalizedPhone);
+            driverDetail.setNationalId(bookingDto.getRentNationalId());
+            driverDetail.setDob(bookingDto.getRentBookPickDate());
+            driverDetail.setCity(bookingDto.getRentProvince().trim());
+            driverDetail.setDistrict(bookingDto.getRentDistrict().trim());
+            driverDetail.setStreet(bookingDto.getRentStreet().trim());
+            driverDetail.setWard(bookingDto.getRentWard().trim());
+            driverDetail.setBooking(booking);
+            driverDetailRepository.save(driverDetail);
+
+            if(bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
+                //Xử lý driver khi ấn tích
+                users.setDriverId(bookingDto.getSelectedUserId());
+                userRepository.save(users);
+
+                //THAY ĐỔI TRẠNG THÁI CHO DRIVER
+                User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId()));
+                driver.setStatusDriverId(2);
+                userRepository.save(driver);
+            }
+
+
+            //MAIL TO USER
+            emailService.sendBookingConfirmation(user, bookingDto, booking,car);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return booking;
+    }
+
+
 }
+
+
+

@@ -1,98 +1,91 @@
-    package com.rentalcar.rentalcar.configs;
-    import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
-    import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
-    import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.context.annotation.Bean;
-    import org.springframework.context.annotation.Configuration;
-    import org.springframework.scheduling.annotation.EnableAsync;
-    import org.springframework.security.authentication.AuthenticationManager;
-    import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-    import org.springframework.security.config.Customizer;
-    import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-    import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-    import org.springframework.security.config.http.SessionCreationPolicy;
-    import org.springframework.security.core.userdetails.UserDetailsService;
-    import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-    import org.springframework.security.web.DefaultSecurityFilterChain;
-    import org.springframework.security.web.SecurityFilterChain;
-    import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-    import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-    import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-    import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+package com.rentalcar.rentalcar.configs;
+import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
+import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
+import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
-    @Configuration
-    @EnableAsync
-    public class WebConfiguration {
-        @Bean
-        public UserDetailsService userDetailsService() {
-            return new UserDetailsServiceImpl();
-        }
-
-        @Bean
-        public BCryptPasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
-
-
-        @Bean
-        public DaoAuthenticationProvider authenticationProvider() {
-            DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-            authProvider.setUserDetailsService(userDetailsService());
-            authProvider.setPasswordEncoder(passwordEncoder());
-            return authProvider;
-        }
-
-
-        @Bean
-        public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-            CustomAuthenticationSuccessHandler successHandler = new CustomAuthenticationSuccessHandler();
-            successHandler.setUserDetailsService((UserDetailsServiceImpl) userDetailsService());
-            return successHandler;
-        }
-
-
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-            http
-                    .csrf(csrf -> csrf
-                            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // Dùng cookie để lưu trữ CSRF token
-                    )
-                    .authorizeHttpRequests((requests) -> requests
-                            .requestMatchers("/", "/homepage-guest", "/booking-car/data").permitAll() // Allow access to these endpoints
-                            .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
-                            .requestMatchers("/homepage-customer").hasAuthority("Customer")
-                            .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
-                            .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll() // Allow access to static resources
-                            .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
-                            .requestMatchers("/error").permitAll()
-                            .anyRequest().authenticated() // All other requests require authentication
-                    )
-                    .formLogin(form -> form
-                            .loginPage("/login")
-                            .usernameParameter("email")
-                            .successHandler(customAuthenticationSuccessHandler())
-                            .failureHandler(new CustomAuthenticationFailureHandler())
-                            .permitAll()
-                    )
-                    .logout(logout -> logout
-                            .logoutUrl("/logout")
-                            .logoutSuccessUrl("/")
-                            .invalidateHttpSession(true)
-                            .deleteCookies("JSESSIONID")
-                    )
-    //    .exceptionHandling(exception -> exception
-    //        .accessDeniedPage("/403")
-    //    )
-            ;
-
-            return http.build();
-
-        }
-
-
-        public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-            auth.authenticationProvider(authenticationProvider());
-        }
-
+@Configuration
+@EnableAsync
+public class WebConfiguration {
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsServiceImpl();
     }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+
+    @Bean
+    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        CustomAuthenticationSuccessHandler successHandler = new CustomAuthenticationSuccessHandler();
+        successHandler.setUserDetailsService((UserDetailsServiceImpl) userDetailsService());
+        return successHandler;
+    }
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service"))  // Tắt CSRF cho các URL này
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/", "/homepage-guest").permitAll()
+                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
+                        .requestMatchers("/homepage-customer").hasAuthority("Customer")
+                        .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
+                        .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
+                        .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .successHandler(customAuthenticationSuccessHandler())
+                        .failureHandler(new CustomAuthenticationFailureHandler())
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
+                ;
+//                .exceptionHandling(exception -> exception
+//                        .accessDeniedPage("/403")
+//                );
+
+        return http.build();
+    }
+
+
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+}

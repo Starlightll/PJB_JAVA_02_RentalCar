@@ -39,6 +39,8 @@ public class User {
     private boolean agreeTerms;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+    private Integer driverId;
+    private Integer statusDriverId;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private VerificationToken verificationToken; // Tham chiếu đến VerificationToken

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -17,16 +18,13 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startDate;
+    private LocalDateTime startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+    private LocalDateTime endDate;
 
     private String driverInfo;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date actualEndDate;
+    private LocalDateTime actualEndDate;
 
     private Double totalPrice;
 
@@ -38,9 +36,9 @@ public class Booking {
     @JoinColumn(name = "bookingStatusId", nullable = false)
     private BookingStatus bookingStatus; // Liên kết với entity BookingStatus
 
-//    @ManyToOne
-//    @JoinColumn(name = "paymentMethodId", nullable = false)
-//    private PaymentMethod paymentMethod; // Liên kết với entity PaymentMethod
+    @ManyToOne
+    @JoinColumn(name = "paymentMethodId", nullable = false)
+    private PaymentMethod paymentMethod; // Liên kết với entity PaymentMethod
 
     @OneToMany(mappedBy = "booking")
     private Set<BookingCar> bookingCars; // Liên kết với entity BookingCar
