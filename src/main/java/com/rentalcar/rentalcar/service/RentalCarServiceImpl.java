@@ -277,24 +277,6 @@ public class RentalCarServiceImpl implements RentalCarService {
             e.printStackTrace();
         }
 
-        //CHỌN VÍ ĐỂ TRẢ CỌC
-        User users = userRepository.getUserById(user.getId());
-        if(bookingDto.getSelectedPaymentMethod() == 1) {
-            //KIỂM TRA TIỀN TRONG VÍ CÓ ĐỦ ĐỂ ĐẶT CỌC HAY KHÔNG
-
-            BigDecimal deposit = BigDecimal.valueOf(Long.parseLong(bookingDto.getDeposit()));
-            BigDecimal myWallet = user.getWallet() != null ? users.getWallet() : BigDecimal.ZERO;
-            if (myWallet.compareTo(deposit) < 0) {
-                throw new RuntimeException("Your wallet must be greater than deposit");
-            } else {
-                BigDecimal depositedMoney = myWallet.subtract(deposit);
-                user.setWallet(depositedMoney);
-                userRepository.save(user);
-                session.setAttribute("user", user);
-            }
-        } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
-            throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
-        }
         try {
 
             long numberOfDays = ChronoUnit.DAYS.between(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
@@ -348,14 +330,33 @@ public class RentalCarServiceImpl implements RentalCarService {
                     userRepository.save(driver);
                 }
             }
-
-
-            //MAIL TO USER
-            emailService.sendBookingConfirmation(user, bookingDto, booking,car);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+        //CHỌN VÍ ĐỂ TRẢ CỌC
+        User users = userRepository.getUserById(user.getId());
+        if(bookingDto.getSelectedPaymentMethod() == 1) {
+            //KIỂM TRA TIỀN TRONG VÍ CÓ ĐỦ ĐỂ ĐẶT CỌC HAY KHÔNG
+
+            BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
+            BigDecimal myWallet = user.getWallet() != null ? users.getWallet() : BigDecimal.ZERO;
+            if (myWallet.compareTo(deposit) < 0) {
+                throw new RuntimeException("Your wallet must be greater than deposit");
+            } else {
+                BigDecimal depositedMoney = myWallet.subtract(deposit);
+                user.setWallet(depositedMoney);
+                userRepository.save(user);
+                session.setAttribute("user", user);
+            }
+        } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
+            throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
+        }
+
+        //MAIL TO USER
+        emailService.sendBookingConfirmation(user, bookingDto, booking,car);
+
 
         return booking;
     }
