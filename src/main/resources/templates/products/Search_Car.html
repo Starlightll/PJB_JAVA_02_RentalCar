@@ -203,7 +203,8 @@
                       th:text="${list.getAddress().province + ',' + list.getAddress().district}"></td>
                   <td style="color: #0b0b0b" th:text="${list.getCarStatus().name}"></td>
                   <td>
-                    <button class="btn-rent">Rent now</button>
+                    <button class="btn-rent"><a th:href="${'/booking-car?CarId='+ list.getCarId()}"
+                                                class="btn-view">Rent now</a></button>
                     <button class="btn-view"><a th:href="@{/carDetail/{id}(id=${list.getCarId()})}"
                                                 class="btn-view">View details</a></button>
                   </td>
