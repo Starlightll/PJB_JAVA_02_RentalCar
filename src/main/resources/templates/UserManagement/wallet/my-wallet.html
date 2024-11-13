@@ -50,14 +50,17 @@
                     <label>From</label>
                     <input type="text" class="form-control datepicker" id="fromDate"
                            th:value="${fromDate != null ? fromDate : ''}" placeholder="Select Start Date">
+                    <span id="fromDateError" class="text-danger" style="display: none; font-size: 0.875em;"></span>
                 </div>
                 <div class="col-md-5">
                     <label>To</label>
                     <input type="text" class="form-control datepicker" id="toDate"
                            th:value="${toDate != null ? toDate : ''}" placeholder="Select End Date">
+                    <span id="toDateError" class="text-danger" style="display: none; font-size: 0.875em;"></span>
                 </div>
-                <div class="mt-3 col-md-2 align-content-end">
+                <div class="mt-3 col-md-2 d-flex justify-content-end align-items-center">
                     <button class="btn btn-primary" id="searchBtn">Search</button>
+                    <span class="text-danger" style="display: none; font-size: 0.875em;"></span>
                 </div>
             </div>
 
@@ -94,22 +97,38 @@
                         </tbody>
                     </table>
 
-                    <!-- Pagination -->
                     <nav aria-label="Transaction history pagination">
-                        <ul class="pagination justify-content-center">
-                            <li th:classappend="${currentPage == 0} ? 'disabled' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${currentPage - 1})}"
+                        <ul class="pagination justify-content-center" th:if="${fromDate != null && toDate != null}">
+                            <li th:classappend="${currentPage == 1} ? 'disabled' : ''" class="page-item">
+                                <a th:href="@{/wallet/my-wallet(page=${currentPage - 1}, fromDate=${fromDate}, toDate=${toDate})}"
                                    class="page-link">Previous</a>
                             </li>
-                            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
                                 th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${i})}" th:text="${i + 1}" class="page-link"></a>
+                                <a th:href="@{/wallet/my-wallet(page=${i}, fromDate=${fromDate}, toDate=${toDate})}"
+                                   th:text="${i}" class="page-link"></a>
                             </li>
-                            <li th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''" class="page-item">
+                            <li th:classappend="${currentPage == totalPages} ? 'disabled' : ''" class="page-item">
+                                <a th:href="@{/wallet/my-wallet(page=${currentPage + 1}, fromDate=${fromDate}, toDate=${toDate})}"
+                                   class="page-link">Next</a>
+                            </li>
+                        </ul>
+
+                        <ul class="pagination justify-content-center" th:if="${fromDate == null || toDate == null}">
+                            <li th:classappend="${currentPage == 1} ? 'disabled' : ''" class="page-item">
+                                <a th:href="@{/wallet/my-wallet(page=${currentPage - 1})}" class="page-link">Previous</a>
+                            </li>
+                            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
+                                <a th:href="@{/wallet/my-wallet(page=${i})}" th:text="${i}" class="page-link"></a>
+                            </li>
+                            <li th:classappend="${currentPage == totalPages} ? 'disabled' : ''" class="page-item">
                                 <a th:href="@{/wallet/my-wallet(page=${currentPage + 1})}" class="page-link">Next</a>
                             </li>
                         </ul>
+
                     </nav>
+
                 </div>
             </div>
 
@@ -239,9 +258,34 @@
                 format: 'yyyy-mm-dd',
                 autoclose: true
             });
+
             $('#searchBtn').on('click', function () {
                 const fromDate = $('#fromDate').val();
                 const toDate = $('#toDate').val();
+
+                if (!fromDate || !toDate) {
+                    if (!fromDate) {
+                        document.getElementById('fromDateError').textContent = 'Please select a "From" date.';
+                        document.getElementById('fromDateError').style.display = 'block';
+                    }
+                    if (!toDate) {
+                        document.getElementById('toDateError').textContent = 'Please select a "To" date.';
+                        document.getElementById('toDateError').style.display = 'block';
+                    }
+                    return;
+                } else {
+                    document.getElementById('fromDateError').style.display = 'none';
+                    document.getElementById('toDateError').style.display = 'none';
+                }
+
+                if (new Date(fromDate) > new Date(toDate)) {
+                    document.getElementById('fromDateError').textContent = '"From Date" cannot be later than "To Date".';
+                    document.getElementById('fromDateError').style.display = 'block';
+                    document.getElementById('toDateError').style.display = 'none';
+                    return;
+                }
+
+
                 const url = `/wallet/my-wallet?fromDate=${fromDate}&toDate=${toDate}`;
                 window.location.href = url;
             });
@@ -258,8 +302,8 @@
     <script>
         $(document).ready(function () {
             checkWithdrawButton();
+            const walletBalanceElement = document.getElementById('walletBalance');
 
-            // Top-up handling
             $('#topUpConfirm').on('click', function () {
                 var amount = $('#topUpAmount').val();
                 $.ajax({
@@ -280,6 +324,8 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         });
+
+                        reloadTransactionTable();
                     },
                     error: function () {
                         Swal.fire({
@@ -288,12 +334,10 @@
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
-                        console.log(this.error);
                     }
                 });
             });
 
-            // Withdraw handling
             $('#withdrawConfirm').on('click', function () {
                 var amount = parseFloat($('#withdrawAmount').val());
                 let currentBalance = parseFloat($('#walletBalance').text().replace(' VND', '').replaceAll(',', ''));
@@ -326,6 +370,8 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         });
+
+                        reloadTransactionTable();
                     },
                     error: function () {
                         Swal.fire({
@@ -338,6 +384,20 @@
                 });
             });
 
+            function reloadTransactionTable() {
+                $.ajax({
+                    url: '/wallet/my-wallet',
+                    method: 'GET',
+                    success: function (data) {
+                        const newTableBody = $(data).find('table tbody').html();
+                        $('table tbody').html(newTableBody);
+                    },
+                    error: function () {
+                        console.log("Failed to reload transaction table.");
+                    }
+                });
+            }
+
 
             function checkWithdrawButton() {
                 let currentBalance = $('#walletBalance').text().replace(' VND', '').replaceAll(',', '');
@@ -348,6 +408,16 @@
                     $('.btn-warning').prop('disabled', false);
                 }
             }
+
+            const observer = new MutationObserver((mutationsList) => {
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                        checkWithdrawButton();
+                    }
+                }
+            });
+
+            observer.observe(walletBalanceElement, {childList: true, characterData: true, subtree: true});
 
             $('.btn-warning').on('click', function () {
                 let currentBalance = $('#walletBalance').text().replace(' VND', '').replaceAll(',', '');
