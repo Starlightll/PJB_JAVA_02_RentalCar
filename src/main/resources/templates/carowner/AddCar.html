@@ -243,7 +243,7 @@
                                                                     <input type="file" id="input-file1"
                                                                            accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view1" th:data-image-url="'/'+${carDraft.getRegistration()}">
+                                                                    <div class="img-view" id="img-view1" th:data-image-url="${carDraft.getRegistration()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -260,7 +260,7 @@
                                                                     <input type="file" id="input-file2"
                                                                            accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view2" th:data-image-url="'/'+${carDraft.getCertificate()}">
+                                                                    <div class="img-view" id="img-view2" th:data-image-url="${carDraft.getCertificate()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -277,7 +277,7 @@
                                                                     <input type="file" id="input-file3"
                                                                            accept=".jpg,.jpeg,.png"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view3" th:data-image-url="'/'+${carDraft.getInsurance()}">
+                                                                    <div class="img-view" id="img-view3" th:data-image-url="${carDraft.getInsurance()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -422,7 +422,7 @@
                                                                     <input type="file" id="input-file4"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view4" th:data-image-url="'/'+${carDraft.getFrontImage()}">
+                                                                    <div class="img-view" id="img-view4" th:data-image-url="${carDraft.getFrontImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -439,7 +439,7 @@
                                                                     <input type="file" id="input-file5"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view5" th:data-image-url="'/'+${carDraft.getBackImage()}">
+                                                                    <div class="img-view" id="img-view5" th:data-image-url="${carDraft.getBackImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -456,7 +456,7 @@
                                                                     <input type="file" id="input-file6"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view6" th:data-image-url="'/'+${carDraft.getLeftImage()}">
+                                                                    <div class="img-view" id="img-view6" th:data-image-url="${carDraft.getLeftImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -472,7 +472,7 @@
                                                                     <input type="file" id="input-file7"
                                                                            accept="image/*" class="file-input"
                                                                            hidden>
-                                                                    <div class="img-view" id="img-view7" th:data-image-url="'/'+${carDraft.getRightImage()}">
+                                                                    <div class="img-view" id="img-view7" th:data-image-url="${carDraft.getRightImage()}">
                                                                         <i class="fa-solid fa-file-arrow-up fa-2x"></i>
                                                                         <p>Drag or drop or click here<br>to upload
                                                                             file</p>
@@ -589,16 +589,16 @@
                                                                 <input type="radio" name="slide" id="three">
                                                                 <input type="radio" name="slide" id="four">
                                                                 <div class="img img-1">
-                                                                    <img id="carFrontImage" th:src="'/'+${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carFrontImage" th:src="${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-2">
-                                                                    <img id="carBackImage" th:src="'/'+${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carBackImage" th:src="${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-3">
-                                                                    <img id="carLeftImage" th:src="'/'+${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carLeftImage" th:src="${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-4">
-                                                                    <img id="carRightImage" th:src="'/'+${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carRightImage" th:src="${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="sliders">
                                                                     <label for="one" class="one"></label>
@@ -702,7 +702,131 @@
     </section>
 <!--Validate-->
     <script>
+        let pageStep = 1;
+        console.log(pageStep)
 
+        let currentStep = document.getElementById('currentStep').value;
+        goToStep(currentStep ? parseInt(currentStep) : 1);
+        $(document).ready(function () {
+
+            let current_fs, next_fs, previous_fs; //fieldsets
+            let opacity;
+
+            $(".next").click(async function () {
+                console.log(pageStep);
+                if (pageStep === 1) {
+                    const isLicensePlateValid = await validateLicensePlate();
+                    const isStep1Valid = checkStep1();
+                    const isModelValid = validateModel();
+                    if (!isLicensePlateValid || !isStep1Valid || !isModelValid) {
+                        console.log('fail step 1');
+                        return;
+                    }
+                    saveDraft();
+                    pageStep++;
+                }else if (pageStep === 2) {
+                    if (!checkStep2() || !validateMileage() || !validateFuelConsumption()) {
+                        console.log('fail step 2');
+                        return;
+                    }
+                    saveDraft();
+                    pageStep++;
+                }else if (pageStep === 3) {
+                    if (!checkStep3() || !validateCarPrice() || !validateBasePrice() || !validateDeposit()) {
+                        console.log('fail step 3');
+                        return;
+                    }
+                    saveDraft();
+                    pageStep++;
+                }else if (pageStep === 4) {
+                    if (!checkStep4()) {
+                        console.log('fail step 4');
+                        return;
+                    }
+                }
+
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
+
+                //Add Class Active
+                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+                //show the next fieldset
+                next_fs.show();
+                // window.scrollTo(0, 0);
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        next_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            $(".previous").click(function () {
+                pageStep--;
+                current_fs = $(this).parent();
+                previous_fs = $(this).parent().prev();
+
+                //Remove class active
+                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+                //show the previous fieldset
+                previous_fs.show();
+                // window.scrollTo(0, 0);
+
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        previous_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            // $('.radio-group .radio').click(function () {
+            //     $(this).parent().find('.radio').removeClass('selected');
+            //     $(this).addClass('selected');
+            // });
+
+            $(".submit").click(function () {
+                return false;
+            })
+
+        });
+
+        function goToStep(targetStep) {
+            if(targetStep > 4){
+                targetStep = 4;
+            }
+            if(targetStep < 1){
+                targetStep = 1;
+            }
+            pageStep = targetStep;
+
+            // Cập nhật progress bar
+            $("#progressbar li").removeClass("active");
+            for (let i = 0; i < targetStep; i++) {
+                $("#progressbar li").eq(i).addClass("active");
+            }
+
+            $("fieldset").hide();
+            $("fieldset").eq(targetStep - 1).show();
+        }
 
     </script>
     <script>
@@ -800,10 +924,6 @@
     </script>
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
-
-
-
-
 
         function saveDraft() {
             const licensePlate = document.getElementById('licensePlate').value;
@@ -1084,7 +1204,7 @@
         function displayExistingImage(imageView, imageUrl) {
             if (imageUrl) {
                 if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {
-                    imageView.style.backgroundImage = 'url('+ imageUrl.replaceAll("\\", "/")+')';
+                    imageView.style.backgroundImage = 'url(/'+ imageUrl.replaceAll("\\", "/")+')';
                     imageView.style.backgroundSize = "cover";
                     imageView.style.backgroundPosition = "center";
                     imageView.innerHTML = "";

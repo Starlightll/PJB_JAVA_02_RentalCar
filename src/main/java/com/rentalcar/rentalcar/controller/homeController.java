@@ -32,6 +32,8 @@ public class homeController {
                 return "redirect:/homepage-customer";
             } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Car Owner"))) {
                 return "redirect:/homepage-carowner";
+            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Admin"))) {
+                return "redirect:/admin/dashboard";
             }
         }
         return "redirect:/homepage-guest";

@@ -56,15 +56,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 redirectUrl = "/homepage-carowner";
                 break;
             } else if (role.equals("Admin")) {
-                redirectUrl = "/add-car";
+                redirectUrl = "/admin/dashboard";
                 break;
             }
         }
 
-//        response.sendRedirect(redirectUrl);
-
         // Thêm chuyển hướng sau login
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setDefaultTargetUrl(redirectUrl);
         successHandler.onAuthenticationSuccess(request, response, authentication);
     }
 }
