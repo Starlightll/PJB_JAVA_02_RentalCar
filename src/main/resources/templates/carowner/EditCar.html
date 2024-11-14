@@ -97,7 +97,7 @@
                                         <th:block th:object="${car}">
                                             <input type="text" th:value="${car.getCarId()}" th:id="carId" hidden>
                                             <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
-                                                <div class="col-lg-6 col-md-6 d-flex align-items-center">
+                                                <div class="col-lg-5 col-md-6 d-flex align-items-center">
                                                     <div class="wrapper" style="max-height: 270px">
                                                         <input type="radio" name="slide-1" id="one-1" checked>
                                                         <input type="radio" name="slide-1" id="two-1">
@@ -128,7 +128,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                <div class="col-lg-5 col-md-6 justify-content-center align-items-center">
                                                     <div class="row justify-content-center align-items-center align-content-center">
                                                         <h1 th:text="${car.getCarName() == null ? car.getBrand().getBrandName()+' '+car.getModel()+' '+car.getProductionYear() :car.getCarName()}" class="col-lg-12 col-md-12 col-sm-12 text-center"
                                                             style="font-size: 2rem">
@@ -195,7 +195,15 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
+                                                    <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
+                                                    <a th:href="'#'"
+                                                    th:id="'cancel-booking-btn-' + ${car.getCarId()}"
+                                                       class="btn btn-primary  ">Confirm deposit</a>
+                                                    </th:block>
+                                                </div>
                                             </div>
+
                                         </th:block>
                                     </div>
 

@@ -97,7 +97,7 @@ public class SearchCarController {
             }
             else{
 
-                model.addAttribute("list", list);
+                model.addAttribute("list", list.getContent());
                 model.addAttribute("totalPage", list.getTotalPages());
                 model.addAttribute("currentPage", pageNo);
                 model.addAttribute("name", name);
@@ -115,7 +115,7 @@ public class SearchCarController {
         } else if (pickDate.isAfter(dropDate)) {
             model.addAttribute("sendCondition", "Drop-off date  must be later than Pick-up date ");
         }else {
-            model.addAttribute("list", list);
+            model.addAttribute("list", list.getContent());
             model.addAttribute("totalPage", list.getTotalPages());
             model.addAttribute("currentPage", pageNo);
             model.addAttribute("name", name);

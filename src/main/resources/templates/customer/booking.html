@@ -95,8 +95,14 @@
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs">
                         <span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span class="mr-2"><a href="/car-owner/my-cars">MY CARS <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span>ADD CAR <i class="ion-ios-arrow-forward"></i></span>
+                        <th:block th:if="${lastLink == 'search'}">
+                            <span class="mr-2"><a
+                            th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">SEARCH CARS <i class="ion-ios-arrow-forward"></i></a></span>
+                        </th:block>
+                        <th:block th:if="${lastLink == 'detailCar'}">
+                            <span class="mr-2"><a href="/car-owner/my-cars">CAR DETAIL <i class="ion-ios-arrow-forward"></i></a></span>
+                        </th:block>
+                        <span>BOOKING CAR <i class="ion-ios-arrow-forward"></i></span>
                     </p>
                     <h1 class="mb-3 bread">Booking Car</h1>
                 </div>
@@ -113,9 +119,9 @@
                         </div>
                         <div class="card-body">
                             <ul class="pl-2" style="font-size: 15px;color: #01d28e;font-weight: bold;">
-                                <li class="card-text">Pickup location: <span id="pickupLocation" style="color: white; font-weight: normal;">Trung Kinh, Cau Giay, Hanoi</span></li>
-                                <li class="card-text">Pickup date and time: <span id="pickupDate" style="color: white; font-weight: normal;">13/02/2024 - 12:00 PM</span></li>
-                                <li class="card-text">Return date and time: <span id="returnDate"  style="color: white; font-weight: normal;">23/02/2024 - 14:00 PM</span></li>
+                                <li class="card-text">Pickup location: <span id="pickupLocation" style="color: white; font-weight: normal;"  th:value="${address}"   th:text="${address}"></span></li>
+                                <li class="card-text">Pickup date and time: <span id="pickupDate" style="color: white; font-weight: normal;" th:value="${startDate}"   th:text="${startDate}"></span></li>
+                                <li class="card-text">Return date and time: <span id="returnDate"  style="color: white; font-weight: normal;" th:value="${enDate}"   th:text="${enDate}"></span></li>
                             </ul>
                             <button href="#" class="btn btn-primary" onclick="changeDetail()">Change details</button>
                         </div>
@@ -506,8 +512,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <th:block th:if="${lastLink == 'search'}">
+
                                         <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                           onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
+                                           th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}"
+                                            >Cancel</a>
+                                        </th:block>
+                                        <th:block th:if="${lastLink == 'home'}">
+
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                           th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}"
+                                            >Cancel</a>
+                                        </th:block>
+                                        <th:block th:if="${lastLink == 'detailCar'}">
+
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                           th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}"
+                                            >Cancel</a>
+                                        </th:block>
                                         <input type="button" id="nextButton" name="next" class="next btn-secondary btn"
                                                value="Next Step"/>
                                     </fieldset>
@@ -527,7 +549,7 @@
                                                         <div class="col-9" style="border-left: 2px #00c86f solid">
                                                             <div class="tab-content" id="v-pills-tabContent">
                                                                 <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                                    <p>Current balance: <span style="color: #00c269;">20,000,000 VND</span></p>
+                                                                    <p>Current balance: <span style="color: #00c269;" th:text="${#numbers.formatDecimal(userRepo.getWallet(), 0, 'COMMA', 0, 'POINT')} + 'VND'" ></span></p>
                                                                 </div>
                                                                 <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
                                                                 <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
@@ -539,8 +561,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                           onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
+<!--                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"-->
+<!--                                           onclick="window.location.href='/car-owner/my-cars'">Cancel</a>-->
+                                        <th:block th:if="${lastLink == 'search'}">
+                                            <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                               th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}"
+                                            >Cancel</a>
+                                        </th:block>
                                         <input type="button" name="previous" class="previous btn-black btn"
                                                value="Previous"/>
                                         <input type="button" name="next" class="next btn-secondary btn"
@@ -565,7 +592,7 @@
                                         </div>
                                         <a class="btn-primary btn" style="; margin: 10px 0 10px 0"
                                            onclick="window.location.href='/'">Homepage</a>
-                                        <button class="btn-warning btn">Book another car</button>
+                                        <a class="btn-warning btn" th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">Book another car</a>
                                         <button class="btn-secondary btn">View Booking</button>
                                     </fieldset>
                                 </form>
@@ -588,12 +615,26 @@
 
 
         function checkStep1() {
+            const pickupLocation = document.getElementById('pickupLocation').innerText;
+            const pickupDate = document.getElementById('pickupDate').innerText;
+            const returnDate = document.getElementById('returnDate').innerText;
+
+            const pickupDateFormatted = formatToDatetimeDB(pickupDate);
+            const returnDateFormatted = formatToDatetimeDB(returnDate);
+
+            document.getElementById('editPickupLocation').value = pickupLocation;
+            document.getElementById('editPickupDate').value = pickupDateFormatted;
+            document.getElementById('editReturnDate').value = returnDateFormatted;
+
+            console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
+            console.log("editPickupDate:", document.getElementById("editPickupDate").value);
+            console.log("editReturnDate:", document.getElementById("editReturnDate").value);
 
             // Thu thập dữ liệu cho renter
             const formData = {
                 pickUpLocation: document.getElementById("editPickupLocation").value,
-                pickUpDateTime: document.getElementById("editPickupDate").value,
-                returnDateTime: document.getElementById("editReturnDate").value,
+                pickUpDateTime: pickupDateFormatted,
+                returnDateTime: returnDateFormatted,
 
                 carId: document.getElementById("carId").value,
                 fullName: document.getElementById("fullName1").value,
@@ -626,7 +667,7 @@
 
             let selectedPaymentMethod = 1;
 
-// Lắng nghe sự kiện khi người dùng thay đổi tab
+            // Lắng nghe sự kiện khi người dùng thay đổi tab
             $('#v-pills-tab button').on('click', function (e) {
                 // Lấy ID của tab đã chọn
                 var selectedTab = $(this).attr('id');
@@ -654,9 +695,25 @@
 
         function saveBooking() {
             return new Promise((resolve, reject) => {
-                const pickUpLocation = document.getElementById("editPickupLocation").value;
-                const pickUpDateTime = document.getElementById("editPickupDate").value;
-                const returnDateTime = document.getElementById("editReturnDate").value;
+                const pickupLocationTxt = document.getElementById('pickupLocation').innerText;
+                const pickupDate = document.getElementById('pickupDate').innerText;
+                const returnDate = document.getElementById('returnDate').innerText;
+
+                const pickupDateFormatted = formatToDatetimeDB(pickupDate);
+                const returnDateFormatted = formatToDatetimeDB(returnDate);
+
+                document.getElementById('editPickupLocation').value = pickupLocationTxt;
+                document.getElementById('editPickupDate').value = pickupDateFormatted;
+                document.getElementById('editReturnDate').value = returnDateFormatted;
+
+                console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
+                console.log("editPickupDate:", document.getElementById("editPickupDate").value);
+                console.log("editReturnDate:", document.getElementById("editReturnDate").value);
+                //==========================================================================
+
+                const pickUpLocation = pickupDateFormatted; document.getElementById("editPickupLocation").value;
+                const pickUpDateTime = pickupDateFormatted;
+                const returnDateTime = returnDateFormatted;
                 const depositValue = depositText.replace(/[^0-9]/g, '');
                 const checked = document.getElementById("differentInfoCheckbox").checked;
                 const carId = document.getElementById("carId").value;
@@ -712,6 +769,7 @@
                     selectedUserId: selectedUserId,
                 };
 
+                console.log(bookingInfor)
                 // Tạo FormData
                 const formData = new FormData();
                 formData.append("booking", JSON.stringify(bookingInfor));
@@ -783,7 +841,7 @@
                         if (xhr.status === 400) {
                             if(xhr.responseText === "Your wallet must be greater than deposit") {
 
-                                const topUpLink = `<a href="/top-up-wallet" style="color: blue; text-decoration: underline;">Nạp tiền</a>`;
+                                const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Nạp tiền</a>`;
                                 const errorMessage = `Ví của bạn không đủ tiền để đặt xe. ${topUpLink} để tiếp tục.`;
 
                                 $('#error-message').html(errorMessage);
@@ -814,6 +872,30 @@
 
         }
 
+        window.onload = function () {
+            calculateOnPageLoad();
+        };
+        function calculateOnPageLoad() {
+            const pickupLocation = document.getElementById('pickupLocation').innerText;
+            const pickupDate = document.getElementById('pickupDate').innerText;
+            const returnDate = document.getElementById('returnDate').innerText;
+
+            if (pickupDate && returnDate && pickupLocation) {
+                document.getElementById('editPickupLocation').value = pickupLocation;
+                document.getElementById('editPickupDate').value = formatToDatetimeLocal(pickupDate);
+                document.getElementById('editReturnDate').value = formatToDatetimeLocal(returnDate);
+
+                const newReturnDate = document.getElementById('editReturnDate').value;
+                console.log("Date = " + newReturnDate);
+                saveChanges();
+            }
+
+            console.log(pickupDate);
+            console.log(returnDate);
+        }
+
+
+
         function changeDetail() {
             // Lấy giá trị hiện tại và định dạng lại cho phù hợp với `datetime-local`
             const pickupDate = document.getElementById('pickupDate').innerText;
@@ -839,7 +921,7 @@
             if (!newPickupLocation || !newPickupDate || !newReturnDate) {
                 iziToast.error({
                     title: 'Error',
-                    message: 'Vui lòng điền đầy đủ thông tin.',
+                    message: 'Please fill in all the information.',
                     position: 'topRight',
                     transitionIn: 'fadeInDown',
                     transitionOut: 'fadeOutUp'
@@ -852,11 +934,38 @@
             const pickupDateObj = new Date(newPickupDate);
             const returnDateObj = new Date(newReturnDate);
 
+            // Lấy ngày hiện tại
+            const currentDate = new Date();
+
+            // Kiểm tra xem ngày pickupDate có phải là ngày trong quá khứ không
+            if (pickupDateObj < currentDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Pickup date cannot be in the past.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+            // Kiểm tra xem ngày returnDate có phải là ngày trong quá khứ không
+            if (returnDateObj < currentDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Return date cannot be in the past.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
 
             if (returnDateObj <= pickupDateObj) {
                 iziToast.error({
                     title: 'Error',
-                    message: 'Ngày trả xe phải lớn hơn ngày lấy xe.!',
+                    message: 'Return date must be later than pickup date.',
                     position: 'topRight',
                     transitionIn: 'fadeInDown',
                     transitionOut: 'fadeOutUp'
@@ -898,6 +1007,31 @@
             const [hour, minute] = time.split(":");
             return `${year}-${month}-${day}T${hour}:${minute}`;
         }
+
+
+        function formatToDatetimeDB(displayDate) {
+            const [date, timeWithPeriod] = displayDate.split(" - ");
+            const [day, month, year] = date.split("/");
+
+
+            let [time, period] = timeWithPeriod.split(" ");
+            let [hour, minute] = time.split(":");
+
+
+            hour = parseInt(hour);
+            if (period === "PM" && hour < 12) {
+                hour += 12;
+            } else if (period === "AM" && hour === 12) {
+                hour = 0;
+            }
+
+            // Định dạng lại giờ phút thành chuỗi hai chữ số
+            const hourString = hour.toString().padStart(2, '0');
+            const minuteString = minute.padStart(2, '0');
+
+            return `${year}-${month}-${day}T${hourString}:${minuteString}`;
+        }
+
 
         // Hàm để tính số ngày giữa 2 ngày
         function calculateNumberOfDays(startDate, endDate) {

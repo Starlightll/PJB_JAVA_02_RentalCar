@@ -312,9 +312,28 @@ VALUES
     (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'Hanoi', N'District 5', N'Ward 7', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 1),
     (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'Da Nang', N'District 3', N'Ward 2', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 1);
 
+INsert into UserRole
+values(1, 4), (2,4),(3,4)
 
 -- SQL to delete all information of carDraft, Car and relative information of Car
 -- DELETE FROM CarDraft WHERE CarDraft.draftId > 0;
 -- DELETE FROM CarAdditionalFunction WHERE CarAdditionalFunction.AdditionalFunctionId > 0;
 -- DELETE FROM CarAddress WHERE CarAddress.addressId > 0;
 -- DELETE FROM Car WHERE Car.carId > 0;
+
+
+-- SQL to INSERT AN ADMIN
+-- password: 123
+DECLARE @InsertedUsers TABLE (userId BIGINT);
+
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, statusDriverId)
+OUTPUT inserted.userId INTO @InsertedUsers
+VALUES (N'admin', '1990-01-15', N'admin@gmail.com', N'123456789', N'0123456789', N'DL123456', 9999999999.00,
+        N'$2a$10$zTJMk41R7yUiRWED31NbtueNZTaIOV8mJm4HGavw2KIZVmCKgA8MW', N'Ha Noi', N'District 1',
+        N'Ward 3', N'Cau Giay', N'Admin', 1, N'ACTIVATED', 1);
+
+INSERT INTO [dbo].[UserRole] (userId, roleId)
+SELECT userId, 1 -- 1 == Admin
+FROM @InsertedUsers;
+
+

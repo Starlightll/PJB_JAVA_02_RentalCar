@@ -6,6 +6,10 @@
 <head>
   <title>Search Car</title>
     <link rel="stylesheet" href="/css/customer/search-car.css">
+  <!-- iziToast CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+  <!-- iziToast JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
 </head>
 
 <body>
@@ -213,10 +217,17 @@
 
                   <td style="color: green" th:text="${list.getCarStatus().name}"></td>
                   <td>
-                    <button class="btn-rent"><a th:href="${'/booking-car?CarId='+ list.getCarId()}"
-                                                class="btn-view">Rent now</a></button>
-                    <button class="btn-view"><a th:href="@{/carDetail/{id}(id=${list.getCarId()})}"
-                                                class="btn-view">View details</a></button>
+                    <th:block th:if="${list.getCarStatus().getStatusId() == 1}">
+                      <button class="btn-rent"><a th:href="${'/booking-car?CarId='+ list.getCarId()+ '&startDate=' + pickDate+' - '+pickTime +'&enDate=' + dropDate +' - '+ dropTime + '&address=' + name + '&beforeNavigate=search'  }"
+                                                  class="btn-view">Rent now</a></button>
+                    </th:block>
+
+                    <th:block th:if="${list.getCarStatus().getStatusId() != 1}">
+                      <button class="btn-rent" onclick="showAlert()"> <span class="btn-view">Rent now</span></button>
+                    </th:block>
+
+
+                    <button class="btn-view"><a th:href="@{/carDetail/{id}(id=${list.getCarId()})}" class="btn-view">View details</a></button>
                   </td>
                 </tr>
 
@@ -250,6 +261,17 @@
 
   <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
 
+  <script>
+    function showAlert() {
+      iziToast.error({
+        title: 'Error',
+        message: 'Lỗi: Xe hiện không có sẵn để đặt!',
+        position: 'topRight',
+        transitionIn: 'fadeInDown',
+        transitionOut: 'fadeOutUp'
+      });
+    }
+  </script>
   <script>
     document.querySelector('.request-form').addEventListener('submit', function(event) {
       event.preventDefault();  // Prevent form submission for validation
