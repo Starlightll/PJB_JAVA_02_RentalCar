@@ -110,7 +110,7 @@ public class EmailService {
         String  toDate = bookingdto.getReturnDate().format(dateTimeFormatter);
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         String  pricePerDay = currencyFormatter.format(car.getBasePrice());
-        String  totalPrice =currencyFormatter.format(booking.getTotalPrice());
+        String  totalPrice =currencyFormatter.format(bookingdto.getTotalPrice());
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -144,4 +144,44 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+
+
+
+    @Async
+    public void sendBookingConfirmationWithDeposit(User user, BookingDto bookingDto, Booking booking, Car car, double depositAmount) {
+        String recipientAddress = user.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        String carName = car.getCarName();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String bookingDate = bookingDto.getPickUpDate().format(dateTimeFormatter);
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String depositFormatted = currencyFormatter.format(depositAmount);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Congratulations!</h2>" +
+                    "<p style='font-size: 16px;'>Your car <strong style='color: #FF5722;'>" + carName + "</strong> has been successfully booked on <strong style='color: #2196F3;'>" + bookingDate + "</strong>.</p>" +
+                    "<p style='font-size: 16px;'>Please go to your wallet to check if the deposit of <strong style='color: #FF5722;'>" + depositFormatted + "</strong> has been paid.</p>" +
+                    "<p style='font-size: 16px;'>Additionally, visit your car's details page to confirm the deposit. Thank you for choosing us!</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you did not make this booking, please contact our support team immediately.</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Your car has been booked - Booking No. " + bookingNumber);
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
