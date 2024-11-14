@@ -25,5 +25,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     User getUserById(Long id);
 
+    @Query("SELECT u FROM User u")
+    public List<User> getAllUsers();
 
 }

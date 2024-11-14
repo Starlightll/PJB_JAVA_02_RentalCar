@@ -12,6 +12,7 @@ import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.RentalCarService;
+import com.rentalcar.rentalcar.service.ReturnCarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,12 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import static com.rentalcar.rentalcar.common.Regex.*;
+
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -46,9 +46,12 @@ public class RentalCarController {
     @Autowired
     UserRepo userRepo;
 
+    @Autowired
+    ReturnCarService returnCarService;
+
     @GetMapping("/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
-                            @RequestParam(defaultValue = "10") int size,
+                            @RequestParam(defaultValue = "5") int size,
                             @RequestParam(defaultValue = "lastModified") String sortBy,
                             @RequestParam(defaultValue = "desc") String order,
                             Model model,
@@ -78,7 +81,7 @@ public class RentalCarController {
         }
 
 
-        Page<MyBookingDto>  bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
 
         List<MyBookingDto> bookingList = bookingPages.getContent();
         //check so on-going bookings
@@ -93,7 +96,7 @@ public class RentalCarController {
 
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");
-        }else {
+        } else {
             model.addAttribute("bookingList", bookingList);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", bookingPages.getTotalPages());
@@ -104,8 +107,6 @@ public class RentalCarController {
         }
         return "customer/MyBookings";
     }
-
-
 
 
     //Add
@@ -246,16 +247,16 @@ public class RentalCarController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid End Date");
         }
 
-        if(bookingInfor.getStep() == 2) {
+        if (bookingInfor.getStep() == 2) {
             response.put("message", "Step 1 validated successfully.");
             return ResponseEntity.ok(response);
         } else {
             MultipartFile[] files = {rentImage, driverImage};
             try {
-              Booking booking =  rentalCarService.saveBooking(bookingInfor, files, session);
+                Booking booking = rentalCarService.saveBooking(bookingInfor, files, session);
                 response.put("message", "Step 2 validated successfully.");
-                response.put("bookingInfo", Map.of("id",booking.getBookingId(),"startDate", booking.getStartDate(), "endDate", booking.getEndDate()));
-            }catch (RuntimeException e) {
+                response.put("bookingInfo", Map.of("id", booking.getBookingId(), "startDate", booking.getStartDate(), "endDate", booking.getEndDate()));
+            } catch (RuntimeException e) {
                 switch (e.getMessage()) {
                     case "Your wallet must be greater than deposit":
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your wallet must be greater than deposit");
@@ -271,24 +272,79 @@ public class RentalCarController {
     }
 
 
-
-
-        @GetMapping("/cancel-booking")
-    public String cancelBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
+    @GetMapping("/cancel-booking")
+    public String cancelBooking(@RequestParam("bookingId") Long bookingId,
+                                HttpSession session,
+                                @RequestParam(defaultValue = "1") int page,
+                                @RequestParam(defaultValue = "5") int size,
+                                @RequestParam(defaultValue = "lastModified") String sortBy,
+                                @RequestParam(defaultValue = "desc") String order,
+                                Model model) {
         boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
-
         if (isCancelled) {
-            model.addAttribute("message", "Booking has been successfully cancelled.");
+            model.addAttribute("message_" + bookingId, "Booking has been successfully cancelled.");
         } else {
             model.addAttribute("error", "Unable to cancel the booking. Please try again.");
         }
 
-        return "redirect:/my-bookings";
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        List<MyBookingDto> bookingList = bookingPages.getContent();
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
+        if (bookingList.isEmpty()) {
+            model.addAttribute("message", "You have no booking");
+        } else {
+            model.addAttribute("bookingList", bookingList);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", bookingPages.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
+
+        }
+        return "customer/MyBookings";
 
     }
 
+
     @GetMapping("/confirm-pickup-booking")
-    public String confirmPickupBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
+    public String confirmPickupBooking(@RequestParam("bookingId") Long bookingId,
+                                       HttpSession session,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "5") int size,
+                                       @RequestParam(defaultValue = "lastModified") String sortBy,
+                                       @RequestParam(defaultValue = "desc") String order,
+                                       Model model) {
         boolean isConfirm = rentalCarService.confirmPickupBooking(bookingId, session);
 
         if (isConfirm) {
@@ -297,7 +353,166 @@ public class RentalCarController {
             model.addAttribute("error", "Unable to confirm the booking. Please try again.");
         }
 
-        return "redirect:/my-bookings";
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        List<MyBookingDto> bookingList = bookingPages.getContent();
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
+        if (bookingList.isEmpty()) {
+            model.addAttribute("message", "You have no booking");
+        } else {
+            model.addAttribute("bookingList", bookingList);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", bookingPages.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
+
+        }
+        return "customer/MyBookings";
     }
+
+    @GetMapping("/return-car")
+    public ResponseEntity<?> returnCar(@RequestParam("bookingId") Long bookingId,
+                                       HttpSession session,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "5") int size,
+                                       @RequestParam(defaultValue = "lastModified") String sortBy,
+                                       @RequestParam(defaultValue = "desc") String order) {
+        String responseMessage = returnCarService.returnCar(bookingId, session);
+
+        // Trả về thông điệp JSON với trạng thái "success"
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", responseMessage);
+
+
+        return ResponseEntity.ok(response);
+
+    }
+
+
+
+    @GetMapping("/confirm-return-car")
+    public ResponseEntity<Map<String, Object>> confirmReturnCar(@RequestParam("bookingId") Long bookingId,
+                                                                HttpSession session,
+                                                                @RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "5") int size,
+                                                                @RequestParam(defaultValue = "lastModified") String sortBy,
+                                                                @RequestParam(defaultValue = "desc") String order,
+                                                                Model model) {
+        // Retrieve user from session
+        User user = (User) session.getAttribute("user");
+
+        // Initialize response map
+        Map<String, Object> response = new HashMap<>();
+
+        // Check if the user is present in the session
+        if (user == null) {
+            return generateResponse(response, "error", "User not found in session.");
+        }
+
+        // Call confirmReturnCar to process the return logic
+        int caseReturn = returnCarService.confirmReturnCar(bookingId, session);
+
+        // Handle response based on caseReturn value
+        if (caseReturn == 1 ) {
+            return generateResponse(response, "success", "Booking has been successfully completed.");
+        } else if (caseReturn == 2) {
+            return generateResponse(response, "success", "Return car has been successfully completed.");
+
+        } else if (caseReturn == -1) {
+            return generateResponse(response, "error", "Your wallet doesn’t have enough balance. Please top-up your wallet and try again");
+        } else if (caseReturn == -2) {
+            boolean isUpdate = returnCarService.updateBookingPendingPayment(bookingId, session);
+            return generateResponse(response, "error", "Car-owner doesn’t have enough balance. Please try again later!");
+        }
+
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        List<MyBookingDto> bookingList = bookingPages.getContent();
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
+        if (bookingList.isEmpty()) {
+            model.addAttribute("message", "You have no booking");
+        } else {
+            model.addAttribute("bookingList", bookingList);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", bookingPages.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
+
+        }
+
+        return generateResponse(response, "error", "Error Return!");
+    }
+
+    private ResponseEntity<Map<String, Object>> generateResponse(Map<String, Object> response, String status, String message) {
+        response.put("status", status);
+        response.put("message", message);
+        return ResponseEntity.ok(response);
+    }
+
+
+
 
 }

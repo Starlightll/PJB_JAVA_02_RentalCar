@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.rentalcar.rentalcar.common.Constants;
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class VerificationToken {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false, unique = true)
+    @JsonBackReference
     private User user;
 
     private LocalDateTime  expiryDate;

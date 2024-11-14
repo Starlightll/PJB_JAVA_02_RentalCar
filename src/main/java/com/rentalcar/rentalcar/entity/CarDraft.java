@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -60,6 +61,7 @@ public class CarDraft {
 
     @ManyToOne
     @JoinColumn(name = "userId")
+    @JsonBackReference
     private User user;
 
     @ManyToOne
