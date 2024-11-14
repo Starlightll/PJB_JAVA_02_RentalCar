@@ -1,31 +1,28 @@
 package com.rentalcar.rentalcar.controller;
 
-import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.entity.Transaction;
-import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.TransactionRepository;
+import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.MyWalletService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/wallet")
@@ -100,22 +97,32 @@ public class WalletController {
     public String myWallet(Model model, HttpSession session,
                            @RequestParam(value = "fromDate", required = false) String fromDate,
                            @RequestParam(value = "toDate", required = false) String toDate,
-                           @RequestParam(value = "page", defaultValue = "0", required = false) int page) {
+                           @RequestParam(value = "page", defaultValue = "1", required = false) int page) {
         User user = (User) session.getAttribute("user");
+        if (user.getWallet() == null) {
+            user.setWallet(BigDecimal.valueOf(0));
+            userRepo.save(user);
+        }
         user = userRepo.getUserByEmail(user.getEmail());
         String formattedWallet = formatWallet(user.getWallet());
 
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page - 1, 5);
         Page<Transaction> transactions = Page.empty();
 
         try {
             if (fromDate != null && toDate != null) {
                 LocalDate from = LocalDate.parse(fromDate);
                 LocalDate to = LocalDate.parse(toDate);
-                if (from.isAfter(to)) {
+
+                LocalDateTime fromDateTime = from.atStartOfDay();
+                LocalDateTime toDateTime = to.atTime(23, 59, 59);
+
+                if (fromDateTime.isAfter(toDateTime)) {
                     model.addAttribute("error", "The end date must be later than the start date.");
                 } else {
-                    transactions = transactionRepo.findByUserAndTransactionDateBetween(user, from, to, pageable);
+                    transactions = transactionRepo.findByUserAndTransactionDateBetween(user, fromDateTime, toDateTime, pageable);
+                    model.addAttribute("fromDate", fromDate);
+                    model.addAttribute("toDate", toDate);
                 }
             } else {
                 transactions = transactionRepo.findByUser(user, pageable);
@@ -133,7 +140,7 @@ public class WalletController {
         return "UserManagement/wallet/my-wallet";
     }
 
-    // Helper method to format wallet balance
+
     private String formatWallet(BigDecimal wallet) {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         DecimalFormat formatter = new DecimalFormat("###,###", symbols);
