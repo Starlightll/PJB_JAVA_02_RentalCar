@@ -133,16 +133,10 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 Long.valueOf((Integer) result[13])
         );
 
-        // Lấy các giá trị cần thiết
         BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
         BigDecimal myWallet = userdb.getWallet();
         BigDecimal totalPrice = BigDecimal.valueOf(calculateTotalPrice(bookingId));
 
-        // Log các giá trị kiểm tra
-        System.out.println("Total Price: " + totalPrice);
-        System.out.println("Deposit: " + deposit);
-        System.out.println("User Wallet: " + myWallet);
-        System.out.println("Car Owner Wallet: " + bookingDto.getCarOwnerWallet());
 
         if (totalPrice.compareTo(deposit) > 0) {
             // Kiểm tra ví người dùng

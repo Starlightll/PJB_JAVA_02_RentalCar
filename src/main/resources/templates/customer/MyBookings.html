@@ -335,7 +335,8 @@
                                                             <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
-                                                        <input type="hidden" id="bookingId" th:value="${booking.getBookingId()}">
+                                                        <input type="hidden" id="bookingId"
+                                                               th:value="${booking.getBookingId()}">
 
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
@@ -406,10 +407,10 @@
 
                                                     <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
                                                     <a
-                                                       style="background: #d5dcd5 !important; color: black !important;"
-                                                       th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
-                                                       th:id="'confirm-booking-btn-' + ${iterStat.index}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
+                                                            style="background: #d5dcd5 !important; color: black !important;"
+                                                            th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                            th:id="'confirm-booking-btn-' + ${iterStat.index}"
+                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
                                                         Pick-up</a>
 
                                                     <!-- Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses -->
@@ -434,12 +435,14 @@
                                                         <!-- Booking information displayed here -->
 
                                                         <!-- Success message -->
-                                                        <div th:if="${session['message_' + booking.bookingId]} != null" class="alert alert-success" role="alert">
+                                                        <div th:if="${session['message_' + booking.bookingId]} != null"
+                                                             class="alert alert-success" role="alert">
                                                             <span th:text="${session['message_' + booking.bookingId]}"></span>
                                                         </div>
 
                                                         <!-- Error message -->
-                                                        <div th:if="${session['error_' + booking.bookingId]} != null" class="alert alert-danger" role="alert">
+                                                        <div th:if="${session['error_' + booking.bookingId]} != null"
+                                                             class="alert alert-danger" role="alert">
                                                             <span th:text="${session['error_' + booking.bookingId]}"></span>
                                                         </div>
                                                     </div>
@@ -522,6 +525,7 @@
             const sortBy = document.getElementById('sortBy').value;
             const pageSize = document.getElementById('pageSize').value;
 
+
             window.location.href = '/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
@@ -537,7 +541,7 @@
                 const element = document.getElementById("booking-" + bookingId);
                 if (element) {
                     // Scroll to the element with smooth behavior and center alignment
-                    element.scrollIntoView({ behavior: "smooth", block: "center" });
+                    element.scrollIntoView({behavior: "smooth", block: "center"});
                     console.log('Scrolled to the element with ID:', "booking-" + bookingId);
                 } else {
                     console.log('Element not found for booking ID:', bookingId);
@@ -549,6 +553,8 @@
         //cancel button
         document.addEventListener('DOMContentLoaded', function () {
             console.log("DOM fully loaded and parsed");
+            const sortBy = document.getElementById('sortBy').value;
+            const pageSize = document.getElementById('pageSize').value;
 
             // Cancel Booking Button Event
             const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn-"]');
@@ -571,7 +577,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             console.log('User chose to cancel the booking with ID:', bookingId);
-                            window.location.href = '/cancel-booking?bookingId=' + bookingId;
+                            window.location.href = '/cancel-booking?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                         } else {
                             console.log('User canceled the booking action');
                         }
@@ -583,7 +589,10 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
+            const sortBy = document.getElementById('sortBy').value;
+            const pageSize = document.getElementById('pageSize').value;
             // Confirm Booking Button Event
+
             const confirmBookingBtns = document.querySelectorAll('[id^="confirm-booking-btn-"]');
             confirmBookingBtns.forEach(btn => {
                 btn.addEventListener('click', function (event) {
@@ -601,10 +610,11 @@
                             confirmButton: 'custom-confirm-btn',
                             cancelButton: 'custom-cancel-btn'
                         }
+
                     }).then((result) => {
                         if (result.isConfirmed) {
                             console.log('User chose to confirm the pick-up with ID:', bookingId);
-                            window.location.href = '/confirm-pickup-booking?bookingId=' + bookingId;
+                            window.location.href = '/confirm-pickup-booking?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                         } else {
                             console.log('User canceled the pick-up confirmation');
                         }
@@ -612,6 +622,7 @@
                 });
             });
         });
+
         function avc() {// document.addEventListener('DOMContentLoaded', function () {
 
             // const returnCarBtns = document.querySelectorAll('[id^="return-booking-btn-"]');
@@ -664,7 +675,7 @@
             $.ajax({
                 url: '/return-car',
                 type: 'get',
-                data: { bookingId: bookingId },
+                data: {bookingId: bookingId},
                 success: function (response) {
                     console.log("Return car successfully", response);
                     Swal.fire({
@@ -697,11 +708,14 @@
         }
 
         function confirmReturnCar(bookingId) {
+
+            const sortBy = document.getElementById('sortBy').value;
+            const pageSize = document.getElementById('pageSize').value;
             console.log(bookingId);
             $.ajax({
                 url: '/confirm-return-car',
                 type: 'get',
-                data: { bookingId: bookingId },
+                data: {bookingId: bookingId},
                 success: function (response) {
                     console.log("Confirm return car response", response);
 
@@ -712,7 +726,7 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId;
+                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                         });
                     } else {
                         Swal.fire({
@@ -721,7 +735,7 @@
                             icon: 'error',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId;
+                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                         });
                     }
                 },
@@ -733,12 +747,11 @@
                         icon: 'error',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = '/my-bookings?bookingId=' + bookingId;
+                        window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                     });
                 }
             });
         }
-
 
 
     </script>

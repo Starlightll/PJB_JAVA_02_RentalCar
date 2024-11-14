@@ -51,7 +51,7 @@ public class RentalCarController {
 
     @GetMapping("/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
-                            @RequestParam(defaultValue = "10") int size,
+                            @RequestParam(defaultValue = "5") int size,
                             @RequestParam(defaultValue = "lastModified") String sortBy,
                             @RequestParam(defaultValue = "desc") String order,
                             Model model,
@@ -273,16 +273,66 @@ public class RentalCarController {
 
 
     @GetMapping("/cancel-booking")
-    public String cancelBooking(@RequestParam("bookingId") Long bookingId, HttpSession session, Model model) {
+    public String cancelBooking(@RequestParam("bookingId") Long bookingId,
+                                HttpSession session,
+                                @RequestParam(defaultValue = "1") int page,
+                                @RequestParam(defaultValue = "5") int size,
+                                @RequestParam(defaultValue = "lastModified") String sortBy,
+                                @RequestParam(defaultValue = "desc") String order,
+                                Model model) {
         boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
-
         if (isCancelled) {
             model.addAttribute("message_" + bookingId, "Booking has been successfully cancelled.");
         } else {
             model.addAttribute("error", "Unable to cancel the booking. Please try again.");
         }
 
-        return "forward:/my-bookings";
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        List<MyBookingDto> bookingList = bookingPages.getContent();
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
+        if (bookingList.isEmpty()) {
+            model.addAttribute("message", "You have no booking");
+        } else {
+            model.addAttribute("bookingList", bookingList);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", bookingPages.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
+
+        }
+        return "customer/MyBookings";
 
     }
 
@@ -291,7 +341,7 @@ public class RentalCarController {
     public String confirmPickupBooking(@RequestParam("bookingId") Long bookingId,
                                        HttpSession session,
                                        @RequestParam(defaultValue = "1") int page,
-                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "5") int size,
                                        @RequestParam(defaultValue = "lastModified") String sortBy,
                                        @RequestParam(defaultValue = "desc") String order,
                                        Model model) {
@@ -303,14 +353,59 @@ public class RentalCarController {
             model.addAttribute("error", "Unable to confirm the booking. Please try again.");
         }
 
-        return "forward:/my-bookings";
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        List<MyBookingDto> bookingList = bookingPages.getContent();
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
+        if (bookingList.isEmpty()) {
+            model.addAttribute("message", "You have no booking");
+        } else {
+            model.addAttribute("bookingList", bookingList);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", bookingPages.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
+
+        }
+        return "customer/MyBookings";
     }
 
     @GetMapping("/return-car")
     public ResponseEntity<?> returnCar(@RequestParam("bookingId") Long bookingId,
                                        HttpSession session,
                                        @RequestParam(defaultValue = "1") int page,
-                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "5") int size,
                                        @RequestParam(defaultValue = "lastModified") String sortBy,
                                        @RequestParam(defaultValue = "desc") String order) {
         String responseMessage = returnCarService.returnCar(bookingId, session);
@@ -320,7 +415,9 @@ public class RentalCarController {
         response.put("status", "success");
         response.put("message", responseMessage);
 
+
         return ResponseEntity.ok(response);
+
     }
 
 
@@ -329,9 +426,10 @@ public class RentalCarController {
     public ResponseEntity<Map<String, Object>> confirmReturnCar(@RequestParam("bookingId") Long bookingId,
                                                                 HttpSession session,
                                                                 @RequestParam(defaultValue = "1") int page,
-                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(defaultValue = "5") int size,
                                                                 @RequestParam(defaultValue = "lastModified") String sortBy,
-                                                                @RequestParam(defaultValue = "desc") String order) {
+                                                                @RequestParam(defaultValue = "desc") String order,
+                                                                Model model) {
         // Retrieve user from session
         User user = (User) session.getAttribute("user");
 
@@ -359,7 +457,52 @@ public class RentalCarController {
             return generateResponse(response, "error", "Car-owner doesn’t have enough balance. Please try again later!");
         }
 
-        // Default error message
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        List<MyBookingDto> bookingList = bookingPages.getContent();
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
+        if (bookingList.isEmpty()) {
+            model.addAttribute("message", "You have no booking");
+        } else {
+            model.addAttribute("bookingList", bookingList);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", bookingPages.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
+
+        }
+
         return generateResponse(response, "error", "Error Return!");
     }
 
