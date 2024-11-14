@@ -28,6 +28,8 @@ import static com.rentalcar.rentalcar.common.Regex.*;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -110,14 +112,52 @@ public class RentalCarController {
     //Add
     @GetMapping("/booking-car")
 
-    public String bookingDetail(@RequestParam Integer CarId, Model model, HttpSession session) {
+    public String bookingDetail(@RequestParam Integer CarId, @RequestParam String startDate, @RequestParam String enDate
+                                 ,@RequestParam String address, @RequestParam String beforeNavigate,Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         CarDto car = rentalCarService.getCarDetails(CarId);
+        User userepo = userRepo.getUserById(user.getId());
+
+
+
 
         List<UserDto> users = getAllDriverAvailable();
+        // Định dạng ngày giờ đầu vào và đầu ra
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
+        SimpleDateFormat dateOutputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeOutputFormat = new SimpleDateFormat("HH:mm");
+        try {
+            // Chuyển đổi startDate và enDate sang định dạng mong muốn
+            Date start = inputFormat.parse(startDate);
+            Date end = inputFormat.parse(enDate);
+
+
+            // Định dạng ngày và giờ riêng biệt
+            String pickStartDate = dateOutputFormat.format(start); // Ngày bắt đầu
+            String pickTime = timeOutputFormat.format(start); // Giờ bắt đầu
+
+            String dropDate = dateOutputFormat.format(end); // Ngày kết thúc
+            String dropTime = timeOutputFormat.format(end); // Giờ kết thúc
+
+
+
+            model.addAttribute("pickDate", pickStartDate);
+            model.addAttribute("dropDate", dropDate);
+            model.addAttribute("pickTime", pickTime);
+            model.addAttribute("dropTime", dropTime);
+            model.addAttribute("startDate", startDate);
+            model.addAttribute("enDate", enDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Xử lý lỗi nếu không thể phân tích chuỗi đầu vào
+        }
+
+        model.addAttribute("lastLink", beforeNavigate);
         model.addAttribute("users", users);
         model.addAttribute("car", car);
+        model.addAttribute("address", address);
         model.addAttribute("user", user);
+        model.addAttribute("userRepo", userepo);
         return "customer/booking";
     }
 
