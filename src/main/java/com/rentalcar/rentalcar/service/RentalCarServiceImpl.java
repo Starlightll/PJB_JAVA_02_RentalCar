@@ -59,6 +59,8 @@ public class RentalCarServiceImpl implements RentalCarService {
     EmailService emailService;
 
     @Autowired UserRepo userRepository;
+    @Autowired
+    private CarStatusRepository carStatusRepository;
 
     @Override
     public Page<MyBookingDto> getBookings(int page, int size, String sortBy, String order, HttpSession session) {
@@ -278,6 +280,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
         try {
+            LocalDateTime a = bookingDto.getPickUpDate();
 
             long numberOfDays = ChronoUnit.DAYS.between(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
             Double totalPrice = car.getBasePrice() * numberOfDays;
@@ -330,36 +333,57 @@ public class RentalCarServiceImpl implements RentalCarService {
                     userRepository.save(driver);
                 }
             }
+
+            //THAY ĐỔI TRẠNG THÁI CHO XE
+            CarStatus notAvailableStatus = carStatusRepository.findByName("BOOKED")
+                    .orElseThrow(() -> new RuntimeException("Status not found"));
+            car.setCarStatus(notAvailableStatus);
+            carRepository.save(car);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
         //CHỌN VÍ ĐỂ TRẢ CỌC
-        User users = userRepository.getUserById(user.getId());
+        User customer = userRepository.getUserById(user.getId());
+        User carOwner = userRepository.getUserById(car.getUser().getId());
         if(bookingDto.getSelectedPaymentMethod() == 1) {
-            //KIỂM TRA TIỀN TRONG VÍ CÓ ĐỦ ĐỂ ĐẶT CỌC HAY KHÔNG
-
-            BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
-            BigDecimal myWallet = user.getWallet() != null ? users.getWallet() : BigDecimal.ZERO;
-            if (myWallet.compareTo(deposit) < 0) {
-                throw new RuntimeException("Your wallet must be greater than deposit");
-            } else {
-                BigDecimal depositedMoney = myWallet.subtract(deposit);
-                user.setWallet(depositedMoney);
-                userRepository.save(user);
-                session.setAttribute("user", user);
-            }
+            calculateAndDeductDeposit(bookingDto, customer, carOwner, session);  //XỬ LÝ TIỀN TRONG CỌC
         } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
             throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
         }
 
-        //MAIL TO USER
-        emailService.sendBookingConfirmation(user, bookingDto, booking,car);
+        //MAIL TO CUSTOMER
+        emailService.sendBookingConfirmation(customer, bookingDto, booking,car);
+        //MAIL TO CAR OWNER
 
+        emailService.sendBookingConfirmationWithDeposit(carOwner ,bookingDto , booking, car,  Double.parseDouble(bookingDto.getDeposit()));
 
         return booking;
     }
+
+
+    private void calculateAndDeductDeposit(BookingDto bookingDto, User customer, User carOwner, HttpSession session) {
+        BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
+        BigDecimal myWallet = customer.getWallet() != null ? customer.getWallet() : BigDecimal.ZERO; // VÍ CỦA CUSTOMER
+        BigDecimal carOwnerWallet = carOwner.getWallet() != null ? carOwner.getWallet() : BigDecimal.ZERO; // VÍ CỦA CAR OWNER
+
+        if (myWallet.compareTo(deposit) < 0) {
+            throw new RuntimeException("Your wallet must be greater than deposit");
+        } else {
+            BigDecimal depositedMoney = myWallet.subtract(deposit);
+            customer.setWallet(depositedMoney);
+            userRepository.save(customer); // TRỪ TIỀN THÀNH CÔNG
+            session.setAttribute("user", customer);
+
+            // CỘNG TIỀN CHO CAR OWNER
+            BigDecimal moneyReceive = carOwnerWallet.add(deposit);
+            carOwner.setWallet(moneyReceive);
+            userRepository.save(carOwner); // CỘNG TIỀN THÀNH CÔNG
+        }
+    }
+
 
 
 }
