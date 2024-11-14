@@ -144,15 +144,14 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 return -1; // Tiền trong ví không đủ
             } else {
                 // Nếu ví người dùng đủ tiền, trừ tiền vào ví của khách hàng và chuyển cho chủ xe
-                BigDecimal remainingBalance = totalPrice.subtract(deposit);
-                BigDecimal updatedUserWallet = myWallet.subtract(remainingBalance);
+                BigDecimal updatedUserWallet = myWallet.subtract(totalPrice.subtract(deposit));
                 user.setWallet(updatedUserWallet);
                 userRepository.save(user);
                 session.setAttribute("user", user);
 
                 // Cập nhật ví của chủ xe
                 BigDecimal carOwnerWallet = bookingDto.getCarOwnerWallet() != null ? bookingDto.getCarOwnerWallet() : BigDecimal.ZERO;
-                BigDecimal updatedCarOwnerWallet = carOwnerWallet.add(remainingBalance);
+                BigDecimal updatedCarOwnerWallet = carOwnerWallet.add(totalPrice.subtract(deposit));
                 User carOwner = userRepository.getUserById(bookingDto.getCarOwnerId());
                 carOwner.setWallet(updatedCarOwnerWallet);
                 userRepository.save(carOwner);
@@ -190,13 +189,12 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 return -2; // Chủ xe không đủ tiền để trả lại cho khách hàng
             } else {
                 // Cập nhật ví của chủ xe và khách hàng
-                BigDecimal remainingDeposit = deposit.subtract(totalPrice);
-                BigDecimal updatedCarOwnerWallet = bookingDto.getCarOwnerWallet().subtract(remainingDeposit);
+                BigDecimal updatedCarOwnerWallet = bookingDto.getCarOwnerWallet().subtract(deposit.subtract(totalPrice));
                 User carOwner = userRepository.getUserById(bookingDto.getCarOwnerId());
                 carOwner.setWallet(updatedCarOwnerWallet);
                 userRepository.save(carOwner);
 
-                BigDecimal updatedCustomerWallet = user.getWallet().add(remainingDeposit);
+                BigDecimal updatedCustomerWallet = user.getWallet().add(deposit.subtract(totalPrice));
                 user.setWallet(updatedCustomerWallet);
                 userRepository.save(user);
                 session.setAttribute("user", user);
