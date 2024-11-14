@@ -39,6 +39,7 @@
                     <button class="btn btn-success  ">Top-up</button>
                 </div>
             </div>
+            <div class="alert alert-danger mt-3" th:if="${errorPayment != null}" th:text="${errorPayment}"></div>
 
             <!-- Date Filters Row -->
             <div class="row mt-4">

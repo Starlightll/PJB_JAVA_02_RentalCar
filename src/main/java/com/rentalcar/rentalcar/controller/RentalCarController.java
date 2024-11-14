@@ -237,12 +237,12 @@ public class RentalCarController {
         boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
 
         if (isCancelled) {
-            model.addAttribute("message", "Booking has been successfully cancelled.");
+            model.addAttribute("message_" + bookingId, "Booking has been successfully cancelled.");
         } else {
             model.addAttribute("error", "Unable to cancel the booking. Please try again.");
         }
 
-        return "redirect:/my-bookings";
+        return "forward:/my-bookings";
 
     }
 
@@ -263,38 +263,73 @@ public class RentalCarController {
             model.addAttribute("error", "Unable to confirm the booking. Please try again.");
         }
 
-        return "redirect:/my-bookings";
+        return "forward:/my-bookings";
     }
 
     @GetMapping("/return-car")
     public ResponseEntity<?> returnCar(@RequestParam("bookingId") Long bookingId,
-                                       HttpSession session, @RequestParam(defaultValue = "1") int page,
+                                       HttpSession session,
+                                       @RequestParam(defaultValue = "1") int page,
                                        @RequestParam(defaultValue = "10") int size,
                                        @RequestParam(defaultValue = "lastModified") String sortBy,
-                                       @RequestParam(defaultValue = "desc") String order,
-                                       Model model) {
+                                       @RequestParam(defaultValue = "desc") String order) {
         String responseMessage = returnCarService.returnCar(bookingId, session);
 
-        return ResponseEntity.ok(responseMessage);
+        // Trả về thông điệp JSON với trạng thái "success"
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", responseMessage);
 
+        return ResponseEntity.ok(response);
     }
+
+
 
     @GetMapping("/confirm-return-car")
-    public  ResponseEntity<?>  confirmReturnCar(@RequestParam("bookingId") Long bookingId,
-                                   HttpSession session, @RequestParam(defaultValue = "1") int page,
-                                   @RequestParam(defaultValue = "10") int size,
-                                   @RequestParam(defaultValue = "lastModified") String sortBy,
-                                   @RequestParam(defaultValue = "desc") String order,
-                                   Model model) {
+    public ResponseEntity<Map<String, Object>> confirmReturnCar(@RequestParam("bookingId") Long bookingId,
+                                                                HttpSession session,
+                                                                @RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(defaultValue = "lastModified") String sortBy,
+                                                                @RequestParam(defaultValue = "desc") String order) {
+        // Retrieve user from session
         User user = (User) session.getAttribute("user");
-//        if(user.getWallet().doubleValue() < returnCarService.calculateTotalPrice(bookingId)) {
-        return ResponseEntity.ok("Your wallet doesn’t have enough balance. Please top-up your wallet and try again!");
-//        }
 
+        // Initialize response map
+        Map<String, Object> response = new HashMap<>();
 
-//        model.addAttribute("errorPayment", "Your wallet doesn’t have enough balance. Please top-up your wallet and try again!");
+        // Check if the user is present in the session
+        if (user == null) {
+            return generateResponse(response, "error", "User not found in session.");
+        }
 
-//        return "redirect:wallet/my-wallet";
+        // Call confirmReturnCar to process the return logic
+        int caseReturn = returnCarService.confirmReturnCar(bookingId, session);
+
+        // Handle response based on caseReturn value
+        if (caseReturn == 1 ) {
+            return generateResponse(response, "success", "Booking has been successfully completed.");
+        } else if (caseReturn == 2) {
+            return generateResponse(response, "success", "Return car has been successfully completed.");
+
+        } else if (caseReturn == -1) {
+            return generateResponse(response, "error", "Your wallet doesn’t have enough balance. Please top-up your wallet and try again");
+        } else if (caseReturn == -2) {
+            boolean isUpdate = returnCarService.updateBookingPendingPayment(bookingId, session);
+            return generateResponse(response, "error", "Car-owner doesn’t have enough balance. Please try again later!");
+        }
+
+        // Default error message
+        return generateResponse(response, "error", "Error Return!");
     }
+
+    private ResponseEntity<Map<String, Object>> generateResponse(Map<String, Object> response, String status, String message) {
+        response.put("status", status);
+        response.put("message", message);
+        return ResponseEntity.ok(response);
+    }
+
+
+
 
 }
