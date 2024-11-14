@@ -46,12 +46,25 @@ public class BookingDetailsController {
     public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
-        MyBookingDto booking = viewEditBookingService.getBookingDetail(bookingId, carId,session);
+        MyBookingDto booking = new MyBookingDto();
+        try {
+             booking = viewEditBookingService.getBookingDetail(bookingId, carId, session);
+        } catch (RuntimeException e) {
+            switch (e.getMessage()) {
+                case "user not found":
+                    return "redirect:/login";
+                case "booking detail not found":
+                    return "redirect:/my-bookings";
+            }
+        }
         List<UserDto> listDriver = getAllDriverAvailable();
 
         //=========================================================== Car detail ===================================================
 
         Car car = carRepository.getCarByCarId(carId);
+        if(car == null) {
+            return "redirect:/";
+        }
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
         model.addAttribute("carStatus", carStatusRepository.findAll());
