@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -34,8 +34,8 @@ public class UserInfoDto {
         @Pattern(regexp = "^\\+?[0-9]{10}$", message = "Phone number must contain only numbers")
         private String phone;
 
-        @NotBlank(message = "Driving License ID is required")
-        private String drivingLicense;
+        private MultipartFile drivingLicense;
+        private String drivingLicensePath;
 
 
         private String city;
