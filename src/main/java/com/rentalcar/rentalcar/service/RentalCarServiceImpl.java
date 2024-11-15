@@ -68,26 +68,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-        switch (sortBy) {
-            case "newestToLatest":
-                sortBy = "lastModified";
-                order = "desc";
-                break;
-            case "latestToNewest":
-                sortBy = "lastModified";
-                order = "asc";
-                break;
-            case "priceLowToHigh":
-                sortBy = "basePrice";
-                order = "asc";
-                break;
-            case "priceHighToLow":
-                sortBy = "basePrice";
-                order = "desc";
-                break;
-            default:
-                break;
-        }
+
         List<MyBookingDto> bookingDtos = new ArrayList<>();
         Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(sorDirection, sortBy);
@@ -119,7 +100,8 @@ public class RentalCarServiceImpl implements RentalCarService {
                     (String) result[12],
                     (String) result[13],
                     (String) result[14],
-                    (String) result[15]
+                    (String) result[15],
+                    (Integer) result[16]
             );
             bookingDtos.add(bookingDto);
         }

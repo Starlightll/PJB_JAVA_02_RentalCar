@@ -25,6 +25,7 @@ public interface RentalCarRepository extends JpaRepository<Booking, Long> {
             "\t  ,c.back\n" +
             "\t  ,c.[left]\n" +
             "\t  ,c.[right]\n" +
+            "\t  ,c.carId\n" +
             "  FROM [RentalCar].[dbo].[Booking] b\n" +
             "  Join [dbo].[Users] u On u.userId = b.userId\n" +
             "  Join [dbo].[BookingCar] bc on bc.bookingId = b.bookingId\n" +
@@ -56,7 +57,9 @@ public interface RentalCarRepository extends JpaRepository<Booking, Long> {
             "       c.front,\n" +
             "       c.back,\n" +
             "       c.[left],\n" +
-            "       c.[right]\n" +
+            "       c.[right],\n" +
+            "       c.carId,\n" +
+            "       b.driverId\n" +
             "FROM RentalCar.dbo.Booking b\n" +
             "JOIN dbo.Users u ON u.userId = b.userId\n" +
             "JOIN dbo.BookingCar bc ON bc.bookingId = b.bookingId\n" +

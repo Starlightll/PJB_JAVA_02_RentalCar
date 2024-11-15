@@ -6,6 +6,7 @@
 <head>
     <title>Edit Booking Details</title>
     <meta name="_csrf" th:content="${_csrf.token}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -144,6 +145,29 @@
             font-size: 1.2rem;
         }
 
+
+        #button {
+            display:  flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-confirm-btn, .custom-cancel-btn {
+            width: 100px; /* Make both buttons the same width */
+            padding: 10px; /* Add padding for better appearance */
+        }
+
+        .custom-confirm-btn {
+            background-color: #333; /* Set OK button color to black */
+            color: white;
+            border: none;
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .custom-confirm-btn:hover {
+            background-color: #01d28e; /* Change OK button to green on hover */
+        }
+
     </style>
 </head>
 
@@ -228,7 +252,7 @@
                                     <h5 class="card-title"></h5>
                                     <div class="row d-flex justify-content-center">
 <!--                                        <th:block th:object="${booking}">-->
-<!--                                            <input type="text" th:value="${car.getCarId()}" th:id="bookingId" hidden>-->
+                                            <input type="text" id="carId" th:value="${car.getCarId()}"  hidden>
                                             <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
                                                 <div class="col-lg-6 col-md-6 d-flex align-items-center">
                                                     <div class="wrapper" style="max-height: 270px">
@@ -349,7 +373,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                                     <!-- View Details button: always visible -->
-                                                    <a th:href="'/edit-car/' + ${booking.bookingId}"
+                                                    <a th:href="'/carDetail/' + ${car.carId}"
                                                        class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                         Details</a>
 
@@ -413,24 +437,30 @@
                                                         <input type="text" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="fullName" th:value="${user.getFullName()}" name="fullName">
+                                                               id="fullName"
+                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:value="${driverDetail.getFullName()}" name="fullName">
                                                     </div>
                                                     <a class="validate-msg" id="FullNameValidate">Invalid</a>
                                                 </div>
-                                                <div class="col-lg-6 mb-3 ">
+                                                <div class="col-lg-6 mb-3 required-label ">
 
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-prepend">
                                                                         <span class="input-group-text "
                                                                         >Date Of Birth</span>
                                                         </div>
-                                                        <input type="date" th:value="${user.getDob()}" class="form-control"
+                                                        <input type="date" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="dateOfBirth" name="dateOfBirth">
+                                                               th:value="${driverDetail.getDob()}"
+                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               oninput="validateDob()" id="book_pick_date">
+
                                                         <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>
 
                                                     </div>
+                                                    <div id="dateError" style="color: red"></div>
                                                 </div>
                                                 <div class="col-lg-6 mb-3 ">
 
@@ -439,11 +469,14 @@
                                                                         <span class="input-group-text "
                                                                         >Phone Number</span>
                                                         </div>
-                                                        <input type="text" th:value="${user.getPhone()}" class="form-control"
+                                                        <input type="text" th:value="${driverDetail.getPhone()}" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="phoneNumber" name="phoneNumber">
+                                                               id="phone" name="phoneNumber"
+                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               oninput="validatePhone()">
                                                     </div>
+                                                    <div id="phoneError" style="color: red"></div>
                                                     <a class="validate-msg" id="phoneNumberValidate">Invalid</a>
 
                                                 </div>
@@ -453,11 +486,14 @@
                                                                         <span class="input-group-text "
                                                                         >Email Address</span>
                                                         </div>
-                                                        <input type="text" th:value="${user.getEmail()}" class="form-control"
+                                                        <input type="text" th:value="${driverDetail.getEmail()}" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="emailAddress" name="emailAddress">
+                                                               id="email" name="emailAddress"
+                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               oninput="validateEmail()">
                                                     </div>
+                                                    <div id="emailError" style="color: red"></div>
                                                     <a class="validate-msg" id="emailAddressValidate">Invalid</a>
                                                 </div>
                                                 <div class="col-lg-6 mb-3 ">
@@ -466,24 +502,35 @@
                                                                         <span class="input-group-text "
                                                                         >National ID No:</span>
                                                         </div>
-                                                        <input type="text" th:value="${user.getNationalId()}" class="form-control"
+                                                        <input type="text" th:value="${driverDetail.getNationalId()}" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="nationalIDNo" name="nationalIDNo">
+                                                               id="nationalId" name="nationalIDNo"
+                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               oninput="validateNationalId()">
                                                     </div>
+                                                    <div id="nationalIdError" style="color: red"></div>
                                                     <a class="validate-msg" id="nationalIDNoValidate">Invalid</a>
                                                 </div>
                                                 <div class="col-lg-6 mb-3 ">
                                                     <div class="input-group input-group-sm">
-                                                        <div class="input-group-prepend">
-                                                                        <span class="input-group-text "
-                                                                        >Driving License</span>
+                                                        <div class="input-group-prepend" style="max-height: 33.5px;">
+                                                            <span class="input-group-text" id="inputGroupFileAddon011" >Driving license</span>
                                                         </div>
-                                                        <input type="text" class="form-control"
-                                                               aria-label="Sizing example input"
-                                                               aria-describedby="inputGroup-sizing-default"
-                                                               id="drivingLicense" th:value="${user.getDrivingLicense()}" name="drivingLicense">
+                                                        <div class="custom-file">
+                                                            <input type="file" accept="image/*" class="custom-file-input" th:text="${driverDetail.getDrivingLicense()}" id="inputGroupFile011"
+                                                                   aria-describedby="inputGroupFileAddon01"
+                                                                   th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                   onchange="validateDrivingLicense()" >
+                                                            <label class="custom-file-label" for="inputGroupFile011" style="font-size: small !important;" id="fileName">Choose file</label>
+                                                        </div>
                                                     </div>
+                                                    <!-- Display the current file name if available -->
+                                                    <div th:if="${driverDetail.getDrivingLicense() != null}">
+                                                        <p style="font-size: small !important;">Current file: <span th:text="${driverDetail.getDrivingLicense()}"></span></p>
+                                                    </div>
+                                                    <div id="drivingLicenseError" style="color: red"></div>
+
                                                     <a class="validate-msg" id="drivingLicenseValidate">Invalid</a>
                                                 </div>
 
@@ -497,9 +544,8 @@
                                                                     <label class="input-group-text"
                                                                            for="province">Province</label>
                                                                 </div>
-                                                                <select class="custom-select" id="province"
-                                                                        th:value="${user.getCity()}"
-                                                                        th:data-default="${user.getCity()}">
+                                                                <select class="custom-select" id="province" th:value="${driverDetail.getCity()}" th:data-default="${driverDetail.getCity()}"
+                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -512,9 +558,8 @@
                                                                     <label class="input-group-text"
                                                                            for="district">District</label>
                                                                 </div>
-                                                                <select class="custom-select" id="district"
-                                                                        th:value="${user.getDistrict()}"
-                                                                        th:data-default="${user.getDistrict()}">
+                                                                <select class="custom-select" id="district" th:value="${driverDetail.getDistrict()}" th:data-default="${driverDetail.getDistrict()}"
+                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -527,9 +572,8 @@
                                                                     <label class="input-group-text"
                                                                            for="ward">Ward</label>
                                                                 </div>
-                                                                <select class="custom-select" id="ward"
-                                                                        th:value="${user.getWard()}"
-                                                                        th:data-default="${user.getWard()}">
+                                                                <select class="custom-select" id="ward" th:value="${driverDetail.getWard()}" th:data-default="${driverDetail.getWard()}"
+                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}" >
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -545,7 +589,7 @@
                                                                        aria-label="Sizing example input"
                                                                        aria-describedby="inputGroup-sizing-default"
                                                                        id="street"
-                                                                       th:value="${user.getStreet()}">
+                                                                       th:value="${driverDetail.getStreet()}">
                                                             </div>
                                                             <a class="validate-msg">Invalid</a>
                                                         </div>
@@ -553,16 +597,61 @@
                                                 </div>
 
                                             </div>
+                                            <div>
+                                                <h5 class="card-title">Driver's information</h5>
+                                                <div class="row">
+                                                    <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
+                                                        <input type="checkbox" id="differentInfoCheckbox"
+                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                        <svg viewBox="0 0 21 21">
+                                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                        </svg>
+                                                        <span>Different than Renter's information</span>
+                                                    </label>
+                                                </div>
+                                                <div id="driverInfoTable" style="display: none; width: 100%">
+                                                    <div>
+                                                        <table class="table table-dark table-hover">
+                                                            <thead>
+                                                            <tr>
+                                                                <!--                                                                            <th scope="col">-->
+                                                                <!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
+                                                                <!--                                                                            </th>-->
+                                                                <th></th>
+
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Date</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr th:each="user : ${users}">
+                                                                <th scope="row">
+                                                                    <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow"
+                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                           th:checked="${user.userId == booking.getDriverId()}" onclick="selectOnlyOne(this)" />
+                                                                </th>
+                                                                <td th:text="${user.getFullName()}"></td>
+                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
+                                                            </tr>
+
+                                                            <!-- Các hàng khác... -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                             <div id="button">
-                                                <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                        onclick="window.history.back()">Back
+                                                <button class="btn-primary btn" style="width: 100px; margin: 10px 10px 10px 10px"
+                                                        onclick="window.history.back()">Discard
                                                 </button>
-                                                <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                        onclick="window.location.reload()">Discard
+                                                <button class="btn-primary btn" id="save" style="width: 100px; margin: 10px 10px 10px 10px"
+                                                        onclick="updateBooking()">Save
                                                 </button>
-                                                <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                        onclick="updateCar()">Save
-                                                </button>
+                                            </div>
+                                            <div th:if="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                 style="color: red; margin-top: 10px;">
+                                                This booking cannot be edited as its status is <span th:text="${booking.getBookingStatus()}"></span>.
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="nav-profile" role="tabpanel"
@@ -796,8 +885,8 @@
                                                                 <input type="checkbox"
                                                                        th:value="${function.functionId}"
                                                                        name="additionalFunction"
-                                                                       th:checked="${car.getAdditionalFunctions() != null && car.additionalFunctions.contains(function)}">
-                                                                <svg viewBox="0 0 21 21">
+                                                                       th:checked="${car.getAdditionalFunctions() != null && car.additionalFunctions.contains(function)}" disabled>
+                                                                <svg viewBox="0 0 21 21" disabled>
                                                                     <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                                                 </svg>
                                                                 <span th:text="${function.functionName}"></span>
@@ -884,74 +973,98 @@
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
-        function updateCar() {
-            const mileage = document.getElementById('mileage').value;
-            const fuelConsumption = document.getElementById('fuelConsumption').value;
-            const province = document.getElementById('province').value + "," + document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
-            const district = document.getElementById('district').value + "," + document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
-            const ward = document.getElementById('ward').value + "," + document.getElementById('ward').options[document.getElementById('ward').selectedIndex].text;
-            const street = document.getElementById('street').value;
-            const checkboxes = document.querySelectorAll('input[name="additionalFunction"]:checked');
-            const additionalFunction = [];
-            checkboxes.forEach((checkbox) => {
-                additionalFunction.push(checkbox.value);
-            });
-            const basePrice = document.getElementById('basePrice').value;
-            const deposit = document.getElementById('deposit').value;
-            const termOfUse = document.getElementById('termOfUse').value;
-            const carPrice = document.getElementById('carPrice').value;
-            const carId = document.getElementById('carId').value;
-            const carStatus = document.getElementById('carStatus').value;
-            const description = document.getElementById('description').value;
+        function updateBooking() {
 
-            const carData = {
-                mileage: mileage,
-                fuelConsumption: fuelConsumption,
-                additionalFunction: additionalFunction.join(','),
-                province: province,
-                district: district,
-                ward: ward,
-                home: street,
-                basePrice: basePrice,
-                deposit: deposit,
-                terms: termOfUse,
-                carPrice: carPrice,
-                description: description,
-            };
+                // const pickupLocationTxt = document.getElementById('pickupLocation').innerText;
+                // const pickupDate = document.getElementById('pickupDate').innerText;
+                // const returnDate = document.getElementById('returnDate').innerText;
+                //
+                // const pickupDateFormatted = formatToDatetimeDB(pickupDate);
+                // const returnDateFormatted = formatToDatetimeDB(returnDate);
+                //
+                // document.getElementById('editPickupLocation').value = pickupLocationTxt;
+                // document.getElementById('editPickupDate').value = pickupDateFormatted;
+                // document.getElementById('editReturnDate').value = returnDateFormatted;
+                //
+                // console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
+                // console.log("editPickupDate:", document.getElementById("editPickupDate").value);
+                // console.log("editReturnDate:", document.getElementById("editReturnDate").value);
+                //==========================================================================
 
-            const formData = new FormData();
-            //Add carId to formData
-            formData.append("carId", carId);
-            //Add carStatus to formData
-            formData.append("carStatus", carStatus);
-            // Add the carDraft object as JSON string
-            formData.append("carData", JSON.stringify(carData));
+                // const pickUpLocation = pickupDateFormatted; document.getElementById("editPickupLocation").value;
+                // const pickUpDateTime = pickupDateFormatted;
+                // const returnDateTime = returnDateFormatted;
+                // const depositValue = depositText.replace(/[^0-9]/g, '');
+                const checked = document.getElementById("differentInfoCheckbox").checked;
+                const carId = document.getElementById("carId").value;
+                const bookingId = document.getElementById("bookingId").value;
+                const fullName = document.getElementById('fullName').value;
+                const bookPickDate = document.getElementById('book_pick_date').value;
+                const phone = document.getElementById('phone').value;
+                const email = document.getElementById('email').value;
+                const nationalId = document.getElementById("nationalId").value;
+                const drivingLicense = document.getElementById("inputGroupFile011").value;
+                const province =  document.getElementById('province').value
+                const district =  document.getElementById('district').value;
+                const ward =  document.getElementById('ward').value;
+                const street = document.getElementById('street').value;
 
-            const fileInputs = {
-                "frontImage": document.getElementById("input-file4"),
-                "backImage": document.getElementById("input-file5"),
-                "leftImage": document.getElementById("input-file6"),
-                "rightImage": document.getElementById("input-file7")
-            };
+                // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
+                let selectedUserId = null;
+                const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
 
-            // Check if files exist before adding to FormData
-            for (const [key, input] of Object.entries(fileInputs)) {
-                if (input && input.files && input.files[0]) {
-                    formData.append(key, input.files[0]);
-                } else {
-                    // If file is not selected, append null or empty file to maintain the structure
-                    formData.append(key, new Blob([], {type: 'application/octet-stream'}));
+                if (selectedCheckbox) {
+                    selectedUserId = selectedCheckbox.value;
                 }
-            }
-            console.log(carData);
-            console.log(fileInputs);
-            if (!validate()) {
-                console.warn("Validation failed, try again!.");
-                alert("Validation failed");
-                return false;
-            } else {
+
+                console.log("Selected User IDs:", selectedUserId);
+
+
+
+
+                const bookingInfor = {
+                    // location: pickUpLocation,
+                    // pickUpDate: pickUpDateTime,
+                    // returnDate: returnDateTime,
+                    // deposit: depositValue,
+                    // step: actualStep,
+                    isCheck: checked,
+                    carID: carId,
+                    bookingId: bookingId,
+                    rentFullName: fullName,
+                    rentBookPickDate: bookPickDate,
+                    rentPhone: phone,
+                    rentMail: email,
+                    rentNationalId: nationalId,
+                    rentDrivingLicense: drivingLicense,
+                    rentProvince: province,
+                    rentDistrict: district,
+                    rentWard: ward,
+                    rentStreet: street,
+                    selectedUserId: selectedUserId,
+                };
+
+                console.log(bookingInfor)
+                // Tạo FormData
+                const formData = new FormData();
+                formData.append("bookingInfo", JSON.stringify(bookingInfor));
+
+                const fileInputs = {
+                    "drivingLicense": document.getElementById("inputGroupFile011"),
+                };
+
+                // Kiểm tra các file và thêm vào FormData
+                for (const [key, input] of Object.entries(fileInputs)) {
+                    if (input && input.files && input.files[0]) {
+                        formData.append(key, input.files[0]);
+                    } else {
+                        formData.append(key, new Blob([], { type: 'application/octet-stream' }));
+                    }
+                }
+
+                // Gửi AJAX request
                 $.ajax({
-                    url: '/car-owner/update-car',
+                    url: '/update-booking-car',
                     type: 'POST',
                     data: formData,
                     processData: false,
@@ -960,36 +1073,41 @@
                         'X-CSRF-TOKEN': csrfToken
                     },
                     success: function (response) {
-                        console.log("Car updated successfully", response);
-                        Swal.fire({
-                            title: 'Updated!',
-                            text: '' +
-                                '',
-                            icon: 'success',
-                            confirmButtonText: 'OK',
-                            customClass: {
-                                confirmButton: 'my-custom-button'
-                            }
-                        });
-                        return true;
+
+                        // Lấy thông tin từ Map
+                        const message = response.message;
+
+                        if(message === "update successfully.") {
+                            Swal.fire({
+                                title: 'Registered successfully!',
+                                text: 'Booking updated successfully',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    confirmButton: 'custom-confirm-btn'
+                                }
+                            });
+                        }
+
+                        console.log("Booking update successfully", message);
+                        return true; // Thành công
                     },
                     error: function (xhr, status, error) {
                         if (xhr.status === 400) {
-                            // Display the custom error message from the server
-                            $('#confirmModal').modal('show');
-                            $('#ModalTitle').text("Format!");
-                            $('#ModalBody').html(xhr.responseText);
-                            $('#confirm').text("OK").click(function () {
-                                $('#confirmModal').modal('hide');
-                            });
-                            $('#notConfirm').hide();
+                            if(xhr.responseText === "Your wallet must be greater than deposit") {
+
+                                const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Nạp tiền</a>`;
+                                const errorMessage = `Ví của bạn không đủ tiền để đặt xe. ${topUpLink} để tiếp tục.`;
+
+                                $('#error-message').html(errorMessage);
+                            }
+                            alert(xhr.responseText); // Hiển thị lỗi nếu có
                         } else {
                             console.log("Other Error:", error);
                         }
-                        return false;
+                        return false; // Thất bại
                     }
                 });
-            }
         }
 
         const MAX_FILE_MB = 200;
@@ -1024,87 +1142,117 @@
         }
 
 
-        function displayExistingImage(imageView, imageUrl) {
-            if (imageUrl) {
-                if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {
-                    imageView.style.backgroundImage = 'url(/' + imageUrl.replaceAll("\\", "/") + ')';
-                    imageView.style.backgroundSize = "cover";
-                    imageView.style.backgroundPosition = "center";
-                    imageView.innerHTML = "";
+
+        // Check if all fields are valid before enabling the "Next" button
+        function checkValidations() {
+            const saveButton = document.getElementById("save");
+
+            // Collect error messages
+            const emailError = document.getElementById("emailError").textContent;
+            const phoneError1 = document.getElementById("phoneError").textContent;
+            const dobError = document.getElementById("dateError").textContent;
+            const nationalIdError = document.getElementById("nationalIdError").textContent;
+            const fileNameError = document.getElementById("drivingLicenseError").textContent;
+
+            // If all error messages are empty, enable the button; otherwise, disable it
+            if (!emailError && !phoneError1 && !dobError && !nationalIdError && !fileNameError) {
+                saveButton.disabled = false;
+            } else {
+                saveButton.disabled = true;
+            }
+        }
+
+        // Email Validation
+        function validateEmail() {
+            const email = document.getElementById("email").value;
+            const emailError = document.getElementById("emailError");
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email)) {
+                emailError.textContent = "Please enter a valid email address.";
+            } else {
+                emailError.textContent = "";
+            }
+            checkValidations();
+        }
+
+        // Phone Validation
+        function validatePhone() {
+            const phone1 = document.getElementById("phone").value;
+            const phoneError1 = document.getElementById("phoneError");
+            const phonePattern = /^(0|(\+84))?(3|5|7|8|9)\d{8}$/;
+            if (!phonePattern.test(phone1)) {
+                phoneError1.textContent = "Invalid phone number format.";
+            } else {
+                phoneError1.textContent = "";
+            }
+            checkValidations();
+        }
+
+        // Date of Birth Validation with 18+ Age Check
+        function validateDob() {
+            const dob = document.getElementById("book_pick_date").value;
+            const dobError = document.getElementById("dateError");
+            const dobDate = new Date(dob);
+            const today = new Date();
+            const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+            if (!dob || dobDate > minAgeDate) {
+                dobError.textContent = "You must be at least 18 years old.";
+            } else {
+                dobError.textContent = "";
+            }
+            checkValidations();
+        }
+
+        // National ID Validation
+        function validateNationalId() {
+            const nationalId = document.getElementById("nationalId").value;
+            const nationalIdError = document.getElementById("nationalIdError");
+            const nationalIdPattern = /^[0-9]{9,}$/;
+            if (!nationalIdPattern.test(nationalId)) {
+                nationalIdError.textContent = "Please enter a valid national ID.";
+            } else {
+                nationalIdError.textContent = "";
+            }
+            checkValidations();
+        }
+
+        // Driving License Validation
+        function validateDrivingLicense() {
+            const fileInput = document.getElementById("inputGroupFile011");
+            const fileNameErrorInner = document.getElementById("fileName");
+            const fileNameError = document.getElementById("drivingLicenseError");
+            const file = fileInput.files[0];
+            const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+
+            if (file) {
+                if (!validImageTypes.includes(file.type)) {
+                    fileNameErrorInner.textContent = "Please upload an image file (JPEG, PNG, GIF).";
+                    fileNameErrorInner.style.color = "red";
+                    fileInput.value = "";
+                    fileNameError.textContent = "Invalid file type.";
                 } else {
-                    imageView.style.backgroundImage = "none";
-                    imageView.innerHTML = `
-                <i class="fa-solid fa-file fa-2x"></i>
-                <p>File đã tải lên</p>
-            `;
+                    fileNameErrorInner.textContent = "File selected";
+                    fileNameErrorInner.style.color = "green";
+                    fileNameError.textContent = "";
                 }
-                imageView.style.border = "none";
+            } else {
+                fileNameError.textContent = "Please upload a driving license image.";
             }
+            checkValidations();
         }
 
-        function initializeDropArea(index) {
-            const dropArea = document.getElementById(`drop-area${index}`);
-            const inputFile = document.getElementById(`input-file${index}`);
-            const imageView = document.getElementById(`img-view${index}`);
+        function toggleDriverInfoFields() {
+            const checkbox = document.getElementById('differentInfoCheckbox');
+            const table = document.getElementById('driverInfoTable');
 
-            // Hiển thị ảnh đã có nếu có
-            const existingImageUrl = imageView.getAttribute('data-image-url');
-            if (existingImageUrl) {
-                displayExistingImage(imageView, existingImageUrl);
-            }
-
-            // Xử lý sự kiện change của input file
-            inputFile.addEventListener("change", function () {
-                uploadfile(imageView, inputFile);
-            });
-
-            // Xử lý sự kiện dragover
-            dropArea.addEventListener("dragover", function (e) {
-                e.preventDefault();
-                dropArea.style.background = "rgba(0, 0, 0, 0.1)";
-            });
-
-            // Xử lý sự kiện dragleave
-            dropArea.addEventListener("dragleave", function (e) {
-                e.preventDefault();
-                if (!dropArea.contains(e.relatedTarget)) {
-                    dropArea.style.background = "#d1d5d9";
-                }
-            });
-
-            // Xử lý sự kiện drop
-            dropArea.addEventListener("drop", function (e) {
-                e.preventDefault();
-                dropArea.style.background = "#d1d5d9";
-
-                const files = e.dataTransfer.files;
-
-                if (files.length > 0) {
-                    const validExtensions = ["jpg", "jpeg", "png"];
-                    const fileExtension = files[0].name.split('.').pop().toLowerCase();
-                    if (files[0].size > MAX_SIZE_BYTES) {
-                        alert("File size must be less than 200MB");
-                        return;
-                    }
-                    // Kiểm tra phần mở rộng file
-                    if (!validExtensions.includes(fileExtension)) {
-                        alert("Only accept file type: .jpg, .jpeg, .png");
-                        return;
-                    }
-
-                    inputFile.files = files; // Thiết lập files cho input
-                    uploadfile(imageView, inputFile); // Gọi hàm uploadfile
-                }
-            });
-        }
-
-        // Khởi tạo tất cả các vùng upload
-        for (let i = 4; i <= 7; i++) {
-            initializeDropArea(i);
+            // Hiển thị bảng nếu checkbox được chọn
+            table.style.display = checkbox.checked ? 'block' : 'none';
         }
 
 
-        //API
+
+
         // Call API to fetch provinces, districts and wards
         // Fetch provinces and set default city
         async function fetchProvinces(defaultCity) {
@@ -1189,26 +1337,22 @@
         });
 
 
+        // //Load location
+        // const province = document.getElementById('province');
+        // const district = document.getElementById('district');
+        // const ward = document.getElementById('district');
+        // const previewLocation = document.getElementById('previewLocation');
+        // ward.addEventListener('change', function(){
+        //     previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
+        // });
 
-
-        //Load price
-        const basePrice = document.getElementById('basePrice');
-        const basePricePreview = document.getElementById('previewPrice');
-        basePrice.addEventListener('input', function () {
-            const value = parseFloat(basePrice.value) || 0;
-            basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' K/Day';
-        });
-
-        const province = document.getElementById('province');
-        const district = document.getElementById('district');
-        const ward = document.getElementById('district');
-        const previewLocation = document.getElementById('previewLocation');
-        ward.addEventListener('change', function () {
-            previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
-        });
-
-
-        function checkDetails() {
+        function selectOnlyOne(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="selectRow"]');
+            checkboxes.forEach((cb) => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+        }
+        function checkDetails(){
             const mileage = document.getElementById('mileage').value;
             const fuelConsumption = document.getElementById('fuelConsumption').value;
             const province = document.getElementById('province').value;
@@ -1243,6 +1387,7 @@
             return true;
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/update-car-validate.js"></script>
     </body>
 </th:block>

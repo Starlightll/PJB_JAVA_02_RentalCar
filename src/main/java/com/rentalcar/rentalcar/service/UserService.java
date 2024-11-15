@@ -8,6 +8,12 @@ import com.rentalcar.rentalcar.repository.UserRepo;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +30,27 @@ public class UserService implements IUserService {
             users.setDob(user.getDob());
             users.setPhone(user.getPhone());
             users.setNationalId(user.getNationalId());
-            users.setDrivingLicense(user.getDrivingLicense());
+            MultipartFile drivingLicenseFile = user.getDrivingLicense();
+            if (drivingLicenseFile != null && !drivingLicenseFile.isEmpty()) {
+                try {
+                    // Define the directory where the file will be saved
+                    String uploadDir = "uploads/DriveLicense/" + users.getId()+ "_" + users.getUsername() +"/"; // Update as needed
+                    Files.createDirectories(Paths.get(uploadDir)); // Ensure directory exists
+
+                    String fileName = drivingLicenseFile.getOriginalFilename();
+                    Path filePath = Paths.get(uploadDir, fileName);
+
+                    // Save the file
+                    Files.write(filePath, drivingLicenseFile.getBytes());
+
+                    // Set the relative path for storing in the database
+                    users.setDrivingLicense(uploadDir + fileName);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // Optionally, log error or rethrow as custom exception
+                }
+            }
             users.setCity(user.getCity());
             users.setDistrict(user.getDistrict());
             users.setWard(user.getWard());

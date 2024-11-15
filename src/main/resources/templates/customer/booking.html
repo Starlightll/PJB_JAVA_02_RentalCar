@@ -410,7 +410,14 @@
                                                                         <div class="custom-file">
                                                                             <input type="file" accept="image/*" class="custom-file-input" th:value="${user.getDrivingLicense()}" id="inputGroupFile011"
                                                                                    aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()" >
-                                                                            <label class="custom-file-label" for="inputGroupFile011" style="font-size: small !important;" id="fileName1">Choose file</label>
+                                                                            <div th:if="${user.getDrivingLicense() != null}">
+<!--                                                                                <p style="font-size: small !important;">Current file: <span th:text="${driverDetail.getDrivingLicense()}"></span></p>-->
+
+                                                                            <label th:text="${user.getDrivingLicense()}" class="custom-file-label" for="inputGroupFile011" style="font-size: small !important;">Choose file</label>
+                                                                             </div>
+                                                                            <div th:if="${user.getDrivingLicense() == null}">
+                                                                                <label  class="custom-file-label" for="inputGroupFile011" style="font-size: small !important;" id="fileName1">Choose file</label>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                     <div id="drivingLicenseError1" style="color: red"></div>
@@ -419,9 +426,9 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="province1">Province</label>
+                                                                            <label class="input-group-text" for="province">Province</label>
                                                                         </div>
-                                                                        <select class="custom-select" th:data-default="${user.getCity()}"  id="province1">
+                                                                        <select class="custom-select" th:data-default="${user.getCity()}"  id="province">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -430,9 +437,9 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="district1">District</label>
+                                                                            <label class="input-group-text" for="district">District</label>
                                                                         </div>
-                                                                        <select class="custom-select" th:data-default="${user.getDistrict()}" id="district1">
+                                                                        <select class="custom-select" th:data-default="${user.getDistrict()}" id="district">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -443,9 +450,9 @@
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
                                                                             <label class="input-group-text"
-                                                                                   for="ward1">Ward</label>
+                                                                                   for="ward">Ward</label>
                                                                         </div>
-                                                                        <select class="custom-select" th:data-default="${user.getWard()}"  id="ward1">
+                                                                        <select class="custom-select" th:data-default="${user.getWard()}"  id="ward">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -460,7 +467,7 @@
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               th:value="${user.getStreet()}" id="street1">
+                                                                               th:value="${user.getStreet()}" id="street">
                                                                     </div>
                                                                     <a class="validate-msg">Invalid</a>
                                                                 </div>
@@ -593,7 +600,7 @@
                                         <a class="btn-primary btn" style="; margin: 10px 0 10px 0"
                                            onclick="window.location.href='/'">Homepage</a>
                                         <a class="btn-warning btn" th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">Book another car</a>
-                                        <button class="btn-secondary btn">View Booking</button>
+                                        <a class="btn-secondary btn">View Booking</a>
                                     </fieldset>
                                 </form>
                             </div>
@@ -643,10 +650,10 @@
                 email: document.getElementById("email1").value,
                 nationalId: document.getElementById("nationalId1").value,
                 drivingLicense: document.getElementById("inputGroupFile011").value,
-                province: document.getElementById("province1").value,
-                district: document.getElementById("district1").value,
-                ward: document.getElementById("ward1").value,
-                street: document.getElementById("street1").value
+                province: document.getElementById("province").value,
+                district: document.getElementById("district").value,
+                ward: document.getElementById("ward").value,
+                street: document.getElementById("street").value
             };
 
             console.log(formData);
@@ -723,10 +730,10 @@
                 const email = document.getElementById('email1').value;
                 const nationalId = document.getElementById("nationalId1").value;
                 const drivingLicense = document.getElementById("inputGroupFile011").value;
-                const province =  document.getElementById('province1').options[document.getElementById('province1').selectedIndex].text;
-                const district =  document.getElementById('district1').options[document.getElementById('district1').selectedIndex].text;
-                const ward =  document.getElementById('ward1').options[document.getElementById('ward1').selectedIndex].text;
-                const street = document.getElementById('street1').value;
+                const province =  document.getElementById('province').value
+                const district =  document.getElementById('district').value;
+                const ward =  document.getElementById('ward').value;
+                const street = document.getElementById('street').value;
 
                 // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
                 let selectedUserId = null;
@@ -817,6 +824,10 @@
                                     timeStyle: 'short'
                                 });
                                 const formattedBookingNumber = bookingInfo.id;
+                                // Gán lại giá trị href của thẻ <a> với bookingId mới
+                                const viewBookingLink = document.querySelector('a.btn-secondary.btn');
+                                viewBookingLink.href = `/homepage-customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}`;
+                                console.log("Updated booking link:", viewBookingLink.href);
 
                                 // Cập nhật từng phần tử cụ thể
                                 $('.start-date').text(formattedStartDate);
@@ -1042,55 +1053,10 @@
         }
 
 
-
-
-        // Initialize both forms when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize for Renter Information (form with ID '1')
-            const renterLocationHandlers = createLocationHandlers('1');
-
-            // Initialize for Driver Information (form with no ID suffix)
-            const driverLocationHandlers = createLocationHandlers('');
-
-            // Handle the checkbox for copying renter's information
-            const checkbox = document.querySelector('input[name="additionalFunction"]');
-            checkbox.addEventListener('change', function() {
-                if (!this.checked) {
-                    // When unchecked, reset driver's form
-                    document.getElementById('province').value = '';
-                    document.getElementById('district').value = '';
-                    document.getElementById('ward').value = '';
-                    document.getElementById('district').disabled = true;
-                    document.getElementById('ward').disabled = true;
-                } else {
-                    // When checked, copy values from renter's form
-                    const province1 = document.getElementById('province1');
-                    const district1 = document.getElementById('district1');
-                    const ward1 = document.getElementById('ward1');
-
-                    document.getElementById('province').value = province1.value;
-                    if (province1.value) {
-                        driverLocationHandlers.fetchDistricts(province1.value, district1.value);
-                    }
-                    if (district1.value) {
-                        driverLocationHandlers.fetchWards(district1.value, ward1.value);
-                    }
-                }
-            });
-        });
-
         // Load provinces on page load with default values
         document.addEventListener('DOMContentLoaded', function () {
             const defaultCity = document.getElementById('province').getAttribute('data-default');
             fetchProvinces(defaultCity);
-        });
-
-        const fileInput = document.getElementById('inputGroupFile01');
-        fileInput.addEventListener('change', function () {
-            const fileName = this.files[0].name;
-            console.log(fileName);
-            const label = document.getElementById('fileName');
-            label.textContent = fileName;
         });
 
         const fileInput1 = document.getElementById('inputGroupFile011');

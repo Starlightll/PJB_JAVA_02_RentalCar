@@ -1,25 +1,40 @@
 package com.rentalcar.rentalcar.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.rentalcar.rentalcar.common.Regex;
+import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.dto.UserDto;
-import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarStatus;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.RentalCarService;
 import com.rentalcar.rentalcar.service.ViewEditBookingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.rentalcar.rentalcar.common.Regex.EMAIL_REGEX;
 
 @Controller
 public class BookingDetailsController {
@@ -42,6 +57,9 @@ public class BookingDetailsController {
     @Autowired
     private ViewEditBookingService viewEditBookingService;
 
+    @Autowired
+    private DriverDetailRepository driverDetailRepository;
+
     @GetMapping("/homepage-customer/booking-detail")
     public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,  Model model, HttpSession session) {
 
@@ -59,6 +77,8 @@ public class BookingDetailsController {
         }
         List<UserDto> listDriver = getAllDriverAvailable();
 
+        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findById(bookingId);
+        DriverDetail driverDetail = optionalDriverDetail.orElse(null);
         //=========================================================== Car detail ===================================================
 
         Car car = carRepository.getCarByCarId(carId);
@@ -94,12 +114,108 @@ public class BookingDetailsController {
         model.addAttribute("car", car);
         model.addAttribute("user", user);
         model.addAttribute("booking", booking);
+        model.addAttribute("driverDetail", driverDetail);
 
         return "customer/EditBookingDetails";
     }
 
+
+
+
+
+    @PostMapping("/update-booking-car")
+    @JsonProperty
+    @ResponseBody
+    public ResponseEntity<?> saveBooking(
+            @RequestParam(value = "bookingInfo") String BookingJson,
+            @RequestParam(value = "drivingLicense", required = false) MultipartFile rentImage,
+            HttpSession session
+    ) throws IOException {
+
+        Map<String, Object> response = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        BookingDto bookingInfor = objectMapper.readValue(BookingJson, BookingDto.class);
+
+        String fullName = bookingInfor.getRentFullName();
+        if (fullName == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Full Name is required");
+        }
+        String email = bookingInfor.getRentMail();
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(email);
+        if (email.isEmpty() || !matcher.matches()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Email");
+        }
+
+        String phone = bookingInfor.getRentPhone();
+        pattern = Pattern.compile(Regex.PHONE_REGEX);
+        matcher = pattern.matcher(phone);
+        if (phone.isEmpty() || !matcher.matches()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Phone");
+        }
+        String nationalId = bookingInfor.getRentNationalId();
+        pattern = Pattern.compile(Regex.NATIONAL_ID_REGEX);
+        matcher = pattern.matcher(nationalId);
+        if (nationalId.isEmpty() || !matcher.matches()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid nationalId");
+        }
+
+        LocalDate dob = bookingInfor.getRentBookPickDate();
+//        pattern = Pattern.compile(NATIONAL_ID_REGEX);
+//        matcher = pattern.matcher(nationalId);
+        if (dob == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Date");
+        }
+        LocalDate today = LocalDate.now();
+        int age = Period.between(dob, today).getYears();
+
+        if (age < 18) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 18 years old");
+        }
+
+
+//        LocalDateTime startDate = bookingInfor.getPickUpDate();
+//        if (startDate == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Start Date");
+//        }
+//
+//        LocalDateTime endDate = bookingInfor.getReturnDate();
+//        if (endDate == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid End Date");
+//        }
+
+//        // Kiểm tra endDate có phải sau startDate ít nhất một giờ không
+//        if (Duration.between(startDate, endDate).toHours() < 1) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("End date must be at least 1 hour after start date");
+//        }
+//
+//        if (endDate.isBefore(LocalDateTime.now()) || startDate.isBefore(LocalDateTime.now())) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date Time cannot be in the past");
+//        }
+        try {
+
+            MultipartFile[] files = {rentImage};
+            viewEditBookingService.updateBooking(bookingInfor, files, session);
+            response.put("message", "update successfully.");
+            //response.put("bookingInfo", Map.of("id", booking.getBookingId(), "startDate", booking.getStartDate(), "endDate", booking.getEndDate()));
+        } catch (RuntimeException e) {
+            switch (e.getMessage()) {
+                case "Your wallet must be greater than deposit":
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your wallet must be greater than deposit");
+                case "Other Pay Method not helps now, please use your wallet":
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Other Pay Method not helps now, please use your wallet");
+
+            }
+        }
+
+        return ResponseEntity.ok(response);
+
+
+    }
+
     public List<UserDto> getAllDriverAvailable() {
-        List<Object[]> results = userRepo.getAllDriverAvailable();
+        List<Object[]> results = userRepo.getAllDriver();
         List<UserDto> userDtos = new ArrayList<>();
 
         for (Object[] result : results) {
