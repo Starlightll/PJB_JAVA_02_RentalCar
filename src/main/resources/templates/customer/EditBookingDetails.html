@@ -168,6 +168,14 @@
             background-color: #01d28e; /* Change OK button to green on hover */
         }
 
+        .custom-file-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            max-width: 100%;
+        }
+
     </style>
 </head>
 
@@ -518,19 +526,21 @@
                                                             <span class="input-group-text" id="inputGroupFileAddon011" >Driving license</span>
                                                         </div>
                                                         <div class="custom-file">
-                                                            <input type="file" accept="image/*" class="custom-file-input" th:text="${driverDetail.getDrivingLicense()}" id="inputGroupFile011"
-                                                                   aria-describedby="inputGroupFileAddon01"
-                                                                   th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                                   onchange="validateDrivingLicense()" >
-                                                            <label class="custom-file-label" for="inputGroupFile011" style="font-size: small !important;" id="fileName">Choose file</label>
+                                                            <!-- Input file -->
+                                                            <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile011"
+                                                                   th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                   aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
+
+                                                            <!-- Label hiển thị tên file -->
+                                                            <label class="custom-file-label" id="fileName" style="font-size: small !important;">
+                                                                <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
+                                                                <span th:if="${driverDetail.getDrivingLicense() != null}" th:text="'Current file: ' + ${driverDetail.getDrivingLicense()}"></span>
+                                                                <span th:if="${driverDetail.getDrivingLicense() == null}">Choose file</span>
+                                                            </label>
                                                         </div>
                                                     </div>
-                                                    <!-- Display the current file name if available -->
-                                                    <div th:if="${driverDetail.getDrivingLicense() != null}">
-                                                        <p style="font-size: small !important;">Current file: <span th:text="${driverDetail.getDrivingLicense()}"></span></p>
-                                                    </div>
+                                                    <input type="hidden" id="currentDrivingLicense" th:value="${driverDetail.getDrivingLicense()}">
                                                     <div id="drivingLicenseError" style="color: red"></div>
-
                                                     <a class="validate-msg" id="drivingLicenseValidate">Invalid</a>
                                                 </div>
 
@@ -589,6 +599,7 @@
                                                                        aria-label="Sizing example input"
                                                                        aria-describedby="inputGroup-sizing-default"
                                                                        id="street"
+                                                                       th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
                                                                        th:value="${driverDetail.getStreet()}">
                                                             </div>
                                                             <a class="validate-msg">Invalid</a>
@@ -646,7 +657,9 @@
                                                         onclick="window.history.back()">Discard
                                                 </button>
                                                 <button class="btn-primary btn" id="save" style="width: 100px; margin: 10px 10px 10px 10px"
-                                                        onclick="updateBooking()">Save
+                                                        onclick="checkData()"
+                                                        th:if="${booking.getBookingStatus() == 'Confirmed' and booking.getBookingStatus() == 'Pending deposit'}">
+                                                    Save
                                                 </button>
                                             </div>
                                             <div th:if="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
@@ -875,7 +888,7 @@
                                                 </div>
                                                 <div class="input-group col-lg-6" style="min-height: 56px">
                                                     <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Description</span>
-                                                    <textarea class="form-control" id="description" aria-label="With textarea" th:text="${car.getDescription()}" style="font-size: 14px;" placeholder="Description of your vehicle"></textarea>
+                                                    <textarea readonly class="form-control" id="description" aria-label="With textarea" th:text="${car.getDescription()}" style="font-size: 14px;" placeholder="Description of your vehicle"></textarea>
                                                 </div>
 
                                                 <div style="padding: 10px">
@@ -905,7 +918,7 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                            <input type="text" class="form-control"
+                                                            <input readonly type="text" class="form-control"
                                                                    aria-label="Text input with checkbox" id="termOfUse" th:value="${car.terms}">
                                                         </div>
                                                     </div>
@@ -934,9 +947,9 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                            <input type="text" class="form-control"
+                                                            <input readonly type="text" class="form-control"
                                                                    aria-label="Text input with checkbox" id="currentBalance"
-                                                                   th:value="${car.terms}">
+                                                                   th:value="${#numbers.formatDecimal(user.getWallet(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                         </div>
                                                     </div>
                                                     <span>Please make sure to have sufficient balance the car.</span>
@@ -972,6 +985,75 @@
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
+
+
+
+        function checkData() {
+            if(!checkStep()) {
+                return;
+            }
+            updateBooking();
+        }
+
+        function checkStep() {
+            // const pickupLocation = document.getElementById('pickupLocation').innerText;
+            // const pickupDate = document.getElementById('pickupDate').innerText;
+            // const returnDate = document.getElementById('returnDate').innerText;
+            //
+            // const pickupDateFormatted = formatToDatetimeDB(pickupDate);
+            // const returnDateFormatted = formatToDatetimeDB(returnDate);
+
+            // document.getElementById('editPickupLocation').value = pickupLocation;
+            // document.getElementById('editPickupDate').value = pickupDateFormatted;
+            // document.getElementById('editReturnDate').value = returnDateFormatted;
+
+            // console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
+            // console.log("editPickupDate:", document.getElementById("editPickupDate").value);
+            // console.log("editReturnDate:", document.getElementById("editReturnDate").value);
+
+            const currentDrivingLicense = document.getElementById("currentDrivingLicense").value // Dữ liệu từ DB
+            let drivingLicense = document.getElementById("inputGroupFile011").value;
+            console.log("currentDrivingLicense:",currentDrivingLicense);
+
+            if(!drivingLicense) {
+                drivingLicense = currentDrivingLicense;
+            }
+
+            console.log(drivingLicense)
+
+            // Thu thập dữ liệu cho renter
+            const formData = {
+                // pickUpLocation: document.getElementById("editPickupLocation").value,
+                // pickUpDateTime: pickupDateFormatted,
+                // returnDateTime: returnDateFormatted,
+
+                carId: document.getElementById("carId").value,
+                fullName: document.getElementById("fullName").value,
+                bookPickDate: document.getElementById("book_pick_date").value,
+                phone: document.getElementById("phone").value,
+                email: document.getElementById("email").value,
+                nationalId: document.getElementById("nationalId").value,
+                drivingLicense: drivingLicense,
+                province: document.getElementById("province").value,
+                district: document.getElementById("district").value,
+                ward: document.getElementById("ward").value,
+                street: document.getElementById("street").value
+            };
+
+            console.log(formData);
+
+            // Kiểm tra từng thuộc tính xem có bị trống không
+            for (const key in formData) {
+                if (formData[key] === '') {
+                    console.log(`Trường ${key} đang bị trống.`);
+                    // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
+                    alert(`Vui lòng điền thông tin vào trường: ${key}`);
+                    return false;
+
+                }
+            }
+            return true;
+        }
 
         function updateBooking() {
 
@@ -1219,27 +1301,37 @@
 
         // Driving License Validation
         function validateDrivingLicense() {
-            const fileInput = document.getElementById("inputGroupFile011");
-            const fileNameErrorInner = document.getElementById("fileName");
-            const fileNameError = document.getElementById("drivingLicenseError");
-            const file = fileInput.files[0];
+            const fileInput = document.getElementById("inputGroupFile011"); // Input file
+            const fileNameDisplay = document.getElementById("fileName"); // Label hiển thị tên file
+            const fileErrorDisplay = document.getElementById("drivingLicenseError"); // Vùng hiển thị lỗi
+            const file = fileInput.files[0]; // File được chọn
             const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
 
+            // Reset thông báo lỗi và nhãn hiển thị
+            fileErrorDisplay.textContent = "";
+
             if (file) {
+                // Kiểm tra định dạng file
                 if (!validImageTypes.includes(file.type)) {
-                    fileNameErrorInner.textContent = "Please upload an image file (JPEG, PNG, GIF).";
-                    fileNameErrorInner.style.color = "red";
-                    fileInput.value = "";
-                    fileNameError.textContent = "Invalid file type.";
+                    fileNameDisplay.textContent = "Invalid file type. Please upload JPEG, PNG, or GIF.";
+                    fileNameDisplay.style.color = "red";
+                    fileInput.value = ""; // Reset input file nếu không hợp lệ
+                    fileErrorDisplay.textContent = "Invalid file type.";
                 } else {
-                    fileNameErrorInner.textContent = "File selected";
-                    fileNameErrorInner.style.color = "green";
-                    fileNameError.textContent = "";
+                    // File hợp lệ
+                    fileNameDisplay.textContent = `File selected: ${file.name}`;
+                    fileNameDisplay.style.color = "green";
+                    fileErrorDisplay.textContent = "";
                 }
             } else {
-                fileNameError.textContent = "Please upload a driving license image.";
+                // Không có file nào được chọn
+                fileErrorDisplay.textContent = "Please upload a driving license image.";
+                fileNameDisplay.textContent = "Choose file";
+                fileNameDisplay.style.color = "";
             }
-            checkValidations();
+
+            // Gọi hàm kiểm tra tổng hợp nếu cần
+            checkAllValidations();
         }
 
         function toggleDriverInfoFields() {

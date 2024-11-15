@@ -198,6 +198,7 @@ public class RentalCarController {
 
         // Parse carDraft JSON
         Map<String, Object> response = new HashMap<>();
+        User user = (User) session.getAttribute("user");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         BookingDto bookingInfor = objectMapper.readValue(BookingJson, BookingDto.class);
@@ -257,6 +258,9 @@ public class RentalCarController {
 
         if (endDate.isBefore(LocalDateTime.now()) || startDate.isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date Time cannot be in the past");
+        }
+        if(user.getDrivingLicense() == null && rentImage == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a driving license image.");
         }
 
 

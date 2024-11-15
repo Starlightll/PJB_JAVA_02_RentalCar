@@ -132,6 +132,7 @@ public class BookingDetailsController {
             HttpSession session
     ) throws IOException {
 
+        User user = (User) session.getAttribute("user");
         Map<String, Object> response = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -172,6 +173,10 @@ public class BookingDetailsController {
 
         if (age < 18) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 18 years old");
+        }
+
+        if(user.getDrivingLicense() == null && rentImage == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a driving license image.");
         }
 
 
