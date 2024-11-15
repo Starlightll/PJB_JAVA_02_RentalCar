@@ -55,7 +55,7 @@ public class User {
             joinColumns = @JoinColumn(name = "userId"),
             inverseJoinColumns = @JoinColumn(name = "roleId")
     )
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles;
 
     @OneToMany
     @JoinColumn(name = "userId")
