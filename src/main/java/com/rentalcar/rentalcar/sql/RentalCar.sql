@@ -27,7 +27,7 @@ CREATE TABLE [dbo].[Users]
     street         NVARCHAR(255),
     fullName       NVARCHAR(100),
     agreeTerms     int                not null,
-    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED')),
+    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED')),
     statusDriverId INT foreign key REFERENCES statusDriver(statusDriverId),
     PRIMARY KEY (userId)
 
