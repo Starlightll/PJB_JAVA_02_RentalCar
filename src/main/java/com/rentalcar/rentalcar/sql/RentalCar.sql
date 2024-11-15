@@ -312,6 +312,8 @@ VALUES
     (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'Hanoi', N'District 5', N'Ward 7', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 1),
     (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'Da Nang', N'District 3', N'Ward 2', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 1);
 
+INsert into UserRole
+values(1, 4), (2,4),(3,4)
 
 -- SQL to delete all information of carDraft, Car and relative information of Car
 -- DELETE FROM CarDraft WHERE CarDraft.draftId > 0;

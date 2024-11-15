@@ -21,6 +21,12 @@ public interface UserRepo extends JpaRepository<User, Long> {
             "  where r.RoleId = 4 and u.statusDriverId =  1", nativeQuery = true)
      List<Object[]> getAllDriverAvailable();
 
+    @Query(value = "  select u.[userId], u.fullName, u.dob from [Users] u \n" +
+            "  Join [dbo].[UserRole] ur ON ur.userId = u.userId\n" +
+            "  Join [dbo].[Role] r ON r.RoleId = ur.roleId\n" +
+            "  where r.RoleId = 4", nativeQuery = true)
+    List<Object[]> getAllDriver();
+
 
     boolean existsByPhone(String phone);
 

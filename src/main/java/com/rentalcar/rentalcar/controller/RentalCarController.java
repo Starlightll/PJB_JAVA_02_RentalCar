@@ -30,6 +30,7 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -119,9 +120,11 @@ public class RentalCarController {
         User userepo = userRepo.getUserById(user.getId());
 
 
+        if(car.getStatusId() != 1) {
+            return "redirect:/";
+        }
 
-
-        List<UserDto> users = getAllDriverAvailable();
+        List<UserDto> driverLisst = getAllDriverAvailable();
         // Định dạng ngày giờ đầu vào và đầu ra
         SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
         SimpleDateFormat dateOutputFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -153,11 +156,11 @@ public class RentalCarController {
         }
 
         model.addAttribute("lastLink", beforeNavigate);
-        model.addAttribute("users", users);
+        model.addAttribute("users", driverLisst); //
         model.addAttribute("car", car);
         model.addAttribute("address", address);
         model.addAttribute("user", user);
-        model.addAttribute("userRepo", userepo);
+        model.addAttribute("userRepo", userepo);//Lấy wallet
         return "customer/booking";
     }
 
@@ -246,6 +249,16 @@ public class RentalCarController {
         if (endDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid End Date");
         }
+
+        // Kiểm tra endDate có phải sau startDate ít nhất một giờ không
+        if (Duration.between(startDate, endDate).toHours() < 1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("End date must be at least 1 hour after start date");
+        }
+
+        if (endDate.isBefore(LocalDateTime.now()) || startDate.isBefore(LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date Time cannot be in the past");
+        }
+
 
         if (bookingInfor.getStep() == 2) {
             response.put("message", "Step 1 validated successfully.");

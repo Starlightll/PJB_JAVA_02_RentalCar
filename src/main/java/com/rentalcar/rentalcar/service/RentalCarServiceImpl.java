@@ -68,26 +68,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-        switch (sortBy) {
-            case "newestToLatest":
-                sortBy = "lastModified";
-                order = "desc";
-                break;
-            case "latestToNewest":
-                sortBy = "lastModified";
-                order = "asc";
-                break;
-            case "priceLowToHigh":
-                sortBy = "basePrice";
-                order = "asc";
-                break;
-            case "priceHighToLow":
-                sortBy = "basePrice";
-                order = "desc";
-                break;
-            default:
-                break;
-        }
+
         List<MyBookingDto> bookingDtos = new ArrayList<>();
         Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(sorDirection, sortBy);
@@ -119,7 +100,8 @@ public class RentalCarServiceImpl implements RentalCarService {
                     (String) result[12],
                     (String) result[13],
                     (String) result[14],
-                    (String) result[15]
+                    (String) result[15],
+                    (Integer) result[16]
             );
             bookingDtos.add(bookingDto);
         }
@@ -265,9 +247,20 @@ public class RentalCarServiceImpl implements RentalCarService {
         if (user == null) {
             throw new RuntimeException("User not found");
         }
+
+        //============CHỌN VÍ ĐỂ TRẢ CỌC============================
+
+        User customer = userRepository.getUserById(user.getId());
+        User carOwner = userRepository.getUserById(car.getUser().getId());
+        if(bookingDto.getSelectedPaymentMethod() == 1) {
+            calculateAndDeductDeposit(bookingDto, customer, carOwner, session);  //XỬ LÝ TIỀN TRONG CỌC
+        } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
+            throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
+        }
+        //==========================================================
+
         String folderName = String.format("%s", user.getId());
         Path draftFolderPath = Paths.get("uploads/Driver/" + user.getId() + "/Detail/", folderName);
-
 
         try {
             if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
@@ -279,10 +272,9 @@ public class RentalCarServiceImpl implements RentalCarService {
             e.printStackTrace();
         }
 
+        //Lưu vô db
         try {
-            LocalDateTime a = bookingDto.getPickUpDate();
-
-            long numberOfDays = ChronoUnit.DAYS.between(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
+            int numberOfDays = (int) ChronoUnit.DAYS.between(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
             Double totalPrice = car.getBasePrice() * numberOfDays;
             booking.setStartDate(bookingDto.getPickUpDate());
             booking.setEndDate(bookingDto.getReturnDate());
@@ -345,20 +337,12 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
 
-        //CHỌN VÍ ĐỂ TRẢ CỌC
-        User customer = userRepository.getUserById(user.getId());
-        User carOwner = userRepository.getUserById(car.getUser().getId());
-        if(bookingDto.getSelectedPaymentMethod() == 1) {
-            calculateAndDeductDeposit(bookingDto, customer, carOwner, session);  //XỬ LÝ TIỀN TRONG CỌC
-        } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
-            throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
-        }
 
         //MAIL TO CUSTOMER
         emailService.sendBookingConfirmation(customer, bookingDto, booking,car);
         //MAIL TO CAR OWNER
 
-        emailService.sendBookingConfirmationWithDeposit(carOwner ,bookingDto , booking, car,  Double.parseDouble(bookingDto.getDeposit()));
+        emailService.sendBookingConfirmationWithDeposit(carOwner, booking, car,  Double.parseDouble(bookingDto.getDeposit()));
 
         return booking;
     }

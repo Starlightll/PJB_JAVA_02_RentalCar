@@ -110,7 +110,7 @@ public class EmailService {
         String  toDate = bookingdto.getReturnDate().format(dateTimeFormatter);
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         String  pricePerDay = currencyFormatter.format(car.getBasePrice());
-        String  totalPrice =currencyFormatter.format(bookingdto.getTotalPrice());
+        String  totalPrice = currencyFormatter.format(booking.getTotalPrice());
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -148,12 +148,12 @@ public class EmailService {
 
 
     @Async
-    public void sendBookingConfirmationWithDeposit(User user, BookingDto bookingDto, Booking booking, Car car, double depositAmount) {
+    public void sendBookingConfirmationWithDeposit(User user, Booking booking, Car car, double depositAmount) {
         String recipientAddress = user.getEmail();
         Long bookingNumber = booking.getBookingId();
         String carName = car.getCarName();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String bookingDate = bookingDto.getPickUpDate().format(dateTimeFormatter);
+        String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         String depositFormatted = currencyFormatter.format(depositAmount);
 
