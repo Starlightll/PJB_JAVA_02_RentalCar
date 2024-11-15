@@ -78,10 +78,11 @@ public class SearchCarController {
        // List<Car> carList = searchCarService.findCars(name);
         Page<Car> list = searchCarService.findCars(name,pageNo, sort);
 
-        if (name.trim().isEmpty()) {
-            model.addAttribute("sendLocation", "Please enter location");
-
-        } else if (pickDate == null) {
+//        if (name.trim().isEmpty()) {
+//            model.addAttribute("sendLocation", "Please enter location");
+//
+//        } else
+            if (pickDate == null) {
             model.addAttribute("sendPickDate", "Please enter pick date");
         } else if (pickTime == null ) {
             model.addAttribute("sendPickTime", "Please enter pick time");
@@ -89,7 +90,10 @@ public class SearchCarController {
             model.addAttribute("sendDropDate", "Please enter drop date");
         } else if (dropTime == null) {
             model.addAttribute("sendDropTime", "Please enter drop time");
-        } else if (pickDate.isEqual(dropDate)) {
+        } else
+
+
+            if (pickDate.isEqual(dropDate)) {
             if (pickTime.isAfter(dropTime) || pickTime.equals(dropTime)) {
                 model.addAttribute("sendCondition", "Drop-off time must be after pick-up time if on the same day");
             }else if (pickTime.plusHours(1).isAfter(dropTime)) {
