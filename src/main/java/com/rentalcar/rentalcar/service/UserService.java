@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.UserRepo;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -68,6 +71,27 @@ public class UserService implements IUserService {
             return userRepo.existsByPhone(phone);
     }
 
+    @Override
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepo.getAllUsers();
+        return users.stream().map(this::convertUserToUserDto).collect(Collectors.toList());
+    }
+
+
+
+    //Convert user to userDto
+    public UserDto convertUserToUserDto(User user){
+        return UserDto.builder()
+                .userId(user.getId())
+                .fullName(user.getFullName())
+                .username(user.getUsername())
+                .dob(user.getDob())
+                .phone(user.getPhone())
+                .email(user.getEmail())
+                .role(user.getRoles().isEmpty()?"THE FUCK, WHERE IS MY ROLE ?":user.getRoles().get(0).getRoleName())
+                .status(user.getStatus().getStatus())
+                .build();
+    }
 
 //
 //        private String code;
@@ -80,6 +104,5 @@ public class UserService implements IUserService {
 //        public String getName() { return name; }
 //        public void setName(String name) { this.name = name; }
 //    }
-
 
 }

@@ -9,7 +9,8 @@ import lombok.Setter;
 public enum UserStatus {
     PENDING("PENDING"),
     ACTIVATED("ACTIVATED"),
-    LOCKED("LOCKED");
+    LOCKED("LOCKED"),
+    DELETED("DELETED");
 
     private final String status;
 }

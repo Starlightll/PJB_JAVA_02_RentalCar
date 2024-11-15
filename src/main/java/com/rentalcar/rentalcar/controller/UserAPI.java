@@ -1,6 +1,8 @@
 package com.rentalcar.rentalcar.controller;
 
 
+import com.rentalcar.rentalcar.dto.UserDto;
+import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.UserService;
@@ -17,11 +19,11 @@ import java.util.List;
 public class UserAPI {
 
     @Autowired
-    private UserRepo userRepository;
+    private UserService userService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() {
-        List<User> users = userRepository.getAllUsers();
-        return ResponseEntity.ok(users);
+    public List<UserDto> getUsers() {
+     List<UserDto> users = userService.getAllUsers();
+        return userService.getAllUsers();
     }
 }
