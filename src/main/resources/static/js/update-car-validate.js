@@ -100,67 +100,67 @@ const setupLicensePlateValidation = (inputElement, msgElement) => {
 };
 
 // Hàm setup validation cho Money
-// const setupMoneyValidation = (inputElement, msgElement) => {
-//     // Thêm class ẩn cho message ban đầu
-//     msgElement.style.display = 'none';
-//
-//     const validateMoney = (value) => {
-//         // Xóa khoảng trắng
-//         const cleanValue = value.trim();
-//
-//         // Kiểm tra với pattern
-//         if (!moneyPatterns.civilian.test(cleanValue) || cleanValue < 0 || cleanValue > 999999999) {
-//             return {
-//                 isValid: false,
-//                 message: 'Invalid money format. Required format: 0-999999999'
-//             };
-//         }
-//
-//         return {
-//             isValid: true,
-//             value: cleanValue
-//         };
-//     };
-//
-//     // Hàm update UI
-//     const updateUI = (result) => {
-//         if (result.isValid) {
-//             // Success state
-//             inputElement.classList.remove('is-invalid');
-//             inputElement.classList.add('is-valid');
-//             msgElement.style.display = 'none';
-//             msgElement.textContent = '';
-//         } else {
-//             // Error state
-//             inputElement.classList.remove('is-valid');
-//             inputElement.classList.add('is-invalid');
-//             msgElement.style.display = 'block';
-//             msgElement.style.color = '#dc3545';  // Bootstrap danger color
-//             msgElement.style.fontSize = '80%';
-//             msgElement.style.marginTop = '0.25rem';
-//             msgElement.textContent = result.message;
-//         }
-//     };
-//
-//     // Validate on input
-//     inputElement.addEventListener('input', (e) => {
-//         const result = validateMoney(e.target.value);
-//         updateUI(result);
-//     });
-//
-//     // Validate on blur
-//     inputElement.addEventListener('blur', (e) => {
-//         const result = validateMoney(e.target.value);
-//         updateUI(result);
-//     });
-//
-//     // Return validate function for external use (e.g., form submit)
-//     return () => {
-//         const result = validateMoney(inputElement.value);
-//         updateUI(result);
-//         return result.isValid;
-//     };
-// };
+const setupMoneyValidation = (inputElement, msgElement) => {
+    // Thêm class ẩn cho message ban đầu
+    msgElement.style.display = 'none';
+
+    const validateMoney = (value) => {
+        // Xóa khoảng trắng
+        const cleanValue = value.trim();
+
+        // Kiểm tra với pattern
+        if (!moneyPatterns.civilian.test(cleanValue) || cleanValue < 0 || cleanValue > 999999999) {
+            return {
+                isValid: false,
+                message: 'Invalid money format. Required format: 0-999999999'
+            };
+        }
+
+        return {
+            isValid: true,
+            value: cleanValue
+        };
+    };
+
+    // Hàm update UI
+    const updateUI = (result) => {
+        if (result.isValid) {
+            // Success state
+            inputElement.classList.remove('is-invalid');
+            inputElement.classList.add('is-valid');
+            msgElement.style.display = 'none';
+            msgElement.textContent = '';
+        } else {
+            // Error state
+            inputElement.classList.remove('is-valid');
+            inputElement.classList.add('is-invalid');
+            msgElement.style.display = 'block';
+            msgElement.style.color = '#dc3545';  // Bootstrap danger color
+            msgElement.style.fontSize = '80%';
+            msgElement.style.marginTop = '0.25rem';
+            msgElement.textContent = result.message;
+        }
+    };
+
+    // Validate on input
+    inputElement.addEventListener('input', (e) => {
+        const result = validateMoney(e.target.value);
+        updateUI(result);
+    });
+
+    // Validate on blur
+    inputElement.addEventListener('blur', (e) => {
+        const result = validateMoney(e.target.value);
+        updateUI(result);
+    });
+
+    // Return validate function for external use (e.g., form submit)
+    return () => {
+        const result = validateMoney(inputElement.value);
+        updateUI(result);
+        return result.isValid;
+    };
+};
 
 // Hàm setup validation cho Distance
 const setupRangeValidation = (inputElement, msgElement) => {
@@ -374,9 +374,9 @@ const setupMaterialValidation = (inputElement, msgElement) => {
     // Setup validation for license plate
     const validateLicensePlate = setupLicensePlateValidation(licensePlateInput, validateMsg);
     // Setup validation for money
-    // const validateCarPrice = setupMoneyValidation(carPriceInput, carPriceValidateMsg);
-    // const validateBasePrice = setupMoneyValidation(basePriceInput, basePriceValidateMsg);
-    // const validateDeposit = setupMoneyValidation(depositInput, depositValidateMsg);
+    const validateCarPrice = setupMoneyValidation(carPriceInput, carPriceValidateMsg);
+    const validateBasePrice = setupMoneyValidation(basePriceInput, basePriceValidateMsg);
+    const validateDeposit = setupMoneyValidation(depositInput, depositValidateMsg);
     // Setup validation for distance
     const validateMileage = setupRangeValidation(mileageInput, mileageValidateMsg);
     // Setup validation for material

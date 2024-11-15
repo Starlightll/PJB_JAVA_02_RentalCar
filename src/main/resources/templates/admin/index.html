@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 
-<html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr"
-      data-theme="theme-default" data-assets-path="../../assets/" data-template="vertical-menu-template"
-      data-style="light"
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layouts/dashboardLayout}"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
-    <title>Demo : Dashboard - Analytics | sneat - Bootstrap Dashboard PRO</title>
+    <title>Dashboard</title>
 
 
 </head>
+
+<th:block layout:fragment="content">
 <body>
-        <div class="layout-page" layout:fragment="content">
+
+        <div class="layout-page">
+            <!-- Content wrapper -->
             <!-- Content wrapper -->
             <div class="content-wrapper">
 
                 <!-- Content -->
 
                 <div class="container-xxl flex-grow-1 container-p-y">
+
 
 
                     <div class="row">
@@ -30,16 +34,14 @@
                                     <div class="col-sm-7">
                                         <div class="card-body">
                                             <h5 class="card-title text-primary mb-3">Congratulations John! 🎉</h5>
-                                            <p class="mb-6">You have done 72% more sales today.<br>Check your new badge
-                                                in your profile.</p>
+                                            <p class="mb-6">You have done 72% more sales today.<br>Check your new badge in your profile.</p>
 
                                             <a href="javascript:;" class="btn btn-sm btn-label-primary">View Badges</a>
                                         </div>
                                     </div>
                                     <div class="col-sm-5 text-center text-sm-left">
                                         <div class="card-body pb-0 px-0 px-md-6">
-                                            <img src="../../assets/img/illustrations/man-with-laptop.png" height="175"
-                                                 class="scaleX-n1-rtl" alt="View Badge User">
+                                            <img src="../../assets/img/illustrations/man-with-laptop.png" height="175" class="scaleX-n1-rtl" alt="View Badge User">
                                         </div>
                                     </div>
                                 </div>
@@ -61,27 +63,21 @@
                                         <div class="card-body">
                                             <div class="card-title d-flex align-items-start justify-content-between mb-4">
                                                 <div class="avatar flex-shrink-0">
-                                                    <img src="../../assets/img/icons/unicons/wallet-info.png"
-                                                         alt="wallet info" class="rounded">
+                                                    <img src="../../assets/img/icons/unicons/wallet-info.png" alt="wallet info" class="rounded">
                                                 </div>
                                                 <div class="dropdown">
-                                                    <button class="btn p-0" type="button" id="cardOpt6"
-                                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
+                                                    <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <i class="bx bx-dots-vertical-rounded text-muted"></i>
                                                     </button>
-                                                    <div class="dropdown-menu dropdown-menu-end"
-                                                         aria-labelledby="cardOpt6">
-                                                        <a class="dropdown-item" href="javascript:void(0);">View
-                                                            More</a>
+                                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
                                                         <a class="dropdown-item" href="javascript:void(0);">Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
                                             <p class="mb-1">Sales</p>
                                             <h4 class="card-title mb-3">$4,679</h4>
-                                            <small class="text-success fw-medium"><i class='bx bx-up-arrow-alt'></i>
-                                                +28.42%</small>
+                                            <small class="text-success fw-medium"><i class='bx bx-up-arrow-alt'></i> +28.42%</small>
                                         </div>
                                     </div>
                                 </div>
@@ -97,13 +93,10 @@
                                                 <h5 class="m-0 me-2">Total Revenue</h5>
                                             </div>
                                             <div class="dropdown">
-                                                <button class="btn p-0" type="button" id="totalRevenue"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
+                                                <button class="btn p-0" type="button" id="totalRevenue" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="bx bx-dots-vertical-rounded bx-lg text-muted"></i>
                                                 </button>
-                                                <div class="dropdown-menu dropdown-menu-end"
-                                                     aria-labelledby="totalRevenue">
+                                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalRevenue">
                                                     <a class="dropdown-item" href="javascript:void(0);">Select All</a>
                                                     <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
                                                     <a class="dropdown-item" href="javascript:void(0);">Share</a>
@@ -122,18 +115,13 @@
 
                                                         </script>
                                                     </button>
-                                                    <button type="button"
-                                                            class="btn btn-label-primary dropdown-toggle dropdown-toggle-split"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <button type="button" class="btn btn-label-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <span class="visually-hidden">Toggle Dropdown</span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li><a class="dropdown-item" href="javascript:void(0);">2021</a>
-                                                        </li>
-                                                        <li><a class="dropdown-item" href="javascript:void(0);">2020</a>
-                                                        </li>
-                                                        <li><a class="dropdown-item" href="javascript:void(0);">2019</a>
-                                                        </li>
+                                                        <li><a class="dropdown-item" href="javascript:void(0);">2021</a></li>
+                                                        <li><a class="dropdown-item" href="javascript:void(0);">2020</a></li>
+                                                        <li><a class="dropdown-item" href="javascript:void(0);">2019</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -144,8 +132,7 @@
                                             <div class="d-flex gap-3 justify-content-between">
                                                 <div class="d-flex">
                                                     <div class="avatar me-2">
-                                                        <span class="avatar-initial rounded-2 bg-label-primary"><i
-                                                                class="bx bx-dollar bx-lg text-primary"></i></span>
+                                                        <span class="avatar-initial rounded-2 bg-label-primary"><i class="bx bx-dollar bx-lg text-primary"></i></span>
                                                     </div>
                                                     <div class="d-flex flex-column">
                                                         <small>
@@ -159,8 +146,7 @@
                                                 </div>
                                                 <div class="d-flex">
                                                     <div class="avatar me-2">
-                                                        <span class="avatar-initial rounded-2 bg-label-info"><i
-                                                                class="bx bx-wallet bx-lg text-info"></i></span>
+                                                        <span class="avatar-initial rounded-2 bg-label-info"><i class="bx bx-wallet bx-lg text-info"></i></span>
                                                     </div>
                                                     <div class="d-flex flex-column">
                                                         <small>
@@ -186,27 +172,21 @@
                                         <div class="card-body">
                                             <div class="card-title d-flex align-items-start justify-content-between mb-4">
                                                 <div class="avatar flex-shrink-0">
-                                                    <img src="../../assets/img/icons/unicons/paypal.png" alt="paypal"
-                                                         class="rounded">
+                                                    <img src="../../assets/img/icons/unicons/paypal.png" alt="paypal" class="rounded">
                                                 </div>
                                                 <div class="dropdown">
-                                                    <button class="btn p-0" type="button" id="cardOpt4"
-                                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
+                                                    <button class="btn p-0" type="button" id="cardOpt4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <i class="bx bx-dots-vertical-rounded text-muted"></i>
                                                     </button>
-                                                    <div class="dropdown-menu dropdown-menu-end"
-                                                         aria-labelledby="cardOpt4">
-                                                        <a class="dropdown-item" href="javascript:void(0);">View
-                                                            More</a>
+                                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt4">
+                                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
                                                         <a class="dropdown-item" href="javascript:void(0);">Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
                                             <p class="mb-1">Payments</p>
                                             <h4 class="card-title mb-3">$2,456</h4>
-                                            <small class="text-danger fw-medium"><i class='bx bx-down-arrow-alt'></i>
-                                                -14.82%</small>
+                                            <small class="text-danger fw-medium"><i class='bx bx-down-arrow-alt'></i> -14.82%</small>
                                         </div>
                                     </div>
                                 </div>
@@ -229,8 +209,7 @@
                                                         <span class="badge bg-label-warning">YEAR 2022</span>
                                                     </div>
                                                     <div class="mt-sm-auto">
-                                                        <span class="text-success text-nowrap fw-medium"><i
-                                                                class='bx bx-up-arrow-alt'></i> 68.2%</span>
+                                                        <span class="text-success text-nowrap fw-medium"><i class='bx bx-up-arrow-alt'></i> 68.2%</span>
                                                         <h4 class="mb-0">$84,686k</h4>
                                                     </div>
                                                 </div>
@@ -252,8 +231,7 @@
                                         <p class="card-subtitle">42.82k Total Sales</p>
                                     </div>
                                     <div class="dropdown">
-                                        <button class="btn text-muted p-0" type="button" id="orederStatistics"
-                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button class="btn text-muted p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="bx bx-dots-vertical-rounded bx-lg"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
@@ -274,8 +252,7 @@
                                     <ul class="p-0 m-0">
                                         <li class="d-flex align-items-center mb-5">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <span class="avatar-initial rounded bg-label-primary"><i
-                                                        class='bx bx-mobile-alt'></i></span>
+                                                <span class="avatar-initial rounded bg-label-primary"><i class='bx bx-mobile-alt'></i></span>
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -289,8 +266,7 @@
                                         </li>
                                         <li class="d-flex align-items-center mb-5">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <span class="avatar-initial rounded bg-label-success"><i
-                                                        class='bx bx-closet'></i></span>
+                                                <span class="avatar-initial rounded bg-label-success"><i class='bx bx-closet'></i></span>
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -304,8 +280,7 @@
                                         </li>
                                         <li class="d-flex align-items-center mb-5">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <span class="avatar-initial rounded bg-label-info"><i
-                                                        class='bx bx-home-alt'></i></span>
+                                                <span class="avatar-initial rounded bg-label-info"><i class='bx bx-home-alt'></i></span>
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -319,8 +294,7 @@
                                         </li>
                                         <li class="d-flex align-items-center">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <span class="avatar-initial rounded bg-label-secondary"><i
-                                                        class='bx bx-football'></i></span>
+                                                <span class="avatar-initial rounded bg-label-secondary"><i class='bx bx-football'></i></span>
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -344,11 +318,7 @@
                                 <div class="card-header nav-align-top">
                                     <ul class="nav nav-pills" role="tablist">
                                         <li class="nav-item">
-                                            <button type="button" class="nav-link active" role="tab"
-                                                    data-bs-toggle="tab" data-bs-target="#navs-tabs-line-card-income"
-                                                    aria-controls="navs-tabs-line-card-income" aria-selected="true">
-                                                Income
-                                            </button>
+                                            <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-tabs-line-card-income" aria-controls="navs-tabs-line-card-income" aria-selected="true">Income</button>
                                         </li>
                                         <li class="nav-item">
                                             <button type="button" class="nav-link" role="tab">Expenses</button>
@@ -360,12 +330,10 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="tab-content p-0">
-                                        <div class="tab-pane fade show active" id="navs-tabs-line-card-income"
-                                             role="tabpanel">
+                                        <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
                                             <div class="d-flex mb-6">
                                                 <div class="avatar flex-shrink-0 me-3">
-                                                    <img src="../../assets/img/icons/unicons/wallet-primary.png"
-                                                         alt="User">
+                                                    <img src="../../assets/img/icons/unicons/wallet-primary.png" alt="User">
                                                 </div>
                                                 <div>
                                                     <p class="mb-0">Total Balance</p>
@@ -401,8 +369,7 @@
                                 <div class="card-header d-flex align-items-center justify-content-between">
                                     <h5 class="card-title m-0 me-2">Transactions</h5>
                                     <div class="dropdown">
-                                        <button class="btn text-muted p-0" type="button" id="transactionID"
-                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button class="btn text-muted p-0" type="button" id="transactionID" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="bx bx-dots-vertical-rounded bx-lg"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
@@ -416,8 +383,7 @@
                                     <ul class="p-0 m-0">
                                         <li class="d-flex align-items-center mb-6">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <img src="../../assets/img/icons/unicons/paypal.png" alt="User"
-                                                     class="rounded">
+                                                <img src="../../assets/img/icons/unicons/paypal.png" alt="User" class="rounded">
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -425,15 +391,13 @@
                                                     <h6 class="fw-normal mb-0">Send money</h6>
                                                 </div>
                                                 <div class="user-progress d-flex align-items-center gap-2">
-                                                    <h6 class="fw-normal mb-0">+82.6</h6> <span
-                                                        class="text-muted">USD</span>
+                                                    <h6 class="fw-normal mb-0">+82.6</h6> <span class="text-muted">USD</span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="d-flex align-items-center mb-6">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <img src="../../assets/img/icons/unicons/wallet.png" alt="User"
-                                                     class="rounded">
+                                                <img src="../../assets/img/icons/unicons/wallet.png" alt="User" class="rounded">
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -441,15 +405,13 @@
                                                     <h6 class="fw-normal mb-0">Mac'D</h6>
                                                 </div>
                                                 <div class="user-progress d-flex align-items-center gap-2">
-                                                    <h6 class="fw-normal mb-0">+270.69</h6> <span
-                                                        class="text-muted">USD</span>
+                                                    <h6 class="fw-normal mb-0">+270.69</h6> <span class="text-muted">USD</span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="d-flex align-items-center mb-6">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <img src="../../assets/img/icons/unicons/chart.png" alt="User"
-                                                     class="rounded">
+                                                <img src="../../assets/img/icons/unicons/chart.png" alt="User" class="rounded">
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -457,15 +419,13 @@
                                                     <h6 class="fw-normal mb-0">Refund</h6>
                                                 </div>
                                                 <div class="user-progress d-flex align-items-center gap-2">
-                                                    <h6 class="fw-normal mb-0">+637.91</h6> <span
-                                                        class="text-muted">USD</span>
+                                                    <h6 class="fw-normal mb-0">+637.91</h6> <span class="text-muted">USD</span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="d-flex align-items-center mb-6">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <img src="../../assets/img/icons/unicons/cc-primary.png" alt="User"
-                                                     class="rounded">
+                                                <img src="../../assets/img/icons/unicons/cc-primary.png" alt="User" class="rounded">
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -473,15 +433,13 @@
                                                     <h6 class="fw-normal mb-0">Ordered Food</h6>
                                                 </div>
                                                 <div class="user-progress d-flex align-items-center gap-2">
-                                                    <h6 class="fw-normal mb-0">-838.71</h6> <span
-                                                        class="text-muted">USD</span>
+                                                    <h6 class="fw-normal mb-0">-838.71</h6> <span class="text-muted">USD</span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="d-flex align-items-center mb-6">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <img src="../../assets/img/icons/unicons/wallet.png" alt="User"
-                                                     class="rounded">
+                                                <img src="../../assets/img/icons/unicons/wallet.png" alt="User" class="rounded">
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -489,15 +447,13 @@
                                                     <h6 class="fw-normal mb-0">Starbucks</h6>
                                                 </div>
                                                 <div class="user-progress d-flex align-items-center gap-2">
-                                                    <h6 class="fw-normal mb-0">+203.33</h6> <span
-                                                        class="text-muted">USD</span>
+                                                    <h6 class="fw-normal mb-0">+203.33</h6> <span class="text-muted">USD</span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="d-flex align-items-center">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <img src="../../assets/img/icons/unicons/cc-warning.png" alt="User"
-                                                     class="rounded">
+                                                <img src="../../assets/img/icons/unicons/cc-warning.png" alt="User" class="rounded">
                                             </div>
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
@@ -505,8 +461,7 @@
                                                     <h6 class="fw-normal mb-0">Ordered Food</h6>
                                                 </div>
                                                 <div class="user-progress d-flex align-items-center gap-2">
-                                                    <h6 class="fw-normal mb-0">-92.45</h6> <span
-                                                        class="text-muted">USD</span>
+                                                    <h6 class="fw-normal mb-0">-92.45</h6> <span class="text-muted">USD</span>
                                                 </div>
                                             </div>
                                         </li>
@@ -521,8 +476,7 @@
                                 <div class="card-header d-flex justify-content-between">
                                     <h5 class="card-title m-0 me-2">Activity Timeline</h5>
                                     <div class="dropdown">
-                                        <button class="btn text-muted p-0" type="button" id="timelineWapper"
-                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button class="btn text-muted p-0" type="button" id="timelineWapper" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="bx bx-dots-vertical-rounded bx-lg"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="timelineWapper">
@@ -546,8 +500,7 @@
                                                 </p>
                                                 <div class="d-flex align-items-center mb-1">
                                                     <div class="badge bg-lighter rounded-2">
-                                                        <img src="../../assets/img/icons/misc/pdf.png" alt="img"
-                                                             width="15" class="me-2">
+                                                        <img src="../../assets/img/icons/misc/pdf.png" alt="img" width="15" class="me-2">
                                                         <span class="h6 mb-0 text-body">invoices.pdf</span>
                                                     </div>
                                                 </div>
@@ -566,8 +519,7 @@
                                                 <div class="d-flex justify-content-between flex-wrap gap-2">
                                                     <div class="d-flex flex-wrap align-items-center">
                                                         <div class="avatar avatar-sm me-2">
-                                                            <img src="../../assets/img/avatars/1.png" alt="Avatar"
-                                                                 class="rounded-circle"/>
+                                                            <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
                                                         </div>
                                                         <div>
                                                             <p class="mb-0 small fw-medium">Lester McCarthy (Client)</p>
@@ -591,32 +543,17 @@
                                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap p-0">
                                                         <div class="d-flex flex-wrap align-items-center">
                                                             <ul class="list-unstyled users-list d-flex align-items-center avatar-group m-0 me-2">
-                                                                <li data-bs-toggle="tooltip" data-popup="tooltip-custom"
-                                                                    data-bs-placement="top" title="Vinnie Mostowy"
-                                                                    class="avatar pull-up">
-                                                                    <img class="rounded-circle"
-                                                                         src="../../assets/img/avatars/5.png"
-                                                                         alt="Avatar"/>
+                                                                <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" title="Vinnie Mostowy" class="avatar pull-up">
+                                                                    <img class="rounded-circle" src="../../assets/img/avatars/5.png" alt="Avatar" />
                                                                 </li>
-                                                                <li data-bs-toggle="tooltip" data-popup="tooltip-custom"
-                                                                    data-bs-placement="top" title="Allen Rieske"
-                                                                    class="avatar pull-up">
-                                                                    <img class="rounded-circle"
-                                                                         src="../../assets/img/avatars/12.png"
-                                                                         alt="Avatar"/>
+                                                                <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" title="Allen Rieske" class="avatar pull-up">
+                                                                    <img class="rounded-circle" src="../../assets/img/avatars/12.png" alt="Avatar" />
                                                                 </li>
-                                                                <li data-bs-toggle="tooltip" data-popup="tooltip-custom"
-                                                                    data-bs-placement="top" title="Julee Rossignol"
-                                                                    class="avatar pull-up">
-                                                                    <img class="rounded-circle"
-                                                                         src="../../assets/img/avatars/6.png"
-                                                                         alt="Avatar"/>
+                                                                <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" title="Julee Rossignol" class="avatar pull-up">
+                                                                    <img class="rounded-circle" src="../../assets/img/avatars/6.png" alt="Avatar" />
                                                                 </li>
                                                                 <li class="avatar">
-                                                                    <span class="avatar-initial rounded-circle pull-up text-heading"
-                                                                          data-bs-toggle="tooltip"
-                                                                          data-bs-placement="bottom"
-                                                                          title="3 more">+3</span>
+                                                                    <span class="avatar-initial rounded-circle pull-up text-heading" data-bs-toggle="tooltip" data-bs-placement="bottom" title="3 more">+3</span>
                                                                 </li>
                                                             </ul>
                                                         </div>
@@ -635,22 +572,13 @@
                                 <div class="card-header nav-align-top">
                                     <ul class="nav nav-pills" role="tablist">
                                         <li class="nav-item">
-                                            <button type="button" class="nav-link active" role="tab"
-                                                    data-bs-toggle="tab" data-bs-target="#navs-pills-browser"
-                                                    aria-controls="navs-pills-browser" aria-selected="true">Browser
-                                            </button>
+                                            <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-browser" aria-controls="navs-pills-browser" aria-selected="true">Browser</button>
                                         </li>
                                         <li class="nav-item">
-                                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
-                                                    data-bs-target="#navs-pills-os" aria-controls="navs-pills-os"
-                                                    aria-selected="false">Operating System
-                                            </button>
+                                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-os" aria-controls="navs-pills-os" aria-selected="false">Operating System</button>
                                         </li>
                                         <li class="nav-item">
-                                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
-                                                    data-bs-target="#navs-pills-country"
-                                                    aria-controls="navs-pills-country" aria-selected="false">Country
-                                            </button>
+                                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-country" aria-controls="navs-pills-country" aria-selected="false">Country</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -671,8 +599,7 @@
                                                     <td>1</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/chrome.png"
-                                                                 alt="Chrome" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/chrome.png" alt="Chrome" height="24" class="me-3">
                                                             <span class="text-heading">Chrome</span>
                                                         </div>
                                                     </td>
@@ -680,9 +607,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-success" role="progressbar"
-                                                                     style="width: 64.75%" aria-valuenow="64.75"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-success" role="progressbar" style="width: 64.75%" aria-valuenow="64.75" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">64.75%</small>
                                                         </div>
@@ -692,8 +617,7 @@
                                                     <td>2</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/safari.png"
-                                                                 alt="Safari" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/safari.png" alt="Safari" height="24" class="me-3">
                                                             <span class="text-heading">Safari</span>
                                                         </div>
                                                     </td>
@@ -701,9 +625,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-primary" role="progressbar"
-                                                                     style="width: 18.43%" aria-valuenow="18.43"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-primary" role="progressbar" style="width: 18.43%" aria-valuenow="18.43" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">18.43%</small>
                                                         </div>
@@ -713,8 +635,7 @@
                                                     <td>3</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/firefox.png"
-                                                                 alt="Firefox" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/firefox.png" alt="Firefox" height="24" class="me-3">
                                                             <span class="text-heading">Firefox</span>
                                                         </div>
                                                     </td>
@@ -722,9 +643,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-info" role="progressbar"
-                                                                     style="width: 8.37%" aria-valuenow="8.37"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-info" role="progressbar" style="width: 8.37%" aria-valuenow="8.37" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">8.37%</small>
                                                         </div>
@@ -734,8 +653,7 @@
                                                     <td>4</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/edge.png" alt="Edge"
-                                                                 height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/edge.png" alt="Edge" height="24" class="me-3">
                                                             <span class="text-heading">Edge</span>
                                                         </div>
                                                     </td>
@@ -743,9 +661,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-warning" role="progressbar"
-                                                                     style="width: 6.12%" aria-valuenow="6.12"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 6.12%" aria-valuenow="6.12" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">6.12%</small>
                                                         </div>
@@ -755,8 +671,7 @@
                                                     <td>5</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/opera.png"
-                                                                 alt="Opera" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/opera.png" alt="Opera" height="24" class="me-3">
                                                             <span class="text-heading">Opera</span>
                                                         </div>
                                                     </td>
@@ -764,9 +679,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-danger" role="progressbar"
-                                                                     style="width: 2.12%" aria-valuenow="1.94"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 2.12%" aria-valuenow="1.94" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">2.12%</small>
                                                         </div>
@@ -776,8 +689,7 @@
                                                     <td>6</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/uc.png" alt="uc"
-                                                                 height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/uc.png" alt="uc" height="24" class="me-3">
                                                             <span class="text-heading">UC Browser</span>
                                                         </div>
                                                     </td>
@@ -785,9 +697,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-danger" role="progressbar"
-                                                                     style="width: 20.14%" aria-valuenow="1.94"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 20.14%" aria-valuenow="1.94" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">20.14%</small>
                                                         </div>
@@ -813,8 +723,7 @@
                                                     <td>1</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/windows.png"
-                                                                 alt="Windows" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/windows.png" alt="Windows" height="24" class="me-3">
                                                             <span class="text-heading">Windows</span>
                                                         </div>
                                                     </td>
@@ -822,9 +731,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-success" role="progressbar"
-                                                                     style="width: 61.50%" aria-valuenow="61.50"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-success" role="progressbar" style="width: 61.50%" aria-valuenow="61.50" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">61.50%</small>
                                                         </div>
@@ -834,8 +741,7 @@
                                                     <td>2</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/mac.png" alt="Mac"
-                                                                 height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/mac.png" alt="Mac" height="24" class="me-3">
                                                             <span class="text-heading">Mac</span>
                                                         </div>
                                                     </td>
@@ -843,9 +749,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-primary" role="progressbar"
-                                                                     style="width: 16.67%" aria-valuenow="16.67"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-primary" role="progressbar" style="width: 16.67%" aria-valuenow="16.67" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">16.67%</small>
                                                         </div>
@@ -855,8 +759,7 @@
                                                     <td>3</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/ubuntu.png"
-                                                                 alt="Ubuntu" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/ubuntu.png" alt="Ubuntu" height="24" class="me-3">
                                                             <span class="text-heading">Ubuntu</span>
                                                         </div>
                                                     </td>
@@ -864,9 +767,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-info" role="progressbar"
-                                                                     style="width: 12.82%" aria-valuenow="12.82"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-info" role="progressbar" style="width: 12.82%" aria-valuenow="12.82" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">12.82%</small>
                                                         </div>
@@ -876,8 +777,7 @@
                                                     <td>4</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/chrome.png"
-                                                                 alt="Chrome" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/chrome.png" alt="Chrome" height="24" class="me-3">
                                                             <span class="text-heading">Chrome</span>
                                                         </div>
                                                     </td>
@@ -885,9 +785,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-warning" role="progressbar"
-                                                                     style="width: 6.25%" aria-valuenow="6.25"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 6.25%" aria-valuenow="6.25" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">6.25%</small>
                                                         </div>
@@ -897,8 +795,7 @@
                                                     <td>5</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/cent.png" alt="Cent"
-                                                                 height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/cent.png" alt="Cent" height="24" class="me-3">
                                                             <span class="text-heading">Cent</span>
                                                         </div>
                                                     </td>
@@ -906,9 +803,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-danger" role="progressbar"
-                                                                     style="width: 2.76%" aria-valuenow="2.76"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 2.76%" aria-valuenow="2.76" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">2.76%</small>
                                                         </div>
@@ -918,8 +813,7 @@
                                                     <td>6</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/brands/linux.png"
-                                                                 alt="linux" height="24" class="me-3">
+                                                            <img src="../../assets/img/icons/brands/linux.png" alt="linux" height="24" class="me-3">
                                                             <span class="text-heading">Linux</span>
                                                         </div>
                                                     </td>
@@ -927,9 +821,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-danger" role="progressbar"
-                                                                     style="width: 20.14%" aria-valuenow="2.76"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 20.14%" aria-valuenow="2.76" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">20.14%</small>
                                                         </div>
@@ -963,9 +855,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-success" role="progressbar"
-                                                                     style="width: 38.12%" aria-valuenow="38.12"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-success" role="progressbar" style="width: 38.12%" aria-valuenow="38.12" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">38.12%</small>
                                                         </div>
@@ -983,9 +873,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-primary" role="progressbar"
-                                                                     style="width: 28.23%" aria-valuenow="28.23"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-primary" role="progressbar" style="width: 28.23%" aria-valuenow="28.23" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">28.23%</small>
                                                         </div>
@@ -1003,9 +891,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-info" role="progressbar"
-                                                                     style="width: 14.82%" aria-valuenow="14.82"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-info" role="progressbar" style="width: 14.82%" aria-valuenow="14.82" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">14.82%</small>
                                                         </div>
@@ -1023,9 +909,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-warning" role="progressbar"
-                                                                     style="width: 12.72%" aria-valuenow="12.72"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 12.72%" aria-valuenow="12.72" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">12.72%</small>
                                                         </div>
@@ -1043,9 +927,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-danger" role="progressbar"
-                                                                     style="width: 7.11%" aria-valuenow="7.11"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 7.11%" aria-valuenow="7.11" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">7.11%</small>
                                                         </div>
@@ -1063,9 +945,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center gap-4">
                                                             <div class="progress w-100" style="height:10px;">
-                                                                <div class="progress-bar bg-danger" role="progressbar"
-                                                                     style="width: 15.13%" aria-valuenow="7.11"
-                                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 15.13%" aria-valuenow="7.11" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
                                                             <small class="fw-medium">15.13%</small>
                                                         </div>
@@ -1080,13 +960,13 @@
                         </div>
                         <!--/ pill table -->
                     </div>
-
                 </div>
                 <!-- / Content -->
-
                 <div class="content-backdrop fade"></div>
             </div>
             <!-- Content wrapper -->
         </div>
+        <script defer src="/assets/js/dashboards-analytics.js"></script>
 </body>
+</th:block>
 </html>
