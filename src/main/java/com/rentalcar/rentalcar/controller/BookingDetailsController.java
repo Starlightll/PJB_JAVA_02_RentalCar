@@ -220,6 +220,21 @@ public class BookingDetailsController {
 
     }
 
+
+    @GetMapping("/cancel-booking-detail")
+    public String cancelBooking(@RequestParam Long bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
+
+        boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
+        if (isCancelled) {
+            model.addAttribute("message_" + bookingId, "Booking has been successfully cancelled.");
+        } else {
+            model.addAttribute("error", "Unable to cancel the booking. Please try again.");
+        }
+
+       return bookingDetail(bookingId.intValue(), carId, navigate, model, session);
+    }
+
+
     public List<UserDto> getAllDriverAvailable() {
         List<Object[]> results = userRepo.getAllDriver();
         List<UserDto> userDtos = new ArrayList<>();
