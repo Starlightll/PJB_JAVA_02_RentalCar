@@ -110,7 +110,7 @@ public class EmailService {
         String  toDate = bookingdto.getReturnDate().format(dateTimeFormatter);
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         String  pricePerDay = currencyFormatter.format(car.getBasePrice());
-        String  totalPrice =currencyFormatter.format(bookingdto.getTotalPrice());
+        String  totalPrice = currencyFormatter.format(booking.getTotalPrice());
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -125,8 +125,8 @@ public class EmailService {
                     "<li><strong>Car Name:</strong> " + carName + "</li>" +
                     "<li><strong>From:</strong> " + fromDate + "</li>" +
                     "<li><strong>To:</strong> " + toDate + "</li>" +
-                    "<li><strong>Price per Day:</strong> $" + pricePerDay + "</li>" +
-                    "<li><strong>Total Price:</strong> $" + totalPrice + "</li>" +
+                    "<li><strong>Price per Day:</strong> " + pricePerDay + "</li>" +
+                    "<li><strong>Total Price:</strong> " + totalPrice + "</li>" +
                     "</ul>" +
                     "<p>We look forward to serving you. If you have any questions, please contact our support team.</p>" +
                     "<p>Best regards,<br>The Support Team</p>" +
@@ -148,12 +148,12 @@ public class EmailService {
 
 
     @Async
-    public void sendBookingConfirmationWithDeposit(User user, BookingDto bookingDto, Booking booking, Car car, double depositAmount) {
+    public void sendBookingConfirmationWithDeposit(User user, Booking booking, Car car, double depositAmount) {
         String recipientAddress = user.getEmail();
         Long bookingNumber = booking.getBookingId();
         String carName = car.getCarName();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String bookingDate = bookingDto.getPickUpDate().format(dateTimeFormatter);
+        String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         String depositFormatted = currencyFormatter.format(depositAmount);
 

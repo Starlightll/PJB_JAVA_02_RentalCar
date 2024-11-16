@@ -1,11 +1,15 @@
 package com.rentalcar.rentalcar.entity;
-import lombok.Data;
+import lombok.*;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 @Entity
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "UserRole")
 @IdClass(UserRole.UserRoleId.class)  // Sử dụng @IdClass để chỉ định khóa chính phức hợp
 public class UserRole {

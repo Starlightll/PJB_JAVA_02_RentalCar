@@ -78,10 +78,11 @@ public class SearchCarController {
        // List<Car> carList = searchCarService.findCars(name);
         Page<Car> list = searchCarService.findCars(name,pageNo, sort);
 
-        if (name.trim().isEmpty()) {
-            model.addAttribute("sendLocation", "Please enter location");
-
-        } else if (pickDate == null) {
+//        if (name.trim().isEmpty()) {
+//            model.addAttribute("sendLocation", "Please enter location");
+//
+//        } else
+            if (pickDate == null) {
             model.addAttribute("sendPickDate", "Please enter pick date");
         } else if (pickTime == null ) {
             model.addAttribute("sendPickTime", "Please enter pick time");
@@ -97,7 +98,7 @@ public class SearchCarController {
             }
             else{
 
-                model.addAttribute("list", list);
+                model.addAttribute("list", list.getContent());
                 model.addAttribute("totalPage", list.getTotalPages());
                 model.addAttribute("currentPage", pageNo);
                 model.addAttribute("name", name);
@@ -115,7 +116,7 @@ public class SearchCarController {
         } else if (pickDate.isAfter(dropDate)) {
             model.addAttribute("sendCondition", "Drop-off date  must be later than Pick-up date ");
         }else {
-            model.addAttribute("list", list);
+            model.addAttribute("list", list.getContent());
             model.addAttribute("totalPage", list.getTotalPages());
             model.addAttribute("currentPage", pageNo);
             model.addAttribute("name", name);

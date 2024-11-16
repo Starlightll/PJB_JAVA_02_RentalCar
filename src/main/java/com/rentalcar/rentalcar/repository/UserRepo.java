@@ -2,6 +2,7 @@ package com.rentalcar.rentalcar.repository;
 
 
 import com.rentalcar.rentalcar.dto.UserDto;
+import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,12 +21,19 @@ public interface UserRepo extends JpaRepository<User, Long> {
             "  where r.RoleId = 4 and u.statusDriverId =  1", nativeQuery = true)
      List<Object[]> getAllDriverAvailable();
 
+    @Query(value = "  select u.[userId], u.fullName, u.dob from [Users] u \n" +
+            "  Join [dbo].[UserRole] ur ON ur.userId = u.userId\n" +
+            "  Join [dbo].[Role] r ON r.RoleId = ur.roleId\n" +
+            "  where r.RoleId = 4", nativeQuery = true)
+    List<Object[]> getAllDriver();
+
 
     boolean existsByPhone(String phone);
 
     User getUserById(Long id);
 
-    @Query("SELECT u FROM User u")
+    @Query("SELECT u FROM User u WHERE u.status != 'DELETED'")
     public List<User> getAllUsers();
+
 
 }

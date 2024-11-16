@@ -4,11 +4,14 @@ package com.rentalcar.rentalcar.entity;
 import com.rentalcar.rentalcar.common.UserStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 
-@Data
+@Setter
+@Getter
 @Entity
 public class DriverDetail {
 

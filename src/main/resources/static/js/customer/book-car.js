@@ -125,115 +125,243 @@ function goToStep(targetStep) {
 
 // Call API to fetch provinces, districts and wards
 // Function to create province/district/ward handlers for a specific form
-function createLocationHandlers(formId) {
-    console.log(formId);
-    const provinceSelect = document.getElementById('province' + formId);
-    const districtSelect = document.getElementById('district'+ formId);
-    const wardSelect = document.getElementById('ward' + formId);
+// function createLocationHandlers(formId) {
+//     console.log(formId);
+//     const provinceSelect = document.getElementById('province' + formId);
+//     const districtSelect = document.getElementById('district'+ formId);
+//     const wardSelect = document.getElementById('ward' + formId);
+//
+//     // Fetch provinces
+//     async function fetchProvinces(defaultCity) {
+//         try {
+//             const response = await fetch('https://provinces.open-api.vn/api/p/');
+//             const provinces = await response.json();
+//
+//             provinceSelect.innerHTML = '<option value="">Select Province</option>';
+//             provinces.forEach(province => {
+//                 const option = document.createElement('option');
+//                 option.value = province.code;
+//                 option.textContent = province.name;
+//                 if (province.code == defaultCity) {
+//                     option.selected = true;
+//                 }
+//                 provinceSelect.appendChild(option);
+//             });
+//
+//             if (defaultCity) {
+//                 fetchDistricts(defaultCity, districtSelect.getAttribute('data-default'));
+//             }
+//         } catch (error) {
+//             console.error('Error fetching provinces:', error);
+//         }
+//     }
+//
+//     // Fetch districts
+//     async function fetchDistricts(provinceCode, defaultDistrict) {
+//         try {
+//             const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+//             const provinceData = await response.json();
+//
+//             districtSelect.innerHTML = '<option value="">Select District</option>';
+//             provinceData.districts.forEach(district => {
+//                 const option = document.createElement('option');
+//                 option.value = district.code;
+//                 option.textContent = district.name;
+//                 if (district.code == defaultDistrict) {
+//                     option.selected = true;
+//                 }
+//                 districtSelect.appendChild(option);
+//             });
+//
+//             if (defaultDistrict) {
+//                 fetchWards(defaultDistrict, wardSelect.getAttribute('data-default'));
+//             }
+//         } catch (error) {
+//             console.error('Error fetching districts:', error);
+//         }
+//     }
+//
+//     // Fetch wards
+//     async function fetchWards(districtCode, defaultWard) {
+//         try {
+//             const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+//             const districtData = await response.json();
+//
+//             wardSelect.innerHTML = '<option value="">Select Ward</option>';
+//             districtData.wards.forEach(ward => {
+//                 const option = document.createElement('option');
+//                 option.value = ward.code;
+//                 option.textContent = ward.name;
+//                 if (ward.code == defaultWard) {
+//                     option.selected = true;
+//                 }
+//                 wardSelect.appendChild(option);
+//             });
+//         } catch (error) {
+//             console.error('Error fetching wards:', error);
+//         }
+//     }
+//
+//     // Add event listeners
+//     provinceSelect.addEventListener('change', function() {
+//         fetchDistricts(this.value);
+//         wardSelect.innerHTML = '<option value="">Select Ward</option>';
+//         districtSelect.disabled = this.value === "";
+//         districtSelect.value = "";
+//         wardSelect.disabled = true;
+//     });
+//
+//     districtSelect.addEventListener('change', function() {
+//         fetchWards(this.value);
+//         wardSelect.disabled = this.value === "";
+//     });
+//
+//     // Initial load
+//     const defaultCity = provinceSelect.getAttribute('data-default');
+//     fetchProvinces(defaultCity);
+//
+//     return {
+//         fetchProvinces,
+//         fetchDistricts,
+//         fetchWards
+//     };
+// }
+//
+// // Hàm khởi tạo cho nhiều form
+// document.addEventListener("DOMContentLoaded", function () {
+//     const formIds = ['1', '2'];  // List các form ID bạn muốn xử lý
+//     formIds.forEach(formId => {
+//         console.log(formId);
+//         console.log(formIds);
+//
+//         createLocationHandlers(formId);
+//     });
+// });
+// Initialize both forms when the DOM is loaded
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Initialize for Renter Information (form with ID '1')
+//     const renterLocationHandlers = createLocationHandlers('1');
+//
+//     // Initialize for Driver Information (form with no ID suffix)
+//     const driverLocationHandlers = createLocationHandlers('');
+//
+//     // Handle the checkbox for copying renter's information
+//     const checkbox = document.querySelector('input[name="additionalFunction"]');
+//     checkbox.addEventListener('change', function() {
+//         if (!this.checked) {
+//             // When unchecked, reset driver's form
+//             document.getElementById('province').value = '';
+//             document.getElementById('district').value = '';
+//             document.getElementById('ward').value = '';
+//             document.getElementById('district').disabled = true;
+//             document.getElementById('ward').disabled = true;
+//         } else {
+//             // When checked, copy values from renter's form
+//             const province1 = document.getElementById('province1');
+//             const district1 = document.getElementById('district1');
+//             const ward1 = document.getElementById('ward1');
+//
+//             document.getElementById('province').value = province1.value;
+//             if (province1.value) {
+//                 driverLocationHandlers.fetchDistricts(province1.value, district1.value);
+//             }
+//             if (district1.value) {
+//                 driverLocationHandlers.fetchWards(district1.value, ward1.value);
+//             }
+//         }
+//     });
+// });
 
-    // Fetch provinces
-    async function fetchProvinces(defaultCity) {
-        try {
-            const response = await fetch('https://provinces.open-api.vn/api/p/');
-            const provinces = await response.json();
 
-            provinceSelect.innerHTML = '<option value="">Select Province</option>';
-            provinces.forEach(province => {
-                const option = document.createElement('option');
-                option.value = province.code;
-                option.textContent = province.name;
-                if (province.code == defaultCity) {
-                    option.selected = true;
-                }
-                provinceSelect.appendChild(option);
-            });
+// Call API to fetch provinces, districts and wards
+// Fetch provinces and set default city
+async function fetchProvinces(defaultCity) {
+    const response = await fetch('https://provinces.open-api.vn/api/p/');
+    const provinces = await response.json();
+    const citySelect = document.getElementById('province');
 
-            if (defaultCity) {
-                fetchDistricts(defaultCity, districtSelect.getAttribute('data-default'));
-            }
-        } catch (error) {
-            console.error('Error fetching provinces:', error);
+    provinces.forEach(province => {
+        const option = document.createElement('option');
+        option.value = province.code;
+        option.textContent = province.name;
+        if (province.code == defaultCity) {
+            option.selected = true;
         }
-    }
-
-    // Fetch districts
-    async function fetchDistricts(provinceCode, defaultDistrict) {
-        try {
-            const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-            const provinceData = await response.json();
-
-            districtSelect.innerHTML = '<option value="">Select District</option>';
-            provinceData.districts.forEach(district => {
-                const option = document.createElement('option');
-                option.value = district.code;
-                option.textContent = district.name;
-                if (district.code == defaultDistrict) {
-                    option.selected = true;
-                }
-                districtSelect.appendChild(option);
-            });
-
-            if (defaultDistrict) {
-                fetchWards(defaultDistrict, wardSelect.getAttribute('data-default'));
-            }
-        } catch (error) {
-            console.error('Error fetching districts:', error);
-        }
-    }
-
-    // Fetch wards
-    async function fetchWards(districtCode, defaultWard) {
-        try {
-            const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
-            const districtData = await response.json();
-
-            wardSelect.innerHTML = '<option value="">Select Ward</option>';
-            districtData.wards.forEach(ward => {
-                const option = document.createElement('option');
-                option.value = ward.code;
-                option.textContent = ward.name;
-                if (ward.code == defaultWard) {
-                    option.selected = true;
-                }
-                wardSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error fetching wards:', error);
-        }
-    }
-
-    // Add event listeners
-    provinceSelect.addEventListener('change', function() {
-        fetchDistricts(this.value);
-        wardSelect.innerHTML = '<option value="">Select Ward</option>';
-        districtSelect.disabled = this.value === "";
-        districtSelect.value = "";
-        wardSelect.disabled = true;
+        citySelect.appendChild(option);
     });
 
-    districtSelect.addEventListener('change', function() {
-        fetchWards(this.value);
-        wardSelect.disabled = this.value === "";
-    });
-
-    // Initial load
-    const defaultCity = provinceSelect.getAttribute('data-default');
-    fetchProvinces(defaultCity);
-
-    return {
-        fetchProvinces,
-        fetchDistricts,
-        fetchWards
-    };
+    if (defaultCity) {
+        fetchDistricts(defaultCity, document.getElementById('district').getAttribute('data-default'));
+    }
 }
 
-// Hàm khởi tạo cho nhiều form
-document.addEventListener("DOMContentLoaded", function () {
-    const formIds = ['1', '2'];  // List các form ID bạn muốn xử lý
-    formIds.forEach(formId => {
-        console.log(formId);
-        console.log(formIds);
+// Fetch districts based on selected province and set default value
+async function fetchDistricts(provinceCode, defaultDistrict) {
+    const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+    const provinceData = await response.json();
+    const districtSelect = document.getElementById('district');
 
-        createLocationHandlers(formId);
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+    provinceData.districts.forEach(district => {
+        const option = document.createElement('option');
+        option.value = district.code;
+        option.textContent = district.name;
+        if (district.code == defaultDistrict) {
+            option.selected = true;
+        }
+        districtSelect.appendChild(option);
     });
+
+    if (defaultDistrict) {
+        fetchWards(defaultDistrict, document.getElementById('ward').getAttribute('data-default'));
+    }
+}
+
+// Fetch wards based on selected district and set default value
+async function fetchWards(districtCode, defaultWard) {
+    const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+    const districtData = await response.json();
+    const wardSelect = document.getElementById('ward');
+
+    wardSelect.innerHTML = '<option value="">Select Ward</option>';
+    districtData.wards.forEach(ward => {
+        const option = document.createElement('option');
+        option.value = ward.code;
+        option.textContent = ward.name;
+        if (ward.code == defaultWard) {
+            option.selected = true;
+        }
+        wardSelect.appendChild(option);
+    });
+}
+
+// Event listeners to load data on selection
+document.getElementById('province').addEventListener('change', function () {
+    fetchDistricts(this.value);
+    document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
+    document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
+    document.getElementById('district').value = ""; // Reset district value
+    document.getElementById('ward').disabled = true; // Disable ward selection
+});
+
+document.getElementById('district').addEventListener('change', function () {
+    fetchWards(this.value);
+    document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
+});
+
+
+// Load provinces on page load with default values
+document.addEventListener('DOMContentLoaded', function () {
+    const defaultCity = document.getElementById('province').getAttribute('data-default');
+    fetchProvinces(defaultCity);
+});
+
+
+//Load location
+const province = document.getElementById('province');
+const district = document.getElementById('district');
+const ward = document.getElementById('district');
+const previewLocation = document.getElementById('previewLocation');
+ward.addEventListener('change', function(){
+    previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
 });
