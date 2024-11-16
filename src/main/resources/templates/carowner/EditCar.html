@@ -198,7 +198,7 @@
                                                 <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
                                                     <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
                                                     <a th:href="'#'"
-                                                    th:id="'cancel-booking-btn-' + ${car.getCarId()}"
+                                                    th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
                                                        class="btn btn-primary  ">Confirm deposit</a>
                                                     </th:block>
                                                 </div>
@@ -646,6 +646,22 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 mb-3">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    <label class="form-check-label"
+                                                                           style="padding: 0 10px;">
+                                                                        Write here
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control"
+                                                                   aria-label="Text input with checkbox" id="termOfUse" th:value="${car.terms}">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -681,6 +697,43 @@
 
 
     <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+            const sortBy = document.getElementById('sortBy').value;
+            const pageSize = document.getElementById('pageSize').value;
+
+            // confirm deposit Button Event
+            const confirmDepositBtns = document.querySelectorAll('[id^="confirm-deposit-btn-"]');
+            confirmDepositBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    const carId = this.closest('.row').querySelector("#carId").value;
+
+                    Swal.fire({
+                        title: 'Please confirm that you have receive the deposit this booking.' +
+                            ' This will allow the customer to pick-up the car at the agreed date and time.',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User chose to confirm deposit the car with ID:', carId);
+                            window.location.href = '/confirm-deposit?carId=' + carId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                        } else {
+                            console.log('User canceled the booking action');
+                        }
+                    });
+                });
+            });
+        });
+
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
