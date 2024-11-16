@@ -61,7 +61,7 @@ public class BookingDetailsController {
     private DriverDetailRepository driverDetailRepository;
 
     @GetMapping("/homepage-customer/booking-detail")
-    public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,  Model model, HttpSession session) {
+    public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
         MyBookingDto booking = new MyBookingDto();
@@ -115,6 +115,7 @@ public class BookingDetailsController {
         model.addAttribute("user", user);
         model.addAttribute("booking", booking);
         model.addAttribute("driverDetail", driverDetail);
+        model.addAttribute("navigate", navigate);
 
         return "customer/EditBookingDetails";
     }
@@ -132,6 +133,7 @@ public class BookingDetailsController {
             HttpSession session
     ) throws IOException {
 
+        User user = (User) session.getAttribute("user");
         Map<String, Object> response = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -172,6 +174,10 @@ public class BookingDetailsController {
 
         if (age < 18) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 18 years old");
+        }
+
+        if(user.getDrivingLicense() == null && rentImage == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a driving license image.");
         }
 
 

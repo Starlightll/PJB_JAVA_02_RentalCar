@@ -125,8 +125,8 @@ public class EmailService {
                     "<li><strong>Car Name:</strong> " + carName + "</li>" +
                     "<li><strong>From:</strong> " + fromDate + "</li>" +
                     "<li><strong>To:</strong> " + toDate + "</li>" +
-                    "<li><strong>Price per Day:</strong> $" + pricePerDay + "</li>" +
-                    "<li><strong>Total Price:</strong> $" + totalPrice + "</li>" +
+                    "<li><strong>Price per Day:</strong> " + pricePerDay + "</li>" +
+                    "<li><strong>Total Price:</strong> " + totalPrice + "</li>" +
                     "</ul>" +
                     "<p>We look forward to serving you. If you have any questions, please contact our support team.</p>" +
                     "<p>Best regards,<br>The Support Team</p>" +

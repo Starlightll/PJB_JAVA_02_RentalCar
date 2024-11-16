@@ -9,7 +9,9 @@ import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.entity.Booking;
+import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.RentalCarService;
 import com.rentalcar.rentalcar.service.ReturnCarService;
@@ -49,6 +51,8 @@ public class RentalCarController {
 
     @Autowired
     ReturnCarService returnCarService;
+    @Autowired
+    private CarRepository carRepository;
 
     @GetMapping("/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -124,7 +128,12 @@ public class RentalCarController {
             return "redirect:/";
         }
 
-        List<UserDto> driverLisst = getAllDriverAvailable();
+        Car carAddress = carRepository.getCarByCarId(CarId);
+        if(carAddress == null) {
+            return "redirect:/";
+        }
+
+        List<UserDto> driverList = getAllDriverAvailable();
         // Định dạng ngày giờ đầu vào và đầu ra
         SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
         SimpleDateFormat dateOutputFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -156,11 +165,12 @@ public class RentalCarController {
         }
 
         model.addAttribute("lastLink", beforeNavigate);
-        model.addAttribute("users", driverLisst); //
+        model.addAttribute("users", driverList); //
         model.addAttribute("car", car);
         model.addAttribute("address", address);
         model.addAttribute("user", user);
         model.addAttribute("userRepo", userepo);//Lấy wallet
+        model.addAttribute("carAddress", carAddress);//Lấy địa chỉ
         return "customer/booking";
     }
 
@@ -198,6 +208,7 @@ public class RentalCarController {
 
         // Parse carDraft JSON
         Map<String, Object> response = new HashMap<>();
+        User user = (User) session.getAttribute("user");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         BookingDto bookingInfor = objectMapper.readValue(BookingJson, BookingDto.class);
@@ -257,6 +268,9 @@ public class RentalCarController {
 
         if (endDate.isBefore(LocalDateTime.now()) || startDate.isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date Time cannot be in the past");
+        }
+        if(user.getDrivingLicense() == null && rentImage == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a driving license image.");
         }
 
 
