@@ -11,7 +11,7 @@ public class Regex {
     public static final String DISTANCE_REGEX = "^\\d+(\\.\\d{1,2})?$";
     public static final String MATERIAL_REGEX = "^\\d+(\\.\\d{1,2})?$";
     public static final String FUEL_CONSUMPTION_REGEX = "^\\d+(\\.\\d{1,2})?$";
-    public static final String NATIONAL_ID_REGEX = "^\\d{9}|\\d{12}$";
+    public static final String NATIONAL_ID_REGEX = "^[0-9]+$";
 
 
 }
