@@ -176,6 +176,15 @@
             max-width: 100%;
         }
 
+        .checkbox {
+            --background: #fff;
+            --border: #D1D6EE;
+            --border-hover: #BBC1E1;
+            --border-active: #BBC1E1;
+            --tick: #fff;
+            position: relative;
+        }
+
     </style>
 </head>
 
@@ -212,9 +221,18 @@
             <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span class="mr-2"><a href="/car-owner/my-cars">MY BOOKINGS <i
-                                class="ion-ios-arrow-forward"></i></a></span><span>CAR DETAILS <i
-                                class="ion-ios-arrow-forward"></i></span></p>
+
+                        <th:block th:if="${navigate == 'mybookings'}">
+                            <span class="mr-2">
+                                <a onclick="window.history.back()">MY BOOKINGS <i
+                                class="ion-ios-arrow-forward"></i></a>
+                            </span>
+                        </th:block>
+
+                        <span>BOOKING DETAILS <i
+                                class="ion-ios-arrow-forward"></i>
+                        </span>
+                    </p>
                     <h1 class="mb-3 bread">Booking Detail</h1>
                 </div>
             </div>
@@ -463,9 +481,9 @@
                                                                aria-describedby="inputGroup-sizing-default"
                                                                th:value="${driverDetail.getDob()}"
                                                                th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                               oninput="validateDob()" id="book_pick_date">
+                                                               oninput="validateDate()" id="book_pick_date1">
 
-                                                        <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>
+<!--                                                        <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>-->
 
                                                     </div>
                                                     <div id="dateError" style="color: red"></div>
@@ -658,7 +676,7 @@
                                                 </button>
                                                 <button class="btn-primary btn" id="save" style="width: 100px; margin: 10px 10px 10px 10px"
                                                         onclick="checkData()"
-                                                        th:if="${booking.getBookingStatus() == 'Confirmed' and booking.getBookingStatus() == 'Pending deposit'}">
+                                                        th:if="${booking.getBookingStatus() == 'Confirmed' or booking.getBookingStatus() == 'Pending deposit'}">
                                                     Save
                                                 </button>
                                             </div>
@@ -954,7 +972,7 @@
                                                     </div>
                                                     <span>Please make sure to have sufficient balance the car.</span>
 
-                                                    <a href="#">My Wallet</a>
+                                                    <a href="/wallet/my-wallet">My Wallet</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1029,7 +1047,7 @@
 
                 carId: document.getElementById("carId").value,
                 fullName: document.getElementById("fullName").value,
-                bookPickDate: document.getElementById("book_pick_date").value,
+                bookPickDate: document.getElementById("book_pick_date1").value,
                 phone: document.getElementById("phone").value,
                 email: document.getElementById("email").value,
                 nationalId: document.getElementById("nationalId").value,
@@ -1081,7 +1099,7 @@
                 const carId = document.getElementById("carId").value;
                 const bookingId = document.getElementById("bookingId").value;
                 const fullName = document.getElementById('fullName').value;
-                const bookPickDate = document.getElementById('book_pick_date').value;
+                const bookPickDate = document.getElementById('book_pick_date1').value;
                 const phone = document.getElementById('phone').value;
                 const email = document.getElementById('email').value;
                 const nationalId = document.getElementById("nationalId").value;
@@ -1271,8 +1289,8 @@
         }
 
         // Date of Birth Validation with 18+ Age Check
-        function validateDob() {
-            const dob = document.getElementById("book_pick_date").value;
+        function validateDate() {
+            const dob = document.getElementById("book_pick_date1").value;
             const dobError = document.getElementById("dateError");
             const dobDate = new Date(dob);
             const today = new Date();

@@ -61,7 +61,7 @@ public class BookingDetailsController {
     private DriverDetailRepository driverDetailRepository;
 
     @GetMapping("/homepage-customer/booking-detail")
-    public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,  Model model, HttpSession session) {
+    public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
         MyBookingDto booking = new MyBookingDto();
@@ -115,6 +115,7 @@ public class BookingDetailsController {
         model.addAttribute("user", user);
         model.addAttribute("booking", booking);
         model.addAttribute("driverDetail", driverDetail);
+        model.addAttribute("navigate", navigate);
 
         return "customer/EditBookingDetails";
     }

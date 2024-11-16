@@ -267,6 +267,8 @@ public class RentalCarServiceImpl implements RentalCarService {
                 files[0].getSize();
                 String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "drivingLicense." + getExtension(files[0].getOriginalFilename()));
                 driverDetail.setDrivingLicense(storedPath);
+            } else {
+                driverDetail.setDrivingLicense(user.getDrivingLicense());
             }
         } catch (Exception e) {
             e.printStackTrace();
