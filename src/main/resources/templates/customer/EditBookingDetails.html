@@ -1006,6 +1006,46 @@
 
 
 
+        //cancel button
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+
+            // Cancel Booking Button Event
+            const cancelBookingBtn = document.getElementById('cancel-booking-btn'); // ID của nút Cancel
+            if (cancelBookingBtn) {
+                cancelBookingBtn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Lấy bookingId từ trường ẩn
+                    const bookingId = document.getElementById('bookingId').value;
+
+                    // Hiển thị hộp thoại xác nhận
+                    Swal.fire({
+                        title: 'Are you sure you want to cancel this booking?',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User chose to cancel the booking with ID:', bookingId);
+
+                            // Gửi yêu cầu xóa (bạn có thể dùng fetch hoặc window.location)
+                            window.location.href = '/cancel-booking-detail?bookingId=' + bookingId;
+                        } else {
+                            console.log('User canceled the booking action');
+                        }
+                    });
+                });
+            }
+        });
+
+
+        //====== Save data ======
         function checkData() {
             if(!checkStep()) {
                 return;
