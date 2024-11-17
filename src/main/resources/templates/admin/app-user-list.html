@@ -147,6 +147,11 @@
                                 <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
                                     <form class="add-new-user pt-0" id="addNewUserForm" onsubmit="return false">
                                         <div class="mb-6">
+                                            <label class="form-label" for="add-user-fullname">Username</label>
+                                            <input type="text" class="form-control" id="add-user-username"
+                                                   placeholder="John Doe" name="userFullname" aria-label="John Doe"/>
+                                        </div>
+                                        <div class="mb-6">
                                             <label class="form-label" for="add-user-fullname">Full Name</label>
                                             <input type="text" class="form-control" id="add-user-fullname"
                                                    placeholder="John Doe" name="userFullname" aria-label="John Doe"/>
@@ -158,15 +163,20 @@
                                                    name="userEmail"/>
                                         </div>
                                         <div class="mb-6">
-                                            <label class="form-label" for="add-user-contact">Contact</label>
+                                            <label class="form-label" for="add-user-contact">Phone</label>
                                             <input type="text" id="add-user-contact" class="form-control phone-mask"
                                                    placeholder="+1 (609) 988-44-11" aria-label="john.doe@example.com"
                                                    name="userContact"/>
                                         </div>
                                         <div class="mb-6">
-                                            <label class="form-label" for="add-user-company">Company</label>
-                                            <input type="text" id="add-user-company" class="form-control"
-                                                   placeholder="Web Developer" aria-label="jdoe1" name="companyName"/>
+                                            <label class="form-label" for="add-user-password">Password</label>
+                                            <input type="text" id="add-user-password" class="form-control"
+                                                   placeholder="Enter your password" aria-label="jdoe1" name="password"/>
+                                        </div>
+                                        <div class="mb-6">
+                                            <label class="form-label" for="add-user-confirm-password">Confirm password</label>
+                                            <input type="text" id="add-user-confirm-password" class="form-control"
+                                                   placeholder="Confirm your password" aria-label="jdoe1" name="confirmPassword"/>
                                         </div>
                                         <div class="mb-6">
                                             <label class="form-label" for="country">Country</label>
