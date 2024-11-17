@@ -184,20 +184,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 }
             }
         } else {
-            // Trường hợp tiền thanh toán nhỏ hơn deposit => Kiểm tra ví của chủ xe
-            if (bookingDto.getCarOwnerWallet().compareTo(totalPrice) < 0) {
-                return -2; // Chủ xe không đủ tiền để trả lại cho khách hàng
-            } else {
-                // Cập nhật ví của chủ xe và khách hàng
-                BigDecimal updatedCarOwnerWallet = bookingDto.getCarOwnerWallet().subtract(deposit.subtract(totalPrice));
-                User carOwner = userRepository.getUserById(bookingDto.getCarOwnerId());
-                carOwner.setWallet(updatedCarOwnerWallet);
-                userRepository.save(carOwner);
-
-                BigDecimal updatedCustomerWallet = user.getWallet().add(deposit.subtract(totalPrice));
-                user.setWallet(updatedCustomerWallet);
-                userRepository.save(user);
-                session.setAttribute("user", user);
 
                 // Cập nhật trạng thái booking
                 if (bookingOptional.isPresent()) {
@@ -205,7 +191,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                     if (booking.getUser().getId().equals(user.getId()) &&
                             booking.getBookingStatus().getName().equals("In-Progress")) {
 
-                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findByName("Completed");
+                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findByName("Pending p ayment");
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus);
@@ -224,7 +210,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                     System.out.println("Booking with ID " + bookingId + " not found.");
                     return 0;
                 }
-            }
+
         }
 
     }

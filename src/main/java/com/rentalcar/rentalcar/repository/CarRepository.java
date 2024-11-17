@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CarRepository extends JpaRepository<Car, Integer> {
     List<Car> getCarsByUser(User user);
@@ -56,5 +57,20 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
             "WHERE (cd.province LIKE %:province% OR cd.district LIKE %:district%)",
             nativeQuery = true)
     List<Car> findCarByCarName(@Param("province") String province, @Param("district") String district, Sort sort);
+
+
+    @Query(value = "SELECT TOP (1) c.carId, c.name, c.licensePlate, c.model, c.color, " +
+            "c.seatNo, c.productionYear, c.transmission, c.fuel, c.mileage, " +
+            "c.fuelConsumption, c.basePrice, c.deposit, c.description, c.termOfUse, " +
+            "c.carPrice, c.front, c.back, [left], [right], c.registration, " +
+            "c.certificate, c.insurance, c.lastModified, c.userId, c.brandId, " +
+            "c.statusId, b.bookingStatusId, bs.name, b.bookingId " +
+            "FROM RentalCar.dbo.Car c " +
+            "JOIN dbo.BookingCar bc ON c.carId = bc.carId " +
+            "JOIN dbo.Booking b ON bc.bookingId = b.bookingId " +
+            "JOIN dbo.BookingStatus bs ON b.bookingStatusId = bs.BookingStatusId " +
+            "WHERE c.carId = :carId AND bs.name = :bookingStatusName",
+            nativeQuery = true)
+    Object[] findCarAndBookingByCarId(@Param("carId") Long carId, @Param("bookingStatusName") String bookingStatusName);
 
 }

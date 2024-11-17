@@ -51,14 +51,18 @@ public class RentalCarServiceImpl implements RentalCarService {
     @Autowired
     private BookingCarRepository bookingCarRepository;
 
-    @Autowired PhoneNumberStandardService phoneNumberStandardService;
+    @Autowired
+    PhoneNumberStandardService phoneNumberStandardService;
 
-    @Autowired DriverDetailRepository driverDetailRepository;
+    @Autowired
+    DriverDetailRepository driverDetailRepository;
 
     @Autowired
     EmailService emailService;
 
-    @Autowired UserRepo userRepository;
+    @Autowired
+    UserRepo userRepository;
+
     @Autowired
     private CarStatusRepository carStatusRepository;
 
@@ -252,7 +256,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         User customer = userRepository.getUserById(user.getId());
         User carOwner = userRepository.getUserById(car.getUser().getId());
-        if(bookingDto.getSelectedPaymentMethod() == 1) {
+        if (bookingDto.getSelectedPaymentMethod() == 1) {
             calculateAndDeductDeposit(bookingDto, customer, carOwner, session);  //XỬ LÝ TIỀN TRONG CỌC
         } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
             throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
@@ -339,14 +343,136 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
 
-
         //MAIL TO CUSTOMER
-        emailService.sendBookingConfirmation(customer, bookingDto, booking,car);
+        emailService.sendBookingConfirmation(customer, bookingDto, booking, car);
         //MAIL TO CAR OWNER
 
-        emailService.sendBookingConfirmationWithDeposit(carOwner, booking, car,  Double.parseDouble(bookingDto.getDeposit()));
+        emailService.sendBookingConfirmationWithDeposit(carOwner, booking, car, Double.parseDouble(bookingDto.getDeposit()));
 
         return booking;
+    }
+
+    @Override
+    public boolean confirmDepositCar(Long carId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        // Check if the user is logged in
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        System.out.println("Attempting to confirm Car with ID: " + carId);
+
+        // Fetch the car and booking details with "Pending deposit" status
+        Object[] nestedArray = carRepository.findCarAndBookingByCarId(carId, "Pending deposit");
+
+        // Check if the result is not empty
+        if (nestedArray == null || nestedArray.length == 0) {
+            System.out.println("Car with ID " + carId + " not found.");
+            return false; // No result found, return false
+        }
+
+        // Extract the relevant data from the nested array and populate the CarDto
+        Object[] result = (Object[]) nestedArray[0];
+        CarDto carDto = new CarDto(
+                Long.valueOf((Integer) result[0]), // booking Id
+                (String) result[1],   // name
+                (String) result[2],   // licensePlate
+                (String) result[3],   // model
+                (String) result[4],   // color
+                (Integer) result[5],  // seatNo
+                (Integer) result[6],  // productionYear
+                (String) result[7],   // transmission
+                (String) result[8],   // fuel
+                ((BigDecimal) result[9]).doubleValue(),  // mileage
+                ((BigDecimal) result[10]).doubleValue(),  // fuelConsumption
+                ((BigDecimal) result[11]).doubleValue(),  // basePrice
+                ((BigDecimal) result[12]).doubleValue(),  // deposit
+                (String) result[13],  // description
+                (String) result[14],  // termOfUse
+                ((BigDecimal) result[15]).doubleValue(),  // carPrice
+                (String) result[16],  // front
+                (String) result[17],  // back
+                (String) result[18],  // left
+                (String) result[19],  // right
+                (String) result[20],  // registration
+                (String) result[21],  // certificate
+                (String) result[22],  // insurance
+                (Date) result[23],    // lastModified
+                (Integer) result[24], // userId
+                (Integer) result[25], // brandId
+                (Integer) result[26], // statusId
+                (Integer) result[27], // bookingStatusId
+                (String) result[28],  // bookingStatusName
+                (Long) result[29]     // bookingId
+        );
+
+        // Ensure that carDto is properly populated
+        if (carDto == null) {
+        }
+
+        // Check the booking status and booking ID
+        String bookingStatusName = carDto.getBookingStatusName();
+        if (!"Pending deposit".equals(bookingStatusName)) {
+            System.out.println("Booking status is not 'Pending deposit'.");
+            return false; // Return false if the status is not "Pending deposit"
+        }
+
+        Long bookingId = carDto.getBookingId();
+        if (bookingId == null) {
+            System.out.println("Booking ID not found.");
+            return false; // Return false if no booking ID found
+        }
+
+        // Retrieve and update the booking
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+        if (!bookingOptional.isPresent()) {
+            System.out.println("Booking with ID " + bookingId + " not found.");
+            return false; // If booking not found, return false
+        }
+
+        Booking booking = bookingOptional.get();
+        if (!booking.getUser().getId().equals(user.getId())) {
+            System.out.println("Booking does not belong to the user.");
+            return false; // If the booking doesn't belong to the user, return false
+        }
+
+        // Update the booking status to "Confirmed"
+        Optional<BookingStatus> confirmedStatusOptional = bookingStatusRepository.findByName("Confirmed");
+        if (confirmedStatusOptional.isPresent()) {
+            BookingStatus confirmedStatus = confirmedStatusOptional.get();
+            booking.setBookingStatus(confirmedStatus);
+            bookingRepository.save(booking);
+        } else {
+            System.out.println("Confirmed status not found.");
+            return false; // If the "Confirmed" status is not found, return false
+        }
+
+        // Update the car status to "BOOKED"
+        Car car = carRepository.getCarByCarId(carDto.getCarId().intValue());
+        Optional<CarStatus> bookedStatusOptional = carStatusRepository.findByName("BOOKED");
+        if (bookedStatusOptional.isPresent()) {
+            CarStatus bookedStatus = bookedStatusOptional.get();
+            car.setCarStatus(bookedStatus);
+            carRepository.save(car);
+        } else {
+            System.out.println("Booked status not found.");
+            return false; // If the "Booked" status is not found, return false
+        }
+
+        System.out.println("Car and Booking successfully updated for booking ID: " + bookingId);
+        return true;
+    }
+
+
+
+
+
+
+
+    @Override
+    public boolean confirmPaymentCar(Long carId, HttpSession session) {
+        return false;
     }
 
 
@@ -369,7 +495,6 @@ public class RentalCarServiceImpl implements RentalCarService {
             userRepository.save(carOwner); // CỘNG TIỀN THÀNH CÔNG
         }
     }
-
 
 
 }

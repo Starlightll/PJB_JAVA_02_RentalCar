@@ -197,9 +197,12 @@
                                                 </div>
                                                 <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
                                                     <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
-                                                    <a th:href="'#'"
-                                                    th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
-                                                       class="btn btn-primary  ">Confirm deposit</a>
+                                                        <a
+                                                                th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
+                                                                class="btn btn-primary"
+                                                                th:attr="data-car-id=${car.getCarId()}">
+                                                            Confirm deposit
+                                                        </a>
                                                     </th:block>
                                                 </div>
                                             </div>
@@ -700,20 +703,17 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             console.log("DOM fully loaded and parsed");
-            const sortBy = document.getElementById('sortBy').value;
-            const pageSize = document.getElementById('pageSize').value;
 
-            // confirm deposit Button Event
             const confirmDepositBtns = document.querySelectorAll('[id^="confirm-deposit-btn-"]');
             confirmDepositBtns.forEach(btn => {
                 btn.addEventListener('click', function (event) {
                     event.preventDefault();
 
-                    const carId = this.closest('.row').querySelector("#carId").value;
+                    // Lấy carId từ data-car-id
+                    const carId = this.getAttribute('data-car-id');
 
                     Swal.fire({
-                        title: 'Please confirm that you have receive the deposit this booking.' +
-                            ' This will allow the customer to pick-up the car at the agreed date and time.',
+                        title: 'Please confirm that you have received the deposit for this booking.',
                         icon: 'warning',
                         confirmButtonText: 'Yes',
                         cancelButtonText: 'No',
@@ -724,15 +724,16 @@
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            console.log('User chose to confirm deposit the car with ID:', carId);
-                            window.location.href = '/confirm-deposit?carId=' + carId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                            console.log('User confirmed the deposit for car with ID:', carId);
+                            window.location.href = `/car-owner/confirm-deposit?carId=${carId}`;
                         } else {
-                            console.log('User canceled the booking action');
+                            console.log('User canceled the action');
                         }
                     });
                 });
             });
         });
+
 
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
