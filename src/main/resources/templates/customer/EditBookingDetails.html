@@ -1078,7 +1078,7 @@
                         if (result.isConfirmed) {
                             console.log('User chose to confirm the pick-up with ID:', bookingId);
                             // Gửi yêu cầu xóa (bạn có thể dùng fetch hoặc window.location)
-                            window.location.href = '/confirm-pickup-booking?bookingId=' + bookingId + '&carId=' + carId + '&navigate=' + navigate;
+                            window.location.href = '/confirm-pickup-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&navigate=' + navigate;
                       }
                     });
                 });

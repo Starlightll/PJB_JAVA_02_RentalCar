@@ -236,7 +236,7 @@ public class BookingDetailsController {
     }
 
 
-    @GetMapping("/confirm-pickup-booking")
+    @GetMapping("/confirm-pickup-booking-detail")
     public String confirmPickupBooking(@RequestParam Long bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         boolean isConfirm = rentalCarService.confirmPickupBooking(bookingId, session);
