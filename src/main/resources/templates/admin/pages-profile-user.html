@@ -93,13 +93,12 @@
           <li class="d-flex align-items-center mb-4"><i class="bx bx-user"></i><span class="fw-medium mx-2">Full Name:</span> <span th:text="${session.user.username}">Anonymous</span></li>
           <li class="d-flex align-items-center mb-4"><i class="bx bx-check"></i><span class="fw-medium mx-2">Status:</span> <span th:text="${session.user.getStatus()}">Undefined</span></li>
           <li class="d-flex align-items-center mb-4"><i class="bx bx-crown"></i><span class="fw-medium mx-2">Role:</span> <span th:text="${session.user.roles[0].getRoleName()}">.</span></li>
-          <li class="d-flex align-items-center mb-4"><i class="bx bx-flag"></i><span class="fw-medium mx-2">Country:</span> <span>USA</span></li>
-          <li class="d-flex align-items-center mb-2"><i class="bx bx-detail"></i><span class="fw-medium mx-2">Languages:</span> <span>English</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="bx bx-flag"></i><span class="fw-medium mx-2">Address:</span> <span th:text="${session.user.city}">Undefined</span><span th:text="${session.user.street}">Undefined</span></li>
+          <li class="d-flex align-items-center mb-2"><i class="bx bx-detail"></i><span class="fw-medium mx-2">National ID:</span> <span th:text="${session.user.nationalId}">Undefined</span></li>
         </ul>
         <small class="card-text text-uppercase text-muted small">Contacts</small>
         <ul class="list-unstyled my-3 py-1">
           <li class="d-flex align-items-center mb-4"><i class="bx bx-phone"></i><span class="fw-medium mx-2">Contact:</span> <span th:text="${session.user.phone}">Nothing</span></li>
-          <li class="d-flex align-items-center mb-4"><i class="bx bx-chat"></i><span class="fw-medium mx-2">Skype:</span> <span>Anonymous.dev</span></li>
           <li class="d-flex align-items-center mb-4"><i class="bx bx-envelope"></i><span class="fw-medium mx-2">Email:</span> <span th:text="${session.user.email}">anonymous@dev.com</span></li>
         </ul>
         <small class="card-text text-uppercase text-muted small">Teams</small>
