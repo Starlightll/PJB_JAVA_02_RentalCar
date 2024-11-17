@@ -18,6 +18,7 @@ import com.rentalcar.rentalcar.service.ReturnCarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -117,8 +118,10 @@ public class RentalCarController {
     //Add
     @GetMapping("/booking-car")
 
-    public String bookingDetail(@RequestParam Integer CarId, @RequestParam String startDate, @RequestParam String enDate
-                                 ,@RequestParam String address, @RequestParam String beforeNavigate,Model model, HttpSession session) {
+    public String bookingDetail(@RequestParam Integer CarId,
+                                @RequestParam  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") String startDate,
+                                @RequestParam  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") String enDate,
+                                @RequestParam String address, @RequestParam String beforeNavigate,Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         CarDto car = rentalCarService.getCarDetails(CarId);
         User userepo = userRepo.getUserById(user.getId());
