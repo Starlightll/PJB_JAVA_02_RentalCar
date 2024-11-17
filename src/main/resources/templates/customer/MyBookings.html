@@ -719,9 +719,19 @@
                 success: function (response) {
                     console.log("Confirm return car response", response);
 
-                    if (response.status === 'success') {
+                    if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Sent Request Completed!',
+                            title: 'Booking Successfully Completed.',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                        });
+                    }
+                    else if (response.status === 'success2') {
+                        Swal.fire({
+                            title: 'Request Payment Completed',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'

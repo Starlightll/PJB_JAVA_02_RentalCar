@@ -36,6 +36,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
     @Autowired
     UserRepo userRepository;
 
+
+    @Autowired
+    EmailService emailService;
     @Override
     public String returnCar(Long bookingId, HttpSession session) {
 //        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
@@ -56,7 +59,8 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 ((BigDecimal) result[11]).doubleValue(), // deposit
                 (BigDecimal) result[12], //carowner wallet
                 Long.valueOf((Integer) result[13]),
-                (String) result[14]
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
 
         );
 
@@ -90,7 +94,8 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 ((BigDecimal) result[11]).doubleValue(), // deposit
                 (BigDecimal) result[12], //carowner wallet
                 Long.valueOf((Integer) result[13]),
-                (String) result[14]
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
 
         );
 
@@ -120,7 +125,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         User user = (User) session.getAttribute("user");
 
         User userdb = userRepository.getUserById(user.getId());
-        // Lấy thông tin người dùng từ session và các chi tiết liên quan đến booking
         User users = userRepository.getUserById(user.getId());
         Object[] result = (Object[]) nestedArray[0];
         MyBookingDto bookingDto = new MyBookingDto(
@@ -138,7 +142,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 ((BigDecimal) result[11]).doubleValue(), // deposit
                 (BigDecimal) result[12], // carOwner wallet
                 Long.valueOf((Integer) result[13]),
-                (String) result[14]
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
+
         );
         User carowner = userRepository.getUserById(bookingDto.getCarOwnerId());
 
@@ -178,8 +184,8 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
                             rentalCarRepository.save(booking);
-                            EmailService emailService = new EmailService();
-                            emailService.sendReturnCarSuccessfully(carowner, booking, bookingDto.getCarname(), totalPrice.subtract(deposit).doubleValue());
+
+                            emailService.sendReturnCarSuccessfully(carowner, booking, bookingDto.getCarId() ,bookingDto.getCarname(), totalPrice.subtract(deposit).doubleValue());
                             return 1;
                         } else {
                             System.out.println("Completed status not found.");
@@ -207,6 +213,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             booking.setBookingStatus(completedStatus);
                             rentalCarRepository.save(booking);
                             System.out.println("Booking with ID " + bookingId + " has been completed!");
+                            emailService.sendRequestConfirmPayment(carowner, booking, bookingDto.getCarId() ,bookingDto.getCarname(), deposit.subtract(totalPrice).doubleValue());
                             return 2;
                         } else {
                             System.out.println("Completed status not found.");

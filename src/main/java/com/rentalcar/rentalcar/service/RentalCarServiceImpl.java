@@ -369,7 +369,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         // Check if the result is not empty
         if (nestedArray == null || nestedArray.length == 0) {
             System.out.println("Car with ID " + carId + " not found.");
-            return false; // No result found, return false
+            return false;
         }
 
         // Extract the relevant data from the nested array and populate the CarDto
@@ -408,7 +408,6 @@ public class RentalCarServiceImpl implements RentalCarService {
                 // bookingId
         );
 
-        // Ensure that carDto is properly populated
         if (carDto == null) {
             return false;
         }
@@ -474,6 +473,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     @Override
     public boolean confirmPaymentCar(Long carId, HttpSession session) {
+
         return false;
     }
 
