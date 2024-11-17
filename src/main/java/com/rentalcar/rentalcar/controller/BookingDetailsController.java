@@ -14,6 +14,7 @@ import com.rentalcar.rentalcar.service.RentalCarService;
 import com.rentalcar.rentalcar.service.ViewEditBookingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -232,6 +233,21 @@ public class BookingDetailsController {
         }
 
        return bookingDetail(bookingId.intValue(), carId, navigate, model, session);
+    }
+
+
+    @GetMapping("/confirm-pickup-booking-detail")
+    public String confirmPickupBooking(@RequestParam Long bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
+
+        boolean isConfirm = rentalCarService.confirmPickupBooking(bookingId, session);
+
+        if (isConfirm) {
+            model.addAttribute("message", "Booking has been successfully confirm pick-up.");
+        } else {
+            model.addAttribute("error", "Unable to confirm the booking. Please try again.");
+        }
+
+        return bookingDetail(bookingId.intValue(), carId, navigate, model, session);
     }
 
 
