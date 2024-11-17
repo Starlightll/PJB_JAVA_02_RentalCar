@@ -214,7 +214,7 @@
                                                            class="btn btn-primary"
                                                            style="padding-right: 6px; padding-left: 6px;"
                                                            th:attr="data-car-id=${car.getCarId()}"
-                                                           th:onclick="'returnCar(' + ${car.getCarId()} + ')'">
+                                                           th:onclick="'checkPayment(' + ${car.getCarId()} + ')'">
                                                             Confirm Payment
                                                         </a>
                                                     </th:block>
@@ -693,23 +693,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-lg-12 col-md-12 mb-3">
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <div class="input-group-text">
-                                                                    <label class="form-check-label"
-                                                                           style="padding: 0 10px;">
-                                                                        Write here
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <input type="text" class="form-control"
-                                                                   aria-label="Text input with checkbox" id="termOfUse"
-                                                                   th:value="${car.terms}">
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -749,35 +732,47 @@
 
     <script>
 
-        function returnCar(carId) {
-            console.log(carId);
+        function checkPayment(carId) {
+            console.log("checkPayment called with carId:", carId); // Kiểm tra xem hàm có được gọi không
+
             $.ajax({
-                url: '/confirm-payment',
+                url: '/car-owner/check-payment',
                 type: 'get',
                 data: {carId: carId},
                 success: function (response) {
-                    console.log("Confirm payment successfully", response);
+                    console.log("Check payment successfully", response);
+
                     Swal.fire({
                         title: 'Confirm Payment!',
                         text: response.message,
                         icon: 'question',
-                        showCancelButton: true,  // Hiển thị nút "Cancel"
+                        showCancelButton: true,
                         confirmButtonText: 'Yes',
                         cancelButtonText: 'No',
                         customClass: {
                             confirmButton: 'my-custom-button'
                         }
                     }).then((result) => {
+                        console.log("Swal result:", result);
                         if (result.isConfirmed) {
-                            confirmReturnCar(bookingId);
+                            confirmReturnCar(carId);
+                            console.log("Calling confirmReturnCar with carId:", carId);
                         }
                     });
                 },
                 error: function (error) {
                     console.log("Error confirm payment", error);
+                    let errorMessage;
+                    try {
+                        const errorResponse = JSON.parse(error.responseText);
+                        errorMessage = errorResponse.message || 'An error occurred.';
+                    } catch (e) {
+                        errorMessage = 'An unexpected error occurred.';
+                    }
+
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Failed to return the car.',
+                        text: errorMessage,
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
@@ -785,59 +780,52 @@
             });
         }
 
-        function confirmReturnCar(bookingId) {
+        function confirmReturnCar(carId) {
 
-            const sortBy = document.getElementById('sortBy').value;
-            const pageSize = document.getElementById('pageSize').value;
-            console.log(bookingId);
+            console.log(carId);
             $.ajax({
-                url: '/confirm-return-car',
-                type: 'get',
-                data: {bookingId: bookingId},
-                success: function (response) {
-                    console.log("Confirm return car response", response);
+                    url: '/car-owner/confirm-payment-car',
+                    type: 'get',
+                    data: {carId: carId},
+                    success: function (response) {
+                        console.log("Confirm payment car response", response);
 
-                    if (response.status === 'success1') {
-                        Swal.fire({
-                            title: 'Booking Successfully Completed.',
-                            text: response.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
-                        });
-                    } else if (response.status === 'success2') {
-                        Swal.fire({
-                            title: 'Request Payment Completed',
-                            text: response.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
-                        });
-                    }
-                },
-                error: function (error) {
-                    console.log("Error confirming return car", error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'An error occurred. Please try again.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
-                    });
+                        if (response.status === 'success1') {
+                            Swal.fire({
+                                title: 'Booking Successfully Completed.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId ;
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/'  + carId ;
+                            });
+                        }
+                    },
+                    error:
+
+                        function (error) {
+                            console.log("Error confirming return payment", error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId ;
+                            });
+                        }
                 }
-            });
+            )
+            ;
         }
 
 

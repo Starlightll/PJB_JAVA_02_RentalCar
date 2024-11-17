@@ -1,14 +1,9 @@
 package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.dto.MyBookingDto;
-import com.rentalcar.rentalcar.entity.Booking;
-import com.rentalcar.rentalcar.entity.BookingStatus;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.mail.EmailService;
-import com.rentalcar.rentalcar.repository.BookingRepository;
-import com.rentalcar.rentalcar.repository.BookingStatusRepository;
-import com.rentalcar.rentalcar.repository.RentalCarRepository;
-import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +31,11 @@ public class ReturnCarServiceImpl implements ReturnCarService {
     @Autowired
     UserRepo userRepository;
 
+    @Autowired
+    CarRepository carRepository;
+
+    @Autowired
+    CarStatusRepository carStatusRepository;
 
     @Autowired
     EmailService emailService;
@@ -184,6 +184,22 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
                             rentalCarRepository.save(booking);
+                            Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
+                            if (carOptional.isPresent()) {
+                                Car car = carOptional.get();
+                                Optional<CarStatus> bookedStatusOptional = carStatusRepository.findByName("Available");
+                                if (bookedStatusOptional.isPresent()) {
+                                    CarStatus bookedStatus = bookedStatusOptional.get();
+                                    car.setCarStatus(bookedStatus); // Cập nhật trạng thái xe
+                                    carRepository.save(car);
+                                } else {
+                                    System.out.println("Car status 'Available' not found.");
+                                    return 0; // Trạng thái "Booked" không tồn tại
+                                }
+                            } else {
+                                System.out.println("Car with ID " + bookingDto.getCarId() + " not found.");
+                                return 0; // Xe không tồn tại
+                            }
 
                             emailService.sendReturnCarSuccessfully(carowner, booking, bookingDto.getCarId() ,bookingDto.getCarname(), totalPrice.subtract(deposit).doubleValue());
                             return 1;

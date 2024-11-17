@@ -267,4 +267,46 @@ public class EmailService {
     }
 
 
+    @Async
+    public void sendPaymentConfirmation(User user, Booking booking, Integer carId ,String carName, double remainingMoney) {
+        String recipientAddress = user.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        String urlToWallet = "http://localhost:8080/wallet/my-wallet";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String remainingMoneyString = currencyFormatter.format(remainingMoney);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // Updated HTML message content
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Payment Successfully Credited!</h2>" +
+                    "<p style='font-size: 16px;'>Dear <strong style='color: #2196F3;'>" + user.getFullName() + "</strong>,</p>" +
+                    "<p style='font-size: 16px;'>We are pleased to inform you that the remaining amount of <strong style='color: #FF5722;'>" + remainingMoneyString + "</strong> has been successfully credited to your wallet after returning the car <strong style='color: #FF5722;'>" + carName + "</strong>.</p>" +
+                    "<p style='font-size: 16px;'>Please visit the link below to check your wallet balance:</p>" +
+                    "<a href='" + urlToWallet + "' style='display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Go to My Wallet</a>" +
+                    "<p style='font-size: 16px;'>Thank you for renting our car. We hope you had a great experience! Please don't hesitate to reach out if you need any further assistance.</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you did not make this booking, please contact our support team immediately.</p>" +
+                    "<p style='font-size: 12px; color: #555;'>" + urlToWallet + "</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Your Payment has been Successfully Credited - Booking No. " + carId);
+            helper.setText(htmlMessage, true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

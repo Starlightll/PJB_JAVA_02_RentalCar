@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.CarStatus;
@@ -188,8 +189,6 @@ public class CarOwnerController {
                 model.addAttribute("bookingStatus", 0);
 
             }
-
-
         }
         return "carowner/EditCar";
     }
@@ -293,23 +292,85 @@ public class CarOwnerController {
         return editCar(carId.intValue(),model,session);
     }
 
-    @GetMapping("/confirm-payment")
+    @GetMapping("/check-payment")
     public ResponseEntity<?> confirmPayment(@RequestParam("carId") Long carId,
-                                       HttpSession session,
-                                       @RequestParam(defaultValue = "1") int page,
-                                       @RequestParam(defaultValue = "5") int size,
-                                       @RequestParam(defaultValue = "lastModified") String sortBy,
-                                       @RequestParam(defaultValue = "desc") String order) {
-        String responseMessage = rentalCarService.confirmPaymentCar(carId, session);
+                                       HttpSession session) {
+        Map<String, String> response = rentalCarService.checkPaymentCar(carId, session);
 
-        // Trả về thông điệp JSON với trạng thái "success"
+        if ("success".equals(response.get("status"))) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("/confirm-payment-car")
+    public ResponseEntity<Map<String, Object>> confirmPaymentCar(@RequestParam("carId") Long carId,
+                                                                HttpSession session,
+                                                                Model model) {
+        User user = (User) session.getAttribute("user");
+
         Map<String, Object> response = new HashMap<>();
-        response.put("status", "success");
-        response.put("message", responseMessage);
 
+        if (user == null) {
+            return generateResponse(response, "error", "User not found in session.");
+        }
 
+        int casePayment = rentalCarService.confirmPaymentCar(carId, session);
+
+        // Handle response based on caseReturn value
+        if (casePayment == 1 ) {
+            return generateResponse(response, "success1", "Booking has been successfully completed.");
+        }
+
+        Car car = carRepository.getCarByCarId(carId.intValue());
+
+        if(car == null){
+
+            return generateResponse(response, "error", "Error Return!");
+        }else{
+            model.addAttribute("car", car);
+            model.addAttribute("brands", brandRepository.findAll());
+            model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
+            model.addAttribute("carStatus", carStatusRepository.findAll());
+            model.addAttribute("car", car);
+            DecimalFormat df = new DecimalFormat("#.##");
+            String formattedBasePrice = df.format(car.getBasePrice() == null ? 0 : car.getBasePrice());
+            String formattedCarPrice = df.format(car.getCarPrice() == null ? 0 : car.getCarPrice());
+            String formattedDeposit = df.format(car.getDeposit() == null ? 0 : car.getDeposit());
+            String formattedMileage = df.format(car.getMileage() == null ? 0 : car.getMileage());
+            String formattedFuelConsumption = df.format(car.getFuelConsumption() == null ? 0 : car.getFuelConsumption());
+            model.addAttribute("formattedCarPrice", formattedCarPrice);
+            model.addAttribute("formattedDeposit", formattedDeposit);
+            model.addAttribute("formattedMileage", formattedMileage);
+            model.addAttribute("formattedFuelConsumption", formattedFuelConsumption);
+            model.addAttribute("formattedBasePrice", formattedBasePrice);
+            String registrationPath = car.getRegistration();
+            String certificatePath = car.getCertificate();
+            String insurancePath = car.getInsurance();
+            model.addAttribute("registrationUrl", "/" + registrationPath);
+            model.addAttribute("certificateUrl", "/" + certificatePath);
+            model.addAttribute("insuranceUrl", "/" + insurancePath);
+            List<CarStatus> carStatus = carStatusRepository.findAll();
+            model.addAttribute("carStatuses", carStatus);
+
+            List<Integer> bookingStatus = carRepository.findBookingStatusIdByCarId(carId.intValue());
+            if(bookingStatus.contains(1)) {
+                model.addAttribute("bookingStatus", 1);
+            } else if(bookingStatus.contains(4)) {
+                model.addAttribute("bookingStatus", 4);
+            } else {
+                model.addAttribute("bookingStatus", 0);
+
+            }
+        }
+        return generateResponse(response, "error", "Error Return!");
+    }
+
+    private ResponseEntity<Map<String, Object>> generateResponse(Map<String, Object> response, String status, String message) {
+        response.put("status", status);
+        response.put("message", message);
         return ResponseEntity.ok(response);
-
     }
 
 
