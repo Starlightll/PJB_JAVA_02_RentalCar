@@ -69,8 +69,16 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
             "JOIN dbo.BookingCar bc ON c.carId = bc.carId " +
             "JOIN dbo.Booking b ON bc.bookingId = b.bookingId " +
             "JOIN dbo.BookingStatus bs ON b.bookingStatusId = bs.BookingStatusId " +
-            "WHERE c.carId = :carId AND bs.name = :bookingStatusName",
+            "WHERE c.carId = :carId AND b.bookingStatusId = :bookingStatusId",
             nativeQuery = true)
-    Object[] findCarAndBookingByCarId(@Param("carId") Long carId, @Param("bookingStatusName") String bookingStatusName);
+    Object[] findCarAndBookingByCarId(@Param("carId") Long carId, @Param("bookingStatusId") Integer bookingStatusId);
 
+
+    @Query(value = "SELECT TOP (1000) b.bookingStatusId\n" +
+            "  FROM [RentalCar].[dbo].[Car] c\n" +
+            "  JOIN [dbo].[BookingCar] bc ON c.carId = bc.carId\n" +
+            "  JOIN [dbo].[Booking] b ON bc.bookingId = b.bookingId\n" +
+            "  WHERE c.carId = :carId",
+            nativeQuery = true)
+    List<Integer> findBookingStatusIdByCarId(@Param("carId") Integer carId);
 }

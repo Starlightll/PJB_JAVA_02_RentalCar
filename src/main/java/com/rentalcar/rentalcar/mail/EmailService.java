@@ -183,5 +183,44 @@ public class EmailService {
         }
     }
 
+    @Async
+    public void sendReturnCarSuccessfully(User user, Booking booking,String carName, double remainingMoney) {
+//        String recipientAddress = user.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String remainingMoneyString = currencyFormatter.format(remainingMoney);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // Updated HTML message content
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Booking Successful!</h2>" +
+                    "<p style='font-size: 16px;'>Congratulations! Your car <strong style='color: #FF5722;'>" + carName + "</strong> has been returned successfully. <strong style='color: #2196F3;'>" + bookingDate + "</strong>.</p>" +
+                    "<p style='font-size: 16px;'>The amount of <strong style='color: #FF5722;'>" + remainingMoneyString + "</strong> has been successfully credited to your wallet. Please go to your wallet to verify and confirm.</p>" +
+                    "<p style='font-size: 16px;'>We recommend visiting your wallet page to confirm the remaining money. Thank you for cooperate with us!</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you did not make this booking, please contact our support team immediately.</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo("vductrong2003@gmail.com");
+            helper.setSubject("Your car has been successfully booked - Booking No. " + bookingNumber);
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
 }

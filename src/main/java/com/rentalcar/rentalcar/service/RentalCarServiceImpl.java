@@ -364,7 +364,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         System.out.println("Attempting to confirm Car with ID: " + carId);
 
         // Fetch the car and booking details with "Pending deposit" status
-        Object[] nestedArray = carRepository.findCarAndBookingByCarId(carId, "Pending deposit");
+        Object[] nestedArray = carRepository.findCarAndBookingByCarId(carId, 1);
 
         // Check if the result is not empty
         if (nestedArray == null || nestedArray.length == 0) {
@@ -404,11 +404,13 @@ public class RentalCarServiceImpl implements RentalCarService {
                 (Integer) result[26], // statusId
                 (Integer) result[27], // bookingStatusId
                 (String) result[28],  // bookingStatusName
-                (Long) result[29]     // bookingId
+                Long.valueOf((Integer) result[29]) // booking Id
+                // bookingId
         );
 
         // Ensure that carDto is properly populated
         if (carDto == null) {
+            return false;
         }
 
         // Check the booking status and booking ID
@@ -432,10 +434,10 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
         Booking booking = bookingOptional.get();
-        if (!booking.getUser().getId().equals(user.getId())) {
-            System.out.println("Booking does not belong to the user.");
-            return false; // If the booking doesn't belong to the user, return false
-        }
+//        if (!booking.getUser().getId().equals(user.getId())) {
+//            System.out.println("Booking does not belong to the user.");
+//            return false; // If the booking doesn't belong to the user, return false
+//        }
 
         // Update the booking status to "Confirmed"
         Optional<BookingStatus> confirmedStatusOptional = bookingStatusRepository.findByName("Confirmed");

@@ -4,6 +4,7 @@ import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.BookingStatus;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.repository.BookingRepository;
 import com.rentalcar.rentalcar.repository.BookingStatusRepository;
 import com.rentalcar.rentalcar.repository.RentalCarRepository;
@@ -54,7 +55,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 ((BigDecimal) result[10]).doubleValue(), // basePrice
                 ((BigDecimal) result[11]).doubleValue(), // deposit
                 (BigDecimal) result[12], //carowner wallet
-                Long.valueOf((Integer) result[13])
+                Long.valueOf((Integer) result[13]),
+                (String) result[14]
+
         );
 
         Double totalPrice = calculateTotalPrice(bookingId);
@@ -86,7 +89,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 ((BigDecimal) result[10]).doubleValue(), // basePrice
                 ((BigDecimal) result[11]).doubleValue(), // deposit
                 (BigDecimal) result[12], //carowner wallet
-                Long.valueOf((Integer) result[13])
+                Long.valueOf((Integer) result[13]),
+                (String) result[14]
+
         );
 
         if (bookingOptional.isPresent()) {
@@ -96,10 +101,12 @@ public class ReturnCarServiceImpl implements ReturnCarService {
             LocalDateTime currentDate = LocalDateTime.now();
 
             long numberOfDaysOverdue = ChronoUnit.DAYS.between(booking.getEndDate(), currentDate);
+            long numberOfDaysNotOverdue = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate());
+
             if (currentDate.isAfter(booking.getEndDate())) {
                 return booking.getTotalPrice();
             } else {
-                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + booking.getTotalPrice();
+                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice();
             }
 
         }
@@ -130,8 +137,10 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 ((BigDecimal) result[10]).doubleValue(), // basePrice
                 ((BigDecimal) result[11]).doubleValue(), // deposit
                 (BigDecimal) result[12], // carOwner wallet
-                Long.valueOf((Integer) result[13])
+                Long.valueOf((Integer) result[13]),
+                (String) result[14]
         );
+        User carowner = userRepository.getUserById(bookingDto.getCarOwnerId());
 
         BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
         BigDecimal myWallet = userdb.getWallet();
@@ -169,7 +178,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
                             rentalCarRepository.save(booking);
-                            return 1; // Booking hoàn thành
+                            EmailService emailService = new EmailService();
+                            emailService.sendReturnCarSuccessfully(carowner, booking, bookingDto.getCarname(), totalPrice.subtract(deposit).doubleValue());
+                            return 1;
                         } else {
                             System.out.println("Completed status not found.");
                             return 0; // Trạng thái "Completed" không tồn tại
@@ -184,14 +195,13 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 }
             }
         } else {
-
                 // Cập nhật trạng thái booking
                 if (bookingOptional.isPresent()) {
                     Booking booking = bookingOptional.get();
                     if (booking.getUser().getId().equals(user.getId()) &&
                             booking.getBookingStatus().getName().equals("In-Progress")) {
 
-                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findByName("Pending p ayment");
+                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findByName("Pending payment");
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus);

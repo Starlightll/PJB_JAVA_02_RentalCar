@@ -197,11 +197,19 @@
                                                 </div>
                                                 <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
                                                     <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
-                                                        <a
+                                                        <a      th:if="${bookingStatus == 1}"
                                                                 th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
                                                                 class="btn btn-primary"
                                                                 th:attr="data-car-id=${car.getCarId()}">
                                                             Confirm deposit
+                                                        </a>
+                                                    </th:block>
+                                                    <th:block th:if="${car.getCarStatus().getStatusId() == 2}">
+                                                        <a      th:if="${bookingStatus == 4}"
+                                                                th:id="'confirm-payment-btn-' + ${car.getCarId()}"
+                                                                class="btn btn-primary"
+                                                                th:attr="data-car-id=${car.getCarId()}">
+                                                            Confirm Payment
                                                         </a>
                                                     </th:block>
                                                 </div>

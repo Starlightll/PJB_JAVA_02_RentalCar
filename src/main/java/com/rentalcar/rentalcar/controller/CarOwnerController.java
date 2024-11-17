@@ -150,6 +150,8 @@ public class CarOwnerController {
         if(car == null){
             return "redirect:/car-owner/my-cars";
         }else{
+
+            model.addAttribute("car", car);
             User user = (User) session.getAttribute("user");
             model.addAttribute("brands", brandRepository.findAll());
             model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
@@ -174,6 +176,17 @@ public class CarOwnerController {
             model.addAttribute("insuranceUrl", "/" + insurancePath);
             List<CarStatus> carStatus = carStatusRepository.findAll();
             model.addAttribute("carStatuses", carStatus);
+
+            List<Integer> bookingStatus = carRepository.findBookingStatusIdByCarId(carId);
+            if(bookingStatus.contains(1)) {
+                model.addAttribute("bookingStatus", 1);
+            } else if(bookingStatus.contains(4)) {
+                model.addAttribute("bookingStatus", 4);
+            } else {
+                model.addAttribute("bookingStatus", 0);
+
+            }
+
 
         }
         return "carowner/EditCar";
@@ -268,10 +281,6 @@ public class CarOwnerController {
     @GetMapping("/confirm-deposit")
     public String confirmDeposit(@RequestParam("carId") Long carId,
                                 HttpSession session,
-                                @RequestParam(defaultValue = "1") int page,
-                                @RequestParam(defaultValue = "5") int size,
-                                @RequestParam(defaultValue = "lastModified") String sortBy,
-                                @RequestParam(defaultValue = "desc") String order,
                                 Model model) {
         boolean isConfirmDeposit = rentalCarService.confirmDepositCar(carId, session);
         if (isConfirmDeposit) {
@@ -281,7 +290,7 @@ public class CarOwnerController {
         }
 
 
-        return "carowner/EditCar";
+        return editCar(carId.intValue(),model,session);
 
     }
 
