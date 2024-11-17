@@ -7,12 +7,12 @@ import com.rentalcar.rentalcar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin")
+@CrossOrigin
 public class UserManagementController {
 
     @Autowired
@@ -30,6 +30,30 @@ public class UserManagementController {
             userRepo.findById(id).ifPresent(user -> model.addAttribute("user", user));
         }
         return "/admin/app-user-view-account";
+    }
+
+    @GetMapping("/user-management/add-user")
+    public String addUser(Model model) {
+        model.addAttribute("user", new User());
+        return "/admin/app-user-list";
+    }
+
+    @PostMapping("/user-management/add-user")
+    public String addUser(
+            @ModelAttribute("user") User user,
+            @RequestParam(value = "formRole", required = true) String role,
+            BindingResult result
+    ) {
+        if (result.hasErrors()) {
+            return "redirect:/admin/user-list";
+        }
+        try{
+            User newUser = userService.addUser(user);
+            userService.setUserRole(newUser, Integer.parseInt(role));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "redirect:/admin/user-list";
     }
 
 }

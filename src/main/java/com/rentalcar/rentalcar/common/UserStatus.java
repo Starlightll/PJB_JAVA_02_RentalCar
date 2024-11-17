@@ -2,7 +2,6 @@ package com.rentalcar.rentalcar.common;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @RequiredArgsConstructor

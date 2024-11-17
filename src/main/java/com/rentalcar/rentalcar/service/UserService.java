@@ -3,11 +3,13 @@ package com.rentalcar.rentalcar.service;
 import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.UserRole;
 import com.rentalcar.rentalcar.repository.UserRepo;
-
-
+import com.rentalcar.rentalcar.repository.UserRoleRepo;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +25,8 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
     private final UserRepo userRepo;
 
-
+    @Autowired
+    private UserRoleRepo UserRoleRepo;
 
     @Override
     public void saveUser(UserInfoDto user, HttpSession session ) {
@@ -77,6 +80,26 @@ public class UserService implements IUserService {
         return users.stream().map(this::convertUserToUserDto).collect(Collectors.toList());
     }
 
+    @Override
+    public User addUser(User user) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        return userRepo.save(user);
+    }
+
+    @Override
+    public void setUserRole(User user, Integer roleId) {
+        Long userId = user.getId();
+        UserRole userRole = new UserRole();
+        userRole.setUserId(userId);
+        userRole.setRoleId(roleId);
+        UserRoleRepo.save(userRole);
+    }
+
+    public boolean checkEmail(String email) {
+        return userRepo.getUserByEmail(email) != null;
+    }
 
 
     //Convert user to userDto
@@ -93,16 +116,6 @@ public class UserService implements IUserService {
                 .build();
     }
 
-//
-//        private String code;
-//        private String name;
-//
-//        // Getters and setters
-//        public String getCode() { return code; }
-//        public void setCode(String code) { this.code = code; }
-//
-//        public String getName() { return name; }
-//        public void setName(String name) { this.name = name; }
-//    }
+
 
 }
