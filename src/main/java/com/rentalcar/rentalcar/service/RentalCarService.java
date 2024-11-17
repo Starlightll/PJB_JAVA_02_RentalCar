@@ -16,7 +16,7 @@ public interface RentalCarService {
     CarDto getCarDetails(Integer carId);
     Booking saveBooking(BookingDto BookingDto, MultipartFile[] files, HttpSession session);
     boolean confirmDepositCar(Long carId, HttpSession session);
-    boolean confirmPaymentCar(Long carId, HttpSession session);
+    String confirmPaymentCar(Long carId, HttpSession session);
 
 
 }

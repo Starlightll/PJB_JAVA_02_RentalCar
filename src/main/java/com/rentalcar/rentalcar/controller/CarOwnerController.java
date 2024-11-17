@@ -25,7 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -288,9 +290,25 @@ public class CarOwnerController {
         } else {
             model.addAttribute("error", "Unable to confirm deposit the booking. Please try again!!");
         }
-
-
         return editCar(carId.intValue(),model,session);
+    }
+
+    @GetMapping("/confirm-payment")
+    public ResponseEntity<?> confirmPayment(@RequestParam("carId") Long carId,
+                                       HttpSession session,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "5") int size,
+                                       @RequestParam(defaultValue = "lastModified") String sortBy,
+                                       @RequestParam(defaultValue = "desc") String order) {
+        String responseMessage = rentalCarService.confirmPaymentCar(carId, session);
+
+        // Trả về thông điệp JSON với trạng thái "success"
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", responseMessage);
+
+
+        return ResponseEntity.ok(response);
 
     }
 

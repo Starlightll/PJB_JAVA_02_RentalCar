@@ -466,15 +466,10 @@ public class RentalCarServiceImpl implements RentalCarService {
     }
 
 
-
-
-
-
-
     @Override
-    public boolean confirmPaymentCar(Long carId, HttpSession session) {
+    public String confirmPaymentCar(Long carId, HttpSession session) {
 
-        return false;
+        return "1";
     }
 
 
