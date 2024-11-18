@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
@@ -95,6 +96,12 @@ public class UserService implements IUserService {
         userRole.setUserId(userId);
         userRole.setRoleId(roleId);
         UserRoleRepo.save(userRole);
+    }
+
+    @Override
+    public void setUserStatus(User user, UserStatus status) {
+        user.setStatus(status);
+        userRepo.save(user);
     }
 
     public boolean checkEmail(String email) {

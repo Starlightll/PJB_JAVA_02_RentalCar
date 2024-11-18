@@ -140,8 +140,8 @@ public class RentalCarController {
         List<UserDto> driverList = getAllDriverAvailable();
         // Định dạng ngày giờ đầu vào và đầu ra
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm");
-        startDate = startDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");;
-        enDate = enDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");;
+        startDate = startDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");
+        enDate = enDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");
 
 
         SimpleDateFormat dateOutputFormat = new SimpleDateFormat("yyyy-MM-dd");

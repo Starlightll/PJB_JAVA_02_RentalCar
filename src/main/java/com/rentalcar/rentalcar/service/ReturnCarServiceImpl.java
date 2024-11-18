@@ -133,7 +133,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 Long.valueOf((Integer) result[13])
         );
 
-        BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
+        BigDecimal deposit = BigDecimal.valueOf(bookingDto.getDeposit());
         BigDecimal myWallet = userdb.getWallet();
         BigDecimal totalPrice = BigDecimal.valueOf(calculateTotalPrice(bookingId));
 

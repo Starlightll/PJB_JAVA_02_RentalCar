@@ -46,7 +46,7 @@ public class FeedbackController {
 
         } catch (RuntimeException e) {
             switch (e.getMessage()) {
-                case "Booking not found": ;
+                case "Booking not found":
                     result.rejectValue("booking", "error.booking", "Booking not found");
                     break;
 
