@@ -593,7 +593,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         Car car = carOptional.get();
 
         // Kiểm tra trạng thái xe
-        if (!car.getCarStatus().getName().equals("Booked")) {
+        if (!car.getCarStatus().getStatusId().equals(2)) {
             System.out.println("Car is not in 'Booked' status.");
             return 0;
         }
