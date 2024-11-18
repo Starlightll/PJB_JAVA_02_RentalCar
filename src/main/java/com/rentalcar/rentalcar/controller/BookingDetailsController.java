@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rentalcar.rentalcar.common.Regex;
-import com.rentalcar.rentalcar.dto.BookingDto;
-import com.rentalcar.rentalcar.dto.CarDto;
-import com.rentalcar.rentalcar.dto.MyBookingDto;
-import com.rentalcar.rentalcar.dto.UserDto;
+import com.rentalcar.rentalcar.dto.*;
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.RentalCarService;
@@ -117,7 +114,7 @@ public class BookingDetailsController {
         model.addAttribute("booking", booking);
         model.addAttribute("driverDetail", driverDetail);
         model.addAttribute("navigate", navigate);
-
+        model.addAttribute("feedbackDto", new FeedbackDto());
         return "customer/EditBookingDetails";
     }
 

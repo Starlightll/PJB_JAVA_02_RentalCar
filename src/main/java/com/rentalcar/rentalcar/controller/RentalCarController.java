@@ -119,7 +119,6 @@ public class RentalCarController {
     @GetMapping("/booking-car")
 
     public String bookingDetail(@RequestParam Integer CarId,
-
                                 @RequestParam String startDate, @RequestParam String enDate
                                  , @RequestParam String address, @RequestParam String beforeNavigate, Model model, HttpSession session) {
 
@@ -299,7 +298,10 @@ public class RentalCarController {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your wallet must be greater than deposit");
                     case "Other Pay Method not helps now, please use your wallet":
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Other Pay Method not helps now, please use your wallet");
-
+                    case "Email already exists" :
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
+                    case "Phone number already exists":
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already exists");
                 }
             }
 
