@@ -77,7 +77,6 @@
                             <th>Date Time</th>
                             <th>Booking No</th>
                             <th>Car Name</th>
-                            <th>Note</th>
                         </tr>
                         </thead>
                         <tbody class="text-center">
@@ -92,8 +91,7 @@
                             <td th:text="${transaction.getTransactionType()}"></td>
                             <td th:text="${#temporals.format(transaction.getTransactionDate(), 'dd/MM/yyyy HH:mm')}"></td>
                             <td th:text="${transaction.getBooking() != null ? transaction.getBooking().getBookingId() : 'N/A'}"></td>
-                            <td th:text="${transaction.getBooking() != null ? transaction.getBooking().getBookingId() : 'N/A'}"></td>
-                            <td></td>
+                            <td th:text="${transaction.getBooking() != null ? transaction.getBooking().getCar().getCarName() : 'N/A'}"></td>
                         </tr>
                         </tbody>
                     </table>
