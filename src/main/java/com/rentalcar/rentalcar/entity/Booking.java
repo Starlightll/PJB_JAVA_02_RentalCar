@@ -48,4 +48,14 @@ public class Booking {
 
     @OneToMany(mappedBy = "booking")
     private Set<BookingCar> bookingCars; // Liên kết với entity BookingCar
+
+    public Car getCar() {
+        for (BookingCar bookingCar : bookingCars) {
+            if (bookingCar.getBookingId().equals(this.bookingId)) {
+                return bookingCar.getCar();
+            }
+        }
+        return null;
+    }
+
 }

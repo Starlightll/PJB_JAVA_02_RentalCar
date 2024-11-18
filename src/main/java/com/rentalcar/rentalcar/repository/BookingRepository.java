@@ -22,7 +22,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "      c.basePrice,\n" +
             "      c.deposit, \n" +
             "\t  u.wallet ,\n" +
-            "\t  c.userId\n" +
+            "\t  c.userId,\n" +
+            "\t  c.name,\n" +
+            "\t  c.carId\n" +
+
             "FROM RentalCar.dbo.Booking b\n" +
             "JOIN dbo.BookingCar bc ON bc.bookingId = b.bookingId\n" +
             "JOIN dbo.Car c ON bc.carId = c.carId\n" +

@@ -116,12 +116,23 @@ public class MyProfileController {
 
             try {
                 String fileName = drivingLicense.getOriginalFilename();
-                String uploadDir = "uploads/DriveLicense/" + user.getId()+ "_" + user.getUsername() +  "/"; // Specify your upload directory
-                Path filePath = Paths.get(uploadDir, fileName);
-                Files.write(filePath, drivingLicense.getBytes());
+                if(fileName.length() > 50){
+                    bindingResult.rejectValue("drivingLicense", "error.userInfo", "Filename is too long. Please rename the file.");
 
-                // Set the file path in the new field
-                userInfoRequest.setDrivingLicensePath(filePath.toString());
+                }
+                else if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+                    bindingResult.rejectValue("drivingLicense", "error.userInfo", "Invalid file extension. Only JPG, PNG, and GIF are allowed.");
+
+                }else {
+                    String uploadDir = "uploads/DriveLicense/" + user.getId()+ "_" + user.getUsername() +  "/"; // Specify your upload directory
+                    Path filePath = Paths.get(uploadDir, fileName);
+                    Files.write(filePath, drivingLicense.getBytes());
+
+                    // Set the file path in the new field
+                    userInfoRequest.setDrivingLicensePath(filePath.toString());
+                }
+
+
 
             } catch (IOException e) {
                 e.printStackTrace();
