@@ -116,6 +116,10 @@ public class MyProfileController {
 
             try {
                 String fileName = drivingLicense.getOriginalFilename();
+                if(fileName.length() > 50){
+                    bindingResult.rejectValue("drivingLicense", "error.userInfo", "Filename is too long. Please rename the file.");
+
+                }
                 String uploadDir = "uploads/DriveLicense/" + user.getId()+ "_" + user.getUsername() +  "/"; // Specify your upload directory
                 Path filePath = Paths.get(uploadDir, fileName);
                 Files.write(filePath, drivingLicense.getBytes());
