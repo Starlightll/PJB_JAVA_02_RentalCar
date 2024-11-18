@@ -129,20 +129,20 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         driverDetail.setBooking(booking);
         driverDetailRepository.save(driverDetail);
 
-
-        //Update Driver
-        if (bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
-            // Xử lý driver khi ấn tích
-            User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId())); // Lấy đối tượng User của Driver
-            if (driver != null) {
-                booking.setDriver(driver);
-                bookingRepository.save(booking);
-
-                // THAY ĐỔI TRẠNG THÁI CHO DRIVER
-                driver.setStatusDriverId(2);
-                userRepository.save(driver);
-            }
-        }
+//
+//        //Update Driver
+//        if (bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
+//            // Xử lý driver khi ấn tích
+//            User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId())); // Lấy đối tượng User của Driver
+//            if (driver != null) {
+//                booking.setDriver(driver);
+//                bookingRepository.save(booking);
+//
+//                // THAY ĐỔI TRẠNG THÁI CHO DRIVER
+//                driver.setStatusDriverId(2);
+//                userRepository.save(driver);
+//            }
+//        }
 
 
 

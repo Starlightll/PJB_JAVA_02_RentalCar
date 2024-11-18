@@ -784,8 +784,8 @@
                 </div>
                 <div>
 
-                  <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
-                          onclick="">Rent now</button>
+                  <a class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                     th:href="@{'/booking-car?CarId='+ ${car.getCarId()} + '&startDate='  + '&enDate='  + '&address=' + '&beforeNavigate=detailCar'}">Rent now</a>
 
                 </div>
 

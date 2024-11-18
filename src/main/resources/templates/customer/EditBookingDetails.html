@@ -13,7 +13,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="/css/carowner/edit-car.css">
-
+    <!-- iziToast CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+    <!-- iziToast JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
 
     <style>
         .hero-wrap {
@@ -185,12 +188,154 @@
             position: relative;
         }
 
+
+
+
+        /*Rating Star*/
+        /* Popup container */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+            margin: 100px auto;
+            text-align: center;
+        }
+
+
+        /* Heading */
+        .popup-content h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Rating stars */
+        .star-rating {
+            font-size: 30px;
+            color: #FFD700;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .star-rating svg {
+            cursor: pointer;
+            transition: fill 0.3s;
+            width: 30px;
+            height: 30px;
+        }
+
+        .star-rating svg:hover,
+        .star-rating svg.active {
+            fill: #FFA500;
+        }
+
+        /* Textarea for review */
+        .review-textarea {
+            width: 100%;
+            height: 80px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            /*resize: none;*/
+            font-size: 16px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Buttons */
+        .popup-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .popup-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .popup-buttons .skip-btn {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        .popup-buttons .skip-btn:hover {
+            background-color: #bbb;
+        }
+
+        .popup-buttons .submit-btn {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .popup-buttons .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+
     </style>
 </head>
 
 <body>
 <th:block layout:fragment="content">
     <body>
+
+    <!-- Popup Overlay -->
+    <div class="popup-overlay" id="ratingPopup">
+        <div class="popup-content">
+            <h2>Rate your trip</h2>
+            <p>Do you enjoy your trip? Please let us know what you think.</p>
+            <form id="ratingStarForm" method="post" th:action="@{/homepage-customer/rating-star}" th:object="${feedbackDto}" onsubmit="return validateForm()">
+
+                <input type="hidden" name="bookingId" th:value="${booking.getBookingId()}">
+                <input type="hidden" id="ratingValue" name="rating" value="0">
+
+                <!-- Star rating -->
+                <div class="star-rating">
+                    <svg data-rating="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+                    <svg data-rating="2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+                    <svg data-rating="3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+                    <svg data-rating="4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+                    <svg data-rating="5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 .587l3.668 7.429 8.332 1.151-6.064 5.608 1.577 8.225L12 18.896l-7.513 4.104 1.577-8.225L.587 9.167l8.332-1.151z"/></svg>
+                </div>
+
+                <!-- Review textarea -->
+                <textarea class="review-textarea" id="content" name="content" placeholder="Write your review here..." oninput="validateContent()"></textarea>
+
+                <!-- Buttons -->
+                <div class="popup-buttons">
+                    <button type="button" class="skip-btn" onclick="closePopup()">Skip</button>
+                    <button class="submit-btn" id="sendButton">Send Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -224,7 +369,7 @@
 
                         <th:block th:if="${navigate == 'mybookings'}">
                             <span class="mr-2">
-                                <a onclick="window.history.back()">MY BOOKINGS <i
+                                <a href="/my-bookings">MY BOOKINGS <i
                                 class="ion-ios-arrow-forward"></i></a>
                             </span>
                         </th:block>
@@ -387,7 +532,7 @@
                                                             <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                th:text="${booking.bookingStatus}"
                                                                th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
-                 : booking.bookingStatus == 'In-Progress'   ? 'color: #FFA500; font-weight: bold;'
+                 : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
                  : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
                  : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
                  : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' : 'font-weight: bold;' }">
@@ -404,7 +549,7 @@ z
                                                         Details</a>
 
                                                     <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
-                                                    <a th:href="'#'"
+                                                    <a th:href="'#'" id="confirm-booking-detail-btn"
                                                        style="background: #d5dcd5 !important; color: black !important;"
                                                        th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
@@ -421,8 +566,9 @@ z
                                                     <!-- Return Car button: visible only if status is In-Progress -->
                                                     <a th:href="'#'" style="background: #707070 !important;"
                                                        th:if="${booking.bookingStatus == 'In-Progress'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Return
-                                                        Car</a>
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                       th:onclick="'returnCarDetail(' + ${booking.getBookingId()} + ')'"
+                                                    >Return Car</a>
                                                 </div>
 
 
@@ -469,7 +615,7 @@ z
                                                     </div>
                                                     <a class="validate-msg" id="FullNameValidate">Invalid</a>
                                                 </div>
-                                                <div class="col-lg-6 mb-3 required-label ">
+                                                <div class="col-lg-6 mb-3">
 
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-prepend">
@@ -626,50 +772,50 @@ z
                                                 </div>
 
                                             </div>
-                                            <div>
-                                                <h5 class="card-title">Driver's information</h5>
-                                                <div class="row">
-                                                    <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
-                                                        <input type="checkbox" id="differentInfoCheckbox"
-                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
-                                                        <svg viewBox="0 0 21 21">
-                                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
-                                                        </svg>
-                                                        <span>Different than Renter's information</span>
-                                                    </label>
-                                                </div>
-                                                <div id="driverInfoTable" style="display: none; width: 100%">
-                                                    <div>
-                                                        <table class="table table-dark table-hover">
-                                                            <thead>
-                                                            <tr>
-                                                                <!--                                                                            <th scope="col">-->
-                                                                <!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
-                                                                <!--                                                                            </th>-->
-                                                                <th></th>
+<!--                                            <div>-->
+<!--                                                <h5 class="card-title">Driver's information</h5>-->
+<!--                                                <div class="row">-->
+<!--                                                    <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">-->
+<!--                                                        <input type="checkbox" id="differentInfoCheckbox"-->
+<!--                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">-->
+<!--                                                        <svg viewBox="0 0 21 21">-->
+<!--                                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>-->
+<!--                                                        </svg>-->
+<!--                                                        <span>Different than Renter's information</span>-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
+<!--                                                <div id="driverInfoTable" style="display: none; width: 100%">-->
+<!--                                                    <div>-->
+<!--                                                        <table class="table table-dark table-hover">-->
+<!--                                                            <thead>-->
+<!--                                                            <tr>-->
+<!--                                                                &lt;!&ndash;                                                                            <th scope="col">&ndash;&gt;-->
+<!--                                                                &lt;!&ndash;                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;&ndash;&gt;-->
+<!--                                                                &lt;!&ndash;                                                                            </th>&ndash;&gt;-->
+<!--                                                                <th></th>-->
 
-                                                                <th scope="col">Name</th>
-                                                                <th scope="col">Date</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr th:each="user : ${users}">
-                                                                <th scope="row">
-                                                                    <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow"
-                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                                           th:checked="${user.userId == booking.getDriverId()}" onclick="selectOnlyOne(this)" />
-                                                                </th>
-                                                                <td th:text="${user.getFullName()}"></td>
-                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
-                                                            </tr>
+<!--                                                                <th scope="col">Name</th>-->
+<!--                                                                <th scope="col">Date</th>-->
+<!--                                                            </tr>-->
+<!--                                                            </thead>-->
+<!--                                                            <tbody>-->
+<!--                                                            <tr th:each="user : ${users}">-->
+<!--                                                                <th scope="row">-->
+<!--                                                                    <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow"-->
+<!--                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"-->
+<!--                                                                           th:checked="${user.userId == booking.getDriverId()}" onclick="selectOnlyOne(this)" />-->
+<!--                                                                </th>-->
+<!--                                                                <td th:text="${user.getFullName()}"></td>-->
+<!--                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>-->
+<!--                                                            </tr>-->
 
-                                                            <!-- Các hàng khác... -->
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+<!--                                                            &lt;!&ndash; Các hàng khác... &ndash;&gt;-->
+<!--                                                            </tbody>-->
+<!--                                                        </table>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
 
-                                            </div>
+<!--                                            </div>-->
                                             <div id="button">
                                                 <button class="btn-primary btn" style="width: 100px; margin: 10px 10px 10px 10px"
                                                         onclick="window.history.back()">Discard
@@ -998,6 +1144,7 @@ z
                     stroke="#F96D00"/>
         </svg>
     </div>
+    <input type="hidden" id="triggerPopup" name="rating" th:value="${isRating}">
 
 
     <script>
@@ -1052,7 +1199,7 @@ z
             console.log("DOM fully loaded and parsed");
 
             // Cancel Booking Button Event
-            const cancelBookingBtn = document.getElementById('confirm-booking-btn'); // ID của nút Confirm
+            const cancelBookingBtn = document.getElementById('confirm-booking-detail-btn'); // ID của nút Confirm
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
 
@@ -1084,6 +1231,109 @@ z
                 });
             }
         });
+
+
+        function returnCarDetail(bookingId) {
+            console.log("aaaa",bookingId);
+            $.ajax({
+                url: '/return-car',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Return car successfully", response);
+                    Swal.fire({
+                        title: 'Return Car!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,  // Hiển thị nút "Cancel"
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Gọi tiếp xác nhận trả xe
+                            confirmReturnCarViewDetail(bookingId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error returning car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to return the car.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+
+        function confirmReturnCarViewDetail(bookingId) {
+            const carId = document.getElementById("carId").value;
+            const navigate = document.getElementById("navigate").value;
+            console.log(bookingId);
+            $.ajax({
+                url: '/confirm-return-car',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Confirm return car response", response);
+
+                    if (response.status === 'success1') {
+                        Swal.fire({
+                            title: 'Return Car Completed!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+
+                            let url = '/homepage-customer/booking-detail?bookingId=' + bookingId +
+                                '&carId=' + carId +
+                                '&navigate=' + navigate;
+                                url += '&triggerPopup=true';
+
+                            window.location.href = url;
+                            // window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+
+                        });
+                    } else if (response.status === 'success2') {
+                        Swal.fire({
+                            title: 'Request Payment Completed',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error confirming return car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                    });
+                }
+            });
+        }
+
+
 
 
         //====== Save data ======
@@ -1176,7 +1426,7 @@ z
                 // const pickUpDateTime = pickupDateFormatted;
                 // const returnDateTime = returnDateFormatted;
                 // const depositValue = depositText.replace(/[^0-9]/g, '');
-                const checked = document.getElementById("differentInfoCheckbox").checked;
+                // const checked = document.getElementById("differentInfoCheckbox").checked;
                 const carId = document.getElementById("carId").value;
                 const bookingId = document.getElementById("bookingId").value;
                 const fullName = document.getElementById('fullName').value;
@@ -1209,7 +1459,7 @@ z
                     // returnDate: returnDateTime,
                     // deposit: depositValue,
                     // step: actualStep,
-                    isCheck: checked,
+                    // isCheck: checked,
                     carID: carId,
                     bookingId: bookingId,
                     rentFullName: fullName,
@@ -1578,6 +1828,140 @@ z
             return true;
         }
     </script>
+
+<!--    rating star -->
+    <script>
+        // Star rating functionality
+        const stars = document.querySelectorAll('.star-rating svg');
+        const ratingValueInput = document.getElementById('ratingValue');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                stars.forEach(s => s.classList.remove('active'));
+                star.classList.add('active');
+                const rating = star.getAttribute('data-rating');
+                for(let i = 0; i < stars.length; i++) {
+                    if (i < star.getAttribute('data-rating')) {
+                        stars[i].classList.add('active');
+                    }
+                }
+                ratingValueInput.value = rating;
+            });
+        });
+
+        // Validate form before submission
+        function validateForm() {
+            if (!ratingValueInput.value) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Vui lòng chọn một ngôi sao để đánh giá!',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return false;
+            }
+            return true;
+        }
+
+        // Close popup function
+        function closePopup() {
+            document.getElementById('ratingPopup').style.display = 'none';
+        }
+
+        function validateContent() {
+            const content = document.getElementById("content").value;
+            const sendButton = document.getElementById("sendButton");
+
+            if (content.length > 1000) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Content must not exceed 1000 characters.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                sendButton.disabled = true;
+            } else {
+                sendButton.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const triggerPopup = urlParams.get('triggerPopup');
+
+            if (triggerPopup === 'true') {
+                // Gọi hàm mở popup đánh giá
+                openRatingPopup();
+            }
+        });
+
+        //Khi load lại trang
+        document.addEventListener('DOMContentLoaded', function () {
+            const isRating = document.getElementById('triggerPopup').value;
+
+            // Nếu isRating là "true", hiển thị popup
+            if (isRating === 'true') {
+                openRatingPopup();
+            }
+        });
+
+        function openRatingPopup() {
+            const popup = document.getElementById('ratingPopup');
+            popup.style.display = 'block'; // Hiển thị popup
+        }
+
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+            $('#ratingStarForm').on('submit', function (event) {
+                event.preventDefault(); // Ngăn form submit
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/homepage-customer/rating-star',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        // Xóa thông báo lỗi cũ nếu có
+                        $('.error').remove();
+                        if (response.success) {
+                            iziToast.success({
+                                title: 'Success',
+                                message: response.success,
+                                position: 'topRight',
+                                transitionIn: 'fadeInDown',
+                                transitionOut: 'fadeOutUp',
+                            });
+                            window.location.href = "/";
+                        }
+                    },
+
+                    error: function (xhr) {
+                        const errors = xhr.responseJSON;
+                        $('.error').remove();
+                        $('#success-message').hide();
+
+                        let errorMessage = '';
+                        for (const field in errors) {
+                            errorMessage += `${errors[field]}<br>`;
+                        }
+
+                        iziToast.error({
+                            title: 'Error',
+                            message: errorMessage,
+                            position: 'topRight',
+                            transitionIn: 'fadeInDown',
+                            transitionOut: 'fadeOutUp',
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/update-car-validate.js"></script>
     </body>

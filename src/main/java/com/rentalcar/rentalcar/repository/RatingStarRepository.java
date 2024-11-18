@@ -9,9 +9,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RatingStarRepository extends JpaRepository<Feedback, Long> {
+
+    @Query("SELECT f FROM Feedback f WHERE f.booking.bookingId = :bookingId")
+    Optional<Feedback> findByBookingId(@Param("bookingId") Long bookingId);
+
 
     @Query(value = "SELECT ROUND(AVG(CAST(f.rating AS FLOAT)), 2) AS average_rating " +
             "FROM Feedback f " +

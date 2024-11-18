@@ -1,10 +1,12 @@
 package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.common.Constants;
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -19,6 +21,7 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -65,6 +68,9 @@ public class RentalCarServiceImpl implements RentalCarService {
     @Autowired
     private ReturnCarService returnCarService;
 
+    @Autowired
+    private TransactionService transactionService;
+
     @Override
     public Page<MyBookingDto> getBookings(int page, int size, String sortBy, String order, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -84,7 +90,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
 
             // Tính toán số ngày giữa startDate và actualEndDate
-            int numberOfDays = (int) ChronoUnit.DAYS.between(startDate, actualEndDate);
+            int numberOfDays = calculateNumberOfDays(startDate, actualEndDate);
 
             MyBookingDto bookingDto = new MyBookingDto(
                     Long.valueOf((Integer) result[0]),
@@ -277,21 +283,32 @@ public class RentalCarServiceImpl implements RentalCarService {
         Booking booking = new Booking();
         DriverDetail driverDetail = new DriverDetail();
         Car car = carRepository.getCarByCarId(bookingDto.getCarID());
-
         User user = (User) session.getAttribute("user");
+        User customer = userRepository.getUserById(user.getId());
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        //============CHỌN VÍ ĐỂ TRẢ CỌC============================
+//        if(userRepository.getUserByEmail(customer.getEmail()) != null) {
+//            throw new RuntimeException("Email already exists");
+//        }
 
-        User customer = userRepository.getUserById(user.getId());
+//        if(phoneNumberStandardService.isPhoneNumberExists(customer.getPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
+//            throw new RuntimeException("Phone number already exists");
+//        }
+
+        //============CHỌN VÍ ĐỂ TRẢ CỌC============================
+        BigDecimal myWallet = customer.getWallet() != null ? customer.getWallet() : BigDecimal.ZERO; // VÍ CỦA CUSTOMER
         User carOwner = userRepository.getUserById(car.getUser().getId());
-        if (bookingDto.getSelectedPaymentMethod() == 1) {
-            calculateAndDeductDeposit(bookingDto, customer, carOwner, session);  //XỬ LÝ TIỀN TRONG CỌC
-        } else { // CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
-            throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
+        BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
+        if(bookingDto.getSelectedPaymentMethod() != 1) {// CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
+             throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
         }
+
+        if (myWallet.compareTo(deposit) < 0) {
+            throw new RuntimeException("Your wallet must be greater than deposit");
+        }
+
         //==========================================================
 
         String folderName = String.format("%s", user.getId());
@@ -311,7 +328,9 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         //Lưu vô db
         try {
-            int numberOfDays = (int) ChronoUnit.DAYS.between(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
+
+            //Lưu booking
+            int numberOfDays = calculateNumberOfDays(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
             Double totalPrice = car.getBasePrice() * numberOfDays;
             booking.setStartDate(bookingDto.getPickUpDate());
             booking.setEndDate(bookingDto.getReturnDate());
@@ -334,6 +353,9 @@ public class RentalCarServiceImpl implements RentalCarService {
             bookingCar.setBookingId(booking.getBookingId());
             bookingCar.setCarId(Long.valueOf(bookingDto.getCarID()));
             bookingCarRepository.save(bookingCar);
+
+            calculateAndDeductDeposit(booking, customer, carOwner,myWallet, deposit, session);  //XỬ LÝ TIỀN TRONG CỌC
+
 
             //Lưu thông tin người thuê xe
             String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
@@ -364,7 +386,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             }
 
             //THAY ĐỔI TRẠNG THÁI CHO XE
-            CarStatus notAvailableStatus = carStatusRepository.findById(2)
+            CarStatus notAvailableStatus = carStatusRepository.findById(14)
                     .orElseThrow(() -> new RuntimeException("Status not found"));
             car.setCarStatus(notAvailableStatus);
             carRepository.save(car);
@@ -372,6 +394,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
 
         //MAIL TO CUSTOMER
@@ -692,24 +715,34 @@ public class RentalCarServiceImpl implements RentalCarService {
     }
 
 
-    private void calculateAndDeductDeposit(BookingDto bookingDto, User customer, User carOwner, HttpSession session) {
-        BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
-        BigDecimal myWallet = customer.getWallet() != null ? customer.getWallet() : BigDecimal.ZERO; // VÍ CỦA CUSTOMER
+    private void calculateAndDeductDeposit(Booking booking, User customer, User carOwner,
+                                           BigDecimal myWallet,BigDecimal deposit, HttpSession session) {
         BigDecimal carOwnerWallet = carOwner.getWallet() != null ? carOwner.getWallet() : BigDecimal.ZERO; // VÍ CỦA CAR OWNER
 
-        if (myWallet.compareTo(deposit) < 0) {
-            throw new RuntimeException("Your wallet must be greater than deposit");
-        } else {
             BigDecimal depositedMoney = myWallet.subtract(deposit);
             customer.setWallet(depositedMoney);
             userRepository.save(customer); // TRỪ TIỀN THÀNH CÔNG
             session.setAttribute("user", customer);
-
+            transactionService.saveTransaction(customer, deposit, TransactionType.PAY_DEPOSIT, booking);
             // CỘNG TIỀN CHO CAR OWNER
             BigDecimal moneyReceive = carOwnerWallet.add(deposit);
             carOwner.setWallet(moneyReceive);
             userRepository.save(carOwner); // CỘNG TIỀN THÀNH CÔNG
-        }
+            transactionService.saveTransaction(carOwner, deposit, TransactionType.RECEIVE_DEPOSIT, booking);
+
+
+    }
+
+    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
+        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        // Tính chênh lệch thời gian (mili-giây)
+        long timeDiff = endMillis - startMillis;
+
+        // Chia để tính số ngày và làm tròn lên
+        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
     }
 
 

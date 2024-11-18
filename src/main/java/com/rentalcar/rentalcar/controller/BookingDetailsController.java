@@ -4,18 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rentalcar.rentalcar.common.Regex;
-import com.rentalcar.rentalcar.dto.BookingDto;
-import com.rentalcar.rentalcar.dto.MyBookingDto;
-import com.rentalcar.rentalcar.dto.UserDto;
-import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarStatus;
-import com.rentalcar.rentalcar.entity.DriverDetail;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.dto.*;
+import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.RentalCarService;
 import com.rentalcar.rentalcar.service.ViewEditBookingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -60,6 +58,10 @@ public class BookingDetailsController {
     @Autowired
     private DriverDetailRepository driverDetailRepository;
 
+    @Autowired
+    RatingStarRepository ratingStarRepo;
+
+
     @GetMapping("/homepage-customer/booking-detail")
     public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
@@ -79,6 +81,12 @@ public class BookingDetailsController {
 
         Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findById(bookingId);
         DriverDetail driverDetail = optionalDriverDetail.orElse(null);
+
+        Optional<Feedback> opFeedback = ratingStarRepo.findByBookingId(Long.valueOf(bookingId));
+        Feedback feedback = opFeedback.orElse(null);
+        boolean isRating = feedback == null && booking.getBookingStatus().equalsIgnoreCase("Completed");
+
+
         //=========================================================== Car detail ===================================================
 
         Car car = carRepository.getCarByCarId(carId);
@@ -116,7 +124,8 @@ public class BookingDetailsController {
         model.addAttribute("booking", booking);
         model.addAttribute("driverDetail", driverDetail);
         model.addAttribute("navigate", navigate);
-
+        model.addAttribute("feedbackDto", new FeedbackDto());
+        model.addAttribute("isRating",isRating); // có hiện đánh giá hay không
         return "customer/EditBookingDetails";
     }
 
@@ -164,6 +173,8 @@ public class BookingDetailsController {
         }
 
         LocalDate dob = bookingInfor.getRentBookPickDate();
+//        pattern = Pattern.compile(NATIONAL_ID_REGEX);
+//        matcher = pattern.matcher(nationalId);
         if (dob == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Date");
         }
@@ -178,11 +189,31 @@ public class BookingDetailsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a driving license image.");
         }
 
+
+//        LocalDateTime startDate = bookingInfor.getPickUpDate();
+//        if (startDate == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Start Date");
+//        }
+//
+//        LocalDateTime endDate = bookingInfor.getReturnDate();
+//        if (endDate == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid End Date");
+//        }
+
+//        // Kiểm tra endDate có phải sau startDate ít nhất một giờ không
+//        if (Duration.between(startDate, endDate).toHours() < 1) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("End date must be at least 1 hour after start date");
+//        }
+//
+//        if (endDate.isBefore(LocalDateTime.now()) || startDate.isBefore(LocalDateTime.now())) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date Time cannot be in the past");
+//        }
         try {
 
             MultipartFile[] files = {rentImage};
             viewEditBookingService.updateBooking(bookingInfor, files, session);
             response.put("message", "update successfully.");
+            //response.put("bookingInfo", Map.of("id", booking.getBookingId(), "startDate", booking.getStartDate(), "endDate", booking.getEndDate()));
         } catch (RuntimeException e) {
             switch (e.getMessage()) {
                 case "Your wallet must be greater than deposit":
@@ -194,6 +225,8 @@ public class BookingDetailsController {
         }
 
         return ResponseEntity.ok(response);
+
+
     }
 
 
