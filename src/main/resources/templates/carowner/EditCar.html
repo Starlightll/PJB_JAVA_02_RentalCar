@@ -22,7 +22,8 @@
     <body>
 
     <!-- Modal -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -49,7 +50,9 @@
             <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span class="mr-2"><a href="/car-owner/my-cars">MY CARS <i class="ion-ios-arrow-forward"></i></a></span><span>CAR DETAILS <i class="ion-ios-arrow-forward"></i></span></p>
+                        <span class="mr-2"><a href="/car-owner/my-cars">MY CARS <i
+                                class="ion-ios-arrow-forward"></i></a></span><span>CAR DETAILS <i
+                                class="ion-ios-arrow-forward"></i></span></p>
                     <h1 class="mb-3 bread">Car Detail</h1>
                 </div>
             </div>
@@ -130,9 +133,10 @@
                                                 </div>
                                                 <div class="col-lg-5 col-md-6 justify-content-center align-items-center">
                                                     <div class="row justify-content-center align-items-center align-content-center">
-                                                        <h1 th:text="${car.getCarName() == null ? car.getBrand().getBrandName()+' '+car.getModel()+' '+car.getProductionYear() :car.getCarName()}" class="col-lg-12 col-md-12 col-sm-12 text-center"
+                                                        <h1 th:text="${car.getCarName() == null ? car.getBrand().getBrandName()+' '+car.getModel()+' '+car.getProductionYear() :car.getCarName()}"
+                                                            class="col-lg-12 col-md-12 col-sm-12 text-center"
                                                             style="font-size: 2rem">
-                                                           </h1>
+                                                        </h1>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -197,9 +201,22 @@
                                                 </div>
                                                 <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
                                                     <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
-                                                    <a th:href="'#'"
-                                                    th:id="'cancel-booking-btn-' + ${car.getCarId()}"
-                                                       class="btn btn-primary  ">Confirm deposit</a>
+                                                        <a th:if="${bookingStatus == 1}"
+                                                           th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
+                                                           class="btn btn-primary"
+                                                           th:attr="data-car-id=${car.getCarId()}">
+                                                            Confirm deposit
+                                                        </a>
+                                                    </th:block>
+                                                    <th:block th:if="${car.getCarStatus().getStatusId() == 2}">
+                                                        <a th:if="${bookingStatus == 4}"
+                                                           th:id="'confirm-payment-btn-' + ${car.getCarId()}"
+                                                           class="btn btn-primary"
+                                                           style="padding-right: 6px; padding-left: 6px;"
+                                                           th:attr="data-car-id=${car.getCarId()}"
+                                                           th:onclick="'checkPayment(' + ${car.getCarId()} + ')'">
+                                                            Confirm Payment
+                                                        </a>
                                                     </th:block>
                                                 </div>
                                             </div>
@@ -245,28 +262,44 @@
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
-                                                        <div class="input-group-prepend" >
+                                                        <div class="input-group-prepend">
                                                             <label class="input-group-text "
                                                                    for="color"
                                                             >Color</label>
                                                         </div>
                                                         <select class="custom-select"
                                                                 id="color" name="color" disabled>
-                                                            <option value="" th:selected="${car.color == null}">Choose...</option>
-                                                            <option value="Red" th:selected="${car.color == 'Red'}">Red</option>
-                                                            <option value="Green" th:selected="${car.color == 'Green'}">Green</option>
-                                                            <option value="Blue" th:selected="${car.color == 'Blue'}">Blue</option>
-                                                            <option value="Black" th:selected="${car.color == 'Black'}">Black</option>
-                                                            <option value="Grey" th:selected="${car.color == 'Grey'}">Grey</option>
-                                                            <option value="Gold" th:selected="${car.color == 'Gold'}">Gold</option>
-                                                            <option value="Silver" th:selected="${car.color == 'Silver'}">Silver</option>
+                                                            <option value="" th:selected="${car.color == null}">
+                                                                Choose...
+                                                            </option>
+                                                            <option value="Red" th:selected="${car.color == 'Red'}">
+                                                                Red
+                                                            </option>
+                                                            <option value="Green" th:selected="${car.color == 'Green'}">
+                                                                Green
+                                                            </option>
+                                                            <option value="Blue" th:selected="${car.color == 'Blue'}">
+                                                                Blue
+                                                            </option>
+                                                            <option value="Black" th:selected="${car.color == 'Black'}">
+                                                                Black
+                                                            </option>
+                                                            <option value="Grey" th:selected="${car.color == 'Grey'}">
+                                                                Grey
+                                                            </option>
+                                                            <option value="Gold" th:selected="${car.color == 'Gold'}">
+                                                                Gold
+                                                            </option>
+                                                            <option value="Silver"
+                                                                    th:selected="${car.color == 'Silver'}">Silver
+                                                            </option>
                                                         </select>
                                                     </div>
                                                     <a class="validate-msg">Invalid</a>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
                                                     <div class="input-group input-group-sm">
-                                                        <div class="input-group-prepend" >
+                                                        <div class="input-group-prepend">
                                                             <label class="input-group-text "
                                                                    for="brand">Brand
                                                                 Name</label>
@@ -482,27 +515,33 @@
                                                 </div>
 
                                                 <div class="input-group col-lg-6" style="min-height: 56px">
-                                                    <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Description</span>
-                                                    <textarea class="form-control" id="description" aria-label="With textarea" th:text="${car.getDescription()}" style="font-size: 14px;" placeholder="Description of your vehicle"></textarea>
+                                                    <span class="input-group-text"
+                                                          style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Description</span>
+                                                    <textarea class="form-control" id="description"
+                                                              aria-label="With textarea"
+                                                              th:text="${car.getDescription()}" style="font-size: 14px;"
+                                                              placeholder="Description of your vehicle"></textarea>
                                                 </div>
 
 
-                                                    <div style="padding: 10px">
-                                                        <div class="row pl-4 pr-4">
-                                                            <th:block th:each="function : ${additionalFunction}">
-                                                                <label class="checkbox bounce col-lg-3 col-md-4 col-6 p-0 d-flex" style="align-items: center;column-gap: 6px;">
-                                                                    <input type="checkbox"
-                                                                           th:value="${function.functionId}"
-                                                                           name="additionalFunction"
-                                                                           th:checked="${car.getAdditionalFunctions() != null && car.additionalFunctions.contains(function)}">
-                                                                    <svg viewBox="0 0 21 21">
-                                                                        <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
-                                                                    </svg>
-                                                                    <span th:text="${function.functionName}"></span>
-                                                                </label>
-                                                            </th:block>
-                                                        </div>
+                                                <div style="padding: 10px">
+                                                    <div class="row pl-4 pr-4">
+                                                        <th:block th:each="function : ${additionalFunction}">
+                                                            <label class="checkbox bounce col-lg-3 col-md-4 col-6 p-0 d-flex"
+                                                                   style="align-items: center;column-gap: 6px;">
+                                                                <input type="checkbox"
+                                                                       th:value="${function.functionId}"
+                                                                       name="additionalFunction"
+                                                                       th:checked="${car.getAdditionalFunctions() != null && car.additionalFunctions.contains(function)}">
+                                                                <svg viewBox="0 0 21 21">
+                                                                    <polyline
+                                                                            points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                </svg>
+                                                                <span th:text="${function.functionName}"></span>
+                                                            </label>
+                                                        </th:block>
                                                     </div>
+                                                </div>
                                                 <div class="document row m-auto w-100">
                                                     <div class="col-lg-3 col-sm-6">
                                                         <input type="hidden" id="frontImage"
@@ -579,7 +618,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                        <div class="tab-pane fade" id="nav-contact" role="tabpanel"
+                                             aria-labelledby="nav-contact-tab">
                                             <div>
                                                 <div class="row">
                                                     <div class="col-lg-6 mb-3">
@@ -587,9 +627,11 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Base price</span>
                                                             </div>
-                                                            <input  class="form-control"
-                                                                    aria-label="Sizing example input"
-                                                                    aria-describedby="inputGroup-sizing-default" id="basePrice" th:value="${formattedBasePrice.replaceAll(',','')}">
+                                                            <input class="form-control"
+                                                                   aria-label="Sizing example input"
+                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                   id="basePrice"
+                                                                   th:value="${formattedBasePrice.replaceAll(',','')}">
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">VND/Day</span>
                                                             </div>
@@ -602,9 +644,11 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Car price</span>
                                                             </div>
-                                                            <input  class="form-control"
-                                                                    aria-label="Sizing example input"
-                                                                    aria-describedby="inputGroup-sizing-default" id="carPrice" th:value="${formattedCarPrice.replaceAll(',','')}">
+                                                            <input class="form-control"
+                                                                   aria-label="Sizing example input"
+                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                   id="carPrice"
+                                                                   th:value="${formattedCarPrice.replaceAll(',','')}">
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">VND/Day</span>
                                                             </div>
@@ -616,9 +660,11 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Deposit</span>
                                                             </div>
-                                                            <input  class="form-control"
-                                                                    aria-label="Sizing example input"
-                                                                    aria-describedby="inputGroup-sizing-default" id="deposit" th:value="${formattedDeposit.replaceAll(',','')}">
+                                                            <input class="form-control"
+                                                                   aria-label="Sizing example input"
+                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                   id="deposit"
+                                                                   th:value="${formattedDeposit.replaceAll(',','')}">
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">VND</span>
                                                             </div>
@@ -642,7 +688,8 @@
                                                                 </div>
                                                             </div>
                                                             <input type="text" class="form-control"
-                                                                   aria-label="Text input with checkbox" id="termOfUse" th:value="${car.terms}">
+                                                                   aria-label="Text input with checkbox" id="termOfUse"
+                                                                   th:value="${car.terms}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -652,11 +699,14 @@
                                 </div>
                                 <div>
                                     <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
-                                            onclick="window.history.back()">Back</button>
+                                            onclick="window.history.back()">Back
+                                    </button>
                                     <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
-                                            onclick="window.location.reload()">Discard</button>
+                                            onclick="window.location.reload()">Discard
+                                    </button>
                                     <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
-                                            onclick="updateCar()">Save</button>
+                                            onclick="updateCar()">Save
+                                    </button>
                                 </div>
 
                             </div>
@@ -681,15 +731,147 @@
 
 
     <script>
+
+        function checkPayment(carId) {
+            console.log("checkPayment called with carId:", carId); // Kiểm tra xem hàm có được gọi không
+
+            $.ajax({
+                url: '/car-owner/check-payment',
+                type: 'get',
+                data: {carId: carId},
+                success: function (response) {
+                    console.log("Check payment successfully", response);
+
+                    Swal.fire({
+                        title: 'Confirm Payment!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        console.log("Swal result:", result);
+                        if (result.isConfirmed) {
+                            confirmReturnCar(carId);
+                            console.log("Calling confirmReturnCar with carId:", carId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error confirm payment", error);
+                    let errorMessage;
+                    try {
+                        const errorResponse = JSON.parse(error.responseText);
+                        errorMessage = errorResponse.message || 'An error occurred.';
+                    } catch (e) {
+                        errorMessage = 'An unexpected error occurred.';
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        function confirmReturnCar(carId) {
+
+            console.log(carId);
+            $.ajax({
+                    url: '/car-owner/confirm-payment-car',
+                    type: 'get',
+                    data: {carId: carId},
+                    success: function (response) {
+                        console.log("Confirm payment car response", response);
+
+                        if (response.status === 'success1') {
+                            Swal.fire({
+                                title: 'Booking Successfully Completed.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId ;
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/'  + carId ;
+                            });
+                        }
+                    },
+                    error:
+
+                        function (error) {
+                            console.log("Error confirming return payment", error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId ;
+                            });
+                        }
+                }
+            )
+            ;
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+
+            const confirmDepositBtns = document.querySelectorAll('[id^="confirm-deposit-btn-"]');
+            confirmDepositBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Lấy carId từ data-car-id
+                    const carId = this.getAttribute('data-car-id');
+
+                    Swal.fire({
+                        title: 'Please confirm that you have received the deposit for this booking.',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the deposit for car with ID:', carId);
+                            window.location.href = `/car-owner/confirm-deposit?carId=${carId}`;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
+
+
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
-        function updateCar(){
+        function updateCar() {
             const mileage = document.getElementById('mileage').value;
             const fuelConsumption = document.getElementById('fuelConsumption').value;
-            const province = document.getElementById('province').value +"," + document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
-            const district = document.getElementById('district').value +"," + document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
-            const ward = document.getElementById('ward').value +"," + document.getElementById('ward').options[document.getElementById('ward').selectedIndex].text;
+            const province = document.getElementById('province').value + "," + document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
+            const district = document.getElementById('district').value + "," + document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
+            const ward = document.getElementById('ward').value + "," + document.getElementById('ward').options[document.getElementById('ward').selectedIndex].text;
             const street = document.getElementById('street').value;
             const checkboxes = document.querySelectorAll('input[name="additionalFunction"]:checked');
             const additionalFunction = [];
@@ -740,16 +922,16 @@
                     formData.append(key, input.files[0]);
                 } else {
                     // If file is not selected, append null or empty file to maintain the structure
-                    formData.append(key, new Blob([], { type: 'application/octet-stream' }));
+                    formData.append(key, new Blob([], {type: 'application/octet-stream'}));
                 }
             }
             console.log(carData);
             console.log(fileInputs);
-            if(!validate()){
+            if (!validate()) {
                 console.warn("Validation failed, try again!.");
                 alert("Validation failed");
                 return false;
-            }else{
+            } else {
                 $.ajax({
                     url: '/car-owner/update-car',
                     type: 'POST',
@@ -794,12 +976,13 @@
 
         const MAX_FILE_MB = 200;
         const MAX_SIZE_BYTES = MAX_FILE_MB * 1024 * 1024;
+
         function uploadfile(imageView, inputFile) {
             const file = inputFile.files[0];
             if (file) {
                 const validExtensions = ["jpg", "jpeg", "png"];
                 const fileExtension = file.name.split('.').pop().toLowerCase();
-                if(file.size > MAX_SIZE_BYTES){
+                if (file.size > MAX_SIZE_BYTES) {
                     alert("File size must be less than 200MB");
                     inputFile.value = ""; // Reset input nếu file không hợp lệ
                     return;
@@ -812,7 +995,7 @@
                 }
 
                 const fileReader = new FileReader();
-                fileReader.onload = function(e) {
+                fileReader.onload = function (e) {
                     imageView.style.backgroundImage = `url(${e.target.result})`;
                     imageView.style.backgroundSize = "cover";
                     imageView.style.backgroundPosition = "center";
@@ -1000,14 +1183,12 @@
         const district = document.getElementById('district');
         const ward = document.getElementById('district');
         const previewLocation = document.getElementById('previewLocation');
-        ward.addEventListener('change', function(){
+        ward.addEventListener('change', function () {
             previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
         });
 
 
-
-
-        function checkDetails(){
+        function checkDetails() {
             const mileage = document.getElementById('mileage').value;
             const fuelConsumption = document.getElementById('fuelConsumption').value;
             const province = document.getElementById('province').value;
