@@ -18,7 +18,7 @@ CREATE TABLE [dbo].[Users]
     email          NVARCHAR(100)      NOT NULL,
     nationalId     NVARCHAR(20),
     phone          NVARCHAR(15)       NOT NULL,
-    drivingLicense NVARCHAR(50),
+    drivingLicense NVARCHAR(200),
     wallet         DECIMAL(18, 2),
     password       NVARCHAR(255)      NOT NULL,
     city           NVARCHAR(100),
