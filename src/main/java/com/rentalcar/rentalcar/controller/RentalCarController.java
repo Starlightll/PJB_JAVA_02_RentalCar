@@ -485,9 +485,9 @@ public class RentalCarController {
 
         // Handle response based on caseReturn value
         if (caseReturn == 1 ) {
-            return generateResponse(response, "success", "Booking has been successfully completed.");
+            return generateResponse(response, "success1", "Booking has been successfully completed.");
         } else if (caseReturn == 2) {
-            return generateResponse(response, "success", "Return car has been successfully completed.");
+            return generateResponse(response, "success2", "Car return request sent. Waiting for Car-Owner to confirm payment.");
 
         } else if (caseReturn == -1) {
             return generateResponse(response, "error", "Your wallet doesn’t have enough balance. Please top-up your wallet and try again");
