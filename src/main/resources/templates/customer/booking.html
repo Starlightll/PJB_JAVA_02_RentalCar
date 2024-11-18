@@ -901,26 +901,29 @@
             const pickupDate = document.getElementById('pickupDate').innerText;
             const returnDate = document.getElementById('returnDate').innerText;
 
+
+            const input = "2024/11/28 - 14:19";
+            const formattedDate = formatToDatetimeLocal(input);
+            console.log("Formatted Date: ", formattedDate);
+
+            const dateObj = new Date(formattedDate);
+            console.log("Date Object: ", dateObj);
+
+
             if (pickupDate && returnDate && pickupLocation) {
                 document.getElementById('editPickupLocation').value = pickupLocation;
-                document.getElementById('editPickupDate').value = formatToDatetimeLocal(pickupDate);
-                document.getElementById('editReturnDate').value = formatToDatetimeLocal(returnDate);
+                document.getElementById('editPickupDate').value = formatToDatetimeOnLoad(pickupDate);
+                document.getElementById('editReturnDate').value = formatToDatetimeOnLoad(returnDate);
 
                 const newReturnDate = document.getElementById('editReturnDate').value;
-                console.log("Date = " + newReturnDate);
                 saveChanges();
             } else {
-                const newPickupDate = formatToDatetimeLocal(pickupDate);
-                const newReturnDate = formatToDatetimeLocal(returnDate);
-                console.log( newPickupDate);
-                console.log(newReturnDate);
+                const newPickupDate = formatToDatetimeOnLoad(pickupDate);
+                const newReturnDate = formatToDatetimeOnLoad(returnDate);
+
                 LoadSaveChanges(newPickupDate, newReturnDate);
             }
 
-
-
-            console.log(pickupDate);
-            console.log(returnDate);
         }
 
 
@@ -1019,10 +1022,12 @@
             $('#confirmModal').modal('hide');
         }
 
-        function LoadSaveChanges(newPickupDate, newReturnDate) {
+        function LoadSaveChanges(newPickupDatee, newReturnDatee) {
 
+            console.log("aa", newPickupDatee)
+            console.log("abc", newReturnDatee)
             // Kiểm tra tính hợp lệ của dữ liệu
-            if ( !newPickupDate || !newReturnDate) {
+            if ( !newPickupDatee || !newReturnDatee) {
                 iziToast.error({
                     title: 'Error',
                     message: 'Please fill in all the information.',
@@ -1035,12 +1040,14 @@
 
 
             // Chuyển đổi chuỗi thời gian thành đối tượng Date để so sánh
-            const pickupDateObj = new Date(newPickupDate);
-            const returnDateObj = new Date(newReturnDate);
+            const pickupDateObj = new Date(newPickupDatee);
+            const returnDateObj = new Date(newReturnDatee);
+            console.log("aa", pickupDateObj)
+            console.log("abc", returnDateObj)
 
             // Lấy ngày hiện tại
             const currentDate = new Date();
-
+            console.log("currentDate", currentDate)
             // Kiểm tra xem ngày pickupDate có phải là ngày trong quá khứ không
             if (pickupDateObj < currentDate) {
                 iziToast.error({
@@ -1078,11 +1085,11 @@
             }
 
             // Tính số ngày
-            const days = calculateNumberOfDays(newPickupDate, newReturnDate);
+            const days = calculateNumberOfDays(newPickupDatee, newReturnDatee);
 
             // Cập nhật lại nội dung của các `span`
-            document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDate);
-            document.getElementById('returnDate').innerText = formatToDisplay(newReturnDate);
+            document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDatee);
+            document.getElementById('returnDate').innerText = formatToDisplay(newReturnDatee);
             document.getElementById('numberOfDays').innerText = days;
             console.log("Số ngày: " + days);
             const totalPrice = days * car.basePrice;
@@ -1112,6 +1119,15 @@
         }
 
 
+        function formatToDatetimeOnLoad(displayDate) {
+            // Tách ngày và giờ từ chuỗi input
+            const [date, time] = displayDate.split(" - ");
+            const [year, month, day] = date.split("/"); // Tách năm, tháng, ngày
+
+            // Định dạng lại thành chuỗi chuẩn ISO 8601: YYYY-MM-DDTHH:mm
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${time}`;
+        }
+
         function formatToDatetimeDB(displayDate) {
             const [date, timeWithPeriod] = displayDate.split(" - ");
             const [day, month, year] = date.split("/");
@@ -1134,7 +1150,6 @@
 
             return `${year}-${month}-${day}T${hourString}:${minuteString}`;
         }
-
 
         // Hàm để tính số ngày giữa 2 ngày
         function calculateNumberOfDays(startDate, endDate) {

@@ -13,4 +13,4 @@
   <div class="dz-filename" data-dz-name></div>
   <div class="dz-size" data-dz-size></div>
 </div>
-</div>`,a=document.querySelector("#dropzone-basic"),a=(a&&new Dropzone(a,{previewTemplate:e,parallelUploads:1,maxFilesize:5,addRemoveLinks:!0,maxFiles:1}),document.querySelector("#dropzone-multi"));a&&new Dropzone(a,{previewTemplate:e,parallelUploads:1,maxFilesize:5,addRemoveLinks:!0})}();
+</div>`,a=document.querySelector("#dropzone-basic"),a=(a&&new Dropzone(a,{previewTemplate:e,parallelUploads:1,maxFilesize:5,addRemoveLinks:!0,maxFiles:1}))}();

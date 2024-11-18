@@ -18,6 +18,7 @@ import com.rentalcar.rentalcar.service.ReturnCarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -117,8 +118,11 @@ public class RentalCarController {
     //Add
     @GetMapping("/booking-car")
 
-    public String bookingDetail(@RequestParam Integer CarId, @RequestParam String startDate, @RequestParam String enDate
-                                 ,@RequestParam String address, @RequestParam String beforeNavigate,Model model, HttpSession session) {
+    public String bookingDetail(@RequestParam Integer CarId,
+
+                                @RequestParam String startDate, @RequestParam String enDate
+                                 , @RequestParam String address, @RequestParam String beforeNavigate, Model model, HttpSession session) {
+
         User user = (User) session.getAttribute("user");
         CarDto car = rentalCarService.getCarDetails(CarId);
         User userepo = userRepo.getUserById(user.getId());
@@ -135,10 +139,16 @@ public class RentalCarController {
 
         List<UserDto> driverList = getAllDriverAvailable();
         // Định dạng ngày giờ đầu vào và đầu ra
-        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm");
+        startDate = startDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");;
+        enDate = enDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");;
+
+
         SimpleDateFormat dateOutputFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat timeOutputFormat = new SimpleDateFormat("HH:mm");
         try {
+
+
             // Chuyển đổi startDate và enDate sang định dạng mong muốn
             Date start = inputFormat.parse(startDate);
             Date end = inputFormat.parse(enDate);
@@ -157,13 +167,13 @@ public class RentalCarController {
             model.addAttribute("dropDate", dropDate);
             model.addAttribute("pickTime", pickTime);
             model.addAttribute("dropTime", dropTime);
-            model.addAttribute("startDate", startDate);
-            model.addAttribute("enDate", enDate);
+
         } catch (ParseException e) {
             e.printStackTrace();
             // Xử lý lỗi nếu không thể phân tích chuỗi đầu vào
         }
-
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("enDate", enDate);
         model.addAttribute("lastLink", beforeNavigate);
         model.addAttribute("users", driverList); //
         model.addAttribute("car", car);

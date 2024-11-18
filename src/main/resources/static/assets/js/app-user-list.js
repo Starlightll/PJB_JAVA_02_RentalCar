@@ -1,11 +1,11 @@
 $(function () {
     let t, a, n;
     n = (isDarkStyle ? (t = config.colors_dark.borderColor, a = config.colors_dark.bodyBg, config.colors_dark) : (t = config.colors.borderColor, a = config.colors.bodyBg, config.colors)).headingColor;
-    var e, s = $(".datatables-users"), o = $(".select2"), i = "app-user-view-account.html", r = {
+    var e, s = $(".datatables-users"), o = $(".select2"), i = "/admin/user-management/user-detail", r = {
         'PENDING': {title: "Pending", class: "bg-label-warning"},
         'ACTIVATED': {title: "Active", class: "bg-label-success"},
-        'LOCKED': {title: "Inactive", class: "bg-label-secondary"},
-        'DELETED': {title: "Inactive", class: "bg-label-error"}
+        'LOCKED': {title: "Locked", class: "bg-label-secondary"},
+        'DELETED': {title: "Deleted", class: "bg-label-error"}
     };
     o.length && (o = o).wrap('<div class="position-relative"></div>').select2({
         placeholder: "Select Country",
@@ -56,7 +56,7 @@ $(function () {
             render: function (e, t, a, n) {
                 a = a.role;
                 return "<span class='text-truncate d-flex align-items-center text-heading'>" + {
-                    Subscriber: '<i class="bx bx-crown text-primary me-2"></i>',
+                    'Driver': '<i class="bx bx-card text-primary me-2"></i>',
                     'Car Owner': '<i class="bx bx-car text-warning me-2"></i>',
                     'Customer': '<i class="bx bx-user text-success me-2"></i>',
                     'THE FUCK, WHERE IS MY ROLE ?': '<i class="bx bx-error text-danger me-2"></i>',
@@ -80,7 +80,7 @@ $(function () {
             searchable: !1,
             orderable: !1,
             render: function (e, t, a, n) {
-                return '<div class="d-flex align-items-center"><a href="javascript:;" class="btn btn-icon delete-record"><i class="bx bx-trash bx-md"></i></a><a href="' + i + '" class="btn btn-icon"><i class="bx bx-show bx-md"></i></a><a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded bx-md"></i></a><div class="dropdown-menu dropdown-menu-end m-0"><a href="javascript:;" class="dropdown-item">Edit</a><a href="javascript:;" class="dropdown-item">Suspend</a></div></div>'
+                return '<div class="d-flex align-items-center"><a href="javascript:;" class="btn btn-icon delete-record"><i class="bx bx-trash bx-md"></i></a><a href="' + i + '?userId=' + a.userId + '" class="btn btn-icon"><i class="bx bx-show bx-md"></i></a><a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded bx-md"></i></a><div class="dropdown-menu dropdown-menu-end m-0"><a href="javascript:;" class="dropdown-item">Edit</a><a href="javascript:;" class="dropdown-item">Suspend</a></div></div>'
             }
         }],
         order: [[2, "desc"]],

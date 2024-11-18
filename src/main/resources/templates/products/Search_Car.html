@@ -218,8 +218,10 @@
                   <td style="color: green" th:text="${list.getCarStatus().name}"></td>
                   <td>
                     <th:block th:if="${list.getCarStatus().getStatusId() == 1}">
-                      <button class="btn-rent"><a th:href="${'/booking-car?CarId='+ list.getCarId()+ '&startDate=' + pickDate+' - '+pickTime +'&enDate=' + dropDate +' - '+ dropTime + '&address=' + name + '&beforeNavigate=search'  }"
-                                                  class="btn-view">Rent now</a></button>
+                      <button class="btn-rent"><a
+                                                  class="btn-view"
+                                                  th:href="@{'/booking-car?CarId='+ ${list.getCarId()} + '&startDate=' + ${pickDate} + ' - ' + ${pickTime} + '&enDate=' + ${dropDate} +' - '+${dropTime} + '&address=' + ${name} + '&beforeNavigate=search'}"
+                      >Rent now</a></button>
                     </th:block>
 
                     <th:block th:if="${list.getCarStatus().getStatusId() != 1}">
