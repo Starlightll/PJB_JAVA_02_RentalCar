@@ -298,6 +298,7 @@
       // Get current date for comparison
       const today = new Date();
       const currentDate = today.toISOString().split('T')[0];
+      const currentTime = today.toTimeString().split(' ')[0].substring(0, 5); // HH:mm format
 
       // Pick-up location validation
 
@@ -313,6 +314,9 @@
 
       if (!pickTime) {
         document.getElementById('pick-time-error').textContent = 'Please enter pick-up time';
+        valid = false;
+      } else if (pickDate === currentDate && pickTime < currentTime) {
+        document.getElementById('pick-time-error').textContent = 'Pick-up time must not be in the past if pick-up date is today';
         valid = false;
       }
 
