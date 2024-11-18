@@ -1144,6 +1144,7 @@ z
                     stroke="#F96D00"/>
         </svg>
     </div>
+    <input type="hidden" id="triggerPopup" name="rating" th:value="${isRating}">
 
 
     <script>
@@ -1866,7 +1867,6 @@ z
         // Close popup function
         function closePopup() {
             document.getElementById('ratingPopup').style.display = 'none';
-            window.location.href = '/';
         }
 
         function validateContent() {
@@ -1893,6 +1893,16 @@ z
 
             if (triggerPopup === 'true') {
                 // Gọi hàm mở popup đánh giá
+                openRatingPopup();
+            }
+        });
+
+        //Khi load lại trang
+        document.addEventListener('DOMContentLoaded', function () {
+            const isRating = document.getElementById('triggerPopup').value;
+
+            // Nếu isRating là "true", hiển thị popup
+            if (isRating === 'true') {
                 openRatingPopup();
             }
         });

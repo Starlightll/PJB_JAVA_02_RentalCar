@@ -58,6 +58,10 @@ public class BookingDetailsController {
     @Autowired
     private DriverDetailRepository driverDetailRepository;
 
+    @Autowired
+    RatingStarRepository ratingStarRepo;
+
+
     @GetMapping("/homepage-customer/booking-detail")
     public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
@@ -77,6 +81,12 @@ public class BookingDetailsController {
 
         Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findById(bookingId);
         DriverDetail driverDetail = optionalDriverDetail.orElse(null);
+
+        Optional<Feedback> opFeedback = ratingStarRepo.findByBookingId(Long.valueOf(bookingId));
+        Feedback feedback = opFeedback.orElse(null);
+        boolean isRating = feedback == null && booking.getBookingStatus().equalsIgnoreCase("Completed");
+
+
         //=========================================================== Car detail ===================================================
 
         Car car = carRepository.getCarByCarId(carId);
@@ -115,6 +125,7 @@ public class BookingDetailsController {
         model.addAttribute("driverDetail", driverDetail);
         model.addAttribute("navigate", navigate);
         model.addAttribute("feedbackDto", new FeedbackDto());
+        model.addAttribute("isRating",isRating); // có hiện đánh giá hay không
         return "customer/EditBookingDetails";
     }
 

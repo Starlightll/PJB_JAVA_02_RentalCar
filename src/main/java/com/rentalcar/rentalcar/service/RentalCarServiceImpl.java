@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -90,7 +91,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
 
             // Tính toán số ngày giữa startDate và actualEndDate
-            int numberOfDays = (int) ChronoUnit.DAYS.between(startDate, actualEndDate);
+            int numberOfDays = calculateNumberOfDays(startDate, actualEndDate);
 
             MyBookingDto bookingDto = new MyBookingDto(
                     Long.valueOf((Integer) result[0]),
@@ -126,6 +127,29 @@ public class RentalCarServiceImpl implements RentalCarService {
             throw new RuntimeException("User not found");
         }
 
+        Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
+        Object[] result = (Object[]) nestedArray[0];
+        MyBookingDto bookingDto = new MyBookingDto(
+                Long.valueOf((Integer) result[0]),
+                ((Timestamp) result[1]).toLocalDateTime(), //start date
+                ((Timestamp) result[2]).toLocalDateTime(), //end date
+                (String) result[3], // driverInfo
+                ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
+                ((BigDecimal) result[5]).doubleValue(), // total price
+                Long.valueOf((Integer) result[6]), //userId
+                (Integer) result[7], //bookingStatus
+                (Integer) result[8], //paymentMethod
+                result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
+                ((BigDecimal) result[10]).doubleValue(), // basePrice
+                ((BigDecimal) result[11]).doubleValue(), // deposit
+                (BigDecimal) result[12], //carowner wallet
+                Long.valueOf((Integer) result[13]),
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
+        );
+        Integer carId = bookingDto.getCarId();
+        Car car = carRepository.findById(carId).orElse(null);
+
         System.out.println("Attempting to cancel booking with ID: " + bookingId);
 
         Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
@@ -149,6 +173,15 @@ public class RentalCarServiceImpl implements RentalCarService {
                     // Save the updated booking
                     rentalCarRepository.save(booking);
                     System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
+                    // Update status xe thành "Available"
+                    Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
+                    if (availableStatusOptional.isEmpty()) {
+                        System.out.println("Car status 'Available' not found.");
+                        return false;
+                    }
+                    CarStatus availableStatus = availableStatusOptional.get();
+                    car.setCarStatus(availableStatus);
+                    carRepository.save(car);
                     return true;
                 } else {
                     System.out.println("Cancelled status not found.");
@@ -298,7 +331,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         try {
 
             //Lưu booking
-            int numberOfDays = (int) ChronoUnit.DAYS.between(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
+            int numberOfDays = calculateNumberOfDays(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
             Double totalPrice = car.getBasePrice() * numberOfDays;
             booking.setStartDate(bookingDto.getPickUpDate());
             booking.setEndDate(bookingDto.getReturnDate());
@@ -615,7 +648,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         Car car = carOptional.get();
 
         // Kiểm tra trạng thái xe
-        if (!car.getCarStatus().getName().equals("Booked")) {
+        if (!car.getCarStatus().getStatusId().equals(2)) {
             System.out.println("Car is not in 'Booked' status.");
             return 0;
         }
@@ -699,6 +732,18 @@ public class RentalCarServiceImpl implements RentalCarService {
             transactionService.saveTransaction(carOwner, deposit, TransactionType.RECEIVE_DEPOSIT, booking);
 
 
+    }
+
+    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
+        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        // Tính chênh lệch thời gian (mili-giây)
+        long timeDiff = endMillis - startMillis;
+
+        // Chia để tính số ngày và làm tròn lên
+        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
     }
 
 
