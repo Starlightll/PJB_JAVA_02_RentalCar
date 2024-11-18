@@ -359,6 +359,10 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Status: </p>
+                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 8}">
+                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                   style="color: #ff9100">Verifying</p>
+                                                            </th:block>
                                                             <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                    style="color: #00d79d">Available</p>

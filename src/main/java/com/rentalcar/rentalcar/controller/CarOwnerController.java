@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,7 +150,9 @@ public class CarOwnerController {
         if(car == null){
             return "redirect:/car-owner/my-cars";
         }else{
-            User user = (User) session.getAttribute("user");
+            if(!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())){
+                throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+            }
             model.addAttribute("brands", brandRepository.findAll());
             model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
             model.addAttribute("carStatus", carStatusRepository.findAll());
@@ -171,7 +174,8 @@ public class CarOwnerController {
             model.addAttribute("registrationUrl", "/" + registrationPath);
             model.addAttribute("certificateUrl", "/" + certificatePath);
             model.addAttribute("insuranceUrl", "/" + insurancePath);
-            List<CarStatus> carStatus = carStatusRepository.findAll();
+            List<Integer> statusIds = List.of(1, 3);
+            List<CarStatus> carStatus = carStatusRepository.findCarStatusesByStatusIdIsIn(statusIds);
             model.addAttribute("carStatuses", carStatus);
 
         }
@@ -181,7 +185,7 @@ public class CarOwnerController {
     @PostMapping("/add-car")
     public ResponseEntity<?> addCar(
             HttpSession session
-    ) throws IOException {
+    ) {
         User user = (User) session.getAttribute("user");
         CarDraft carDraft = carDraftService.getDraftByLastModified(user.getId());
         if (carDraft == null) {
@@ -206,9 +210,18 @@ public class CarOwnerController {
             @RequestParam(value = "rightImage", required = false) MultipartFile rightImage,
             HttpSession session
     ) throws IOException {
+        Car car = carRepository.getCarByCarId(carId);
+        User user = (User) session.getAttribute("user");
+
+        // Check if user is allowed to update this car
+        if(!Objects.equals(car.getUser().getId(), user.getId()) || car.getCarStatus().getStatusId() == 8 && user.getRoles().get(0).getId() != 1){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not allowed to update this car");
+        }
+
         // Parse carDraft JSON
         ObjectMapper objectMapper = new ObjectMapper();
         CarDraft carDraft = objectMapper.readValue(carJson, CarDraft.class);
+
         //Validate here
         try {
             DecimalFormat df = new DecimalFormat("#.##");
@@ -249,8 +262,9 @@ public class CarOwnerController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data");
         }
 
-        User user = (User) session.getAttribute("user");
+        // Convert carDraft to car
         Car carUpdate = carDraftService.convertCarDraftToCar(carDraft);
+
         //Update car
         MultipartFile[] files = {frontImage, backImage, leftImage, rightImage};
         carOwnerService.updateCar(carUpdate, files, user, carId, carStatus);

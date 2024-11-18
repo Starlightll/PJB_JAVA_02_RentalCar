@@ -656,7 +656,8 @@
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                         Status: </p>
-                                                                    <p style="color: #5bd77a; font-weight: bold">Available</p>
+<!--                                                                    <p style="color: #5bd77a; font-weight: bold">Available</p>-->
+                                                                    <p style="color: #ff9100; font-weight: bold">Pending Verify</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1089,8 +1090,19 @@
                             'X-CSRF-TOKEN': csrfToken
                         },
                         success: function (response) {
-                            console.log("Car saved successfully", response);
-                            window.location.href = '/car-owner/my-cars';
+                            // Display the custom error message from the server
+                            $('#confirmModal').modal('show');
+                            $('#ModalTitle').text("Nice!");
+                            $('#ModalBody').html("<div style=\"padding: 20px; background-color: #f5f5f5; border-radius: 8px; text-align: center; font-family: Arial, sans-serif;\">\n" +
+                                "    <h3 style=\"color: #4caf50; margin-bottom: 10px;\">Car Saved Successfully!</h3>\n" +
+                                "    <p>Your car listing is awaiting admin approval.</p>\n" +
+                                "    <p>Check the status anytime on the <a href=\"/my-cars\" style=\"text-decoration: none; color: #008cf4;\">'My Cars'</a> page.</p>\n" +
+                                "</div>");
+                            $('#confirm').text("OK").click(function () {
+                                console.log("Car saved successfully", response);
+                                window.location.href = '/car-owner/my-cars';
+                            });
+                            $('#notConfirm').hide();
                         },
                         error: function (xhr, status, error) {
                             console.error("Error saving car:", error);

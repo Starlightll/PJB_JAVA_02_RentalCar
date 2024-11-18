@@ -25,4 +25,9 @@ public class AdminController {
     public String myProfile() {
         return "/admin/pages-profile-user";
     }
+
+    @GetMapping("/admin/account-settings")
+    public String accountSettings() {
+        return "/admin/pages-account-settings-account";
+    }
 }

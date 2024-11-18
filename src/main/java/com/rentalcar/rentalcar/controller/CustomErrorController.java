@@ -43,6 +43,10 @@ public class CustomErrorController implements ErrorController {
             return "error/500";
         }
 
+        if ((Integer) errors.get("status") == 401) {
+            return "error/403";
+        }
+
 
         // Otherwise, return a generic error template
         return "error/error";

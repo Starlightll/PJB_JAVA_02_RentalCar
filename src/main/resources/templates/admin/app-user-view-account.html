@@ -290,7 +290,7 @@
                                                 <label class="form-label" for="modalEditUserNationalID">National ID</label>
                                                 <input type="text" id="modalEditUserNationalID" th:field="*{nationalId}"
                                                        name="modalEditUserNationalID" class="form-control"
-                                                       placeholder="Your user name" value=""/>
+                                                       placeholder="Your national ID" value=""/>
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserProvince">Province</label>
@@ -436,7 +436,12 @@
     <script defer src="/assets/js/modal-edit-user.js"></script>
     <script defer src="/assets/js/app-user-view.js"></script>
     <script defer src="/assets/js/app-user-view-account.js"></script>
-    <script>
+    <script defer>
+
+        document.getElementById("modalEditUserProvince").addEventListener("change", function () {
+            console.log("change");
+        });
+
         // Fetch provinces and set default city
         async function fetchProvinces(defaultProvince) {
             const response = await fetch('https://provinces.open-api.vn/api/p/');
@@ -498,24 +503,28 @@
             });
         }
 
-        // Event listeners to load data on selection
-        document.getElementById('modalEditUserProvince').addEventListener('change', function () {
-            fetchDistricts(this.value);
-            document.getElementById('modalEditUserWard').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
-            document.getElementById('modalEditUserDistrict').disabled = this.value === ""; // Enable/disable district based on city selection
-            document.getElementById('modalEditUserDistrict').value = ""; // Reset district value
-            document.getElementById('modalEditUserWard').disabled = true; // Disable ward selection
+        // Select 2 library
+        $('#modalEditUserProvince').on('select2:select', function (e) {
+            console.log("Province selected");
+            const selectedProvince = $(this).val();
+            fetchDistricts(selectedProvince);
+            $('#modalEditUserWard').html('<option value="">Select Ward</option>').prop('disabled', true);
+            $('#modalEditUserDistrict').val("").prop('disabled', selectedProvince === "");
         });
 
-        document.getElementById('modalEditUserDistrict').addEventListener('change', function () {
-            fetchWards(this.value);
-            document.getElementById('modalEditUserWard').disabled = this.value === ""; // Enable/disable ward based on district selection
+
+        // Select 2 library
+        $('#modalEditUserDistrict').on('select2:select', function (e) {
+            console.log("District selected");
+            const selectedDistrict = $(this).val();
+            fetchWards(selectedDistrict);
+            $('#modalEditUserWard').prop('disabled', selectedDistrict === "");
         });
 
         // Load provinces on page load with default values
         document.addEventListener('DOMContentLoaded', function () {
-            const defaulProvince = document.getElementById('modalEditUserProvince').getAttribute('data-default');
-            fetchProvinces(defaulProvince);
+            const defaultProvince = document.getElementById('modalEditUserProvince').getAttribute('data-default');
+            fetchProvinces(defaultProvince);
         });
 
     </script>
