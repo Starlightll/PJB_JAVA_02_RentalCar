@@ -379,6 +379,14 @@
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                    style="color: #303030">Deleted</p>
                                                             </th:block>
+                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 11}">
+                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                   style="color: #008cf4">Pending payment</p>
+                                                            </th:block>
+                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 14}">
+                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                   style="color: #008cf4">Pending deposit</p>
+                                                            </th:block>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -386,9 +394,12 @@
                                                     <a th:href="'/car-owner/edit-car/' + ${car.getCarId()}"
                                                        class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                         Details</a>
-                                                    <a th:href="'#'"
+                                                    <a th:href="'#'" th:if="${car.getCarStatus().getStatusId() == 14}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
                                                         Deposit</a>
+                                                    <a th:href="'#'" th:if="${car.getCarStatus().getStatusId() == 11}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
+                                                        Payment</a>
                                                 </div>
                                             </div>
                                         </th:block>
