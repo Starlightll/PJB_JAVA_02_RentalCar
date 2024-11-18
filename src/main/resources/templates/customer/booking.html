@@ -484,48 +484,48 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div>
-                                                            <h5 class="card-title">Driver's information</h5>
-                                                            <div class="row">
-                                                                        <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
-                                                                            <input type="checkbox" id="differentInfoCheckbox"
-                                                                                   name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
-                                                                            <svg viewBox="0 0 21 21">
-                                                                                <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
-                                                                            </svg>
-                                                                            <span>Different than Renter's information</span>
-                                                                        </label>
-                                                            </div>
-                                                            <div id="driverInfoTable" style="display: none; width: 100%">
-                                                                <div>
-                                                                    <table class="table table-dark table-hover">
-                                                                        <thead>
-                                                                        <tr>
-<!--                                                                            <th scope="col">-->
-<!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
+<!--                                                        <div>-->
+<!--                                                            <h5 class="card-title">Driver's information</h5>-->
+<!--                                                            <div class="row">-->
+<!--                                                                        <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">-->
+<!--                                                                            <input type="checkbox" id="differentInfoCheckbox"-->
+<!--                                                                                   name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">-->
+<!--                                                                            <svg viewBox="0 0 21 21">-->
+<!--                                                                                <polyline points="5 10.75 8.5 14.25 16 6"></polyline>-->
+<!--                                                                            </svg>-->
+<!--                                                                            <span>Different than Renter's information</span>-->
+<!--                                                                        </label>-->
+<!--                                                            </div>-->
+<!--                                                            <div id="driverInfoTable" style="display: none; width: 100%">-->
+<!--                                                                <div>-->
+<!--                                                                    <table class="table table-dark table-hover">-->
+<!--                                                                        <thead>-->
+<!--                                                                        <tr>-->
+<!--&lt;!&ndash;                                                                            <th scope="col">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                                                                            </th>&ndash;&gt;-->
+<!--                                                                            <th></th>-->
+
+<!--                                                                            <th scope="col">Name</th>-->
+<!--                                                                            <th scope="col">Date</th>-->
+<!--                                                                        </tr>-->
+<!--                                                                        </thead>-->
+<!--                                                                        <tbody>-->
+<!--                                                                        <tr th:each="user : ${users}">-->
+<!--                                                                            <th scope="row">-->
+<!--                                                                                <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow" onclick="selectOnlyOne(this)" />-->
 <!--                                                                            </th>-->
-                                                                            <th></th>
+<!--                                                                            <td th:text="${user.getFullName()}"></td>-->
+<!--                                                                            <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>-->
+<!--                                                                        </tr>-->
 
-                                                                            <th scope="col">Name</th>
-                                                                            <th scope="col">Date</th>
-                                                                        </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                        <tr th:each="user : ${users}">
-                                                                            <th scope="row">
-                                                                                <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow" onclick="selectOnlyOne(this)" />
-                                                                            </th>
-                                                                            <td th:text="${user.getFullName()}"></td>
-                                                                            <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
-                                                                        </tr>
+<!--                                                                        &lt;!&ndash; Các hàng khác... &ndash;&gt;-->
+<!--                                                                        </tbody>-->
+<!--                                                                    </table>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
 
-                                                                        <!-- Các hàng khác... -->
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
+<!--                                                        </div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -739,7 +739,7 @@
                 const pickUpDateTime = pickupDateFormatted;
                 const returnDateTime = returnDateFormatted;
                 const depositValue = depositText.replace(/[^0-9]/g, '');
-                const checked = document.getElementById("differentInfoCheckbox").checked;
+                const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
                 const carId = document.getElementById("carId").value;
                 const fullName = document.getElementById('fullName1').value;
                 const bookPickDate = document.getElementById('book_pick_date1').value;

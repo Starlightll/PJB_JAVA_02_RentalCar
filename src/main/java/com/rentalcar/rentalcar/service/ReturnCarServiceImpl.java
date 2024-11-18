@@ -108,7 +108,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
             long numberOfDaysOverdue = ChronoUnit.DAYS.between(booking.getEndDate(), currentDate);
             long numberOfDaysNotOverdue = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate());
 
-            if (currentDate.isAfter(booking.getEndDate())) {
+            if (currentDate.isBefore(booking.getEndDate())) {
                 return booking.getTotalPrice();
             } else {
                 return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice();

@@ -538,7 +538,7 @@
                  : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' : 'font-weight: bold;' }">
                                                             </p>
                                                         </div>
-
+z
 
                                                     </div>
                                                 </div>
@@ -772,50 +772,50 @@
                                                 </div>
 
                                             </div>
-                                            <div>
-                                                <h5 class="card-title">Driver's information</h5>
-                                                <div class="row">
-                                                    <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
-                                                        <input type="checkbox" id="differentInfoCheckbox"
-                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
-                                                        <svg viewBox="0 0 21 21">
-                                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
-                                                        </svg>
-                                                        <span>Different than Renter's information</span>
-                                                    </label>
-                                                </div>
-                                                <div id="driverInfoTable" style="display: none; width: 100%">
-                                                    <div>
-                                                        <table class="table table-dark table-hover">
-                                                            <thead>
-                                                            <tr>
-                                                                <!--                                                                            <th scope="col">-->
-                                                                <!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
-                                                                <!--                                                                            </th>-->
-                                                                <th></th>
+<!--                                            <div>-->
+<!--                                                <h5 class="card-title">Driver's information</h5>-->
+<!--                                                <div class="row">-->
+<!--                                                    <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">-->
+<!--                                                        <input type="checkbox" id="differentInfoCheckbox"-->
+<!--                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">-->
+<!--                                                        <svg viewBox="0 0 21 21">-->
+<!--                                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>-->
+<!--                                                        </svg>-->
+<!--                                                        <span>Different than Renter's information</span>-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
+<!--                                                <div id="driverInfoTable" style="display: none; width: 100%">-->
+<!--                                                    <div>-->
+<!--                                                        <table class="table table-dark table-hover">-->
+<!--                                                            <thead>-->
+<!--                                                            <tr>-->
+<!--                                                                &lt;!&ndash;                                                                            <th scope="col">&ndash;&gt;-->
+<!--                                                                &lt;!&ndash;                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;&ndash;&gt;-->
+<!--                                                                &lt;!&ndash;                                                                            </th>&ndash;&gt;-->
+<!--                                                                <th></th>-->
 
-                                                                <th scope="col">Name</th>
-                                                                <th scope="col">Date</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr th:each="user : ${users}">
-                                                                <th scope="row">
-                                                                    <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow"
-                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                                           th:checked="${user.userId == booking.getDriverId()}" onclick="selectOnlyOne(this)" />
-                                                                </th>
-                                                                <td th:text="${user.getFullName()}"></td>
-                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
-                                                            </tr>
+<!--                                                                <th scope="col">Name</th>-->
+<!--                                                                <th scope="col">Date</th>-->
+<!--                                                            </tr>-->
+<!--                                                            </thead>-->
+<!--                                                            <tbody>-->
+<!--                                                            <tr th:each="user : ${users}">-->
+<!--                                                                <th scope="row">-->
+<!--                                                                    <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow"-->
+<!--                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"-->
+<!--                                                                           th:checked="${user.userId == booking.getDriverId()}" onclick="selectOnlyOne(this)" />-->
+<!--                                                                </th>-->
+<!--                                                                <td th:text="${user.getFullName()}"></td>-->
+<!--                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>-->
+<!--                                                            </tr>-->
 
-                                                            <!-- Các hàng khác... -->
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+<!--                                                            &lt;!&ndash; Các hàng khác... &ndash;&gt;-->
+<!--                                                            </tbody>-->
+<!--                                                        </table>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
 
-                                            </div>
+<!--                                            </div>-->
                                             <div id="button">
                                                 <button class="btn-primary btn" style="width: 100px; margin: 10px 10px 10px 10px"
                                                         onclick="window.history.back()">Discard
@@ -1281,7 +1281,7 @@
                 success: function (response) {
                     console.log("Confirm return car response", response);
 
-                    if (response.status === 'success') {
+                    if (response.status === 'success1') {
                         Swal.fire({
                             title: 'Return Car Completed!',
                             text: response.message,
@@ -1297,6 +1297,15 @@
                             window.location.href = url;
                             // window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
 
+                        });
+                    } else if (response.status === 'success2') {
+                        Swal.fire({
+                            title: 'Request Payment Completed',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
                         });
                     } else {
                         Swal.fire({
@@ -1416,7 +1425,7 @@
                 // const pickUpDateTime = pickupDateFormatted;
                 // const returnDateTime = returnDateFormatted;
                 // const depositValue = depositText.replace(/[^0-9]/g, '');
-                const checked = document.getElementById("differentInfoCheckbox").checked;
+                // const checked = document.getElementById("differentInfoCheckbox").checked;
                 const carId = document.getElementById("carId").value;
                 const bookingId = document.getElementById("bookingId").value;
                 const fullName = document.getElementById('fullName').value;
@@ -1449,7 +1458,7 @@
                     // returnDate: returnDateTime,
                     // deposit: depositValue,
                     // step: actualStep,
-                    isCheck: checked,
+                    // isCheck: checked,
                     carID: carId,
                     bookingId: bookingId,
                     rentFullName: fullName,

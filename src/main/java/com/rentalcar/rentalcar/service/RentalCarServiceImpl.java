@@ -353,11 +353,11 @@ public class RentalCarServiceImpl implements RentalCarService {
                 }
             }
 
-            //THAY ĐỔI TRẠNG THÁI CHO XE
-            CarStatus notAvailableStatus = carStatusRepository.findByName("BOOKED")
-                    .orElseThrow(() -> new RuntimeException("Status not found"));
-            car.setCarStatus(notAvailableStatus);
-            carRepository.save(car);
+//            //THAY ĐỔI TRẠNG THÁI CHO XE
+//            CarStatus notAvailableStatus = carStatusRepository.findById(2)
+//                    .orElseThrow(() -> new RuntimeException("Status not found"));
+//            car.setCarStatus(notAvailableStatus);
+//            carRepository.save(car);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -455,10 +455,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
         Booking booking = bookingOptional.get();
-        if (!booking.getUser().getId().equals(user.getId())) {
-            System.out.println("Booking does not belong to the user.");
-            return false;
-        }
+
 
         // Update the booking status to "Confirmed"
         Optional<BookingStatus> confirmedStatusOptional = bookingStatusRepository.findByName("Confirmed");
@@ -473,7 +470,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         // Update the car status to "BOOKED"
         Car car = carRepository.getCarByCarId(carDto.getCarId().intValue());
-        Optional<CarStatus> bookedStatusOptional = carStatusRepository.findByName("BOOKED");
+        Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(2);
         if (bookedStatusOptional.isPresent()) {
             CarStatus bookedStatus = bookedStatusOptional.get();
             car.setCarStatus(bookedStatus);
@@ -654,7 +651,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         userRepository.save(carOwner);
 
         // Update status xe thành "Available"
-        Optional<CarStatus> availableStatusOptional = carStatusRepository.findByName("Available");
+        Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
         if (availableStatusOptional.isEmpty()) {
             System.out.println("Car status 'Available' not found.");
             return 0;

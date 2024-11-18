@@ -377,14 +377,3 @@ INSERT [dbo].[Car] ([carId], [name], [licensePlate], [model], [color], [seatNo],
 INSERT [dbo].[Car] ([carId], [name], [licensePlate], [model], [color], [seatNo], [productionYear], [transmission], [fuel], [mileage], [fuelConsumption], [basePrice], [deposit], [description], [termOfUse], [carPrice], [front], [back], [left], [right], [registration], [certificate], [insurance], [lastModified], [userId], [brandId], [statusId]) VALUES (5, N'Hyundai Santafe 2024 2022', N'18F-39069', N'Santafe 2024', N'Green', 5, 2022, N'Automatic', N'Diesel', CAST(123123.00 AS Decimal(18, 2)), CAST(1232.00 AS Decimal(18, 2)), CAST(1230000.00 AS Decimal(18, 2)), CAST(900000.00 AS Decimal(18, 2)), N'AAAAAAAAAAAA', N'', CAST(444.00 AS Decimal(18, 2)), N'uploads\CarOwner\3\Car\5\frontImage.jpg', N'uploads\CarOwner\3\Car\5\backImage.jpg', N'uploads\CarOwner\3\Car\5\leftImage.jpg', N'uploads\CarOwner\3\Car\5\rightImage.jpg', N'uploads\CarOwner\3\Car\5\registration.jpg', N'uploads\CarOwner\3\Car\5\certificate.jpg', N'uploads\CarOwner\3\Car\5\insurance.jpg', CAST(N'2024-11-14T01:17:11.440' AS DateTime), 5, 3, 1)
 SET IDENTITY_INSERT [dbo].[Car] OFF
 
-GO
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (1, 3)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (1, 8)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (2, 4)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (2, 9)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (3, 5)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (3, 10)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (4, 6)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (4, 11)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (5, 7)
-INSERT [dbo].[BookingCar] ([carId], [bookingId]) VALUES (5, 12)
