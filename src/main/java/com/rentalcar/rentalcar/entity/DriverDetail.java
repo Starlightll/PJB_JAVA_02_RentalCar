@@ -1,9 +1,7 @@
 package com.rentalcar.rentalcar.entity;
 
 
-import com.rentalcar.rentalcar.common.UserStatus;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;

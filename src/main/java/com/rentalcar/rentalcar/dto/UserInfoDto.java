@@ -1,6 +1,5 @@
 package com.rentalcar.rentalcar.dto;
 
-import com.rentalcar.rentalcar.entity.Role;
 import com.rentalcar.rentalcar.util.ValidAge;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
