@@ -4,12 +4,10 @@ import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Booking;
+import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.DriverDetail;
 import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.repository.BookingRepository;
-import com.rentalcar.rentalcar.repository.DriverDetailRepository;
-import com.rentalcar.rentalcar.repository.RentalCarRepository;
-import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +19,7 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
@@ -128,6 +127,8 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 () -> new RuntimeException("Booking not found"));
         driverDetail.setBooking(booking);
         driverDetailRepository.save(driverDetail);
+
+        booking.setLastModified(new Date());
 
 //
 //        //Update Driver
