@@ -121,6 +121,29 @@ public class RentalCarServiceImpl implements RentalCarService {
             throw new RuntimeException("User not found");
         }
 
+        Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
+        Object[] result = (Object[]) nestedArray[0];
+        MyBookingDto bookingDto = new MyBookingDto(
+                Long.valueOf((Integer) result[0]),
+                ((Timestamp) result[1]).toLocalDateTime(), //start date
+                ((Timestamp) result[2]).toLocalDateTime(), //end date
+                (String) result[3], // driverInfo
+                ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
+                ((BigDecimal) result[5]).doubleValue(), // total price
+                Long.valueOf((Integer) result[6]), //userId
+                (Integer) result[7], //bookingStatus
+                (Integer) result[8], //paymentMethod
+                result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
+                ((BigDecimal) result[10]).doubleValue(), // basePrice
+                ((BigDecimal) result[11]).doubleValue(), // deposit
+                (BigDecimal) result[12], //carowner wallet
+                Long.valueOf((Integer) result[13]),
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
+        );
+        Integer carId = bookingDto.getCarId();
+        Car car = carRepository.findById(carId).orElse(null);
+
         System.out.println("Attempting to cancel booking with ID: " + bookingId);
 
         Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
@@ -144,6 +167,15 @@ public class RentalCarServiceImpl implements RentalCarService {
                     // Save the updated booking
                     rentalCarRepository.save(booking);
                     System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
+                    // Update status xe thành "Available"
+                    Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
+                    if (availableStatusOptional.isEmpty()) {
+                        System.out.println("Car status 'Available' not found.");
+                        return false;
+                    }
+                    CarStatus availableStatus = availableStatusOptional.get();
+                    car.setCarStatus(availableStatus);
+                    carRepository.save(car);
                     return true;
                 } else {
                     System.out.println("Cancelled status not found.");
