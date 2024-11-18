@@ -1,8 +1,6 @@
 package com.rentalcar.rentalcar.repository;
 
 
-import com.rentalcar.rentalcar.dto.UserDto;
-import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

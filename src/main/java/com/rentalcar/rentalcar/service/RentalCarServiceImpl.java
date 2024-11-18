@@ -1,11 +1,9 @@
 package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.common.Constants;
-import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.BookingDto;
-import com.rentalcar.rentalcar.dto.MyBookingDto;
-
 import com.rentalcar.rentalcar.dto.CarDto;
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.repository.*;

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head>
+ lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> My Feedback</title>
@@ -53,7 +53,7 @@
             </div>
             <div class="limit-selector">
                 <button onclick="adjustLimit(-1)">-</button>
-                <input type="number" id="limit" value="1" min="1"  readonly />
+                <label for="limit"></label><input type="number" id="limit" value="1" min="1" readonly />
                 <button onclick="adjustLimit(1)">+</button>
                 <span>per page</span>
             </div>

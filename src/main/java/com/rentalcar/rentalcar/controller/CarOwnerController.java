@@ -5,7 +5,10 @@ import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.CarStatus;
 import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.repository.*;
+import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
+import com.rentalcar.rentalcar.repository.BrandRepository;
+import com.rentalcar.rentalcar.repository.CarRepository;
+import com.rentalcar.rentalcar.repository.CarStatusRepository;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.rentalcar.rentalcar.common.Regex.*;
-import static com.rentalcar.rentalcar.common.Regex.LICENSE_PLATE_REGEX;
 
 @Controller
 @RequestMapping("/car-owner")

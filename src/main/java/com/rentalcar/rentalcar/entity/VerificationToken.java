@@ -2,7 +2,6 @@ package com.rentalcar.rentalcar.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.rentalcar.rentalcar.common.Constants;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,7 +2,6 @@ package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Transaction;
-import com.rentalcar.rentalcar.entity.TransactionType;
 import com.rentalcar.rentalcar.entity.User;
 
 import java.math.BigDecimal;
