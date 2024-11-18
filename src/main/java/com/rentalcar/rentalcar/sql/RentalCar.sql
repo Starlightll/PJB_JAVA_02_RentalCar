@@ -51,7 +51,7 @@ CREATE TABLE VerificationToken
 -- Car Status table
 CREATE TABLE [dbo].[CarStatus]
 (
-    CarStatusId INT IDENTITY (1,1) PRIMARY KEY,
+    CarStatusId INT PRIMARY KEY,
     name        NVARCHAR(50),
     );
 
@@ -170,7 +170,7 @@ values ('Admin'),
 -- Booking Status table
 CREATE TABLE [dbo].[BookingStatus]
 (
-    BookingStatusId INT IDENTITY (1,1) PRIMARY KEY,
+    BookingStatusId INT PRIMARY KEY,
     name            NVARCHAR(50)
     );
 
@@ -285,8 +285,29 @@ INSERT INTO Brand (brandName) VALUES ('Toyota'), ('Honda'), ('Hyundai'), ('Kia')
 
     INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('Sun roof'), ('DVD'), ('Ski Rack'), ('Car Cover'), ('Car Wash'), ('Car Wax'), ('Car Polish'), ('Car Vacuum'), ('Car Freshener'), ('Car Shampoo');
 
-INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED')
-INSERT INTO CarStatus (name) VALUES ('MAINTENANCE'), ('RENTED'), ('RETURNED'), ('VERIFYING'), ('CONFIRMED'), ('IN-PROGRESS'), ('PENDING PAYMENT'), ('COMPLETED'), ('CANCELLED'), ('PENDING DEPOSIT'), ;
+INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
+                                                 (2,'Booked'),
+                                                 (3, 'Stopped'),
+                                                 (4,'Deleted'),
+                                                 (5, 'Maintenance'),
+                                                 (6, 'Rented'),
+                                                 (7,'Returned'),
+                                                 (8,'Verifying'),
+                                                 (9,'Confirmed'),
+                                                 (10,'In-Progress'),
+                                                 (11, 'Pending payment'),
+                                                 (12, 'Completed'),
+                                                 (13,'Cancelled'),
+                                                 (14, 'Pending deposit'),;
+
+
+-- insert BookingStatus
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (2, N'Confirmed')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (3, N'In-Progress')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (4, N'Pending payment')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (5, N'Completed')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (6, N'Cancelled')
 
 -- Transaction table
 CREATE TABLE [dbo].[Transaction] (
@@ -336,20 +357,6 @@ VALUES (N'admin', '1990-01-15', N'admin@gmail.com', N'123456789', N'0123456789',
 INSERT INTO [dbo].[UserRole] (userId, roleId)
 SELECT userId, 1 -- 1 == Admin
 FROM @InsertedUsers;
-
-
-
--- insert BookingStatus
-GO
-SET IDENTITY_INSERT [dbo].[BookingStatus] ON
-
-INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
-INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (2, N'Confirmed')
-INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (3, N'In-Progress')
-INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (4, N'Pending payment')
-INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (5, N'Completed')
-INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (6, N'Cancelled')
-SET IDENTITY_INSERT [dbo].[BookingStatus] OFF
 
 GO
 SET IDENTITY_INSERT [dbo].[Booking] ON
