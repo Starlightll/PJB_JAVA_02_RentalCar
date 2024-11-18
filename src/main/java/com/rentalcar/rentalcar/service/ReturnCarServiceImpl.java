@@ -177,9 +177,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
                     // Kiểm tra xem booking có phải của người dùng và đang ở trạng thái "In-Progress"
                     if (booking.getUser().getId().equals(user.getId()) &&
-                            booking.getBookingStatus().getName().equals("In-Progress")) {
+                            booking.getBookingStatus().getBookingStatusId() == 3) {
 
-                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findByName("Completed");
+                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(4L);
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
@@ -187,7 +187,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
                             if (carOptional.isPresent()) {
                                 Car car = carOptional.get();
-                                Optional<CarStatus> bookedStatusOptional = carStatusRepository.findByName("Available");
+                                Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(1);
                                 if (bookedStatusOptional.isPresent()) {
                                     CarStatus bookedStatus = bookedStatusOptional.get();
                                     car.setCarStatus(bookedStatus); // Cập nhật trạng thái xe
@@ -221,14 +221,31 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 if (bookingOptional.isPresent()) {
                     Booking booking = bookingOptional.get();
                     if (booking.getUser().getId().equals(user.getId()) &&
-                            booking.getBookingStatus().getName().equals("In-Progress")) {
+                            booking.getBookingStatus().getBookingStatusId() == 3) {
 
-                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findByName("Pending payment");
+                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(4L);
+                        Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
+                        // cap nhat trang thai xe thanh Pending payment
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus);
                             rentalCarRepository.save(booking);
-                            System.out.println("Booking with ID " + bookingId + " has been completed!");
+
+                            if (carOptional.isPresent()) {
+                                Car car = carOptional.get();
+                                Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(11);
+                                if (bookedStatusOptional.isPresent()) {
+                                    CarStatus bookedStatus = bookedStatusOptional.get();
+                                    car.setCarStatus(bookedStatus);
+                                    carRepository.save(car);
+                                } else {
+                                    System.out.println("Car status 'Pending payment' not found.");
+                                    return 0;
+                                }
+                            } else {
+                                System.out.println("Car with ID " + bookingDto.getCarId() + " not found.");
+                                return 0; // Xe không tồn tại
+                            }
                             emailService.sendRequestConfirmPayment(carowner, booking, bookingDto.getCarId() ,bookingDto.getCarname(), deposit.subtract(totalPrice).doubleValue());
                             return 2;
                         } else {
@@ -264,10 +281,10 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
             // Check if the booking belongs to the user and is in a in-progress state
             if (booking.getUser().getId().equals(user.getId()) &&
-                    (booking.getBookingStatus().getName().equals("In-Progress"))) {
+                    booking.getBookingStatus().getBookingStatusId() == 3 ){
 
                 // Fetch the "Cancelled" BookingStatus from the database
-                Optional<BookingStatus> pendingPaymentStatus = bookingStatusRepository.findByName("Pending Payment");
+                Optional<BookingStatus> pendingPaymentStatus = bookingStatusRepository.findById(4L);
 
                 if (pendingPaymentStatus.isPresent()) {
                     BookingStatus pendingPayment = pendingPaymentStatus.get();

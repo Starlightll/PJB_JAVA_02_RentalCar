@@ -553,7 +553,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         double remainingMoney = carDto.getDeposit() - totalPrice;
         NumberFormat formatter = NumberFormat.getInstance(Locale.US);
         String formattedMoney = formatter.format(remainingMoney);
-        Optional<BookingStatus> confirmedStatusOptional = bookingStatusRepository.findByName("Pending deposit");
+        Optional<BookingStatus> confirmedStatusOptional = bookingStatusRepository.findById(1L);
         if (confirmedStatusOptional.isPresent()) {
             if (remainingMoney <= carOwner.getWallet().doubleValue()) {
                 return Map.of(
@@ -624,13 +624,13 @@ public class RentalCarServiceImpl implements RentalCarService {
         Car car = carOptional.get();
 
         // Kiểm tra trạng thái xe
-        if (!car.getCarStatus().getStatusId().equals(2)) {
+        if (!car.getCarStatus().getStatusId().equals(11)) {
             System.out.println("Car is not in 'Booked' status.");
             return 0;
         }
 
         // Lấy booking liên quan
-        Optional<BookingStatus> bookingStatusOptional = bookingStatusRepository.findByName("Pending payment");
+        Optional<BookingStatus> bookingStatusOptional = bookingStatusRepository.findById(4L);
         if (bookingStatusOptional.isEmpty()) {
             System.out.println("No booking with 'Pending payment' status for car ID " + carId + ".");
             return 0;
