@@ -2,259 +2,304 @@
 
 <html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr"
       data-theme="theme-default" data-assets-path="../../assets/" data-template="vertical-menu-template"
-      data-style="light" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/dashboardLayout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      data-style="light" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/dashboardLayout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/typeahead-js/typeahead.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/typeahead-js/typeahead.css"/>
     <link rel="stylesheet" href="../../assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css">
     <link rel="stylesheet" href="../../assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css">
     <link rel="stylesheet" href="../../assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css">
-    <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/@form-validation/form-validation.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/@form-validation/form-validation.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/bootstrap-select/bootstrap-select.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css" />
     <style>
 
     </style>
 </head>
 <th:block layout:fragment="content">
-<body>
-            <div class="layout-page">
-                <!-- Content wrapper -->
-                <div class="content-wrapper">
-                    <!-- Content -->
-                    <div class="container-xxl flex-grow-1 container-p-y">
-                        <div class="row g-6 mb-6">
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div class="content-left">
-                                                <span class="text-heading">Session</span>
-                                                <div class="d-flex align-items-center my-1">
-                                                    <h4 class="mb-0 me-2">21,459</h4>
-                                                    <p class="text-success mb-0">(+29%)</p>
-                                                </div>
-                                                <small class="mb-0">Total Users</small>
-                                            </div>
-                                            <div class="avatar">
-            <span class="avatar-initial rounded bg-label-primary">
-              <i class="bx bx-group bx-lg"></i>
-            </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div class="content-left">
-                                                <span class="text-heading">Paid Users</span>
-                                                <div class="d-flex align-items-center my-1">
-                                                    <h4 class="mb-0 me-2">4,567</h4>
-                                                    <p class="text-success mb-0">(+18%)</p>
-                                                </div>
-                                                <small class="mb-0">Last week analytics </small>
-                                            </div>
-                                            <div class="avatar">
-            <span class="avatar-initial rounded bg-label-danger">
-              <i class="bx bx-user-plus bx-lg"></i>
-            </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div class="content-left">
-                                                <span class="text-heading">Active Users</span>
-                                                <div class="d-flex align-items-center my-1">
-                                                    <h4 class="mb-0 me-2">19,860</h4>
-                                                    <p class="text-danger mb-0">(-14%)</p>
-                                                </div>
-                                                <small class="mb-0">Last week analytics</small>
-                                            </div>
-                                            <div class="avatar">
-            <span class="avatar-initial rounded bg-label-success">
-              <i class="bx bx-user-check bx-lg"></i>
-            </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div class="content-left">
-                                                <span class="text-heading">Pending Users</span>
-                                                <div class="d-flex align-items-center my-1">
-                                                    <h4 class="mb-0 me-2">237</h4>
-                                                    <p class="text-success mb-0">(+42%)</p>
-                                                </div>
-                                                <small class="mb-0">Last week analytics</small>
-                                            </div>
-                                            <div class="avatar">
-            <span class="avatar-initial rounded bg-label-warning">
-              <i class="bx bx-user-voice bx-lg"></i>
-            </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <body>
+    <div class="layout-page">
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+            <!-- Content -->
+            <div class="container-xxl flex-grow-1 container-p-y">
+<!--                <div class="row g-6 mb-6">-->
+<!--                    <div class="col-sm-6 col-xl-3">-->
+<!--                        <div class="card">-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="d-flex align-items-start justify-content-between">-->
+<!--                                    <div class="content-left">-->
+<!--                                        <span class="text-heading">Session</span>-->
+<!--                                        <div class="d-flex align-items-center my-1">-->
+<!--                                            <h4 class="mb-0 me-2">21,459</h4>-->
+<!--                                            <p class="text-success mb-0">(+29%)</p>-->
+<!--                                        </div>-->
+<!--                                        <small class="mb-0">Total Users</small>-->
+<!--                                    </div>-->
+<!--                                    <div class="avatar"><span class="avatar-initial rounded bg-label-primary"><i-->
+<!--                                            class="bx bx-group bx-lg"></i></span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-sm-6 col-xl-3">-->
+<!--                        <div class="card">-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="d-flex align-items-start justify-content-between">-->
+<!--                                    <div class="content-left">-->
+<!--                                        <span class="text-heading">Paid Users</span>-->
+<!--                                        <div class="d-flex align-items-center my-1">-->
+<!--                                            <h4 class="mb-0 me-2">4,567</h4>-->
+<!--                                            <p class="text-success mb-0">(+18%)</p>-->
+<!--                                        </div>-->
+<!--                                        <small class="mb-0">Last week analytics </small>-->
+<!--                                    </div>-->
+<!--                                    <div class="avatar"><span class="avatar-initial rounded bg-label-danger"><i-->
+<!--                                            class="bx bx-user-plus bx-lg"></i></span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-sm-6 col-xl-3">-->
+<!--                        <div class="card">-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="d-flex align-items-start justify-content-between">-->
+<!--                                    <div class="content-left">-->
+<!--                                        <span class="text-heading">Active Users</span>-->
+<!--                                        <div class="d-flex align-items-center my-1">-->
+<!--                                            <h4 class="mb-0 me-2">19,860</h4>-->
+<!--                                            <p class="text-danger mb-0">(-14%)</p>-->
+<!--                                        </div>-->
+<!--                                        <small class="mb-0">Last week analytics</small>-->
+<!--                                    </div>-->
+<!--                                    <div class="avatar"><span class="avatar-initial rounded bg-label-success"><i-->
+<!--                                            class="bx bx-user-check bx-lg"></i></span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-sm-6 col-xl-3">-->
+<!--                        <div class="card">-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="d-flex align-items-start justify-content-between">-->
+<!--                                    <div class="content-left">-->
+<!--                                        <span class="text-heading">Pending Users</span>-->
+<!--                                        <div class="d-flex align-items-center my-1">-->
+<!--                                            <h4 class="mb-0 me-2">237</h4>-->
+<!--                                            <p class="text-success mb-0">(+42%)</p>-->
+<!--                                        </div>-->
+<!--                                        <small class="mb-0">Last week analytics</small>-->
+<!--                                    </div>-->
+<!--                                    <div class="avatar"><span class="avatar-initial rounded bg-label-warning"><i-->
+<!--                                            class="bx bx-user-voice bx-lg"></i></span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <!-- Users List Table -->
+                <div class="card">
+                    <div class="card-header border-bottom">
+                        <h5 class="card-title mb-0">Search Filters</h5>
+                        <div class="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0 g-6">
+                            <div class="col-md-4 user_role"></div>
+                            <div class="col-md-4 user_plan"></div>
+                            <div class="col-md-4 user_status"></div>
                         </div>
-                        <!-- Users List Table -->
-                        <div class="card">
-                            <div class="card-header border-bottom">
-                                <h5 class="card-title mb-0">Search Filters</h5>
-                                <div class="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0 g-6">
-                                    <div class="col-md-4 user_role"></div>
-                                    <div class="col-md-4 user_plan"></div>
-                                    <div class="col-md-4 user_status"></div>
-                                </div>
-                            </div>
-                            <div class="card-datatable table-responsive">
-                                <table class="datatables-users table border-top">
-                                    <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th>User</th>
-                                        <th>Role</th>
-                                        <th>Birth</th>
-                                        <th>Phone</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <!-- Offcanvas to add new user -->
-                            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser"
-                                 aria-labelledby="offcanvasAddUserLabel">
-                                <div class="offcanvas-header border-bottom">
-                                    <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Add User</h5>
-                                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
-                                    <form class="add-new-user pt-0" id="addNewUserForm" onsubmit="return false">
-                                        <div class="mb-6">
-                                            <label class="form-label" for="add-user-fullname">Username</label>
-                                            <input type="text" class="form-control" id="add-user-username"
-                                                   placeholder="John Doe" name="userFullname" aria-label="John Doe"/>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="add-user-fullname">Full Name</label>
-                                            <input type="text" class="form-control" id="add-user-fullname"
-                                                   placeholder="John Doe" name="userFullname" aria-label="John Doe"/>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="add-user-email">Email</label>
-                                            <input type="text" id="add-user-email" class="form-control"
-                                                   placeholder="john.doe@example.com" aria-label="john.doe@example.com"
-                                                   name="userEmail"/>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="add-user-contact">Phone</label>
-                                            <input type="text" id="add-user-contact" class="form-control phone-mask"
-                                                   placeholder="+1 (609) 988-44-11" aria-label="john.doe@example.com"
-                                                   name="userContact"/>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="add-user-password">Password</label>
-                                            <input type="text" id="add-user-password" class="form-control"
-                                                   placeholder="Enter your password" aria-label="jdoe1" name="password"/>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="add-user-confirm-password">Confirm password</label>
-                                            <input type="text" id="add-user-confirm-password" class="form-control"
-                                                   placeholder="Confirm your password" aria-label="jdoe1" name="confirmPassword"/>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="country">Country</label>
-                                            <select id="country" class="select2 form-select">
-                                                <option value="">Select</option>
-                                                <option value="Australia">Australia</option>
-                                                <option value="Bangladesh">Bangladesh</option>
-                                                <option value="Belarus">Belarus</option>
-                                                <option value="Brazil">Brazil</option>
-                                                <option value="Canada">Canada</option>
-                                                <option value="China">China</option>
-                                                <option value="France">France</option>
-                                                <option value="Germany">Germany</option>
-                                                <option value="India">India</option>
-                                                <option value="Indonesia">Indonesia</option>
-                                                <option value="Israel">Israel</option>
-                                                <option value="Italy">Italy</option>
-                                                <option value="Japan">Japan</option>
-                                                <option value="Korea">Korea, Republic of</option>
-                                                <option value="Mexico">Mexico</option>
-                                                <option value="Philippines">Philippines</option>
-                                                <option value="Russia">Russian Federation</option>
-                                                <option value="South Africa">South Africa</option>
-                                                <option value="Thailand">Thailand</option>
-                                                <option value="Turkey">Turkey</option>
-                                                <option value="Ukraine">Ukraine</option>
-                                                <option value="United Arab Emirates">United Arab Emirates</option>
-                                                <option value="United Kingdom">United Kingdom</option>
-                                                <option value="United States">United States</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="user-role">User Role</label>
-                                            <select id="user-role" class="form-select">
-                                                <option value="2">Car Owner</option>
-                                                <option value="3">Customer</option>
-                                                <option value="4">Driver</option>
-                                                <option value="1" class="text-danger">Admin</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-6">
-                                            <label class="form-label" for="user-plan">Select Status</label>
-                                            <select id="user-plan" class="form-select">
-                                                <option value="PENDING" class="text-warning">PENDING</option>
-                                                <option value="ACTIVATED" class="text-success">ACTIVATED</option>
-                                                <option value="LOCKED" class="text-danger">LOCKED</option>
-                                                <option value="DELETED" class="text-info">DELETED</option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary me-3 data-submit">Submit</button>
-                                        <button type="reset" class="btn btn-label-danger" data-bs-dismiss="offcanvas">
-                                            Cancel
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-
                     </div>
-                    <!-- / Content -->
-                    <div class="content-backdrop fade"></div>
+                    <div class="card-datatable table-responsive">
+                        <table class="datatables-users table border-top">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Birth</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <!-- Offcanvas to add new user -->
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser"
+                         aria-labelledby="offcanvasAddUserLabel">
+                        <div class="offcanvas-header border-bottom">
+                            <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Add User</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
+                            <form th:action="@{/admin/user-management/add-user}" th:object="${user}" th:method="post" class="add-new-user pt-0" id="addNewUserForm" autocomplete="off">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <div class="mb-6">
+                                    <h6>1. Account Details</h6>
+                                    <hr class="mt-0"/>
+                                </div>
+
+
+                                <div class="mb-6">
+                                    <label class="form-label" for="formUsername">Username</label>
+                                    <input type="text" id="formUsername" class="form-control" th:field="*{username}"
+                                           placeholder="John Doe" autocomplete="off"/>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="form-label" for="formEmail">Email</label>
+                                    <input class="form-control" type="email" id="formEmail" th:field="*{email}"
+                                           th:name="formEmail" placeholder="john.doe" autocomplete="off"/>
+                                </div>
+
+                                <div class="mb-6">
+                                    <div class="form-password-toggle">
+                                        <label class="form-label" for="formPassword">Password</label>
+                                        <div class="input-group input-group-merge" style="box-shadow: none">
+                                            <input class="form-control" type="password" id="formPassword" th:field="*{password}"
+                                                   name="formPassword"
+                                                   placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                                   aria-describedby="multicol-password2" autocomplete="off"/>
+                                            <span class="input-group-text cursor-pointer" id="multicol-password2"><i
+                                                    class="bx bx-hide"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <div class="form-password-toggle">
+                                        <label class="form-label" for="formConfirmPassword">Confirm
+                                            Password</label>
+                                        <div class="input-group input-group-merge" style="box-shadow: none">
+                                            <input class="form-control" type="password" id="formConfirmPassword"
+                                                   name="formConfirmPassword"
+                                                   placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                                   aria-describedby="multicol-confirm-password2"/>
+                                            <span class="input-group-text cursor-pointer"
+                                                  id="multicol-confirm-password2"><i class="bx bx-hide"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Personal Info -->
+
+                                <div class="mb-6">
+                                    <h6 class="mt-2">2. Personal Info</h6>
+                                    <hr class="mt-0"/>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label class="form-label" for="formValidationDob">DOB</label>
+                                    <input type="date" class="form-control flatpickr-validation" th:field="*{dob}"
+                                           name="formValidationDob" id="formValidationDob" required/>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label class="form-label" for="formPhone">Phone</label>
+                                    <input type="text" id="formPhone" class="form-control phone-mask" th:field="*{phone}"
+                                           placeholder="(+84) 12 345 678" name="formPhone"/>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="form-label" for="formStatus">Status</label>
+                                    <select id="formStatus" name="status" class="form-select select" data-allow-clear="true" th:field="*{status}">
+                                        <option value="" disabled>Select a status</option>
+                                        <option value="PENDING">Pending</option>
+                                        <option value="ACTIVATED">Activated</option>
+                                        <option value="LOCKED">Locked</option>
+                                        <option value="DELETED">Deleted</option>
+                                    </select>
+                                </div>
+                                <!-- Choose Your Plan -->
+
+                                <div class="mb-6">
+                                    <h6 class="mt-2">3. Choose Role</h6>
+                                    <hr class="mt-0"/>
+                                </div>
+                                <div class="row gy-3 mt-0 mb-6">
+                                    <div class="">
+                                        <div class="form-check custom-option custom-option-icon">
+                                            <label class="form-check-label custom-option-content" for="formRole1">
+                                              <span class="custom-option-body">
+                                                <i class="bx bx-rocket"></i>
+                                                <span class="custom-option-title"> Customer </span>
+                                                <small> Customer who rent car. </small>
+                                              </span>
+                                                <input name="formRole" class="form-check-input" type="radio"
+                                                       value="3" id="formRole1" checked/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="">
+                                        <div class="form-check custom-option custom-option-icon">
+                                            <label class="form-check-label custom-option-content" for="formRole2">
+                                              <span class="custom-option-body">
+                                                <i class="bx bx-user"></i>
+                                                <span class="custom-option-title"> Car Owner </span>
+                                                <small> Car owner who renting their car. </small>
+                                              </span>
+                                                <input name="formRole" class="form-check-input" type="radio"
+                                                       value="2" id="formRole2"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="">
+                                        <div class="form-check custom-option custom-option-icon">
+                                            <label class="form-check-label custom-option-content" for="formRole3">
+                                              <span class="custom-option-body">
+                                                <i class="bx bx-crown"></i>
+                                                <span class="custom-option-title"> Admin </span>
+                                                <small> Admin who management the website. </small>
+                                              </span>
+                                                <input name="formRole" class="form-check-input" type="radio"
+                                                       value="1" id="formRole3"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" name="submitButton" class="btn btn-primary">Submit</button>
+                                <button type="reset" class="btn btn-label-danger" data-bs-dismiss="offcanvas">
+                                    Cancel
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <!-- Content wrapper -->
+
+
             </div>
+            <!-- / Content -->
+            <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+    </div>
 
-            <!-- Vendors JS -->
-            <script defer src="/assets/vendor/libs/moment/moment.js"></script>
-            <script defer src="/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
-            <script defer src="/assets/vendor/libs/select2/select2.js"></script>
-            <script defer src="/assets/vendor/libs/@form-validation/popular.js"></script>
-            <script defer src="/assets/vendor/libs/@form-validation/bootstrap5.js"></script>
-            <script defer src="/assets/vendor/libs/@form-validation/auto-focus.js"></script>
-            <script defer src="/assets/vendor/libs/cleavejs/cleave.js"></script>
-            <script defer src="/assets/vendor/libs/cleavejs/cleave-phone.js"></script>
+    <!-- Vendors JS -->
+    <script defer src="/assets/vendor/libs/moment/moment.js"></script>
+    <script defer src="/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+    <script defer src="/assets/vendor/libs/select2/select2.js"></script>
+    <script defer src="/assets/vendor/libs/@form-validation/popular.js"></script>
+    <script defer src="/assets/vendor/libs/@form-validation/bootstrap5.js"></script>
+    <script defer src="/assets/vendor/libs/@form-validation/auto-focus.js"></script>
+    <script defer src="/assets/vendor/libs/cleavejs/cleave.js"></script>
+    <script defer src="/assets/vendor/libs/cleavejs/cleave-phone.js"></script>
+    <script defer src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js"></script>
+    <script defer src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
 
-            <!-- Page JS -->
-            <script defer src="/assets/js/app-user-list.js"></script>
-</body>
+    <!-- Page JS -->
+    <script defer src="/assets/js/app-user-list.js"></script>
+
+    <script>
+        function validateAddForm() {
+            return true;
+        }
+    </script>
+    </body>
 </th:block>
 </html>

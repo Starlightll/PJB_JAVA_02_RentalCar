@@ -1,9 +1,7 @@
 package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.dto.FeedbackDto;
-import com.rentalcar.rentalcar.entity.Feedback;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 

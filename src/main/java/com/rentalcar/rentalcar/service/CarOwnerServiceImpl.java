@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.AuthenticationException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -53,6 +54,9 @@ public class CarOwnerServiceImpl implements CarOwnerService {
     public void updateCar(Car carUpdate, MultipartFile[] files, User user, Integer carId, Integer statusId) {
         try{
             Car car = carRepository.findById(carId).get();
+            if(!Objects.equals(car.getUser().getId(), user.getId()) || car.getCarStatus().getStatusId() == 8 && user.getRoles().get(0).getId() != 1){
+                throw new AuthenticationException("You are not allowed to update this car");
+            }
             // Create folder path
             String folderName = String.format("%s", car.getCarId()+"");
             Path carFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", folderName);
@@ -178,7 +182,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
-        carStatus.setStatusId(1);
+        carStatus.setStatusId(8);
         car.setCarStatus(carStatus);
     }
 

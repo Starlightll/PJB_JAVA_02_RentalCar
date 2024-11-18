@@ -1,6 +1,10 @@
 package com.rentalcar.rentalcar.common;
 
 public class Constants {
+
+    private Constants() {
+    }
+
     public static final int EXPIRATION = 60 * 24;// kich hoat tai khoan
 
     public static final int EXPIRATION_FORGOTPASS = 10;  // Thời hạn token là 10 phut  (forgot pass)

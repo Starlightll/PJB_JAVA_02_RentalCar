@@ -1,21 +1,19 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.configs.FileStorageProperties;
+import com.rentalcar.rentalcar.exception.FileNotFoundException;
+import com.rentalcar.rentalcar.exception.FileStorageException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import com.rentalcar.rentalcar.configs.FileStorageProperties;
-import com.rentalcar.rentalcar.exception.FileNotFoundException;
-import com.rentalcar.rentalcar.exception.FileStorageException;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
 public class FileStorageServiceImpl implements FileStorageService{

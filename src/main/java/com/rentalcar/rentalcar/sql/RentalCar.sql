@@ -285,7 +285,8 @@ INSERT INTO Brand (brandName) VALUES ('Toyota'), ('Honda'), ('Hyundai'), ('Kia')
 
     INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('Sun roof'), ('DVD'), ('Ski Rack'), ('Car Cover'), ('Car Wash'), ('Car Wax'), ('Car Polish'), ('Car Vacuum'), ('Car Freshener'), ('Car Shampoo');
 
-INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED');
+INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED')
+INSERT INTO CarStatus (name) VALUES ('MAINTENANCE'), ('RENTED'), ('RETURNED'), ('VERIFYING'), ('CONFIRMED'), ('IN-PROGRESS'), ('PENDING PAYMENT'), ('COMPLETED'), ('CANCELLED'), ('PENDING DEPOSIT'), ;
 
 -- Transaction table
 CREATE TABLE [dbo].[Transaction] (
@@ -308,9 +309,9 @@ CREATE TABLE [dbo].[Transaction] (
 
 INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, statusDriverId)
 VALUES
-    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'Ho Chi Minh', N'District 1', N'Ward 3', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED', 1),
-    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'Hanoi', N'District 5', N'Ward 7', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 1),
-    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'Da Nang', N'District 3', N'Ward 2', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 1);
+    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'1', N'8', N'334', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED', 1),
+    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'1', N'8', N'334', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 1),
+    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'1', N'8', N'334', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 1);
 
 INsert into UserRole
 values(1, 4), (2,4),(3,4)
@@ -329,8 +330,8 @@ DECLARE @InsertedUsers TABLE (userId BIGINT);
 INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, statusDriverId)
 OUTPUT inserted.userId INTO @InsertedUsers
 VALUES (N'admin', '1990-01-15', N'admin@gmail.com', N'123456789', N'0123456789', N'DL123456', 9999999999.00,
-        N'$2a$10$zTJMk41R7yUiRWED31NbtueNZTaIOV8mJm4HGavw2KIZVmCKgA8MW', N'Ha Noi', N'District 1',
-        N'Ward 3', N'Cau Giay', N'Admin', 1, N'ACTIVATED', 1);
+        N'$2a$10$zTJMk41R7yUiRWED31NbtueNZTaIOV8mJm4HGavw2KIZVmCKgA8MW', N'1', N'8',
+        N'334', N'Cau Giay', N'Admin', 1, N'ACTIVATED', 1);
 
 INSERT INTO [dbo].[UserRole] (userId, roleId)
 SELECT userId, 1 -- 1 == Admin

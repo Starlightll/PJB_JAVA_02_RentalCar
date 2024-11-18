@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import static com.rentalcar.rentalcar.common.Constants.*;
+import static com.rentalcar.rentalcar.common.Constants.FINE_COST;
 
 
 @Service
@@ -148,7 +148,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         );
         User carowner = userRepository.getUserById(bookingDto.getCarOwnerId());
 
-        BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
+        BigDecimal deposit = BigDecimal.valueOf(bookingDto.getDeposit());
         BigDecimal myWallet = userdb.getWallet();
         BigDecimal totalPrice = BigDecimal.valueOf(calculateTotalPrice(bookingId));
 

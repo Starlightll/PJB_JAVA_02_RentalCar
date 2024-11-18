@@ -1,8 +1,6 @@
 package com.rentalcar.rentalcar.repository;
 
 
-import com.rentalcar.rentalcar.dto.UserDto;
-import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +11,7 @@ import java.util.List;
 public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.email = :email")
-    public User getUserByEmail(@Param("email") String email);
+    User getUserByEmail(@Param("email") String email);
 
     @Query(value = "  select u.[userId], u.fullName, u.dob from [Users] u \n" +
             "  Join [dbo].[UserRole] ur ON ur.userId = u.userId\n" +
@@ -33,7 +31,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
     User getUserById(Long id);
 
     @Query("SELECT u FROM User u WHERE u.status != 'DELETED'")
-    public List<User> getAllUsers();
+    List<User> getAllUsers();
 
 
 }
