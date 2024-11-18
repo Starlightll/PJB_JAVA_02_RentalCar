@@ -1,6 +1,10 @@
 package com.rentalcar.rentalcar.common;
 
 public class Regex {
+
+    private Regex() {
+    }
+
     public static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
     public static final String PHONE_REGEX = "^\\+?[0-9]\\d{1,14}$";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$";

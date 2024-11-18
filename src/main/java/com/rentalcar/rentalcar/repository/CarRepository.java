@@ -1,10 +1,7 @@
 package com.rentalcar.rentalcar.repository;
 
-import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarStatus;
 import com.rentalcar.rentalcar.entity.User;
-import jakarta.persistence.SqlResultSetMapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

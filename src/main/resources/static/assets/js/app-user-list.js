@@ -1,4 +1,5 @@
 $(function () {
+
     let t, a, n;
     n = (isDarkStyle ? (t = config.colors_dark.borderColor, a = config.colors_dark.bodyBg, config.colors_dark) : (t = config.colors.borderColor, a = config.colors.bodyBg, config.colors)).headingColor;
     var e, s = $(".datatables-users"), o = $(".select2"), i = "/admin/user-management/user-detail", r = {
@@ -13,7 +14,7 @@ $(function () {
     }),
     s.length && (e = s.DataTable({
         ajax: {
-            url: "/api/users",
+            url: "/api/users/",
             method: "GET",
             dataSrc: ''
         },
@@ -48,8 +49,8 @@ $(function () {
             targets: 2,
             responsivePriority: 4,
             render: function (e, t, a, n) {
-                    var s = a.username, o = a.email, r = a.avatar == null ? null : a.avatar;
-                return '<div class="d-flex justify-content-start align-items-center user-name"><div class="avatar-wrapper"><div class="avatar avatar-sm me-4">' + (r ? '<img src="' + assetsPath + "img/avatars/" + r + '" alt="Avatar" class="rounded-circle">' : '<span class="avatar-initial rounded-circle bg-label-' + ["success", "danger", "warning", "info", "dark", "primary", "secondary"][Math.floor(6 * Math.random())] + '">' + (r = (((r = (s = a.username).match(/\b\w/g) || []).shift() || "") + (r.pop() || "")).toUpperCase()) + "</span>") + '</div></div><div class="d-flex flex-column"><a href="' + i + '" class="text-heading text-truncate"><span class="fw-medium">' + s + "</span></a><small>" + o + "</small></div></div>"
+                var s = a.username, o = a.email, r = a.avatar == null ? null : a.avatar;
+                return '<div class="d-flex justify-content-start align-items-center user-name"><div class="avatar-wrapper"><div class="avatar avatar-sm me-4">' + (r ? '<img src="' + assetsPath + "img/avatars/" + r + '" alt="Avatar" class="rounded-circle">' : '<span class="avatar-initial rounded-circle bg-label-' + ["success", "danger", "warning", "info", "dark", "primary", "secondary"][Math.floor(6 * Math.random())] + '">' + (r = (((r = (s = a.username).match(/\b\w/g) || []).shift() || "") + (r.pop() || "")).toUpperCase()) + "</span>") + '</div></div><div class="d-flex flex-column"><a href="' + i + '?userId=' + a.userId + '" class="text-heading text-truncate"><span class="fw-medium">' + s + "</span></a><small>" + o + "</small></div></div>"
             }
         }, {
             targets: 3,
@@ -202,45 +203,159 @@ $(function () {
                     a.append('<option value="' + e + '">' + e + "</option>")
                 })
             }),
-            //     this.api().columns(4).every(function () {
-            //     var t = this,
-            //         a = $('<select id="UserPlan" class="form-select text-capitalize"><option value=""> Select Plan </option></select>').appendTo(".user_plan").on("change", function () {
-            //             var e = $.fn.dataTable.util.escapeRegex($(this).val());
-            //             t.search(e ? "^" + e + "$" : "", !0, !1).draw()
-            //         });
-            //     t.data().unique().sort().each(function (e, t) {
-            //         a.append('<option value="' + e + '">' + e + "</option>")
-            //     })
-            // }),
+                //     this.api().columns(4).every(function () {
+                //     var t = this,
+                //         a = $('<select id="UserPlan" class="form-select text-capitalize"><option value=""> Select Plan </option></select>').appendTo(".user_plan").on("change", function () {
+                //             var e = $.fn.dataTable.util.escapeRegex($(this).val());
+                //             t.search(e ? "^" + e + "$" : "", !0, !1).draw()
+                //         });
+                //     t.data().unique().sort().each(function (e, t) {
+                //         a.append('<option value="' + e + '">' + e + "</option>")
+                //     })
+                // }),
                 this.api().columns(6).every(function () {
-                var t = this,
-                    a = $('<select id="FilterTransaction" class="form-select text-capitalize"><option value=""> Select Status </option></select>').appendTo(".user_status").on("change", function () {
-                        var e = $.fn.dataTable.util.escapeRegex($(this).val());
-                        t.search(e ? "^" + e + "$" : "", !0, !1).draw()
-                    });
-                t.data().unique().sort().each(function (e, t) {
-                    a.append('<option value="' + r[e].title + '" class="text-capitalize">' + r[e].title + "</option>")
+                    var t = this,
+                        a = $('<select id="FilterTransaction" class="form-select text-capitalize"><option value=""> Select Status </option></select>').appendTo(".user_status").on("change", function () {
+                            var e = $.fn.dataTable.util.escapeRegex($(this).val());
+                            t.search(e ? "^" + e + "$" : "", !0, !1).draw()
+                        });
+                    t.data().unique().sort().each(function (e, t) {
+                        a.append('<option value="' + r[e].title + '" class="text-capitalize">' + r[e].title + "</option>")
+                    })
                 })
-            })
         }
-    }), $(".dt-buttons > .btn-group > button").removeClass("btn-secondary")), $(".datatables-users tbody").on("click", ".delete-record", function () {
-        e.row($(this).parents("tr")).remove().draw()
-    }), setTimeout(() => {
+    }),
+        $(".dt-buttons > .btn-group > button").removeClass("btn-secondary")), $(".datatables-users tbody").on("click", ".delete-record", function () {
+        e.row($(this).parents("tr")).remove().draw()}),
+
+        setTimeout(() => {
         $(".dataTables_filter .form-control").removeClass("form-control-sm"), $(".dataTables_length .form-select").removeClass("form-select-sm")
-    }, 300)
-}), function () {
+    }, 300)}),
+
+    function () {
+        // Track email validation state
+        let isEmailBlurred = false;
+        let emailCheckTimeout = null;
+
+
     var e = document.querySelectorAll(".phone-mask"), t = document.getElementById("addNewUserForm");
     e && e.forEach(function (e) {
-        new Cleave(e, {phone: !0, phoneRegionCode: "US"})
-    }), FormValidation.formValidation(t, {
+        new Cleave(e, {phone: !0, phoneRegionCode: "VN"})
+    }),
+        i = FormValidation.formValidation(t, {
         fields: {
-            userFullname: {validators: {notEmpty: {message: "Please enter fullname "}}},
-            userEmail: {
+            username: {
+                validators:
+                    {
+                        notEmpty: {
+                                message: "Please enter username "
+                        },
+                        stringLength: {
+                            min: 6,
+                            max: 30,
+                            message: "The name must be more than 6 and less than 30 characters long"
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9 ]+$/,
+                            message: "The name can only consist of alphabetical, number and space"
+                        }
+                    }
+            },
+            email: {
                 validators: {
-                    notEmpty: {message: "Please enter your email"},
-                    emailAddress: {message: "The value is not a valid email address"}
+                    notEmpty: {
+                        message: "Please enter your email"
+                    },
+                    emailAddress: {
+                        message: "The value is not a valid email address"
+                    },
+                    // remote: {
+                    //     url: "/api/users/check-email",
+                    //     message: "The email is already taken",
+                    //     method: "GET",
+                    //     data: function () {
+                    //         return {
+                    //             email: t.querySelector('[name="email"]').value
+                    //         }
+                    //     },
+                    // }
+                    callback: {
+                        callback: function (input) {
+                            if (isEmailBlurred) {
+                                return validateEmail(input.value);
+                            }
+                            return true;
+                        }
+                    }
                 }
-            }
+            },
+            password: {
+                validators: {
+                    notEmpty: {
+                        message: "Please enter your password"
+                    },
+                    stringLength: {
+                        min: 6,
+                        message: "Password must have at least 6 characters"
+                    },
+                    regexp: {
+                        regexp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,}$/,
+                        message: "The password must contain at least one number, one lowercase and one uppercase letter, one special character"
+                    },
+                }
+            },
+            formConfirmPassword: {
+                validators: {
+                        notEmpty: {
+                            message: "Please confirm password"
+                        },
+                        identical: {
+                            compare: function () {
+                                return t.querySelector('[name="formPassword"]').value
+                            },
+                            message: "The password and its confirm are not the same"
+                        }
+                }
+            },
+            dob: {
+                validators: {
+                    notEmpty: {
+                        message: "Please select your DOB"
+                    },
+                    date: {
+                        format: "YYYY-MM-DD",
+                        message: "The value is not a valid date"
+                    },
+                    callback: {
+                        message: "You must be at least 18 years old",
+                        callback: function (input) {
+                            const dob = input.value;
+                            const [day, month, year] = dob.split('-');
+                            const dobDate = new Date(year, month - 1, day);
+                            const today = new Date();
+                            const age = today.getFullYear() - dobDate.getFullYear();
+                            const monthDiff = today.getMonth() - dobDate.getMonth();
+                            const dayDiff = today.getDate() - dobDate.getDate();
+                            return age > 18 || (age === 18 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)));
+                        }
+                    }
+
+                }
+            },
+            formRole: {
+                validators: {
+                    notEmpty: {
+                        message: "Please select role"
+                    }
+                }
+            },
+            status: {
+                validators: {
+                    notEmpty: {
+                        message: "Please select status"
+                    }
+                }
+            },
         },
         plugins: {
             trigger: new FormValidation.plugins.Trigger,
@@ -250,7 +365,67 @@ $(function () {
                 }
             }),
             submitButton: new FormValidation.plugins.SubmitButton,
+            defaultSubmit: new FormValidation.plugins.DefaultSubmit,
             autoFocus: new FormValidation.plugins.AutoFocus
-        }
+        },
+
     })
+
+    t.addEventListener("submit", function(e) {
+        t.checkValidity() ? alert("Submitted!!!") : (e.preventDefault(),
+            e.stopPropagation()),
+            t.classList.add("was-validated")
+    }, !1);
+
+
+        // Handle email field blur/focus events
+        const emailField = t.querySelector('[name="email"]');
+        emailField.addEventListener('blur', () => {
+            isEmailBlurred = true;
+            i.revalidateField('email');
+        });
+
+        emailField.addEventListener('focus', () => {
+            isEmailBlurred = false;
+            i.revalidateField('email');
+        });
+
+
+        const validateEmail = async function (email) {
+            const check = await checkEmailAvailability(email);
+            if(check){
+                return {
+                    valid: true,
+                    message: 'Email is available',
+                }
+            }
+            else{
+                return {
+                    valid: false,
+                    message: 'Email is already taken',
+                }
+            }
+        }
+
+        async function checkEmailAvailability(email) {
+            const response = await fetch(`/api/users/check-email?email=${email}`);
+            return await response.json();
+
+        }
 }();
+
+    window.Helpers.initCustomOptionCheck();
+    var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
+        , e = (e && e.forEach(e => {
+            e.flatpickr({
+                enableTime: !1,
+                dateFormat: "Y-m-d",
+                onChange: function() {
+                    i.revalidateField("dob")
+                }
+            })
+        }
+    ));
+
+
+

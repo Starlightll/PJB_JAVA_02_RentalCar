@@ -1,7 +1,5 @@
 package com.rentalcar.rentalcar.service;
 
-import com.rentalcar.rentalcar.entity.User;
-
 public interface ForgotPasswordService {
     void forgotPassword(String email);
 

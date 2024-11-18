@@ -1,9 +1,10 @@
 package com.rentalcar.rentalcar.controller;
 
 
+import com.rentalcar.rentalcar.entity.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class AdminController {
@@ -14,12 +15,19 @@ public class AdminController {
     }
 
     @GetMapping("/admin/user-list")
-    public String userList() {
+    public String userList(Model model) {
+        User user = new User();
+        model.addAttribute("user", user);
         return "/admin/app-user-list";
     }
 
     @GetMapping("/admin/my-profile")
     public String myProfile() {
         return "/admin/pages-profile-user";
+    }
+
+    @GetMapping("/admin/account-settings")
+    public String accountSettings() {
+        return "/admin/pages-account-settings-account";
     }
 }

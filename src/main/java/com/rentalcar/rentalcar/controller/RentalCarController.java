@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rentalcar.rentalcar.common.Regex;
 import com.rentalcar.rentalcar.dto.BookingDto;
-import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Car;
@@ -18,19 +18,17 @@ import com.rentalcar.rentalcar.service.ReturnCarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.rentalcar.rentalcar.common.Regex.*;
-
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -40,6 +38,8 @@ import java.time.Period;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.rentalcar.rentalcar.common.Regex.EMAIL_REGEX;
 
 @Controller
 public class RentalCarController {
@@ -139,8 +139,8 @@ public class RentalCarController {
         List<UserDto> driverList = getAllDriverAvailable();
         // Định dạng ngày giờ đầu vào và đầu ra
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm");
-        startDate = startDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");;
-        enDate = enDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");;
+        startDate = startDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");
+        enDate = enDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");
 
 
         SimpleDateFormat dateOutputFormat = new SimpleDateFormat("yyyy-MM-dd");

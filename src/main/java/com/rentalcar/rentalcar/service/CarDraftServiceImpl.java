@@ -4,20 +4,17 @@ import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 @Service

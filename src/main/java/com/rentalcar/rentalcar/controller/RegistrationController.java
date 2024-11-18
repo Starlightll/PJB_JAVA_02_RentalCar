@@ -3,8 +3,6 @@ package com.rentalcar.rentalcar.controller;
 
 import com.rentalcar.rentalcar.dto.ForgotDto;
 import com.rentalcar.rentalcar.dto.RegisterDto;
-import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.entity.VerificationToken;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.VerificationTokenRepo;
 import com.rentalcar.rentalcar.service.RegisterUserService;

@@ -124,9 +124,9 @@
                                                 </li>
                                             </ul>
                                             <div class="d-flex justify-content-center">
-                                                <a href="javascript:;" class="btn btn-primary me-4"
+                                                <a href="javascript:" class="btn btn-primary me-4"
                                                    data-bs-target="#editUser" data-bs-toggle="modal">Edit</a>
-                                                <a href="javascript:;"
+                                                <a href="javascript:"
                                                    class="btn btn-label-danger suspend-user">Suspend</a>
                                             </div>
                                         </div>
@@ -196,30 +196,6 @@
                                     </ul>
                                 </div>
                                 <!--/ User Pills -->
-
-                                <!-- Booking table -->
-                                <th:block th:if="${user.getRoles().get(0).getRoleName() == 'Customer'}">
-                                    <div class="card mb-6">
-                                        <h5 class="card-header pb-0 text-sm-start text-center">Booking List</h5>
-                                        <div class="table-responsive mb-4">
-                                            <table class="table datatable-project">
-                                                <thead class="border-top">
-                                                <tr>
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th>Project</th>
-                                                    <th>Leader</th>
-                                                    <th>Team</th>
-                                                    <th class="w-px-200">Progress</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                                </thead>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </th:block>
-                                <!-- /Booking table -->
-
                                 <!-- Car table -->
                                 <th:block th:if="${user.getRoles().get(0).getRoleName() == 'Car Owner'}">
                                     <div class="card mb-6">
@@ -243,112 +219,10 @@
                                 </th:block>
                                 <!-- /Car table -->
 
-                                <!-- Activity Timeline -->
-                                <div class="card mb-6">
-                                    <h5 class="card-header">User Activity Timeline</h5>
-                                    <div class="card-body pt-1">
-                                        <ul class="timeline mb-0">
-                                            <li class="timeline-item timeline-item-transparent">
-                                                <span class="timeline-point timeline-point-primary"></span>
-                                                <div class="timeline-event">
-                                                    <div class="timeline-header mb-3">
-                                                        <h6 class="mb-0">12 Invoices have been paid</h6>
-                                                        <small class="text-muted">12 min ago</small>
-                                                    </div>
-                                                    <p class="mb-2">
-                                                        Invoices have been paid to the company
-                                                    </p>
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="badge bg-lighter rounded d-flex align-items-center">
-                                                            <img src="../../assets/img/icons/misc/pdf.png" alt="img"
-                                                                 width="15" class="me-2">
-                                                            <span class="h6 mb-0 text-body">invoices.pdf</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="timeline-item timeline-item-transparent">
-                                                <span class="timeline-point timeline-point-success"></span>
-                                                <div class="timeline-event">
-                                                    <div class="timeline-header mb-3">
-                                                        <h6 class="mb-0">Client Meeting</h6>
-                                                        <small class="text-muted">45 min ago</small>
-                                                    </div>
-                                                    <p class="mb-2">
-                                                        Project meeting with john @10:15am
-                                                    </p>
-                                                    <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
-                                                        <div class="d-flex flex-wrap align-items-center mb-50">
-                                                            <div class="avatar avatar-sm me-2">
-                                                                <img src="../../assets/img/avatars/1.png" alt="Avatar"
-                                                                     class="rounded-circle"/>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-0 small fw-medium">Lester McCarthy
-                                                                    (Client)</p>
-                                                                <small>CEO of ThemeSelection</small>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="timeline-item timeline-item-transparent">
-                                                <span class="timeline-point timeline-point-info"></span>
-                                                <div class="timeline-event">
-                                                    <div class="timeline-header mb-3">
-                                                        <h6 class="mb-0">Create a new project for client</h6>
-                                                        <small class="text-muted">2 Day Ago</small>
-                                                    </div>
-                                                    <p class="mb-2">
-                                                        6 team members in a project
-                                                    </p>
-                                                    <ul class="list-group list-group-flush">
-                                                        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap border-top-0 p-0">
-                                                            <div class="d-flex flex-wrap align-items-center">
-                                                                <ul class="list-unstyled users-list d-flex align-items-center avatar-group m-0 me-2">
-                                                                    <li data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top" title="Vinnie Mostowy"
-                                                                        class="avatar pull-up">
-                                                                        <img class="rounded-circle"
-                                                                             src="../../assets/img/avatars/5.png"
-                                                                             alt="Avatar"/>
-                                                                    </li>
-                                                                    <li data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top" title="Allen Rieske"
-                                                                        class="avatar pull-up">
-                                                                        <img class="rounded-circle"
-                                                                             src="../../assets/img/avatars/12.png"
-                                                                             alt="Avatar"/>
-                                                                    </li>
-                                                                    <li data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top" title="Julee Rossignol"
-                                                                        class="avatar pull-up">
-                                                                        <img class="rounded-circle"
-                                                                             src="../../assets/img/avatars/6.png"
-                                                                             alt="Avatar"/>
-                                                                    </li>
-                                                                    <li class="avatar">
-                                                                        <span class="avatar-initial rounded-circle pull-up text-heading"
-                                                                              data-bs-toggle="tooltip"
-                                                                              data-bs-placement="bottom" title="3 more">+3</span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <!-- /Activity Timeline -->
-
                                 <!-- Invoice table -->
                                 <div class="card mb-4">
                                     <div class="card-datatable table-responsive">
+                                        <h5 class="card-header pb-0 text-sm-start text-center">Invoice List</h5>
                                         <table class="table datatable-invoice">
                                             <thead>
                                             <tr>
@@ -380,32 +254,25 @@
                                             <h4 class="mb-2">Edit User Information</h4>
                                             <p>Updating user details will receive a privacy audit.</p>
                                         </div>
-                                        <form class="row g-6" onsubmit="false">
+                                        <form class="row g-6" th:action="@{/admin/user-management/edit}" th:object="${user}" th:type="post" onsubmit="false">
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserName">Username</label>
-                                                <input type="text" id="modalEditUserName"
+                                                <input type="text" id="modalEditUserName" th:field="*{username}"
                                                        name="modalEditUserFirstName" class="form-control"
                                                        placeholder="Your user name" value=""/>
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserFullName">Full Name</label>
-                                                <input type="text" id="modalEditUserFullName"
+                                                <input type="text" id="modalEditUserFullName" th:field="*{fullName}"
                                                        name="modalEditUserLastName" class="form-control"
                                                        placeholder="Your full name" value=""/>
                                             </div>
-                                            <div class="col-12 col-md-12">
-                                                <label class="form-label" for="modalEditUserEmail">Email</label>
-                                                <input type="text" id="modalEditUserEmail" name="modalEditUserEmail"
-                                                       class="form-control" placeholder="example@domain.com"
-                                                       value=""/>
-                                            </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserStatus">Status</label>
-                                                <select id="modalEditUserStatus" name="modalEditUserStatus"
-                                                        class="select2 form-select" aria-label="Default select example">
-                                                    <option selected>Status</option>
+                                                <select id="modalEditUserStatus" name="status" class="form-select select" data-allow-clear="true" th:field="*{status}">
+                                                    <option value="" disabled>Select a status</option>
                                                     <option value="PENDING">Pending</option>
-                                                    <option value="ACTIVATED">Active</option>
+                                                    <option value="ACTIVATED">Activated</option>
                                                     <option value="LOCKED">Locked</option>
                                                     <option value="DELETED">Deleted</option>
                                                 </select>
@@ -414,48 +281,45 @@
                                                 <label class="form-label" for="modalEditUserPhone">Phone Number</label>
                                                 <div class="input-group">
                                                     <span class="input-group-text">VN (+84)</span>
-                                                    <input type="text" id="modalEditUserPhone" name="modalEditUserPhone"
+                                                    <input type="text" id="modalEditUserPhone" name="modalEditUserPhone" th:field="*{phone}"
                                                            class="form-control phone-number-mask"
-                                                           placeholder="312 345 6789" value=""/>
+                                                           placeholder="1234 567890" value=""/>
                                                 </div>
+                                            </div>
+                                            <div class="col-12 col-md-12">
+                                                <label class="form-label" for="modalEditUserNationalID">National ID</label>
+                                                <input type="text" id="modalEditUserNationalID" th:field="*{nationalId}"
+                                                       name="modalEditUserNationalID" class="form-control"
+                                                       placeholder="Your national ID" value=""/>
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserProvince">Province</label>
-                                                <select id="modalEditUserProvince" name="modalEditUserStatus"
+                                                <select id="modalEditUserProvince" name="modalEditUserProvince" th:field="*{city}" th:value="*{city}"
+                                                        th:data-default="*{city}"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option selected>Select</option>
-                                                    <option value="PENDING">Pending</option>
-                                                    <option value="ACTIVATED">Active</option>
-                                                    <option value="LOCKED">Locked</option>
-                                                    <option value="DELETED">Deleted</option>
+                                                    <option disabled value="">Select</option>
                                                 </select>
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserDistrict">District</label>
-                                                <select id="modalEditUserDistrict" name="modalEditUserStatus"
+                                                <select id="modalEditUserDistrict" name="modalEditUserDistrict" th:field="*{district}" th:value="*{district}"
+                                                        th:data-default="*{district}"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option selected>Select</option>
-                                                    <option value="PENDING">Pending</option>
-                                                    <option value="ACTIVATED">Active</option>
-                                                    <option value="LOCKED">Locked</option>
-                                                    <option value="DELETED">Deleted</option>
+                                                    <option disabled value="">Select</option>
                                                 </select>
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserWard">Ward</label>
-                                                <select id="modalEditUserWard" name="modalEditUserStatus"
+                                                <select id="modalEditUserWard" name="modalEditUserStatus" th:field="*{ward}" th:value="*{ward}"
+                                                        th:data-default="*{ward}"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option selected>Select</option>
-                                                    <option value="PENDING">Pending</option>
-                                                    <option value="ACTIVATED">Active</option>
-                                                    <option value="LOCKED">Locked</option>
-                                                    <option value="DELETED">Deleted</option>
+                                                    <option disabled value="">Select</option>
                                                 </select>
                                             </div>
-                                            <div class="col-12 col-md-12">
+                                            <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserStreet">Street</label>
-                                                <input type="text" id="modalEditUserStreet" name="modalEditUserEmail"
-                                                       class="form-control" placeholder="Your street"
+                                                <input type="text" id="modalEditUserStreet" name="modalEditUserStreet"
+                                                       class="form-control" placeholder="Your street" th:field="*{street}"
                                                        value=""/>
                                             </div>
 
@@ -572,7 +436,98 @@
     <script defer src="/assets/js/modal-edit-user.js"></script>
     <script defer src="/assets/js/app-user-view.js"></script>
     <script defer src="/assets/js/app-user-view-account.js"></script>
+    <script defer>
 
+        document.getElementById("modalEditUserProvince").addEventListener("change", function () {
+            console.log("change");
+        });
+
+        // Fetch provinces and set default city
+        async function fetchProvinces(defaultProvince) {
+            const response = await fetch('https://provinces.open-api.vn/api/p/');
+            const provinces = await response.json();
+            const citySelect = document.getElementById('modalEditUserProvince');
+
+            provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province.code;
+                option.textContent = province.name;
+                if (province.code == defaultProvince) {
+                    option.selected = true;
+                }
+                citySelect.appendChild(option);
+            });
+
+            if (defaultProvince) {
+                fetchDistricts(defaultProvince, document.getElementById('modalEditUserDistrict').getAttribute('data-default'));
+            }
+        }
+
+        // Fetch districts based on selected province and set default value
+        async function fetchDistricts(provinceCode, defaultDistrict) {
+            const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+            const provinceData = await response.json();
+            const districtSelect = document.getElementById('modalEditUserDistrict');
+
+            districtSelect.innerHTML = '<option value="">Select District</option>';
+            provinceData.districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district.code;
+                option.textContent = district.name;
+                if (district.code == defaultDistrict) {
+                    option.selected = true;
+                }
+                districtSelect.appendChild(option);
+            });
+
+            if (defaultDistrict) {
+                fetchWards(defaultDistrict, document.getElementById('modalEditUserWard').getAttribute('data-default'));
+            }
+        }
+
+        // Fetch wards based on selected district and set default value
+        async function fetchWards(districtCode, defaultWard) {
+            const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+            const districtData = await response.json();
+            const wardSelect = document.getElementById('modalEditUserWard');
+
+            wardSelect.innerHTML = '<option value="">Select Ward</option>';
+            districtData.wards.forEach(ward => {
+                const option = document.createElement('option');
+                option.value = ward.code;
+                option.textContent = ward.name;
+                if (ward.code == defaultWard) {
+                    option.selected = true;
+                }
+                wardSelect.appendChild(option);
+            });
+        }
+
+        // Select 2 library
+        $('#modalEditUserProvince').on('select2:select', function (e) {
+            console.log("Province selected");
+            const selectedProvince = $(this).val();
+            fetchDistricts(selectedProvince);
+            $('#modalEditUserWard').html('<option value="">Select Ward</option>').prop('disabled', true);
+            $('#modalEditUserDistrict').val("").prop('disabled', selectedProvince === "");
+        });
+
+
+        // Select 2 library
+        $('#modalEditUserDistrict').on('select2:select', function (e) {
+            console.log("District selected");
+            const selectedDistrict = $(this).val();
+            fetchWards(selectedDistrict);
+            $('#modalEditUserWard').prop('disabled', selectedDistrict === "");
+        });
+
+        // Load provinces on page load with default values
+        document.addEventListener('DOMContentLoaded', function () {
+            const defaultProvince = document.getElementById('modalEditUserProvince').getAttribute('data-default');
+            fetchProvinces(defaultProvince);
+        });
+
+    </script>
     </body>
 </th:block>
 </html>

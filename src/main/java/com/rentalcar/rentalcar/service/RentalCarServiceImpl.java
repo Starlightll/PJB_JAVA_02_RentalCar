@@ -3,9 +3,8 @@ package com.rentalcar.rentalcar.service;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.BookingDto;
-import com.rentalcar.rentalcar.dto.MyBookingDto;
-
 import com.rentalcar.rentalcar.dto.CarDto;
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.mail.EmailService;
@@ -386,11 +385,11 @@ public class RentalCarServiceImpl implements RentalCarService {
                 }
             }
 
-//            //THAY ĐỔI TRẠNG THÁI CHO XE
-//            CarStatus notAvailableStatus = carStatusRepository.findById(2)
-//                    .orElseThrow(() -> new RuntimeException("Status not found"));
-//            car.setCarStatus(notAvailableStatus);
-//            carRepository.save(car);
+            //THAY ĐỔI TRẠNG THÁI CHO XE
+            CarStatus notAvailableStatus = carStatusRepository.findById(14)
+                    .orElseThrow(() -> new RuntimeException("Status not found"));
+            car.setCarStatus(notAvailableStatus);
+            carRepository.save(car);
 
         } catch (Exception e) {
             e.printStackTrace();

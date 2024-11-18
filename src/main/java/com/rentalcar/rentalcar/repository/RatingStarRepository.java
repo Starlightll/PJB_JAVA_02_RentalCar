@@ -1,8 +1,6 @@
 package com.rentalcar.rentalcar.repository;
 
-import com.rentalcar.rentalcar.dto.FeedbackDto;
 import com.rentalcar.rentalcar.entity.Feedback;
-import com.rentalcar.rentalcar.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -2,19 +2,14 @@ package com.rentalcar.rentalcar.configs;
 import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
 import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 @Configuration
 @EnableAsync
@@ -52,8 +47,8 @@ public class WebConfiguration {
         http
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service")) // Tắt CSRF cho các URL này
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/homepage-guest", "/error", "/faq", "/contacts", "privacy").permitAll()
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/", "/homepage-guest", "/error/**", "/faq", "/contacts", "privacy").permitAll()
                         .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
                         .requestMatchers("/homepage-customer").hasAuthority("Customer")
                         .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
@@ -76,16 +71,8 @@ public class WebConfiguration {
                         .deleteCookies("JSESSIONID")
                 )
                 ;
-//                .exceptionHandling(exception -> exception
-//                        .accessDeniedPage("/403")
-//                );
 
         return http.build();
-    }
-
-
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
     }
 
 }
