@@ -333,7 +333,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             }
 
             //THAY ĐỔI TRẠNG THÁI CHO XE
-            CarStatus notAvailableStatus = carStatusRepository.findByName("Booked")
+            CarStatus notAvailableStatus = carStatusRepository.findById(2)
                     .orElseThrow(() -> new RuntimeException("Status not found"));
             car.setCarStatus(notAvailableStatus);
             carRepository.save(car);
@@ -448,7 +448,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         // Update the car status to "BOOKED"
         Car car = carRepository.getCarByCarId(carDto.getCarId().intValue());
-        Optional<CarStatus> bookedStatusOptional = carStatusRepository.findByName("Booked");
+        Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(2);
         if (bookedStatusOptional.isPresent()) {
             CarStatus bookedStatus = bookedStatusOptional.get();
             car.setCarStatus(bookedStatus);
@@ -629,7 +629,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         userRepository.save(carOwner);
 
         // Update status xe thành "Available"
-        Optional<CarStatus> availableStatusOptional = carStatusRepository.findByName("Available");
+        Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
         if (availableStatusOptional.isEmpty()) {
             System.out.println("Car status 'Available' not found.");
             return 0;

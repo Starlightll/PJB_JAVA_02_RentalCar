@@ -387,13 +387,13 @@
                                                             <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                th:text="${booking.bookingStatus}"
                                                                th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
-                 : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+                 : booking.bookingStatus == 'In-Progress'   ? 'color: #FFA500; font-weight: bold;'
                  : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
                  : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
                  : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' : 'font-weight: bold;' }">
                                                             </p>
                                                         </div>
-
+z
 
                                                     </div>
                                                 </div>
