@@ -215,7 +215,7 @@
                                                             Confirm deposit
                                                         </a>
                                                     </th:block>
-                                                    <th:block th:if="${car.getCarStatus().getStatusId() == 2}">
+                                                    <th:block th:if="${car.getCarStatus().getStatusId() == 11}">
                                                         <a th:if="${bookingStatus == 4}"
                                                            th:id="'confirm-payment-btn-' + ${car.getCarId()}"
                                                            class="btn btn-primary"

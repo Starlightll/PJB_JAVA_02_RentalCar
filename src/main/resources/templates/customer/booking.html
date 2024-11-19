@@ -903,6 +903,7 @@
         window.onload = function () {
             calculateOnPageLoad();
         };
+        
         function calculateOnPageLoad() {
             const pickupLocation = document.getElementById('pickupLocation').innerText;
             const pickupDate = document.getElementById('pickupDate').innerText;
@@ -942,8 +943,8 @@
 
             document.getElementById('editPickupLocation').value = document.getElementById('pickupLocation').innerText;
             if(pickupDate && returnDate) {
-                document.getElementById('editPickupDate').value = formatToDatetimeLocal(pickupDate);
-                document.getElementById('editReturnDate').value = formatToDatetimeLocal(returnDate);
+                document.getElementById('editPickupDate').value = formatToDatetimeDB(pickupDate);
+                document.getElementById('editReturnDate').value = formatToDatetimeDB(returnDate);
             }
             // Hiển thị modal
             $('#confirmModal').modal('show');
@@ -1020,6 +1021,8 @@
             document.getElementById('pickupLocation').innerText = newPickupLocation;
             document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDate);
             document.getElementById('returnDate').innerText = formatToDisplay(newReturnDate);
+            document.getElementById('editPickupDate').value = newPickupDate;
+            document.getElementById('editReturnDate').value = newReturnDate;
             document.getElementById('numberOfDays').innerText = days;
             console.log("Số ngày: " + days);
             const totalPrice = days * car.basePrice;
@@ -1099,6 +1102,8 @@
             document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDatee);
             document.getElementById('returnDate').innerText = formatToDisplay(newReturnDatee);
             document.getElementById('numberOfDays').innerText = days;
+            document.getElementById('editPickupDate').value = newPickupDatee;
+            document.getElementById('editReturnDate').value = newReturnDatee;
             console.log("Số ngày: " + days);
             const totalPrice = days * car.basePrice;
             document.getElementById('totalPrice').innerText = totalPrice.toLocaleString() + ' VND';

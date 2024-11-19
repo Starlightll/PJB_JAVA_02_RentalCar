@@ -54,7 +54,7 @@
                     <p>${feedback.content}</p>
                     <div class="car-info">
                         <div class="image-container">
-                            <img th:src="${'/'+feedback.frontImage}" alt="Car Image">
+                            <img src="${'/'+feedback.frontImage}" alt="Car Image">
                         </div>
                         <div>
                             <strong>${feedback.carName}</strong>

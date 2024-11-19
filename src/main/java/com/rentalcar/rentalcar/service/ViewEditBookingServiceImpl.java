@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
 
         // Tính toán số ngày giữa startDate và actualEndDate
-        int numberOfDays = (int) ChronoUnit.DAYS.between(startDate, actualEndDate);
+        int numberOfDays = calculateNumberOfDays(startDate, actualEndDate);
 
         MyBookingDto bookingDto = new MyBookingDto(
                 Long.valueOf((Integer) result[0]),
@@ -91,7 +92,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
             throw new RuntimeException("User not found");
         }
 
-        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findById(bookingDto.getBookingId());
+        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingDto.getBookingId()));
         DriverDetail driverDetail = optionalDriverDetail.orElse(null);
 
         if(driverDetail == null) {
@@ -129,6 +130,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         driverDetailRepository.save(driverDetail);
 
         booking.setLastModified(new Date());
+        bookingRepository.save(booking);
 
 //
 //        //Update Driver
@@ -147,5 +149,16 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
 
 
+    }
+    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
+        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        // Tính chênh lệch thời gian (mili-giây)
+        long timeDiff = endMillis - startMillis;
+
+        // Chia để tính số ngày và làm tròn lên
+        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
     }
 }
