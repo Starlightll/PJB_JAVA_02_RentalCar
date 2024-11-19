@@ -569,7 +569,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                 (String) result[28],  // bookingStatusName
                 Long.valueOf((Integer) result[29]) // booking Id
         );
-        double totalPrice = returnCarService.calculateTotalPrice(carDto.getBookingId());
+        double totalPrice = returnCarService.calculateTotalPriceForActualEnddateCarOwner(carDto.getBookingId());
 
         User carOwner = userRepository.findById(Long.valueOf(carDto.getUserId())).get();
 
@@ -667,7 +667,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         User customer = booking.getUser();
 
         // Cập nhật ví của carOwner và customer
-        Double totalPrice = returnCarService.calculateTotalPrice(booking.getBookingId());
+        Double totalPrice = returnCarService.calculateTotalPriceForActualEnddateCarOwner(booking.getBookingId());
         Double deposit = car.getDeposit();
         Double remainingAmount = deposit - totalPrice;
         BigDecimal remainingMoney = BigDecimal.valueOf(remainingAmount);
