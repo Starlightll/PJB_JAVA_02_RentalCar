@@ -1,5 +1,23 @@
 /* Search Results Styles */
+.hero-wrap {
+    height: 200px !important;
+    position: relative;
+    background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+}
 
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 200px !important;
+}
+
+.slider-text {
+    height: 200px !important;
+}
 .validate-msg{
     color: red !important;
     font-size: 0.9rem;
@@ -18,6 +36,7 @@
 .results-table table {
     width: 100%;
     border-collapse: collapse;
+
 }
 
 .results-table th, .results-table td {
@@ -34,6 +53,7 @@
 
 .results-table td {
     background-color: #f9f9f9;
+
 }
 
 .car-image {
