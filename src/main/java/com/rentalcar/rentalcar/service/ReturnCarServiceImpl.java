@@ -155,8 +155,8 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
         if (totalPrice.compareTo(deposit) > 0) {
             // Kiểm tra ví người dùng
-            if (totalPrice.compareTo(myWallet) > 0) {
-                return -1; // Tiền trong ví không đủ
+            if ((totalPrice.subtract(deposit)).compareTo(myWallet) > 0) {
+                return -1;
             } else {
                 // Nếu ví người dùng đủ tiền, trừ tiền vào ví của khách hàng và chuyển cho chủ xe
                 BigDecimal updatedUserWallet = myWallet.subtract(totalPrice.subtract(deposit));
@@ -179,7 +179,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                     if (booking.getUser().getId().equals(user.getId()) &&
                             booking.getBookingStatus().getBookingStatusId() == 3) {
 
-                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(4L);
+                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(5L);
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking

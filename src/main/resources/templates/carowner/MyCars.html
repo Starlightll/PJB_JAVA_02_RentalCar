@@ -209,255 +209,294 @@
 
     <section class="ftco-section p-0" style="min-height: 500px !important;">
         <form>
-        <div class="container row d-flex m-auto justify-content-between">
-            <button id="addCarBtn" class="btn btn-primary btn-lg m-4 ">Add car</button>
-            <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
-                <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
-                    <option value="newestToLatest" th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to Latest</option>
-                    <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">Latest to Newest</option>
-<!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
-<!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
-                    <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price: Low to High</option>
-                    <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price: High to Low</option>
-                </select>
-            </div>
-            <!-- Modal -->
-            <div class="modal fade" id="hasDraftModal" tabindex="-1" role="dialog"
-                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="hasDraftModalTitle">No Title</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body" id="hasDraftModalBody">
-                            ...
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-secondary" id="carContinues">Yes</button>
-                            <button type="button" class="btn btn-secondary" id="carAddNew">No</button>
-                        </div>
-                    </div>
+            <div class="container row d-flex m-auto justify-content-between">
+                <button id="addCarBtn" class="btn btn-primary btn-lg m-4 ">Add car</button>
+                <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
+                    <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
+                        <option value="newestToLatest"
+                                th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to
+                            Latest
+                        </option>
+                        <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
+                            Latest to Newest
+                        </option>
+                        <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
+                        <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
+                        <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price:
+                            Low to High
+                        </option>
+                        <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price:
+                            High to Low
+                        </option>
+                    </select>
                 </div>
-            </div>
-
-
-        </div>
-
-        <div class="container pb-5">
-<!--            <div style="display: flex; justify-content: end;">-->
-<!--                <a class="sort-asc"><i class="fa fa-sort-amount-desc" aria-hidden="true"></i></a>-->
-<!--            </div>-->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="table-wrap">
-                        <div class="d-flex justify-content-center">
-                            <div class="card align-items-start display-flex-center"
-                                 style="">
-                                <div class="card-body text-left w-100">
-                                    <h5 class="card-title"></h5>
-                                    <div th:if="${message}">
-                                        <p th:text="${message}"></p>
-                                    </div>
-                                    <div class="row d-flex justify-content-center" th:if="${carList != null}">
-
-                                        <th:block th:each="car, iterStat: ${carList}">
-                                            <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e" data-aos="fade-up">
-                                                <div class="col-lg-6 col-md-6 d-flex align-items-center">
-                                                    <div class="wrapper" style="max-height: 270px">
-                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                               th:id="'one-' + ${iterStat.index}" checked>
-                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                               th:id="'two-' + ${iterStat.index}">
-                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                               th:id="'three-' + ${iterStat.index}">
-                                                        <input type="radio" th:name="'slide-'+ ${iterStat.index}"
-                                                               th:id="'four-' + ${iterStat.index}">
-                                                        <div class="img img-1">
-                                                            <img th:src="'/'+${car.getFrontImage()}"
-                                                                 style="background: #1a1a1a" alt="">
-                                                        </div>
-                                                        <div class="img img-2">
-                                                            <img th:src="'/'+${car.getBackImage()}"
-                                                                 style="background: #1a1a1a" alt="">
-                                                        </div>
-                                                        <div class="img img-3">
-                                                            <img th:src="'/'+${car.getLeftImage()}"
-                                                                 style="background: #1a1a1a" alt="">
-                                                        </div>
-                                                        <div class="img img-4">
-                                                            <img th:src="'/'+${car.getRightImage()}"
-                                                                 style="background: #1a1a1a" alt="">
-                                                        </div>
-                                                        <div class="sliders">
-                                                            <label th:for="'one-' + ${iterStat.index}"
-                                                                   th:id="'label-one-' + ${iterStat.index}"
-                                                                   class="one"></label>
-                                                            <label th:for="'two-' + ${iterStat.index}"
-                                                                   th:id="'label-two-' + ${iterStat.index}"
-                                                                   class="two"></label>
-                                                            <label th:for="'three-' + ${iterStat.index}"
-                                                                   th:id="'label-three-' + ${iterStat.index}"
-                                                                   class="three"></label>
-                                                            <label th:for="'four-' + ${iterStat.index}"
-                                                                   th:id="'label-four-' + ${iterStat.index}"
-                                                                   class="four"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
-                                                    <div class="row justify-content-center align-items-center align-content-center">
-                                                        <h4 class="col-lg-12 col-md-12 col-sm-12 text-center" style="" th:text="${car.getCarName() == null ? 'NULL' :car.getCarName()}" data-aos="zoom-out-up">No Name</h4>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Ratings: </p>
-                                                            <div class="rating">
-                                                                <div class="star"
-                                                                     th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="100"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="200"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="300"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="400"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="500"></i>
-                                                                </div>
-                                                                <div class="star-base">
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="100"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="200"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="300"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="400"></i>
-                                                                    <i class="fa fa-star" data-aos="zoom-in" data-aos-delay="500"></i>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                No. of rides: </p>
-                                                            <p>0</p>
-                                                        </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Price: </p>
-                                                            <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
-                                                               id="previewPrice" >0k/Day</p>
-                                                        </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Location: </p>
-                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="previewLocation"
-                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${car.getAddress().getProvince()}" >No</p>
-                                                        </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Status: </p>
-                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 8}">
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #ff9100">Verifying</p>
-                                                            </th:block>
-                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 1}">
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #00d79d">Available</p>
-                                                            </th:block>
-                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 2}">
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #0080ff">Booked</p>
-                                                            </th:block>
-                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 3}">
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #ff0000" >Stopped</p>
-                                                            </th:block>
-                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 4}">
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #303030">Deleted</p>
-                                                            </th:block>
-                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 11}">
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #008cf4">Pending payment</p>
-                                                            </th:block>
-                                                            <th:block th:if="${car.getCarStatus().getStatusId() == 14}">
-                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                   style="color: #008cf4">Pending deposit</p>
-                                                            </th:block>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
-                                                    <a th:href="'/car-owner/edit-car/' + ${car.getCarId()}"
-                                                       class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
-                                                        Details</a>
-                                                    <a th:href="'#'" th:if="${car.getCarStatus().getStatusId() == 14}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
-                                                        Deposit</a>
-                                                    <a th:href="'#'" th:if="${car.getCarStatus().getStatusId() == 11}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
-                                                        Payment</a>
-                                                </div>
-                                            </div>
-                                        </th:block>
-                                    </div>
-
-
-                                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="hasDraftModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="hasDraftModalTitle">No Title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="hasDraftModalBody">
+                                ...
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" id="carContinues">Yes</button>
+                                <button type="button" class="btn btn-secondary" id="carAddNew">No</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <nav th:if="${carList != null}" class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center" aria-label="Page navigation example" style="column-gap: 10px">
-                    <ul class="pagination m-0">
-                        <!-- Previous button - note currentPage is already 1-based -->
-                        <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
-                            <a class="page-link"
-                               th:href="@{/car-owner/my-cars(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                               th:classappend="${currentPage <= 1} ? 'disabled'"
-                               aria-label="Previous">
-                                <span aria-hidden="true">Previous</span>
-                            </a>
-                        </li>
 
-                        <!-- Page numbers -->
-                        <li class="page-item"
-                            th:each="i : ${#numbers.sequence(1, totalPages)}"
-                            th:classappend="${i == currentPage} ? 'active'">
-                            <a class="page-link"
-                               th:href="@{/car-owner/my-cars(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                               th:text="${i}"></a>
-                        </li>
 
-                        <!-- Next button -->
-                        <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
-                            <a class="page-link"
-                               th:href="@{/car-owner/my-cars(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                               th:classappend="${currentPage >= totalPages} ? 'disabled'"
-                               aria-label="Next">
-                                <span aria-hidden="true">Next</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="input-group input-group-sm" style="width: 100px">
-                        <div class="input-group-prepend" style="max-height: 31px">
-                            <label class="input-group-text"
-                                   for="pageSize">Size</label>
-                        </div>
-                        <select class="custom-select" id="pageSize" name="size" onchange="navigateToFilteredCars()">
-                            <option value="5" th:selected="${size == null || size == 5}">5</option>
-                            <option value="10" th:selected="${size == 10}">10</option>
-                            <option value="15" th:selected="${size == 15}">15</option>
-                            <option value="20" th:selected="${size == 20}">20</option>
-                            <option value="30" th:selected="${size == 30}">30</option>
-                        </select>
-                    </div>
-                </nav>
             </div>
-        </div>
+
+            <div class="container pb-5">
+                <!--            <div style="display: flex; justify-content: end;">-->
+                <!--                <a class="sort-asc"><i class="fa fa-sort-amount-desc" aria-hidden="true"></i></a>-->
+                <!--            </div>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-wrap">
+                            <div class="d-flex justify-content-center">
+                                <div class="card align-items-start display-flex-center"
+                                     style="">
+                                    <div class="card-body text-left w-100">
+                                        <h5 class="card-title"></h5>
+                                        <div th:if="${message}">
+                                            <p th:text="${message}"></p>
+                                        </div>
+                                        <div class="row d-flex justify-content-center" th:if="${carList != null}">
+
+                                            <th:block th:each="car, iterStat: ${carList}">
+                                                <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e"
+                                                     data-aos="fade-up">
+                                                    <div class="col-lg-6 col-md-6 d-flex align-items-center">
+                                                        <div class="wrapper" style="max-height: 270px">
+                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                                   th:id="'one-' + ${iterStat.index}" checked>
+                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                                   th:id="'two-' + ${iterStat.index}">
+                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                                   th:id="'three-' + ${iterStat.index}">
+                                                            <input type="radio" th:name="'slide-'+ ${iterStat.index}"
+                                                                   th:id="'four-' + ${iterStat.index}">
+                                                            <div class="img img-1">
+                                                                <img th:src="'/'+${car.getFrontImage()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="img img-2">
+                                                                <img th:src="'/'+${car.getBackImage()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="img img-3">
+                                                                <img th:src="'/'+${car.getLeftImage()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="img img-4">
+                                                                <img th:src="'/'+${car.getRightImage()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="sliders">
+                                                                <label th:for="'one-' + ${iterStat.index}"
+                                                                       th:id="'label-one-' + ${iterStat.index}"
+                                                                       class="one"></label>
+                                                                <label th:for="'two-' + ${iterStat.index}"
+                                                                       th:id="'label-two-' + ${iterStat.index}"
+                                                                       class="two"></label>
+                                                                <label th:for="'three-' + ${iterStat.index}"
+                                                                       th:id="'label-three-' + ${iterStat.index}"
+                                                                       class="three"></label>
+                                                                <label th:for="'four-' + ${iterStat.index}"
+                                                                       th:id="'label-four-' + ${iterStat.index}"
+                                                                       class="four"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                        <div class="row justify-content-center align-items-center align-content-center">
+                                                            <h4 class="col-lg-12 col-md-12 col-sm-12 text-center"
+                                                                style=""
+                                                                th:text="${car.getCarName() == null ? 'NULL' :car.getCarName()}"
+                                                                data-aos="zoom-out-up">No Name</h4>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Ratings: </p>
+                                                                <div class="rating">
+                                                                    <div class="star"
+                                                                         th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="100"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="200"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="300"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="400"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="500"></i>
+                                                                    </div>
+                                                                    <div class="star-base">
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="100"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="200"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="300"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="400"></i>
+                                                                        <i class="fa fa-star" data-aos="zoom-in"
+                                                                           data-aos-delay="500"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    No. of rides: </p>
+                                                                <p>0</p>
+                                                            </div>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Price: </p>
+                                                                <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                                   id="previewPrice">0k/Day</p>
+                                                            </div>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Location: </p>
+                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                   id="previewLocation"
+                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                   th:text="${car.getAddress().getProvince()}">No</p>
+                                                            </div>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Status: </p>
+                                                                <th:block
+                                                                        th:if="${car.getCarStatus().getStatusId() == 8}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #ff9100">Verifying</p>
+                                                                </th:block>
+                                                                <th:block
+                                                                        th:if="${car.getCarStatus().getStatusId() == 1}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #00d79d">Available</p>
+                                                                </th:block>
+                                                                <th:block
+                                                                        th:if="${car.getCarStatus().getStatusId() == 2}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #0080ff">Booked</p>
+                                                                </th:block>
+                                                                <th:block
+                                                                        th:if="${car.getCarStatus().getStatusId() == 3}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #ff0000">Stopped</p>
+                                                                </th:block>
+                                                                <th:block
+                                                                        th:if="${car.getCarStatus().getStatusId() == 4}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #303030">Deleted</p>
+                                                                </th:block>
+                                                                <th:block
+                                                                        th:if="${car.getCarStatus().getStatusId() == 11}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #008cf4">Pending payment</p>
+                                                                </th:block>
+                                                                <th:block
+                                                                        th:if="${car.getCarStatus().getStatusId() == 14}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #008cf4">Pending deposit</p>
+                                                                </th:block>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+                                                        <a th:href="'/car-owner/edit-car/' + ${car.getCarId()}"
+                                                           class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
+                                                            Details</a>
+                                                        <a th:href="'#'"
+                                                           th:if="${car.getCarStatus().getStatusId() == 14}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
+                                                           th:attr="data-car-id=${car.getCarId()}"
+                                                           style="background: #da1b1b !important;">
+                                                            Confirm Deposit</a>
+                                                        <a th:href="'#'"
+                                                           th:if="${car.getCarStatus().getStatusId() == 11}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'checkPayment(' + ${car.getCarId()} + ')'"
+                                                           style="background: #da1b1b !important;">
+                                                            Confirm Payment</a>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <nav th:if="${carList != null}"
+                         class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
+                         aria-label="Page navigation example" style="column-gap: 10px">
+                        <ul class="pagination m-0">
+                            <!-- Previous button - note currentPage is already 1-based -->
+                            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/car-owner/my-cars(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:classappend="${currentPage <= 1} ? 'disabled'"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">Previous</span>
+                                </a>
+                            </li>
+
+                            <!-- Page numbers -->
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/car-owner/my-cars(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:text="${i}"></a>
+                            </li>
+
+                            <!-- Next button -->
+                            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/car-owner/my-cars(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:classappend="${currentPage >= totalPages} ? 'disabled'"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="input-group input-group-sm" style="width: 100px">
+                            <div class="input-group-prepend" style="max-height: 31px">
+                                <label class="input-group-text"
+                                       for="pageSize">Size</label>
+                            </div>
+                            <select class="custom-select" id="pageSize" name="size" onchange="navigateToFilteredCars()">
+                                <option value="5" th:selected="${size == null || size == 5}">5</option>
+                                <option value="10" th:selected="${size == 10}">10</option>
+                                <option value="15" th:selected="${size == 15}">15</option>
+                                <option value="20" th:selected="${size == 20}">20</option>
+                                <option value="30" th:selected="${size == 30}">30</option>
+                            </select>
+                        </div>
+                    </nav>
+                </div>
+            </div>
         </form>
     </section>
 
@@ -480,6 +519,139 @@
 
             window.location.href = '/car-owner/my-cars?sortBy=' + sortBy + '&size=' + pageSize;
         }
+
+        //confirm deposit btn
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+
+            const confirmDepositBtns = document.querySelectorAll('[id^="confirm-deposit-btn-"]');
+            confirmDepositBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Lấy carId từ data-car-id
+                    const carId = this.getAttribute('data-car-id');
+
+                    Swal.fire({
+                        title: 'Please confirm that you have received the deposit for this booking.',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the deposit for car with ID:', carId);
+                            window.location.href = `/car-owner/confirm-deposit-mycar?carId=${carId}`;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
+
+        // confirm payment btn
+        function checkPayment(carId) {
+            console.log("checkPayment called with carId:", carId); // Kiểm tra xem hàm có được gọi không
+
+            $.ajax({
+                url: '/car-owner/check-payment',
+                type: 'get',
+                data: {carId: carId},
+                success: function (response) {
+                    console.log("Check payment successfully", response);
+
+                    Swal.fire({
+                        title: 'Confirm Payment!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        console.log("Swal result:", result);
+                        if (result.isConfirmed) {
+                            confirmReturnCar(carId);
+                            console.log("Calling confirmReturnCar with carId:", carId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error confirm payment", error);
+                    let errorMessage;
+                    try {
+                        const errorResponse = JSON.parse(error.responseText);
+                        errorMessage = errorResponse.message || 'An error occurred.';
+                    } catch (e) {
+                        errorMessage = 'An unexpected error occurred.';
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        function confirmReturnCar(carId) {
+            const sortBy = document.getElementById('sortBy').value;
+            const pageSize = document.getElementById('pageSize').value;
+            console.log(carId);
+            $.ajax({
+                    url: '/car-owner/confirm-payment-car',
+                    type: 'get',
+                    data: {carId: carId},
+                    success: function (response) {
+                        console.log("Confirm payment car response", response);
+
+                        if (response.status === 'success1') {
+                            Swal.fire({
+                                title: 'Booking Successfully Completed.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-cars?sortBy=' + sortBy + '&size=' + pageSize;
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-car?sortBy=' + sortBy + '&size=' + pageSize;
+                            });
+                        }
+                    },
+                    error:
+
+                        function (error) {
+                            console.log("Error confirming return payment", error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-car?sortBy=' + sortBy + '&size=' + pageSize;
+                            });
+                        }
+                }
+            )
+            ;
+        }
+
 
         $(document).ready(function () {
             $('#addCarBtn').click(function (event) {
