@@ -120,7 +120,7 @@ public class MyProfileController {
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "Filename is too long. Please rename the file.");
 
                 }
-                else if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+                else if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$") && !fileName.isEmpty()) {
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "Invalid file extension. Only JPG, PNG, and GIF are allowed.");
 
                 }else {
