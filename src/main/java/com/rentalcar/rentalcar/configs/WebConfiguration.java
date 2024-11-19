@@ -52,14 +52,9 @@ public class WebConfiguration {
                         .requestMatchers("/", "/homepage-guest", "/error/**", "/faq", "/contacts", "/privacy").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**", "/assets/**").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
-
-                        // Dành riêng cho Admin - cho phép truy cập vào tất cả các endpoint
-                        .requestMatchers("/**").hasAuthority("Admin")
-
-                        // Các URL yêu cầu xác thực cho Customer và Car Owner
-                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
-                        .requestMatchers("/homepage-customer").hasAuthority("Customer")
-                        .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
+                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner", "Admin")
+                        .requestMatchers("/homepage-customer").hasAnyAuthority("Customer", "Admin")
+                        .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAnyAuthority("Car Owner", "Admin")
                         .requestMatchers("/admin/**").hasAuthority("Admin")
 
                         // Mọi yêu cầu khác đều yêu cầu xác thực
