@@ -7,4 +7,6 @@ public interface ReturnCarService {
     Double calculateTotalPrice(Long bookingId);
     int confirmReturnCar(Long bookingId, HttpSession session);
     boolean updateBookingPendingPayment(Long bookingId, HttpSession session);
+    Double calculateTotalPriceForActualEnddateCarOwner(Long bookingId);
+
 }
