@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/cars-layout}"
+>
+<head>
+    <title>My Cars</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <!-- Google Fonts Css-->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <!-- SlickNav Css -->
+    <link href="/cars/css/slicknav.min.css" rel="stylesheet">
+    <!-- Swiper Css -->
+    <link rel="stylesheet" href="/cars/css/swiper-bundle.min.css">
+    <!-- Animated Css -->
+    <link href="/cars/css/animate.css" rel="stylesheet">
+    <!-- Magnific Popup Core Css File -->
+    <link rel="stylesheet" href="/cars/css/magnific-popup.css">
+    <!-- Mouse Cursor Css File -->
+    <link rel="stylesheet" href="/cars/css/mousecursor.css">
+    <!-- Font Awesome Icon Css-->
+    <link href="/cars/css/all.css" rel="stylesheet" media="screen">
+    <!-- Main Custom Css -->
+    <link href="/cars/css/custom.css" rel="stylesheet" media="screen">
+    <style>
+        .hero-wrap {
+            height: 200px !important;
+            position: relative;
+            background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 200px !important;
+        }
+
+        .slider-text {
+            height: 200px !important;
+        }
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body>
+
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span>MY CARS <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-3 bread">My Cars!</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Fleets Start -->
+    <div class="page-fleets">
+        <div class="container" style="max-width: 1300px;">
+            <div class="row">
+                <div class="col-lg-3">
+                    <!-- Fleets Sidebar Start -->
+                    <div class="fleets-sidebar wow fadeInUp">
+                        <!-- Fleets Search Box Start -->
+                        <div class="fleets-search-box">
+                            <form id="fleetsForm" action="#" method="POST">
+                                <div class="form-group">
+                                    <input type="text" name="search" class="form-control"  id="search" placeholder="Search..." required>
+                                    <button type="submit" class="section-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Fleets Search Box End -->
+
+                        <div class="fleets-sidebar-list-box">
+                            <!-- Fleets Sidebar List Start -->
+                            <div class="fleets-sidebar-list">
+                                <div class="fleets-list-title">
+                                    <h3>Brands</h3>
+                                </div>
+
+                                <ul>
+                                    <li>
+                                        <p>Waiting for update</p>
+                                    </li>
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox1">-->
+<!--                                        <label class="form-check-label" for="checkbox1">sport cars</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox2">-->
+<!--                                        <label class="form-check-label" for="checkbox2">electric car</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox3">-->
+<!--                                        <label class="form-check-label" for="checkbox3">Convertible</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox4">-->
+<!--                                        <label class="form-check-label" for="checkbox4">luxury cars</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox5">-->
+<!--                                        <label class="form-check-label" for="checkbox5">sedan</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox6">-->
+<!--                                        <label class="form-check-label" for="checkbox6">coupe cars</label>-->
+<!--                                    </li>-->
+                                </ul>
+                            </div>
+                            <!-- Fleets Sidebar List End -->
+
+                            <!-- Fleets Sidebar List Start -->
+                            <div class="fleets-sidebar-list">
+                                <div class="fleets-list-title">
+                                    <h3>Additional Functions</h3>
+                                </div>
+
+                                <ul>
+                                    <li>
+                                        <p>Waiting for update</p>
+                                    </li>
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox7">-->
+<!--                                        <label class="form-check-label" for="checkbox7">abu dhabi</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox8">-->
+<!--                                        <label class="form-check-label" for="checkbox8">alain</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox9">-->
+<!--                                        <label class="form-check-label" for="checkbox9">dubai</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox10">-->
+<!--                                        <label class="form-check-label" for="checkbox10">sharjah</label>-->
+<!--                                    </li>-->
+                                </ul>
+                            </div>
+                            <!-- Fleets Sidebar List End -->
+
+                            <!-- Fleets Sidebar List Start -->
+                            <div class="fleets-sidebar-list">
+                                <div class="fleets-list-title">
+                                    <h3>Price</h3>
+                                </div>
+
+                                <ul>
+                                    <li>
+                                        <p>Waiting for update</p>
+                                    </li>
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox11">-->
+<!--                                        <label class="form-check-label" for="checkbox11">abu dhabi</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox12">-->
+<!--                                        <label class="form-check-label" for="checkbox12">alain</label>-->
+<!--                                    </li>-->
+
+<!--                                    <li class="form-check">-->
+<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox13">-->
+<!--                                        <label class="form-check-label" for="checkbox13">dubai</label>-->
+<!--                                    </li>-->
+                                </ul>
+                            </div>
+                            <!-- Fleets Sidebar List End -->
+                        </div>
+                    </div>
+                    <!-- Fleets Sidebar End -->
+                </div>
+
+                <div class="col-lg-9">
+                    <!-- Fleets Collection Box Start -->
+                    <div class="fleets-collection-box">
+                        <div class="row">
+                            <div th:if="${cars == null}" style="margin: auto">
+                                <h1 data-cursor="-opaque">No car found!</h1>
+                            </div>
+                            <th:block th:each="car, iterStat: ${cars}">
+                            <div class="col-lg-4 col-md-6">
+                                <!-- Perfect Fleets Item Start -->
+                                <div class="perfect-fleet-item fleets-collection-item wow fadeInUp" style="display: flex; flex-direction: column">
+                                    <!-- Image Box Start -->
+                                    <div class="image-box" style="	border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
+                                        <img th:src="${car.getFrontImage()}" onerror="this.onerror=null;this.src='/images/no-image-available.png';"  style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;" alt="">
+                                    </div>
+                                    <!-- Image Box End -->
+
+                                    <!-- Perfect Fleets Content Start -->
+                                    <div class="perfect-fleet-content">
+                                        <!-- Perfect Fleets Title Start -->
+                                        <div class="perfect-fleet-title">
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 1}" th:text="${car.getCarStatus().getName()}" style="color: #2c8b00; background-color: #e2ffde">Undefined</h3>
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 2}" th:text="${car.getCarStatus().getName()}" style="color: #ff0000; background-color: #ffeded">Undefined</h3>
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 3}" th:text="${car.getCarStatus().getName()}" style="color: #ff8c00; background-color: #ffedde">Undefined</h3>
+                                            <h2 th:text="${car.getCarName()}">Undefined</h2>
+                                        </div>
+                                        <!-- Perfect Fleets Content End -->
+
+                                        <!-- Perfect Fleets Body Start -->
+                                        <div class="perfect-fleet-body">
+                                            <ul>
+                                                <li><i class="fa fa-user"></i><p th:text="${car.getSeat()+' passenger'}" class="m-0"></p></li>
+                                                <li><i class="fa fa-sliders"></i><p th:text="${car.getTransmission()}" class="m-0"></p></li>
+                                                <li><i class="fa fa-gas-pump"></i><p th:text="${car.getFuelType()}" class="m-0"></p></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Perfect Fleets Body End -->
+
+                                        <!-- Perfect Fleets Footer End -->
+                                    </div>
+                                    <!-- Perfect Fleets Footer Start -->
+                                    <div class="perfect-fleet-footer">
+                                        <!-- Perfect Fleets Pricing Start -->
+                                        <div class="perfect-fleet-pricing d-flex">
+                                            <h2 data-cursor="-opaque" class="basePrice" th:text="${car.getBasePrice()}"></h2><span style="font-size: 14px;font-weight: 400; align-self: center">/day</span>
+                                        </div>
+                                        <!-- Perfect Fleets Pricing End -->
+
+                                        <!-- Perfect Fleets Btn Start -->
+                                        <div class="perfect-fleet-btn">
+                                            <a href="#" class="section-icon-btn"><img src="images/arrow-white.svg" alt=""></a>
+                                        </div>
+                                        <!-- Perfect Fleets Btn End -->
+                                    </div>
+                                    <!-- Perfect Fleets Content End -->
+                                </div>
+                                <!-- Perfect Fleets Item End -->
+                            </div>
+                            </th:block>
+                            <div class="col-lg-12">
+                                <!-- Fleets Pagination Start -->
+                                <div class="fleets-pagination wow fadeInUp" data-wow-delay="0.5s">
+                                    <ul class="pagination">
+                                        <li><a href="#"><i class="fa-solid fa-arrow-left-long"></i></a></li>
+                                        <li class="active"><a href="#">1</a></li>
+                                        <li><a href="#">2</a></li>
+                                        <li><a href="#">3</a></li>
+                                        <li><a href="#"><i class="fa-solid fa-arrow-right-long"></i></a></li>
+                                    </ul>
+                                </div>
+                                <!-- Fleets Pagination End -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fleets Collection Box End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Fleets End -->
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen">
+        <svg class="circular" width="48px" height="48px">
+            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+                    stroke="#F96D00"/>
+        </svg>
+    </div>
+
+    <!-- Jquery Library File -->
+    <script src="/cars/js/jquery-3.7.1.min.js"></script>
+    <!-- Jquery Ui Js File -->
+    <script src="/cars/js/jquery-ui.js"></script>
+    <!-- Bootstrap js file -->
+    <script src="/cars/js/bootstrap.min.js"></script>
+    <!-- Validator js file -->
+    <script src="/cars/js/validator.min.js"></script>
+    <!-- SlickNav js file -->
+    <script src="/cars/js/jquery.slicknav.js"></script>
+    <!-- Swiper js file -->
+    <script src="/cars/js/swiper-bundle.min.js"></script>
+    <!-- Counter js file -->
+    <script src="/cars/js/jquery.waypoints.min.js"></script>
+    <script src="/cars/js/jquery.counterup.min.js"></script>
+    <!-- Magnific js file -->
+    <script src="/cars/js/jquery.magnific-popup.min.js"></script>
+    <!-- SmoothScroll -->
+    <script src="/cars/js/SmoothScroll.js"></script>
+    <!-- Parallax js -->
+    <script src="/cars/js/parallaxie.js"></script>
+    <!-- MagicCursor js file -->
+    <script src="/cars/js/gsap.min.js"></script>
+    <script src="/cars/js/magiccursor.js"></script>
+    <!-- Text Effect js file -->
+    <script src="/cars/js/SplitText.js"></script>
+    <script src="/cars/js/ScrollTrigger.min.js"></script>
+    <!-- YTPlayer js File -->
+    <script src="/cars/js/jquery.mb.YTPlayer.min.js"></script>
+    <!-- Wow js file -->
+    <script src="/cars/js/wow.js"></script>
+    <!-- Main Custom js file -->
+    <script src="/cars/js/function.js"></script>
+    <script defer>
+        const priceElements = document.querySelectorAll('.basePrice');
+
+        priceElements.forEach(priceElement => {
+            const price = parseFloat(priceElement.textContent);
+            priceElement.textContent = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        });
+
+    </script>
+    </body>
+</th:block>
+</body>
+</html>

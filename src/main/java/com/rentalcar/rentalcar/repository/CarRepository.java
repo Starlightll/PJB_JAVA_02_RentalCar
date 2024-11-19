@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface CarRepository extends JpaRepository<Car, Integer> {
@@ -46,4 +47,6 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 
     @Query(value = "SELECT * FROM Car WHERE Car.statusId = :statusId", nativeQuery = true)
     List<Car> findAllByCarStatus(Integer statusId);
+
+    List<Car> findAllByCarStatus_StatusIdIsIn(Collection<Integer> carStatusStatusIds);
 }
