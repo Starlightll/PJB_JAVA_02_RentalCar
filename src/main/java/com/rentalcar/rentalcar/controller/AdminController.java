@@ -30,4 +30,11 @@ public class AdminController {
     public String accountSettings() {
         return "/admin/pages-account-settings-account";
     }
+
+    @GetMapping("/admin/car-verify")
+    public String carVerify(Model model) {
+        User user = new User();
+        model.addAttribute("user", user);
+        return "/admin/app-car-verify";
+    }
 }

@@ -15,4 +15,6 @@ public interface CarOwnerService {
     void updateCar(Car car, MultipartFile[] files, User user, Integer carId, Integer carStatus);
     void deleteCar(int carId);
     void addCar(CarDraft carDraft, User user);
+    List<Car> getCarsByStatus(Integer statusId);
+    void setCarStatus(Integer carId, Integer statusId);
 }

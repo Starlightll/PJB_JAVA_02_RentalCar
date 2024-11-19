@@ -179,6 +179,25 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         }
     }
 
+    @Override
+    public List<Car> getCarsByStatus(Integer statusId) {
+        return carRepository.findAllByCarStatus(statusId);
+    }
+
+    @Override
+    public void setCarStatus(Integer carId, Integer statusId) {
+        try{
+            Car car = carRepository.getCarByCarId(carId);
+            CarStatus carStatus = new CarStatus();
+            carStatus.setStatusId(statusId);
+            car.setCarStatus(carStatus);
+            carRepository.save(car);
+        }catch (Exception e){
+            System.out.println("Something wrong when set car status in car owner service" + e.getMessage());
+            throw new RuntimeException("Something wrong when set car status in car owner service");
+        }
+    }
+
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
