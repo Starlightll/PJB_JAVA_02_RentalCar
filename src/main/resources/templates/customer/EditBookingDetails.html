@@ -369,7 +369,7 @@
 
                         <th:block th:if="${navigate == 'mybookings'}">
                             <span class="mr-2">
-                                <a href="/my-bookings">MY BOOKINGS <i
+                                <a href="/customer/my-bookings">MY BOOKINGS <i
                                 class="ion-ios-arrow-forward"></i></a>
                             </span>
                         </th:block>
@@ -1295,7 +1295,7 @@ z
                             confirmButtonText: 'OK'
                         }).then(() => {
 
-                            let url = '/homepage-customer/booking-detail?bookingId=' + bookingId +
+                            let url = '/customer/booking-detail?bookingId=' + bookingId +
                                 '&carId=' + carId +
                                 '&navigate=' + navigate;
                                 url += '&triggerPopup=true';
@@ -1311,7 +1311,7 @@ z
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
                         });
                     } else {
                         Swal.fire({
@@ -1320,7 +1320,7 @@ z
                             icon: 'error',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
                         });
                     }
                 },
@@ -1332,7 +1332,7 @@ z
                         icon: 'error',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
                     });
                 }
             });

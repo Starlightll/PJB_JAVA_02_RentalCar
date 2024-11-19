@@ -53,7 +53,7 @@ public class WebConfiguration {
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**", "/assets/**").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
                         .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner", "Admin")
-                        .requestMatchers("/homepage-customer").hasAnyAuthority("Customer", "Admin")
+                        .requestMatchers("/homepage-customer, /customer/**").hasAnyAuthority("Customer", "Admin")
                         .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAnyAuthority("Car Owner", "Admin")
                         .requestMatchers("/admin/**").hasAuthority("Admin")
 

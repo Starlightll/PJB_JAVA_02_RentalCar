@@ -170,7 +170,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                 if (cancelledStatusOptional.isPresent()) {
                     BookingStatus cancelledStatus = cancelledStatusOptional.get();
                     booking.setBookingStatus(cancelledStatus); // Update the status of the booking
-
+                    booking.setLastModified(new Date());
                     // Save the updated booking
                     rentalCarRepository.save(booking);
                     System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
@@ -221,7 +221,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                 if (cancelledStatusOptional.isPresent()) {
                     BookingStatus cancelledStatus = cancelledStatusOptional.get();
                     booking.setBookingStatus(cancelledStatus); // Update the status of the booking
-
+                    booking.setLastModified(new Date());
                     // Save the updated booking
                     rentalCarRepository.save(booking);
                     System.out.println("Booking with ID " + bookingId + " has been update to In-Progress.");

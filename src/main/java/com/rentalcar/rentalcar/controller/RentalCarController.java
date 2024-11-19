@@ -55,7 +55,7 @@ public class RentalCarController {
     @Autowired
     private CarRepository carRepository;
 
-    @GetMapping("/my-bookings")
+    @GetMapping("/customer/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "5") int size,
                             @RequestParam(defaultValue = "lastModified") String sortBy,

@@ -62,7 +62,7 @@ public class BookingDetailsController {
     RatingStarRepository ratingStarRepo;
 
 
-    @GetMapping("/homepage-customer/booking-detail")
+    @GetMapping("/customer/booking-detail")
     public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");

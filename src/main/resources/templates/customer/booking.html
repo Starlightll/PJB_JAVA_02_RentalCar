@@ -843,7 +843,7 @@
                                 const formattedBookingNumber = bookingInfo.id;
                                 // Gán lại giá trị href của thẻ <a> với bookingId mới
                                 const viewBookingLink = document.querySelector('a.btn-secondary.btn');
-                                viewBookingLink.href = `/homepage-customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&navigate=home`;
+                                viewBookingLink.href = `/customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&navigate=home`;
                                 console.log("Updated booking link:", viewBookingLink.href);
 
                                 // Cập nhật từng phần tử cụ thể
