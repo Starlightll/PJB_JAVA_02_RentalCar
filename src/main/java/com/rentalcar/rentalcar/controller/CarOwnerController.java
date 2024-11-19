@@ -91,30 +91,30 @@ public class CarOwnerController {
         }
         Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(sorDirection, sortBy);
-        Pageable pageable = PageRequest.of(page-1, size, sort);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
         Page<Car> carPage;
-        if(findByStatus){
+        if (findByStatus) {
             int statusId = 0;
-            if(sortBy.equalsIgnoreCase("available")){
+            if (sortBy.equalsIgnoreCase("available")) {
                 statusId = 1;
-            }else{
+            } else {
                 statusId = 2;
             }
-            pageable = PageRequest.of(page-1, size);
+            pageable = PageRequest.of(page - 1, size);
             carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
-        }else{
+        } else {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
-        if(cars.isEmpty()){
+        if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
-        }else{
+        } else {
             model.addAttribute("carList", cars);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", carPage.getTotalPages());
             model.addAttribute("sortBy", sortBy);
             model.addAttribute("order", order);
-                model.addAttribute("size", size);
+            model.addAttribute("size", size);
         }
         return "/carowner/MyCars";
     }
@@ -152,10 +152,10 @@ public class CarOwnerController {
     @GetMapping("edit-car/{carId}")
     public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
-        if(car == null){
+        if (car == null) {
             return "redirect:/car-owner/my-cars";
-        }else{
-            if(!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())){
+        } else {
+            if (!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())) {
                 throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
             model.addAttribute("brands", brandRepository.findAll());
@@ -184,9 +184,9 @@ public class CarOwnerController {
             model.addAttribute("carStatuses", carStatus);
 
             List<Integer> bookingStatus = carRepository.findBookingStatusIdByCarId(carId);
-            if(bookingStatus.contains(1)) {
+            if (bookingStatus.contains(1)) {
                 model.addAttribute("bookingStatus", 1);
-            } else if(bookingStatus.contains(4)) {
+            } else if (bookingStatus.contains(4)) {
                 model.addAttribute("bookingStatus", 4);
             } else {
                 model.addAttribute("bookingStatus", 0);
@@ -205,10 +205,10 @@ public class CarOwnerController {
         if (carDraft == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Draft not found");
         }
-        try{
+        try {
             carOwnerService.addCar(carDraft, user);
             return ResponseEntity.ok("Car saved successfully");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Can't saving car");
         }
     }
@@ -229,7 +229,7 @@ public class CarOwnerController {
 
         // Check if user is allowed to update this car
         Integer carStatusId = car.getCarStatus().getStatusId();
-        if(!Objects.equals(car.getUser().getId(), user.getId()) || (carStatusId != 1 && carStatusId != 3) || (car.getCarStatus().getStatusId() == 8 && user.getRoles().get(0).getId() != 1)){
+        if (!Objects.equals(car.getUser().getId(), user.getId()) || (carStatusId != 1 && carStatusId != 3) || (car.getCarStatus().getStatusId() == 8 && user.getRoles().get(0).getId() != 1)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not allowed to update this car");
         }
 
@@ -258,7 +258,7 @@ public class CarOwnerController {
             }
             Double deposit = carDraft.getDeposit();
             matcher = pattern.matcher(formattedDeposit);
-            if (deposit < 0  || !matcher.matches()) {
+            if (deposit < 0 || !matcher.matches()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid deposit");
             }
             Double mileage = carDraft.getMileage();
@@ -295,20 +295,90 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-deposit")
     public String confirmDeposit(@RequestParam("carId") Long carId,
-                                HttpSession session,
-                                Model model) {
+                                 HttpSession session,
+                                 Model model) {
         boolean isConfirmDeposit = rentalCarService.confirmDepositCar(carId, session);
         if (isConfirmDeposit) {
             model.addAttribute("message_" + carId, "The Car deposit has been confirmed.");
         } else {
             model.addAttribute("error", "Unable to confirm deposit the booking. Please try again!!");
         }
-        return editCar(carId.intValue(),model,session);
+        return editCar(carId.intValue(), model, session);
+    }
+
+    @GetMapping("/confirm-deposit-mycar")
+    public String confirmDepositmyCar(@RequestParam("carId") Long carId,
+                                      @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "5") int size,
+                                      @RequestParam(defaultValue = "lastModified") String sortBy,
+                                      @RequestParam(defaultValue = "desc") String order,
+                                      HttpSession session,
+                                      Model model) {
+        boolean isConfirmDeposit = rentalCarService.confirmDepositCar(carId, session);
+        if (isConfirmDeposit) {
+            model.addAttribute("message_" + carId, "The Car deposit has been confirmed.");
+        } else {
+            model.addAttribute("error", "Unable to confirm deposit the booking. Please try again!!");
+        }
+        User user = (User) session.getAttribute("user");
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+            case "available", "booked":
+                findByStatus = true;
+                break;
+            default:
+                break;
+        }
+        Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(sorDirection, sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Page<Car> carPage;
+        if (findByStatus) {
+            int statusId = 0;
+            if (sortBy.equalsIgnoreCase("available")) {
+                statusId = 1;
+            } else {
+                statusId = 2;
+            }
+            pageable = PageRequest.of(page - 1, size);
+            carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
+        } else {
+            carPage = carRepository.findAllByUser(user, pageable);
+        }
+        List<Car> cars = carPage.getContent();
+        if (cars.isEmpty()) {
+            model.addAttribute("message", "You have no cars");
+        } else {
+            model.addAttribute("carList", cars);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", carPage.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+        }
+        return "/carowner/MyCars";
+
     }
 
     @GetMapping("/check-payment")
     public ResponseEntity<?> confirmPayment(@RequestParam("carId") Long carId,
-                                       HttpSession session) {
+                                            HttpSession session) {
         Map<String, String> response = rentalCarService.checkPaymentCar(carId, session);
 
         if ("success".equals(response.get("status"))) {
@@ -320,8 +390,8 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-payment-car")
     public ResponseEntity<Map<String, Object>> confirmPaymentCar(@RequestParam("carId") Long carId,
-                                                                HttpSession session,
-                                                                Model model) {
+                                                                 HttpSession session,
+                                                                 Model model) {
         User user = (User) session.getAttribute("user");
 
         Map<String, Object> response = new HashMap<>();
@@ -333,16 +403,16 @@ public class CarOwnerController {
         int casePayment = rentalCarService.confirmPaymentCar(carId, session);
 
         // Handle response based on caseReturn value
-        if (casePayment == 1 ) {
+        if (casePayment == 1) {
             return generateResponse(response, "success1", "Booking has been successfully completed.");
         }
 
         Car car = carRepository.getCarByCarId(carId.intValue());
 
-        if(car == null){
+        if (car == null) {
 
             return generateResponse(response, "error", "Error Return!");
-        }else{
+        } else {
             model.addAttribute("car", car);
             model.addAttribute("brands", brandRepository.findAll());
             model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
@@ -369,9 +439,9 @@ public class CarOwnerController {
             model.addAttribute("carStatuses", carStatus);
 
             List<Integer> bookingStatus = carRepository.findBookingStatusIdByCarId(carId.intValue());
-            if(bookingStatus.contains(1)) {
+            if (bookingStatus.contains(1)) {
                 model.addAttribute("bookingStatus", 1);
-            } else if(bookingStatus.contains(4)) {
+            } else if (bookingStatus.contains(4)) {
                 model.addAttribute("bookingStatus", 4);
             } else {
                 model.addAttribute("bookingStatus", 0);
@@ -386,7 +456,6 @@ public class CarOwnerController {
         response.put("message", message);
         return ResponseEntity.ok(response);
     }
-
 
 
 }

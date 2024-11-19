@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Optional;
 
 import static com.rentalcar.rentalcar.common.Constants.FINE_COST;
@@ -39,6 +40,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    private TransactionService transactionService;
     @Override
     public String returnCar(Long bookingId, HttpSession session) {
 //        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
@@ -155,8 +159,8 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
         if (totalPrice.compareTo(deposit) > 0) {
             // Kiểm tra ví người dùng
-            if (totalPrice.compareTo(myWallet) > 0) {
-                return -1; // Tiền trong ví không đủ
+            if ((totalPrice.subtract(deposit)).compareTo(myWallet) > 0) {
+                return -1;
             } else {
                 // Nếu ví người dùng đủ tiền, trừ tiền vào ví của khách hàng và chuyển cho chủ xe
                 BigDecimal updatedUserWallet = myWallet.subtract(totalPrice.subtract(deposit));
@@ -171,19 +175,28 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 carOwner.setWallet(updatedCarOwnerWallet);
                 userRepository.save(carOwner);
 
+
                 // Cập nhật trạng thái booking
                 if (bookingOptional.isPresent()) {
                     Booking booking = bookingOptional.get();
+                    //======================Cộng tiền vào ví chủ xe===========================
+                    transactionService.saveTransaction(carOwner, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT, booking);
+                    //=================================================
 
+                    // ======================Trừ tiền vào ví customer===========================
+                    transactionService.saveTransaction(user, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT, booking);
+                    //=================================================
                     // Kiểm tra xem booking có phải của người dùng và đang ở trạng thái "In-Progress"
                     if (booking.getUser().getId().equals(user.getId()) &&
                             booking.getBookingStatus().getBookingStatusId() == 3) {
 
-                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(4L);
+                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(5L);
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
+                            booking.setLastModified(new Date());
                             rentalCarRepository.save(booking);
+
                             Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
                             if (carOptional.isPresent()) {
                                 Car car = carOptional.get();
@@ -229,7 +242,11 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus);
+                            LocalDateTime currentDate = LocalDateTime.now();
+
+                            booking.setActualEndDate(currentDate);
                             rentalCarRepository.save(booking);
+
 
                             if (carOptional.isPresent()) {
                                 Car car = carOptional.get();
@@ -305,5 +322,50 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         }
 
         return false;
+    }
+
+    @Override
+    public Double calculateTotalPriceForActualEnddateCarOwner(Long bookingId) {
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
+        Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
+        Object[] result = (Object[]) nestedArray[0];
+        MyBookingDto bookingDto = new MyBookingDto(
+                Long.valueOf((Integer) result[0]),
+                ((Timestamp) result[1]).toLocalDateTime(), //start date
+                ((Timestamp) result[2]).toLocalDateTime(), //end date
+                (String) result[3], // driverInfo
+                ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
+                ((BigDecimal) result[5]).doubleValue(), // total price
+                Long.valueOf((Integer) result[6]), //userId
+                (Integer) result[7], //bookingStatus
+                (Integer) result[8], //paymentMethod
+                result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
+
+                ((BigDecimal) result[10]).doubleValue(), // basePrice
+                ((BigDecimal) result[11]).doubleValue(), // deposit
+                (BigDecimal) result[12], //carowner wallet
+                Long.valueOf((Integer) result[13]),
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
+
+        );
+
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+
+
+            LocalDateTime currentDate = LocalDateTime.now();
+
+            long numberOfDaysOverdue = ChronoUnit.DAYS.between(booking.getEndDate(), booking.getActualEndDate());
+            long numberOfDaysNotOverdue = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate());
+
+            if (currentDate.isBefore(booking.getEndDate())) {
+                return booking.getTotalPrice();
+            } else {
+                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice();
+            }
+
+        }
+        return 0.0;
     }
 }
