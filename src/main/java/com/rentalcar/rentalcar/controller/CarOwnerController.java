@@ -1,7 +1,6 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.CarStatus;
@@ -13,7 +12,6 @@ import com.rentalcar.rentalcar.repository.CarStatusRepository;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import com.rentalcar.rentalcar.service.RentalCarService;
-import com.sun.jdi.LongValue;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,8 +29,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -230,7 +228,8 @@ public class CarOwnerController {
         User user = (User) session.getAttribute("user");
 
         // Check if user is allowed to update this car
-        if(!Objects.equals(car.getUser().getId(), user.getId()) || car.getCarStatus().getStatusId() == 8 && user.getRoles().get(0).getId() != 1){
+        Integer carStatusId = car.getCarStatus().getStatusId();
+        if(!Objects.equals(car.getUser().getId(), user.getId()) || (carStatusId != 1 && carStatusId != 3) || (car.getCarStatus().getStatusId() == 8 && user.getRoles().get(0).getId() != 1)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not allowed to update this car");
         }
 

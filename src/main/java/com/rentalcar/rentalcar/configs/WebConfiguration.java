@@ -48,13 +48,16 @@ public class WebConfiguration {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service")) // Tắt CSRF cho các URL này
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/", "/homepage-guest", "/error/**", "/faq", "/contacts", "privacy").permitAll()
-                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner")
-                        .requestMatchers("/homepage-customer").hasAuthority("Customer")
-                        .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAuthority("Car Owner")
-                        .requestMatchers("/admin/**").hasAuthority("Admin")
+                        // Các URL công khai, không yêu cầu xác thực
+                        .requestMatchers("/", "/homepage-guest", "/error/**", "/faq", "/contacts", "/privacy").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**", "/assets/**").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
+                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner", "Admin")
+                        .requestMatchers("/homepage-customer").hasAnyAuthority("Customer", "Admin")
+                        .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAnyAuthority("Car Owner", "Admin")
+                        .requestMatchers("/admin/**").hasAuthority("Admin")
+
+                        // Mọi yêu cầu khác đều yêu cầu xác thực
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -74,18 +75,22 @@ public class Car {
                     @JoinColumn(name = "AdditionalFunctionId")
             }
     )
+    @JsonIgnore
     private Set<AdditionalFunction> additionalFunctions = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "brandId")
+    @JsonIgnore
     private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "statusId")
+    @JsonIgnore
     private CarStatus carStatus;
 
     @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "carId", referencedColumnName = "carId")
+    @JsonIgnore
     private CarAddress address;
 
     @ManyToOne
