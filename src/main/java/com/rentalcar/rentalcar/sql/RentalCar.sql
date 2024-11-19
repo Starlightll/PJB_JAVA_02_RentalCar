@@ -174,6 +174,8 @@ CREATE TABLE [dbo].[BookingStatus]
     name            NVARCHAR(50)
     );
 
+
+
 -- Payment Method table
 CREATE TABLE [dbo].[PaymentMethod]
 (
@@ -228,6 +230,7 @@ CREATE TABLE [dbo].[Booking]
     userId          INT,
     bookingStatusId INT,
     paymentMethodId INT,
+    lastModified    DATETIME DEFAULT CURRENT_TIMESTAMP,
     driverId INT foreign key references [dbo].[Users] (userId) Null,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (bookingStatusId) REFERENCES [dbo].[BookingStatus] (BookingStatusId),
@@ -291,11 +294,11 @@ INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
                                                  (11, 'Pending payment'),
                                                  (12, 'Completed'),
                                                  (13,'Cancelled'),
-                                                 (14, 'Pending deposit')
+                                                 (14, 'Pending deposit'),;
 
 
 -- insert BookingStatus
-    INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (2, N'Confirmed')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (3, N'In-Progress')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (4, N'Pending payment')

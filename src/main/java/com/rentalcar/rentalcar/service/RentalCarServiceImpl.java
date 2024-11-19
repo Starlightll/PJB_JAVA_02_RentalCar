@@ -79,8 +79,10 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
         List<MyBookingDto> bookingDtos = new ArrayList<>();
+        // Kiểm tra nếu sortBy là "lastModified", ánh xạ nó thành "b.lastModified"
+        String mappedSortBy = sortBy.equalsIgnoreCase("lastModified") ? "b.lastModified" : sortBy;
         Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(sorDirection, sortBy);
+        Sort sort = Sort.by(sorDirection, mappedSortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         Page<Object[]> resultsPage;
         resultsPage = rentalCarRepository.findAllWithPagination(user.getId(), pageable);
@@ -346,6 +348,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             PaymentMethod paymentMethod = paymentMethodRepository.findById((long) bookingDto.getSelectedPaymentMethod())
                     .orElseThrow(() -> new RuntimeException("PaymentMethod not found"));
             booking.setPaymentMethod(paymentMethod);
+            booking.setLastModified(new Date());
             bookingRepository.save(booking);
 
             //Lưu booking car
@@ -494,6 +497,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         if (confirmedStatusOptional.isPresent()) {
             BookingStatus confirmedStatus = confirmedStatusOptional.get();
             booking.setBookingStatus(confirmedStatus);
+            booking.setLastModified(new Date());
             bookingRepository.save(booking);
         } else {
             System.out.println("Confirmed status not found.");
@@ -672,15 +676,17 @@ public class RentalCarServiceImpl implements RentalCarService {
         Double remainingAmount = deposit - totalPrice;
         BigDecimal remainingMoney = BigDecimal.valueOf(remainingAmount);
 
-        // Trừ tiền từ ví car owner
+       // Cộng tiền vào customer
         BigDecimal updatedCustomerWallet = customer.getWallet().add(remainingMoney);
         customer.setWallet(updatedCustomerWallet);
         userRepository.save(customer);
+        transactionService.saveTransaction(customer, remainingMoney, TransactionType.RECEIVE_DEPOSIT, booking);
 
-        // Cộng tiền vào customer
+        // Trừ tiền từ ví car owner
         BigDecimal updatedCarOwnerWallet = carOwner.getWallet().subtract(remainingMoney);
         carOwner.setWallet(updatedCarOwnerWallet);
         userRepository.save(carOwner);
+        transactionService.saveTransaction(carOwner, remainingMoney, TransactionType.REFUND_DEPOSIT, booking);
 
         // Update status xe thành "Available"
         Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
@@ -699,7 +705,9 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
         BookingStatus completedStatus = completedStatusOptional.get();
         booking.setBookingStatus(completedStatus);
+        booking.setLastModified(new Date());
         bookingRepository.save(booking);
+
 
         // Gửi email thông báo
         emailService.sendPaymentConfirmation(

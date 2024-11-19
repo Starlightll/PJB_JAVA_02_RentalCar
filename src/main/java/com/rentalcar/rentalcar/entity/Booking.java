@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -28,6 +29,8 @@ public class Booking {
     private LocalDateTime actualEndDate;
 
     private Double totalPrice;
+
+    private Date lastModified;
 
     @ManyToOne
     @JoinColumn(name = "driverId")

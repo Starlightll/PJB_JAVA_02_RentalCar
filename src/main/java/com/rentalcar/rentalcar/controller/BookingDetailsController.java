@@ -79,7 +79,7 @@ public class BookingDetailsController {
         }
         List<UserDto> listDriver = getAllDriverAvailable();
 
-        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findById(bookingId);
+        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingId));
         DriverDetail driverDetail = optionalDriverDetail.orElse(null);
 
         Optional<Feedback> opFeedback = ratingStarRepo.findByBookingId(Long.valueOf(bookingId));

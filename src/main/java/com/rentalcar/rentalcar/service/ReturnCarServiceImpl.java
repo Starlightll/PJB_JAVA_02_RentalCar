@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Optional;
 
 import static com.rentalcar.rentalcar.common.Constants.FINE_COST;
@@ -39,6 +40,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    private TransactionService transactionService;
     @Override
     public String returnCar(Long bookingId, HttpSession session) {
 //        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
@@ -171,10 +175,17 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 carOwner.setWallet(updatedCarOwnerWallet);
                 userRepository.save(carOwner);
 
+
                 // Cập nhật trạng thái booking
                 if (bookingOptional.isPresent()) {
                     Booking booking = bookingOptional.get();
+                    //======================Cộng tiền vào ví chủ xe===========================
+                    transactionService.saveTransaction(carOwner, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT, booking);
+                    //=================================================
 
+                    // ======================Trừ tiền vào ví customer===========================
+                    transactionService.saveTransaction(user, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT, booking);
+                    //=================================================
                     // Kiểm tra xem booking có phải của người dùng và đang ở trạng thái "In-Progress"
                     if (booking.getUser().getId().equals(user.getId()) &&
                             booking.getBookingStatus().getBookingStatusId() == 3) {
@@ -183,7 +194,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
+                            booking.setLastModified(new Date());
                             rentalCarRepository.save(booking);
+
                             Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
                             if (carOptional.isPresent()) {
                                 Car car = carOptional.get();

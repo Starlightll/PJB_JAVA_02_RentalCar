@@ -4,12 +4,10 @@ import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Booking;
+import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.DriverDetail;
 import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.repository.BookingRepository;
-import com.rentalcar.rentalcar.repository.DriverDetailRepository;
-import com.rentalcar.rentalcar.repository.RentalCarRepository;
-import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
@@ -58,7 +58,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
 
         // Tính toán số ngày giữa startDate và actualEndDate
-        int numberOfDays = (int) ChronoUnit.DAYS.between(startDate, actualEndDate);
+        int numberOfDays = calculateNumberOfDays(startDate, actualEndDate);
 
         MyBookingDto bookingDto = new MyBookingDto(
                 Long.valueOf((Integer) result[0]),
@@ -92,7 +92,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
             throw new RuntimeException("User not found");
         }
 
-        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findById(bookingDto.getBookingId());
+        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingDto.getBookingId()));
         DriverDetail driverDetail = optionalDriverDetail.orElse(null);
 
         if(driverDetail == null) {
@@ -129,6 +129,9 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         driverDetail.setBooking(booking);
         driverDetailRepository.save(driverDetail);
 
+        booking.setLastModified(new Date());
+        bookingRepository.save(booking);
+
 //
 //        //Update Driver
 //        if (bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
@@ -146,5 +149,16 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
 
 
+    }
+    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
+        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        // Tính chênh lệch thời gian (mili-giây)
+        long timeDiff = endMillis - startMillis;
+
+        // Chia để tính số ngày và làm tròn lên
+        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
     }
 }
