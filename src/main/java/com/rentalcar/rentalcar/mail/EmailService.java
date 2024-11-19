@@ -9,21 +9,28 @@ import com.rentalcar.rentalcar.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Map;
 
 
 @Service
 public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @Async
     public void sendVerificationEmail(User user, String token) {
@@ -306,6 +313,28 @@ public class EmailService {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    @Async
+    public void sendEmailApprovedCar(String to, String subject, Map<String, Object> variables) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(to);
+        helper.setSubject(subject);
+
+        // Prepare Thymeleaf template
+        Context context = new Context();
+        context.setVariables(variables);
+        String htmlContent = templateEngine.process("/emailtemplate/car-approved", context);
+        helper.setText(htmlContent, true);
+
+        // Embed an inline image
+        ClassPathResource bannerImage = new ClassPathResource("static/images/car-8.jpg");
+        helper.addInline("bannerImage", bannerImage);
+
+        // Send email
+        mailSender.send(message);
     }
 
 

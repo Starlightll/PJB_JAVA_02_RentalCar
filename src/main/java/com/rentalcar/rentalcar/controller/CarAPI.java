@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.controller;
 
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.service.CarOwnerService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +33,8 @@ public class CarAPI {
     private CarMapper carMapper;
     @Autowired
     private CarOwnerService carOwnerService;
+    @Autowired
+    private EmailService emailService;
 
 
     @GetMapping("/api/car/check-license-plate")
@@ -79,6 +83,11 @@ public class CarAPI {
                         .body(Map.of("error", "Car not found"));
             }
             carOwnerService.setCarStatus(carId, statusId);
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("title1", "Bravo!");
+            variables.put("title2", "Your Car is Approved and Ready to Rent.");
+            variables.put("body", "The first mate and his Skipper too will do their very best to make the others comfortable in their tropic island nest. Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels..");
+            emailService.sendEmailApprovedCar(car.getUser().getEmail(), "Car Approve", variables);
             return ResponseEntity.ok(Map.of("success", true));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
