@@ -141,6 +141,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                     if(!Objects.equals(userOwnLicence, user.getId())) {
                         throw new RuntimeException("Liscense plate already owned by another user");
                     }
+                    car.setLicensePlate(carDraft.getLicensePlate());
                 }else{
                     car.setLicensePlate(carDraft.getLicensePlate());
                 }
