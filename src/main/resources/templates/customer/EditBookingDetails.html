@@ -13,10 +13,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="/css/carowner/edit-car.css">
-    <!-- iziToast CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
-    <!-- iziToast JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+<!--    &lt;!&ndash; iziToast CSS &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">-->
+<!--    &lt;!&ndash; iziToast JavaScript &ndash;&gt;-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>-->
+
+    <!-- iziToast CSS (offline) -->
+    <link rel="stylesheet" href="/assets/css/iziToast.min.css">
+
+    <!-- iziToast JavaScript (offline) -->
+    <script src="/assets/js/iziToast.min.js"></script>
 
     <style>
         .hero-wrap {
@@ -297,6 +303,19 @@
             cursor: not-allowed;
         }
 
+        #previewContainer {
+            width: auto;
+            aspect-ratio: 2 / 1;
+            /*border: 1px solid #ddd;*/
+            overflow: hidden;
+            /*background-color: #f5f5f5;*/
+        }
+
+        #previewImage {
+            width: auto;
+            height: 100%;
+            object-fit: cover;
+        }
 
 
     </style>
@@ -612,7 +631,7 @@
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="fullName" oninput="validateFullName()"
                                                                th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                               th:value="${driverDetail.getFullName()}" name="fullName">
+                                                               th:value="${rentUser.getFullName()}" name="fullName">
                                                     </div>
                                                     <span id="fullNameError" class="text-danger"></span>
                                                     <a class="validate-msg" id="FullNameValidate">Invalid</a>
@@ -627,7 +646,7 @@
                                                         <input type="date" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               th:value="${driverDetail.getDob()}"
+                                                               th:value="${rentUser.getDob()}"
                                                                th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
                                                                oninput="validateDate()" id="book_pick_date1">
 
@@ -643,7 +662,7 @@
                                                                         <span class="input-group-text "
                                                                         >Phone Number</span>
                                                         </div>
-                                                        <input type="text" th:value="${driverDetail.getPhone()}" class="form-control"
+                                                        <input type="text" th:value="${rentUser.getPhone()}" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="phone" name="phoneNumber"
@@ -660,7 +679,7 @@
                                                                         <span class="input-group-text "
                                                                         >Email Address</span>
                                                         </div>
-                                                        <input type="text" readonly th:value="${driverDetail.getEmail()}" class="form-control"
+                                                        <input type="text" readonly th:value="${rentUser.getEmail()}" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="email" name="emailAddress"
@@ -675,7 +694,7 @@
                                                                         <span class="input-group-text "
                                                                         >National ID No:</span>
                                                         </div>
-                                                        <input type="text" th:value="${driverDetail.getNationalId()}" class="form-control"
+                                                        <input type="text" th:value="${rentUser.getNationalId()}" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="nationalId" name="nationalIDNo"
@@ -699,19 +718,29 @@
                                                             <!-- Label hiển thị tên file -->
                                                             <label class="custom-file-label" id="fileName" style="font-size: small !important;">
                                                                 <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                <span th:if="${driverDetail.getDrivingLicense() != null}" th:text="'Current file: ' + ${driverDetail.getDrivingLicense()}"></span>
-                                                                <span th:if="${driverDetail.getDrivingLicense() == null}">Choose file</span>
+                                                                <span th:if="${rentUser.getDrivingLicense() != null}" th:text="'Current file: ' + ${rentUser.getDrivingLicense()}"></span>
+                                                                <span th:if="${rentUser.getDrivingLicense() == null}">Choose file</span>
                                                             </label>
+
                                                         </div>
                                                     </div>
-                                                    <input type="hidden" id="currentDrivingLicense" th:value="${driverDetail.getDrivingLicense()}">
+
+<!--                                                    &lt;!&ndash; Khung hiển thị ảnh &ndash;&gt;-->
+<!--                                                    <div id="previewContainer" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">-->
+<!--                                                        <img id="previewImage" th:src="'/'+${rentUser.getDrivingLicense()}"-->
+<!--                                                             alt="Image preview"-->
+<!--                                                             style="width: 100%; height: 100%; object-fit: cover;">-->
+<!--                                                    </div>-->
+
+                                                    <input type="hidden" id="currentDrivingLicense" th:value="${rentUser.getDrivingLicense()}">
                                                     <div id="drivingLicenseError" style="color: red"></div>
                                                     <a class="validate-msg" id="drivingLicenseValidate">Invalid</a>
                                                 </div>
 
-                                                <div style="width: 100%; overflow: auto">
-                                                    <div class="col-lg-6 mb-3 ">
-                                                        <h6>Address</h6>
+
+<!--                                                <div class="row" style="width: 100%; overflow: auto">-->
+                                                    <div class="col-lg-6 mb-3 " style="width: 100%; overflow: auto">
+                                                        <h6 >Address</h6>
 
                                                         <div class="col-lg-6 mb-3">
                                                             <div class="input-group input-group-sm">
@@ -719,7 +748,7 @@
                                                                     <label class="input-group-text"
                                                                            for="province">Province</label>
                                                                 </div>
-                                                                <select class="custom-select" id="province" th:value="${driverDetail.getCity()}" th:data-default="${driverDetail.getCity()}"
+                                                                <select class="custom-select" id="province" th:value="${rentUser.getCity()}" th:data-default="${rentUser.getCity()}"
                                                                     th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
                                                                     <option value="">Select</option>
                                                                 </select>
@@ -733,7 +762,7 @@
                                                                     <label class="input-group-text"
                                                                            for="district">District</label>
                                                                 </div>
-                                                                <select class="custom-select" id="district" th:value="${driverDetail.getDistrict()}" th:data-default="${driverDetail.getDistrict()}"
+                                                                <select class="custom-select" id="district" th:value="${rentUser.getDistrict()}" th:data-default="${rentUser.getDistrict()}"
                                                                     th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
                                                                     <option value="">Select</option>
                                                                 </select>
@@ -747,7 +776,7 @@
                                                                     <label class="input-group-text"
                                                                            for="ward">Ward</label>
                                                                 </div>
-                                                                <select class="custom-select" id="ward" th:value="${driverDetail.getWard()}" th:data-default="${driverDetail.getWard()}"
+                                                                <select class="custom-select" id="ward" th:value="${rentUser.getWard()}" th:data-default="${rentUser.getWard()}"
                                                                     th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}" >
                                                                     <option value="">Select</option>
                                                                 </select>
@@ -765,62 +794,69 @@
                                                                        aria-describedby="inputGroup-sizing-default"
                                                                        id="street"
                                                                        th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                                       th:value="${driverDetail.getStreet()}">
+                                                                       th:value="${rentUser.getStreet()}">
                                                             </div>
                                                             <a class="validate-msg">Invalid</a>
                                                         </div>
                                                     </div>
+
+                                                    <!-- Khung hiển thị ảnh -->
+                                                    <div  class="col-lg-6 mb-3 " id="previewContainer">
+                                                        <img id="previewImage" th:src="'/'+${rentUser.getDrivingLicense()}"
+                                                             alt="Image preview"
+                                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                                    </div>
+                                                </div>
+
+<!--                                            </div>-->
+
+
+
+
+                                            <div>
+                                                <h5 class="card-title">Driver's information</h5>
+                                                <div class="row">
+                                                    <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
+                                                        <input type="checkbox" id="differentInfoCheckbox"
+                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                        <svg viewBox="0 0 21 21">
+                                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                        </svg>
+                                                        <span>Different than Renter's information</span>
+                                                    </label>
+                                                </div>
+                                                <div id="driverInfoTable" style="display: none; width: 100%">
+                                                    <div>
+                                                        <table class="table table-dark table-hover">
+                                                            <thead>
+                                                            <tr>
+                                                                <!--                                                                            <th scope="col">-->
+                                                                <!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
+                                                                <!--                                                                            </th>-->
+                                                                <th></th>
+
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Date</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr th:each="user : ${users}">
+                                                                <th scope="row">
+                                                                    <input type="checkbox" th:attr="value=${user.getUserId()}"   name="selectRow"
+                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                           th:checked="${user.getUserId() == booking.getDriverId()}" onclick="selectOnlyOne(this)" />
+                                                                </th>
+                                                                <td th:text="${user.getFullName()}"></td>
+                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
+                                                            </tr>
+
+                                                            <!-- Các hàng khác... -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
 
                                             </div>
-
-
-
-
-<!--                                            <div>-->
-<!--                                                <h5 class="card-title">Driver's information</h5>-->
-<!--                                                <div class="row">-->
-<!--                                                    <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">-->
-<!--                                                        <input type="checkbox" id="differentInfoCheckbox"-->
-<!--                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">-->
-<!--                                                        <svg viewBox="0 0 21 21">-->
-<!--                                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>-->
-<!--                                                        </svg>-->
-<!--                                                        <span>Different than Renter's information</span>-->
-<!--                                                    </label>-->
-<!--                                                </div>-->
-<!--                                                <div id="driverInfoTable" style="display: none; width: 100%">-->
-<!--                                                    <div>-->
-<!--                                                        <table class="table table-dark table-hover">-->
-<!--                                                            <thead>-->
-<!--                                                            <tr>-->
-<!--                                                                &lt;!&ndash;                                                                            <th scope="col">&ndash;&gt;-->
-<!--                                                                &lt;!&ndash;                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;&ndash;&gt;-->
-<!--                                                                &lt;!&ndash;                                                                            </th>&ndash;&gt;-->
-<!--                                                                <th></th>-->
-
-<!--                                                                <th scope="col">Name</th>-->
-<!--                                                                <th scope="col">Date</th>-->
-<!--                                                            </tr>-->
-<!--                                                            </thead>-->
-<!--                                                            <tbody>-->
-<!--                                                            <tr th:each="user : ${users}">-->
-<!--                                                                <th scope="row">-->
-<!--                                                                    <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow"-->
-<!--                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"-->
-<!--                                                                           th:checked="${user.userId == booking.getDriverId()}" onclick="selectOnlyOne(this)" />-->
-<!--                                                                </th>-->
-<!--                                                                <td th:text="${user.getFullName()}"></td>-->
-<!--                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>-->
-<!--                                                            </tr>-->
-
-<!--                                                            &lt;!&ndash; Các hàng khác... &ndash;&gt;-->
-<!--                                                            </tbody>-->
-<!--                                                        </table>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-
-<!--                                            </div>-->
                                             <div id="button">
                                                 <button class="btn-primary btn" style="width: 100px; margin: 10px 10px 10px 10px"
                                                         onclick="window.history.back()">Discard
@@ -1431,7 +1467,7 @@
                 // const pickUpDateTime = pickupDateFormatted;
                 // const returnDateTime = returnDateFormatted;
                 // const depositValue = depositText.replace(/[^0-9]/g, '');
-                // const checked = document.getElementById("differentInfoCheckbox").checked;
+                 const checked = document.getElementById("differentInfoCheckbox").checked;
                 const carId = document.getElementById("carId").value;
                 const bookingId = document.getElementById("bookingId").value;
                 const fullName = document.getElementById('fullName').value;
@@ -1464,7 +1500,7 @@
                     // returnDate: returnDateTime,
                     // deposit: depositValue,
                     // step: actualStep,
-                    // isCheck: checked,
+                     isCheck: checked,
                     carID: carId,
                     bookingId: bookingId,
                     rentFullName: fullName,
@@ -1603,7 +1639,7 @@
             const fullName = document.getElementById("fullName").value.trim();
             const fullNameError = document.getElementById("fullNameError");
 
-            if (!fullName) {
+            if (fullName === "") {
                 fullNameError.textContent = "Full name cannot be empty.";
             } else {
                 fullNameError.textContent = "";
@@ -1675,9 +1711,16 @@
             const fileErrorDisplay = document.getElementById("drivingLicenseError"); // Vùng hiển thị lỗi
             const file = fileInput.files[0]; // File được chọn
             const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+            const maxFileSize = 200 * 1024 * 1024; // 200MB
+            const previewImage = document.getElementById("previewImage"); // Thẻ img để hiển thị ảnh
+            const previewContainer = document.getElementById("previewContainer"); // Container ảnh
 
-            // Reset thông báo lỗi và nhãn hiển thị
+            // Reset thông báo lỗi, hình ảnh và nhãn hiển thị
             fileErrorDisplay.textContent = "";
+            previewImage.src = "";
+            previewImage.style.display = "none";
+            previewContainer.style.display = "block";
+            // Reset thông báo lỗi và nhãn hiển thị
 
             if (file) {
                 // Kiểm tra định dạng file
@@ -1686,17 +1729,37 @@
                     fileNameDisplay.style.color = "red";
                     fileInput.value = ""; // Reset input file nếu không hợp lệ
                     fileErrorDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
+                    previewContainer.style.display = "none";
+                } else if (file.size > maxFileSize) {
+                    // Kiểm tra kích thước file
+                    fileNameDisplay.textContent = "File size exceeds 200MB";
+                    fileNameDisplay.style.color = "red";
+                    fileInput.value = ""; // Reset input file nếu không hợp lệ
+                    fileErrorDisplay.textContent = "File size must not exceed 200MB.";
+                    previewContainer.style.display = "none";
                 } else {
                     // File hợp lệ
                     fileNameDisplay.textContent = `File selected: ${file.name}`;
                     fileNameDisplay.style.color = "green";
                     fileErrorDisplay.textContent = "";
+
+                    // Hiển thị ảnh xem trước
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImage.src = e.target.result; // Gán src bằng dữ liệu base64 của ảnh
+                        previewImage.style.display = "block"; // Hiển thị ảnh
+                        previewImage.style.backgroundSize = "cover";
+                        previewImage.style.backgroundPosition = "center";
+                    };
+                    reader.readAsDataURL(file); // Đọc file dưới dạng DataURL
+
                 }
             } else {
                 // Không có file nào được chọn
                 fileErrorDisplay.textContent = "Please upload a driving license image.";
                 fileNameDisplay.textContent = "Choose file";
                 fileNameDisplay.style.color = "";
+                previewContainer.style.display = "none";
             }
 
             // Gọi hàm kiểm tra tổng hợp nếu cần

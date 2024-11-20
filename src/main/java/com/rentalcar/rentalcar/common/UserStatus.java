@@ -9,7 +9,8 @@ public enum UserStatus {
     PENDING("PENDING"),
     ACTIVATED("ACTIVATED"),
     LOCKED("LOCKED"),
-    DELETED("DELETED");
+    DELETED("DELETED"),
+    RENTED("RENTED");
 
     private final String status;
 }

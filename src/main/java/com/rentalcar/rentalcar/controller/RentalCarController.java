@@ -223,7 +223,7 @@ public class RentalCarController {
         BookingDto bookingInfor = objectMapper.readValue(BookingJson, BookingDto.class);
 
         String fullName = bookingInfor.getRentFullName();
-        if (fullName == null) {
+        if (fullName == null || fullName.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Full Name is required");
         }
         String email = bookingInfor.getRentMail();
