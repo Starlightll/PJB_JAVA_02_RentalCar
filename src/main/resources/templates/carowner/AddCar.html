@@ -589,16 +589,16 @@
                                                                 <input type="radio" name="slide" id="three">
                                                                 <input type="radio" name="slide" id="four">
                                                                 <div class="img img-1">
-                                                                    <img id="carFrontImage" th:src="${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carFrontImage" th:src="${'/'+carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-2">
-                                                                    <img id="carBackImage" th:src="${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carBackImage" th:src="${'/'+carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-3">
-                                                                    <img id="carLeftImage" th:src="${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carLeftImage" th:src="${'/'+carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-4">
-                                                                    <img id="carRightImage" th:src="${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carRightImage" th:src="${'/'+carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="sliders">
                                                                     <label for="one" class="one"></label>
@@ -642,7 +642,7 @@
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
                                                                         Price: </p>
-                                                                    <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>
+                                                                    <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'VND/Day'" id="previewPrice">0k/Day</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
@@ -1094,7 +1094,7 @@
                             $('#confirmModal').modal('show');
                             $('#ModalTitle').text("Nice!");
                             $('#ModalBody').html("<div style=\"padding: 20px; background-color: #f5f5f5; border-radius: 8px; text-align: center; font-family: Arial, sans-serif;\">\n" +
-                                "    <h3 style=\"color: #4caf50; margin-bottom: 10px;\">Car Saved Successfully!</h3>\n" +
+                                "    <h3 style=\"color: #383838; margin-bottom: 10px;\">Car Saved Successfully!</h3>\n" +
                                 "    <p>Your car listing is awaiting admin approval.</p>\n" +
                                 "    <p>Check the status anytime on the <a href=\"/my-cars\" style=\"text-decoration: none; color: #008cf4;\">'My Cars'</a> page.</p>\n" +
                                 "</div>");
@@ -1381,7 +1381,7 @@
             const basePricePreview = document.getElementById('previewPrice');
             basePrice.addEventListener('input', function () {
                 const value = parseFloat(basePrice.value) || 0;
-                basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' K/Day';
+                basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' VN/Day';
             });
 
             //Load location
