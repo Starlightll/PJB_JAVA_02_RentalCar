@@ -31,7 +31,7 @@ public class UserInfoDto {
         private String nationalId;
 
         @NotBlank(message = "Phone number is required")
-        @Pattern(regexp = "^\\+?[0-9]{10}$", message = "Phone number must contain only numbers")
+        @Pattern(  regexp = "^(0[0-9]{9}|\\+84[0-9]{9})$",  message = "Phone number must contain only numbers")
         private String phone;
 
         private MultipartFile drivingLicense;
