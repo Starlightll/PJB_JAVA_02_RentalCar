@@ -485,7 +485,7 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Number of days: </p>
-                                                            <p th:text="${booking.getNumberOfDays()}">0</p>
+                                                            <p th:text="${booking.getNumberOfDays() > 0 ? booking.getNumberOfDays() : 0}"></p>
 
                                                         </div>
                                                         <div class="col-lg-12 row"

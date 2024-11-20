@@ -308,7 +308,7 @@ INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (6, N'Cancelled'
 -- Transaction table
 CREATE TABLE [dbo].[Transaction] (
                                      transactionId   INT IDENTITY (1,1) PRIMARY KEY,
-    transactionType VARCHAR(20) NOT NULL CHECK (transactionType IN ('Withdraw', 'Top-up', 'Pay deposit', 'Receive deposit', 'Refund deposit', 'Offset final payment')),
+    transactionType VARCHAR(50) NOT NULL CHECK (transactionType IN ('Withdraw', 'Top-up', 'Pay deposit', 'Receive deposit', 'Refund deposit', 'Offset final payment', 'Pay final payment', 'Receive final payment','Receive remaining deposit', 'Return remaining deposit')),
     amount          DECIMAL(18, 2) NOT NULL,
     transactionDate DATETIME DEFAULT GETDATE(),
     userId          INT NOT NULL,

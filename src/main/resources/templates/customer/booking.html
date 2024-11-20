@@ -867,7 +867,7 @@
                     },
                     error: function (xhr, status, error) {
                         if (xhr.status === 400) {
-                            if(xhr.responseText === "Your wallet must be greater than deposit") {
+                            if(xhr.responseText === "Your current balance is insufficient. Please top up or choose another payment method") {
 
                                 const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Top up</a>`;
                                 const errorMessage = `Your wallet doesn't have enough money to book a car. ${topUpLink}  to continue.`;
