@@ -680,7 +680,7 @@
                 if (formData[key] === '') {
                     console.log(`Trường ${key} đang bị trống.`);
                     // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
-                    alert(`Vui lòng điền thông tin vào trường: ${key}`);
+                    alert(`Please fill all required fields`);
                     return false;
 
                 }
@@ -843,7 +843,7 @@
                                 const formattedBookingNumber = bookingInfo.id;
                                 // Gán lại giá trị href của thẻ <a> với bookingId mới
                                 const viewBookingLink = document.querySelector('a.btn-secondary.btn');
-                                viewBookingLink.href = `/homepage-customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&navigate=home`;
+                                viewBookingLink.href = `/customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&navigate=home`;
                                 console.log("Updated booking link:", viewBookingLink.href);
 
                                 // Cập nhật từng phần tử cụ thể
@@ -869,8 +869,8 @@
                         if (xhr.status === 400) {
                             if(xhr.responseText === "Your wallet must be greater than deposit") {
 
-                                const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Nạp tiền</a>`;
-                                const errorMessage = `Ví của bạn không đủ tiền để đặt xe. ${topUpLink} để tiếp tục.`;
+                                const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Top up</a>`;
+                                const errorMessage = `Your wallet doesn't have enough money to book a car. ${topUpLink}  to continue.`;
 
                                 $('#error-message').html(errorMessage);
                             }
@@ -1240,9 +1240,10 @@
             const dobDate = new Date(dob);
             const today = new Date();
             const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+            const maxAgeDate = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
-            if (!dob || dobDate > minAgeDate) {
-                dobError.textContent = "You must be at least 18 years old.";
+            if (!dob || dobDate > minAgeDate || dobDate < maxAgeDate) {
+                dobError.textContent = "Age must be between 18 and 80 years.";
             } else {
                 dobError.textContent = "";
             }
@@ -1276,10 +1277,10 @@
             if (file) {
                 // Kiểm tra định dạng file
                 if (!validImageTypes.includes(file.type)) {
-                    fileNameDisplay.textContent = "Invalid file type. Please upload JPEG, PNG, or GIF.";
+                    fileNameDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
                     fileNameDisplay.style.color = "red";
                     fileInput.value = ""; // Reset input file nếu không hợp lệ
-                    fileErrorDisplay.textContent = "Invalid file type.";
+                    fileErrorDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
                 } else {
                     // File hợp lệ
                     fileNameDisplay.textContent = `File selected: ${file.name}`;

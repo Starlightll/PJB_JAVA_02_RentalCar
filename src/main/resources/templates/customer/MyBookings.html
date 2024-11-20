@@ -412,7 +412,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                                     <!-- View Details button: always visible -->
-                                                    <a th:href="${'/homepage-customer/booking-detail?bookingId=' +booking.getBookingId()+'&carId='+ booking.getCarId() + '&navigate=mybookings'}"
+                                                    <a th:href="${'/customer/booking-detail?bookingId=' +booking.getBookingId()+'&carId='+ booking.getCarId() + '&navigate=mybookings'}"
                                                        class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                         Details</a>
 
@@ -475,7 +475,7 @@
                             <!-- Previous button - note currentPage is already 1-based -->
                             <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/customer/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage <= 1} ? 'disabled'"
                                    aria-label="Previous">
                                     <span aria-hidden="true">Previous</span>
@@ -487,14 +487,14 @@
                                 th:each="i : ${#numbers.sequence(1, totalPages)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/customer/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:text="${i}"></a>
                             </li>
 
                             <!-- Next button -->
                             <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:href="@{/customer/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
                                    th:classappend="${currentPage >= totalPages} ? 'disabled'"
                                    aria-label="Next">
                                     <span aria-hidden="true">Next</span>
@@ -537,7 +537,7 @@
             const pageSize = document.getElementById('pageSize').value;
 
 
-            window.location.href = '/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
+            window.location.href = '/customer/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
         window.addEventListener('DOMContentLoaded', function () {
@@ -737,7 +737,7 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                            window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                         });
                     }
                     else if (response.status === 'success2') {
@@ -747,7 +747,7 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                            window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                         });
                     } else {
                         Swal.fire({
@@ -756,7 +756,7 @@
                             icon: 'error',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                            window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                         });
                     }
                 },
@@ -768,7 +768,7 @@
                         icon: 'error',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = '/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                        window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
                     });
                 }
             });

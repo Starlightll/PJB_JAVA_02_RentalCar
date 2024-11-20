@@ -54,6 +54,7 @@ public class WebConfiguration {
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
                         .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner", "Admin")
                         .requestMatchers("/homepage-customer").hasAnyAuthority("Customer", "Admin")
+                        .requestMatchers("/customer/**").hasAnyAuthority("Customer", "Admin")
                         .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAnyAuthority("Car Owner", "Admin")
                         .requestMatchers("/admin/**").hasAuthority("Admin")
 

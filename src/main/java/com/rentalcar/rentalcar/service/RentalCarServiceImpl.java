@@ -170,7 +170,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                 if (cancelledStatusOptional.isPresent()) {
                     BookingStatus cancelledStatus = cancelledStatusOptional.get();
                     booking.setBookingStatus(cancelledStatus); // Update the status of the booking
-
+                    booking.setLastModified(new Date());
                     // Save the updated booking
                     rentalCarRepository.save(booking);
                     System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
@@ -221,7 +221,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                 if (cancelledStatusOptional.isPresent()) {
                     BookingStatus cancelledStatus = cancelledStatusOptional.get();
                     booking.setBookingStatus(cancelledStatus); // Update the status of the booking
-
+                    booking.setLastModified(new Date());
                     // Save the updated booking
                     rentalCarRepository.save(booking);
                     System.out.println("Booking with ID " + bookingId + " has been update to In-Progress.");
@@ -362,7 +362,8 @@ public class RentalCarServiceImpl implements RentalCarService {
 
             //Lưu thông tin người thuê xe
             String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
-            driverDetail.setFullName(bookingDto.getRentFullName());
+            String fullName = normalizeFullName(bookingDto.getRentFullName());
+            driverDetail.setFullName(fullName);
             driverDetail.setEmail(bookingDto.getRentMail());
             driverDetail.setPhone(normalizedPhone);
             driverDetail.setNationalId(bookingDto.getRentNationalId());
@@ -752,6 +753,25 @@ public class RentalCarServiceImpl implements RentalCarService {
         // Chia để tính số ngày và làm tròn lên
         return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
     }
+
+
+    public String normalizeFullName(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Full Name is required");
+        }
+
+        String[] words = fullName.trim().split("\\s+");
+        StringBuilder normalized = new StringBuilder();
+
+        for (String word : words) {
+            normalized.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1).toLowerCase())
+                    .append(" ");
+        }
+
+        return normalized.toString().trim();
+    }
+
 
 
 }
