@@ -294,7 +294,7 @@ INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
                                                  (11, 'Pending payment'),
                                                  (12, 'Completed'),
                                                  (13,'Cancelled'),
-                                                 (14, 'Pending deposit'),;
+                                                 (14, 'Pending deposit')
 
 
 -- insert BookingStatus
