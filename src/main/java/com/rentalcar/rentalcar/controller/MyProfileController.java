@@ -105,11 +105,11 @@ public class MyProfileController {
 
         User user = (User) session.getAttribute("user");
 
-        if (!userInfoRequest.getPhone().equals(user.getPhone())
-                && userService.checkPhone(userInfoRequest.getPhone())) {
+        if (!normalizePhone(userInfoRequest.getPhone()).equals(user.getPhone())
+                && userService.checkPhone(normalizePhone(userInfoRequest.getPhone()))) {
             bindingResult.rejectValue("phone", "error.userInfo", "Phone number already exists");
         }
-        if (drivingLicense.isEmpty() && user.getDrivingLicense().isEmpty()) {
+        if (drivingLicense.isEmpty() && user.getDrivingLicense() == null) {
             bindingResult.rejectValue("drivingLicense", "error.userInfo", "File upload is required : ");
 
         }else{
@@ -199,5 +199,20 @@ public class MyProfileController {
         models.addFlashAttribute("success1", "Update successfully!!!");
         return "redirect:/my-profile";
     }
+    private String normalizePhone(String phone) {
+        // Loại bỏ khoảng trắng và các ký tự không phải số
+        phone = phone.trim().replaceAll("\\D", "");
+
+        // Nếu số bắt đầu bằng "0", thay thế "0" bằng "+84" để chuẩn hóa quốc tế
+        if (phone.startsWith("0")) {
+            phone = "+84" + phone.substring(1);
+        } else if (!phone.startsWith("+")) {
+            // Trường hợp khác: nếu không bắt đầu bằng "+" và không phải dạng chuẩn
+            phone = "+84" + phone;
+        }
+
+        return phone;
+    }
+
 
 }
