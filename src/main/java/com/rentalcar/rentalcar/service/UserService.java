@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.dto.UserInfoDto;
@@ -29,13 +30,18 @@ public class UserService implements IUserService {
     @Autowired
     private UserRoleRepo UserRoleRepo;
 
+    @Autowired
+    PhoneNumberStandardService phoneNumberStandardService;
+
     @Override
     public void saveUser(UserInfoDto user, HttpSession session ) {
         User users = userRepo.getUserByEmail(user.getEmail());
         if(users != null){
+            String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(user.getPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+
             users.setFullName(user.getFullName());
             users.setDob(user.getDob());
-            users.setPhone(user.getPhone());
+            users.setPhone(normalizedPhone);
             users.setNationalId(user.getNationalId());
             MultipartFile drivingLicenseFile = user.getDrivingLicense();
             if (drivingLicenseFile != null && !drivingLicenseFile.isEmpty()) {
