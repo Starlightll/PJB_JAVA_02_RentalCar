@@ -610,10 +610,11 @@
                                                         <input type="text" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="fullName"
+                                                               id="fullName" oninput="validateFullName()"
                                                                th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
                                                                th:value="${driverDetail.getFullName()}" name="fullName">
                                                     </div>
+                                                    <span id="fullNameError" class="text-danger"></span>
                                                     <a class="validate-msg" id="FullNameValidate">Invalid</a>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
@@ -659,11 +660,10 @@
                                                                         <span class="input-group-text "
                                                                         >Email Address</span>
                                                         </div>
-                                                        <input type="text" th:value="${driverDetail.getEmail()}" class="form-control"
+                                                        <input type="text" readonly th:value="${driverDetail.getEmail()}" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="email" name="emailAddress"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
                                                                oninput="validateEmail()">
                                                     </div>
                                                     <div id="emailError" style="color: red"></div>
@@ -1401,7 +1401,7 @@
                 if (formData[key] === '') {
                     console.log(`Trường ${key} đang bị trống.`);
                     // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
-                    alert(`Vui lòng điền thông tin vào trường: ${key}`);
+                    alert(`Please fill all required fields`);
                     return false;
 
                 }
@@ -1515,8 +1515,8 @@
 
                         if(message === "update successfully.") {
                             Swal.fire({
-                                title: 'Registered successfully!',
-                                text: 'Booking updated successfully',
+                                title: 'Booking updated successfully!',
+                                // text: 'Booking updated successfully!',
                                 icon: 'success',
                                 confirmButtonText: 'OK',
                                 customClass: {
@@ -1533,7 +1533,7 @@
                             if(xhr.responseText === "Your wallet must be greater than deposit") {
 
                                 const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Nạp tiền</a>`;
-                                const errorMessage = `Ví của bạn không đủ tiền để đặt xe. ${topUpLink} để tiếp tục.`;
+                                const errorMessage = `Your wallet doesn't have enough money to book a car. ${topUpLink}  to continue.`;
 
                                 $('#error-message').html(errorMessage);
                             }
@@ -1584,6 +1584,7 @@
             const saveButton = document.getElementById("save");
 
             // Collect error messages
+            const fullNameError = document.getElementById("fullNameError").textContent;
             const emailError = document.getElementById("emailError").textContent;
             const phoneError1 = document.getElementById("phoneError").textContent;
             const dobError = document.getElementById("dateError").textContent;
@@ -1591,12 +1592,25 @@
             const fileNameError = document.getElementById("drivingLicenseError").textContent;
 
             // If all error messages are empty, enable the button; otherwise, disable it
-            if (!emailError && !phoneError1 && !dobError && !nationalIdError && !fileNameError) {
+            if (!emailError && !phoneError1 && !dobError && !nationalIdError && !fileNameError && !fullNameError) {
                 saveButton.disabled = false;
             } else {
                 saveButton.disabled = true;
             }
         }
+
+        function validateFullName() {
+            const fullName = document.getElementById("fullName").value.trim();
+            const fullNameError = document.getElementById("fullNameError");
+
+            if (!fullName) {
+                fullNameError.textContent = "Full name cannot be empty.";
+            } else {
+                fullNameError.textContent = "";
+            }
+            checkValidations();
+        }
+
 
         // Email Validation
         function validateEmail() {
@@ -1624,6 +1638,7 @@
             checkValidations();
         }
 
+
         // Date of Birth Validation with 18+ Age Check
         function validateDate() {
             const dob = document.getElementById("book_pick_date1").value;
@@ -1631,9 +1646,9 @@
             const dobDate = new Date(dob);
             const today = new Date();
             const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-
-            if (!dob || dobDate > minAgeDate) {
-                dobError.textContent = "You must be at least 18 years old.";
+            const maxAgeDate = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
+            if (!dob || dobDate > minAgeDate || dobDate < maxAgeDate) {
+                dobError.textContent = "Age must be between 18 and 80 years.";
             } else {
                 dobError.textContent = "";
             }
@@ -1667,10 +1682,10 @@
             if (file) {
                 // Kiểm tra định dạng file
                 if (!validImageTypes.includes(file.type)) {
-                    fileNameDisplay.textContent = "Invalid file type. Please upload JPEG, PNG, or GIF.";
+                    fileNameDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
                     fileNameDisplay.style.color = "red";
                     fileInput.value = ""; // Reset input file nếu không hợp lệ
-                    fileErrorDisplay.textContent = "Invalid file type.";
+                    fileErrorDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
                 } else {
                     // File hợp lệ
                     fileNameDisplay.textContent = `File selected: ${file.name}`;
@@ -1859,7 +1874,7 @@
             if (!ratingValueInput.value) {
                 iziToast.error({
                     title: 'Error',
-                    message: 'Vui lòng chọn một ngôi sao để đánh giá!',
+                    message: 'Please select a star to rate!',
                     position: 'topRight',
                     transitionIn: 'fadeInDown',
                     transitionOut: 'fadeOutUp'

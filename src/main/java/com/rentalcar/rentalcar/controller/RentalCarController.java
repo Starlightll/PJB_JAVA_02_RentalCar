@@ -255,8 +255,8 @@ public class RentalCarController {
         LocalDate today = LocalDate.now();
         int age = Period.between(dob, today).getYears();
 
-        if (age < 18) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 18 years old");
+        if (age < 18 || age > 80) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Age must be between 18 and 80 years.");
         }
 
 
@@ -295,7 +295,7 @@ public class RentalCarController {
             } catch (RuntimeException e) {
                 switch (e.getMessage()) {
                     case "Your wallet must be greater than deposit":
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your wallet must be greater than deposit");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your current balance is insufficient. Please top up or choose another payment method");
                     case "Other Pay Method not helps now, please use your wallet":
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Other Pay Method not helps now, please use your wallet");
                     case "Email already exists" :
@@ -550,8 +550,6 @@ public class RentalCarController {
         response.put("message", message);
         return ResponseEntity.ok(response);
     }
-
-
 
 
 }

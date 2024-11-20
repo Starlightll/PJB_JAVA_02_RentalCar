@@ -181,8 +181,8 @@ public class BookingDetailsController {
         LocalDate today = LocalDate.now();
         int age = Period.between(dob, today).getYears();
 
-        if (age < 18) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 18 years old");
+        if (age < 18 || age > 80) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Age must be between 18 and 80 years.");
         }
 
         if(user.getDrivingLicense() == null && rentImage == null) {
