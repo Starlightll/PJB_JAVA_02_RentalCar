@@ -12,10 +12,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 
-    <!-- iziToast CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
-    <!-- iziToast JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+    <!-- iziToast CSS (offline) -->
+    <link rel="stylesheet" href="/assets/css/iziToast.min.css">
+
+    <!-- iziToast JavaScript (offline) -->
+    <script src="/assets/js/iziToast.min.js"></script>
 
     <style>
         .validate-msg {
@@ -70,6 +71,20 @@
             text-overflow: ellipsis;
             display: inline-block;
             max-width: 100%;
+        }
+
+        #previewContainer {
+            width: 100%;
+            aspect-ratio: 2 / 1;
+            border: 1px solid #ddd;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        #previewImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
     </style>
@@ -358,6 +373,7 @@
                                                                                aria-describedby="inputGroup-sizing-default"
                                                                               th:value="${user.getFullName()}" oninput="validateFullName()" id="fullName1">
                                                                     </div>
+                                                                    <span id="fullNameError" class="text-danger"></span>
                                                                     <a class="validate-msg" id="fullNameValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
@@ -412,28 +428,7 @@
                                                                     <div id="nationalIdError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="nationalIdValidate1">Invalid</a>
                                                                 </div>
-                                                                <div class="col-lg-6 mb-3 required-label">
-                                                                    <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" style="max-height: 33.5px;">
-                                                                            <span class="input-group-text" id="inputGroupFileAddon011" >Driving license</span>
-                                                                        </div>
-                                                                        <div class="custom-file">
-                                                                            <!-- Input file -->
-                                                                            <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile011"
-                                                                                   aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
 
-                                                                            <!-- Label hiển thị tên file -->
-                                                                            <label class="custom-file-label" id="fileName1" style="font-size: small !important;">
-                                                                                <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                                <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: ' + ${user.getDrivingLicense()}"></span>
-                                                                                <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <input type="hidden" id="currentDrivingLicense" th:value="${user.getDrivingLicense()}">
-                                                                    <div id="drivingLicenseError1" style="color: red"></div>
-                                                                    <a class="validate-msg" id="drivingLicenseValidate1">Invalid</a>
-                                                                </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
@@ -482,50 +477,81 @@
                                                                     </div>
                                                                     <a class="validate-msg">Invalid</a>
                                                                 </div>
+
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend" style="max-height: 33.5px;">
+                                                                            <span class="input-group-text" id="inputGroupFileAddon011" >Driving license</span>
+                                                                        </div>
+                                                                        <div class="custom-file">
+                                                                            <!-- Input file -->
+                                                                            <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile011"
+                                                                                   aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
+
+                                                                            <!-- Label hiển thị tên file -->
+                                                                            <label class="custom-file-label" id="fileName1" style="font-size: small !important;">
+                                                                                <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
+                                                                                <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: ' + ${user.getDrivingLicense()}"></span>
+                                                                                <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
+                                                                            </label>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <!-- Khung hiển thị ảnh -->
+                                                                    <div id="previewContainer" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">
+                                                                        <img id="previewImage" th:src="'/'+${user.getDrivingLicense()}"
+                                                                             alt="Image preview"
+                                                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    </div>
+
+                                                                    <input type="hidden" id="currentDrivingLicense" th:value="${user.getDrivingLicense()}">
+                                                                    <div id="drivingLicenseError1" style="color: red"></div>
+                                                                    <a class="validate-msg" id="drivingLicenseValidate1">Invalid</a>
+                                                                </div>
                                                             </div>
                                                         </div>
-<!--                                                        <div>-->
-<!--                                                            <h5 class="card-title">Driver's information</h5>-->
-<!--                                                            <div class="row">-->
-<!--                                                                        <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">-->
-<!--                                                                            <input type="checkbox" id="differentInfoCheckbox"-->
-<!--                                                                                   name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">-->
-<!--                                                                            <svg viewBox="0 0 21 21">-->
-<!--                                                                                <polyline points="5 10.75 8.5 14.25 16 6"></polyline>-->
-<!--                                                                            </svg>-->
-<!--                                                                            <span>Different than Renter's information</span>-->
-<!--                                                                        </label>-->
-<!--                                                            </div>-->
-<!--                                                            <div id="driverInfoTable" style="display: none; width: 100%">-->
-<!--                                                                <div>-->
-<!--                                                                    <table class="table table-dark table-hover">-->
-<!--                                                                        <thead>-->
-<!--                                                                        <tr>-->
-<!--&lt;!&ndash;                                                                            <th scope="col">&ndash;&gt;-->
-<!--&lt;!&ndash;                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;                                                                            </th>&ndash;&gt;-->
-<!--                                                                            <th></th>-->
-
-<!--                                                                            <th scope="col">Name</th>-->
-<!--                                                                            <th scope="col">Date</th>-->
-<!--                                                                        </tr>-->
-<!--                                                                        </thead>-->
-<!--                                                                        <tbody>-->
-<!--                                                                        <tr th:each="user : ${users}">-->
-<!--                                                                            <th scope="row">-->
-<!--                                                                                <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow" onclick="selectOnlyOne(this)" />-->
+                                                        <div>
+                                                            <h5 class="card-title">Driver's information</h5>
+                                                            <div class="row">
+                                                                        <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
+                                                                            <input type="checkbox" id="differentInfoCheckbox"
+                                                                                   name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                                            <svg viewBox="0 0 21 21">
+                                                                                <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                            </svg>
+                                                                            <span>Different than Renter's information</span>
+                                                                        </label>
+                                                            </div>
+                                                            <div id="driverInfoTable" style="display: none; width: 100%">
+                                                                <div>
+                                                                    <table class="table table-dark table-hover">
+                                                                        <thead>
+                                                                        <tr>
+<!--                                                                            <th scope="col">-->
+<!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
 <!--                                                                            </th>-->
-<!--                                                                            <td th:text="${user.getFullName()}"></td>-->
-<!--                                                                            <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>-->
-<!--                                                                        </tr>-->
+                                                                            <th></th>
 
-<!--                                                                        &lt;!&ndash; Các hàng khác... &ndash;&gt;-->
-<!--                                                                        </tbody>-->
-<!--                                                                    </table>-->
-<!--                                                                </div>-->
-<!--                                                            </div>-->
+                                                                            <th scope="col">Name</th>
+                                                                            <th scope="col">Date</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        <tr th:each="user : ${users}">
+                                                                            <th scope="row">
+                                                                                <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow" onclick="selectOnlyOne(this)" />
+                                                                            </th>
+                                                                            <td th:text="${user.getFullName()}"></td>
+                                                                            <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
+                                                                        </tr>
 
-<!--                                                        </div>-->
+                                                                        <!-- Các hàng khác... -->
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -616,6 +642,22 @@
             </div>
         </div>
     </section>
+
+    <script>
+        function chooseFile(fileInput) {
+            if (fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#image').attr('src', e.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+    </script>
+
+
+
 
     <script>
 
@@ -1194,17 +1236,30 @@
 
             // Collect error messages
             const emailError = document.getElementById("emailError1").textContent;
+            const fullNameError = document.getElementById("fullNameError").textContent;
             const phoneError1 = document.getElementById("phoneError1").textContent;
             const dobError = document.getElementById("dateError1").textContent;
             const nationalIdError = document.getElementById("nationalIdError1").textContent;
             const fileNameError = document.getElementById("drivingLicenseError1").textContent;
 
             // If all error messages are empty, enable the button; otherwise, disable it
-            if (!emailError && !phoneError1 && !dobError && !nationalIdError && !fileNameError) {
+            if (!emailError && !phoneError1 && !dobError && !nationalIdError && !fileNameError && !fullNameError) {
                 nextButton.disabled = false;
             } else {
                 nextButton.disabled = true;
             }
+        }
+
+        function validateFullName() {
+            const fullName = document.getElementById("fullName1").value.trim();
+            const fullNameError = document.getElementById("fullNameError");
+
+            if (fullName === "") {
+                fullNameError.textContent = "Full name cannot be empty.";
+            } else {
+                fullNameError.textContent = "";
+            }
+            checkAllValidations();
         }
 
         // Email Validation
@@ -1268,12 +1323,16 @@
             const fileInput = document.getElementById("inputGroupFile011"); // Input file
             const fileNameDisplay = document.getElementById("fileName1"); // Label hiển thị tên file
             const fileErrorDisplay = document.getElementById("drivingLicenseError1"); // Vùng hiển thị lỗi
+            const previewImage = document.getElementById("previewImage"); // Thẻ img để hiển thị ảnh
+            const previewContainer = document.getElementById("previewContainer"); // Container ảnh
             const file = fileInput.files[0]; // File được chọn
             const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+            const maxFileSize = 200 * 1024 * 1024; // 200MB
 
-            // Reset thông báo lỗi và nhãn hiển thị
+            // Reset thông báo lỗi, hình ảnh và nhãn hiển thị
             fileErrorDisplay.textContent = "";
-
+            previewImage.src = "";
+            previewImage.style.display = "none";
             if (file) {
                 // Kiểm tra định dạng file
                 if (!validImageTypes.includes(file.type)) {
@@ -1281,11 +1340,29 @@
                     fileNameDisplay.style.color = "red";
                     fileInput.value = ""; // Reset input file nếu không hợp lệ
                     fileErrorDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
+
+                } else if (file.size > maxFileSize) {
+                    // Kiểm tra kích thước file
+                    fileNameDisplay.textContent = "File size exceeds 200MB";
+                    fileNameDisplay.style.color = "red";
+                    fileInput.value = ""; // Reset input file nếu không hợp lệ
+                    fileErrorDisplay.textContent = "File size must not exceed 200MB.";
+
                 } else {
-                    // File hợp lệ
+                    // File hợp lệ, hiển thị tên file
                     fileNameDisplay.textContent = `File selected: ${file.name}`;
                     fileNameDisplay.style.color = "green";
                     fileErrorDisplay.textContent = "";
+
+                    // Hiển thị ảnh xem trước
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImage.src = e.target.result; // Gán src bằng dữ liệu base64 của ảnh
+                        previewImage.style.display = "block"; // Hiển thị ảnh
+                        previewImage.style.backgroundSize = "cover";
+                        previewImage.style.backgroundPosition = "center";
+                    };
+                    reader.readAsDataURL(file); // Đọc file dưới dạng DataURL
                 }
             } else {
                 // Không có file nào được chọn
@@ -1297,6 +1374,7 @@
             // Gọi hàm kiểm tra tổng hợp nếu cần
             checkAllValidations();
         }
+
 
 
         function toggleDriverInfoFields() {

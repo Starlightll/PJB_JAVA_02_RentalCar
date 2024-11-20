@@ -66,6 +66,7 @@ public class BookingDetailsController {
     public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
+        User rentUser = userRepo.getUserById(user.getId());
         MyBookingDto booking = new MyBookingDto();
         try {
              booking = viewEditBookingService.getBookingDetail(bookingId, carId, session);
@@ -77,10 +78,10 @@ public class BookingDetailsController {
                     return "redirect:/my-bookings";
             }
         }
-        List<UserDto> listDriver = getAllDriverAvailable();
+        List<UserDto> listDriver = getAllDriverAvailable(bookingId);
 
-        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingId));
-        DriverDetail driverDetail = optionalDriverDetail.orElse(null);
+//        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingId));
+//        DriverDetail driverDetail = optionalDriverDetail.orElse(null);
 
         Optional<Feedback> opFeedback = ratingStarRepo.findByBookingId(Long.valueOf(bookingId));
         Feedback feedback = opFeedback.orElse(null);
@@ -121,8 +122,8 @@ public class BookingDetailsController {
         model.addAttribute("users", listDriver);
         model.addAttribute("car", car);
         model.addAttribute("user", user);
+        model.addAttribute("rentUser", rentUser);
         model.addAttribute("booking", booking);
-        model.addAttribute("driverDetail", driverDetail);
         model.addAttribute("navigate", navigate);
         model.addAttribute("feedbackDto", new FeedbackDto());
         model.addAttribute("isRating",isRating); // có hiện đánh giá hay không
@@ -149,7 +150,7 @@ public class BookingDetailsController {
         BookingDto bookingInfor = objectMapper.readValue(BookingJson, BookingDto.class);
 
         String fullName = bookingInfor.getRentFullName();
-        if (fullName == null) {
+        if (fullName == null || fullName.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Full Name is required");
         }
         String email = bookingInfor.getRentMail();
@@ -259,8 +260,8 @@ public class BookingDetailsController {
     }
 
 
-    public List<UserDto> getAllDriverAvailable() {
-        List<Object[]> results = userRepo.getAllDriver();
+    public List<UserDto> getAllDriverAvailable(Integer bookingId) {
+        List<Object[]> results = userRepo.getAllDriver(bookingId);
         List<UserDto> userDtos = new ArrayList<>();
 
         for (Object[] result : results) {

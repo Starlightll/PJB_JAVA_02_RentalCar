@@ -336,9 +336,9 @@ public class RentalCarServiceImpl implements RentalCarService {
             if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
                 files[0].getSize();
                 String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "drivingLicense." + getExtension(files[0].getOriginalFilename()));
-                driverDetail.setDrivingLicense(storedPath);
+                customer.setDrivingLicense(storedPath);
             } else {
-                driverDetail.setDrivingLicense(user.getDrivingLicense());
+                customer.setDrivingLicense(user.getDrivingLicense());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -379,19 +379,18 @@ public class RentalCarServiceImpl implements RentalCarService {
             //Lưu thông tin người thuê xe
             String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
             String fullName = normalizeFullName(bookingDto.getRentFullName());
-            driverDetail.setFullName(fullName);
-            driverDetail.setEmail(bookingDto.getRentMail());
-            driverDetail.setPhone(normalizedPhone);
-            driverDetail.setNationalId(bookingDto.getRentNationalId());
-            driverDetail.setDob(bookingDto.getRentBookPickDate());
-            driverDetail.setCity(bookingDto.getRentProvince().trim());
-            driverDetail.setDistrict(bookingDto.getRentDistrict().trim());
-            driverDetail.setStreet(bookingDto.getRentStreet().trim());
-            driverDetail.setWard(bookingDto.getRentWard().trim());
-            driverDetail.setBooking(booking);
-            driverDetailRepository.save(driverDetail);
+            customer.setFullName(fullName);
+            customer.setEmail(bookingDto.getRentMail());
+            customer.setPhone(normalizedPhone);
+            customer.setNationalId(bookingDto.getRentNationalId());
+            customer.setDob(bookingDto.getRentBookPickDate());
+            customer.setCity(bookingDto.getRentProvince().trim());
+            customer.setDistrict(bookingDto.getRentDistrict().trim());
+            customer.setStreet(bookingDto.getRentStreet().trim());
+            customer.setWard(bookingDto.getRentWard().trim());
+            userRepository.save(customer);
 
-
+            //NẾU NGƯỜI DÙNG THUÊ LÁI XE
             if (bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
                 // Xử lý driver khi ấn tích
                 User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId())); // Lấy đối tượng User của Driver
@@ -400,7 +399,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                     bookingRepository.save(booking);
 
                     // THAY ĐỔI TRẠNG THÁI CHO DRIVER
-                    driver.setStatusDriverId(2);
+                    driver.setStatus(UserStatus.RENTED);
                     userRepository.save(driver);
                 }
             }
