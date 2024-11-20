@@ -123,7 +123,10 @@ public class MyProfileController {
                 else if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$") && !fileName.isEmpty()) {
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "Invalid file extension. Only JPG, PNG, and GIF are allowed.");
 
-                }else {
+                }else if (drivingLicense.getSize() > 200 * 1024 * 1024) { // 200MB = 200 * 1024 * 1024 bytes
+                    bindingResult.rejectValue("drivingLicense", "error.userInfo", "File size exceeds 200MB. Please upload a smaller file.");
+                }
+                else {
                     String uploadDir = "uploads/DriveLicense/" + user.getId()+ "_" + user.getUsername() +  "/"; // Specify your upload directory
                     Path filePath = Paths.get(uploadDir, fileName);
                     Files.write(filePath, drivingLicense.getBytes());
