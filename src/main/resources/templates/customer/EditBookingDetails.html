@@ -483,23 +483,23 @@
                                                                th:value="${booking.getBookingId()}">
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Number of days: </p>
                                                             <p th:text="${booking.getNumberOfDays()}">0</p>
 
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Base price: </p>
                                                             <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Total: </p>
-                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                id="previewTotal"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
@@ -507,9 +507,9 @@
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Deposit: </p>
-                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                id="previewDeposit"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${#numbers.formatDecimal(booking.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
@@ -517,19 +517,19 @@
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Booking No: </p>
-                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                id="previewBookingNo"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${booking.getBookingId()}">No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
-                                                            <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Booking status:
                                                             </p>
-                                                            <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                th:text="${booking.getBookingStatus()}"
                                                                th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;' :
                  (booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;' :
@@ -539,7 +539,7 @@
                  'font-weight: bold;'))))}">
                                                             </p>
                                                         </div>
-z
+
 
                                                     </div>
                                                 </div>

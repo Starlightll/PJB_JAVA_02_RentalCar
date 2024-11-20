@@ -33,8 +33,11 @@ public class AdminController {
 
     @GetMapping("/admin/car-verify")
     public String carVerify(Model model) {
-        User user = new User();
-        model.addAttribute("user", user);
         return "/admin/app-car-verify";
+    }
+
+    @GetMapping("/admin/testEmail")
+    public String testEmail() {
+        return "/emailtemplate/car-approved";
     }
 }

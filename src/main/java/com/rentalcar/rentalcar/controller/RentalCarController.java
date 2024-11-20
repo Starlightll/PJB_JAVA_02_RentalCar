@@ -116,7 +116,7 @@ public class RentalCarController {
 
 
     //Add
-    @GetMapping("/booking-car")
+    @GetMapping("/customer/booking-car")
 
     public String bookingDetail(@RequestParam Integer CarId,
                                 @RequestParam String startDate, @RequestParam String enDate

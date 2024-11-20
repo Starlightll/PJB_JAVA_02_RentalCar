@@ -69,12 +69,13 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         );
 
         Double totalPrice = calculateTotalPrice(bookingId);
-        if (totalPrice > bookingDto.getDeposit()) {
+        if(totalPrice.equals(bookingDto.getDeposit())) {
+            return ("Please confirm to return the car. The deposit you pay is equal to the rental fee.");
+        } else if (totalPrice > bookingDto.getDeposit()) {
             return String.format("Please confirm to return the car. The remaining amount of %.2f VND will be deducted from your wallet.", totalPrice - bookingDto.getDeposit());
         } else {
-            return String.format("Please confirm to return the car. The exceeding amount of %.2f VND will be returned to your wallet..", bookingDto.getDeposit() - totalPrice);
+            return String.format("Please confirm to return the car. The exceeding amount of %.2f VND will be returned to your wallet.", bookingDto.getDeposit() - totalPrice);
         }
-
     }
 
     @Override
@@ -157,7 +158,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         BigDecimal totalPrice = BigDecimal.valueOf(calculateTotalPrice(bookingId));
 
 
-        if (totalPrice.compareTo(deposit) > 0) {
+        if (totalPrice.compareTo(deposit) >= 0) {
             // Kiểm tra ví người dùng
             if ((totalPrice.subtract(deposit)).compareTo(myWallet) > 0) {
                 return -1;

@@ -4,382 +4,353 @@
       layout:decorate="~{layouts/layout}"
 >
 <head>
-  <title>Search Car</title>
+    <title>Search Car</title>
     <link rel="stylesheet" href="/css/customer/search-car.css">
-  <!-- iziToast CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
-  <!-- iziToast JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+    <!-- iziToast CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+    <!-- iziToast JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
 </head>
 
 <body>
 <th:block layout:fragment="content">
-  <body>
-
-  <div class="hero-wrap ftco-degree-bg" style="background-image: url('/images/bg_1.jpg');" data-stellar-background-ratio="0.5">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
-        <div class="col-lg-8 ftco-animate">
-          <div class="text w-100 text-center mb-md-5 pb-md-5">
-            <h1 class="mb-4">Fast &amp; Easy Way To Rent A Car</h1>
-            <p style="font-size: 18px;">A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts</p>
-            <a href="https://vimeo.com/45830194" class="icon-wrap popup-vimeo d-flex align-items-center mt-4 justify-content-center">
-              <div class="icon d-flex align-items-center justify-content-center">
-                <span class="ion-ios-play"></span>
-              </div>
-              <div class="heading-title ml-5">
-                <span>Easy steps for renting a car</span>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <section class="ftco-section ftco-no-pt bg-light">
-    <div class="container" style="">
-      <div class="row no-gutters">
-        <div class="col-md-12	featured-top">
-          <div class="row no-gutters">
-            <div class="col-md-4 d-flex align-items-center justify-content-center">
-              <form th:action="@{/searchCar}" class="request-form ftco-animate bg-primary" method="get" style="min-height: 550px;align-items: center;align-content: center;gap: 20px;display: flex;flex-flow: column;">
-                <h2>Make your trip</h2>
-                <div th:if="${sendCondition != null}">
-                  <p class="validate-msg" th:text="${sendCondition}"></p>
+    <body>
+    <section class="hero-wrap hero-wrap " data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs">
+                        <span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span>Search Result</span>
+                    </p>
                 </div>
-                <div id="error-messages" style="color: red;"></div>
-
-                <div class="form-group">
-                  <label for="pick-location" class="label">Pick-up location</label>
-                  <input name="name" type="text" class="form-control" placeholder="City, District" id="pick-location">
-                  <small id="pick-location-error" style="color: red;"></small>
-                  <div th:if="${sendLocation != null}">
-                    <p class="validate-msg"  th:text="${sendLocation}"></p>
-                  </div>
-                </div>
-                <div class="d-flex">
-                  <div class="form-group mr-2">
-                    <label for="book_pick_date" class="label">Pick-up date</label>
-                    <input name="pickDate" type="date" class="form-control"  placeholder="Date" id="book_pick_dates">
-                    <div th:if="${sendPickDate != null}">
-                      <p class="validate-msg" th:text="${sendPickDate}"></p>
-                    </div>
-                    <small id="pick-date-error" style="color: red;"></small>
-
-                  </div>
-                  <div class="form-group">
-                    <label for="time_pick" class="label">Pick-up time</label>
-                    <input name="pickTime" type="time" class="form-control"  placeholder="Time" id="time_picks">
-                    <div th:if="${sendPickTime != null}">
-                      <p class="validate-msg" th:text="${sendPickDate}"></p>
-                    </div>
-                    <small id="pick-time-error" style="color: red;"></small>
-
-                  </div>
-                </div>
-
-                <div class="d-flex">
-                  <div class="form-group mr-2">
-                    <label for="book_drop_date" class="label">Drop date</label>
-                    <input name="dropDate" type="date" class="form-control" placeholder="Date" id="book_drop_dates">
-                    <div th:if="${sendDropDate != null}">
-                      <p class="validate-msg" th:text="${sendDropDate}" ></p>
-                    </div>
-                    <small id="drop-date-error" style="color: red;"></small>
-                  </div>
-                  <div class="form-group">
-                    <label for="time_drop" class="label">Drop time</label>
-                    <input name="dropTime" type="time" class="form-control"  placeholder="Time" id="time_drops">
-                    <div th:if="${sendDropTime != null}">
-                      <p class="validate-msg" th:text="${sendDropTime}"></p>
-                    </div>
-                    <small id="drop-time-error" style="color: red;"></small>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <input type="submit" value="Rent A Car Now" class="btn btn-secondary py-3 px-4">
-                </div>
-              </form>
             </div>
-            <div class="col-md-8 d-flex align-items-center">
-              <div class="services-wrap rounded-right w-100" style="text-align: center;">
-                <h3 class="heading-section mb-4">Better Way to Rent Your Perfect Cars</h3>
-                <div class="row d-flex mb-4">
-                  <div class="col-md-4 d-flex align-self-stretch ftco-animate">
-                    <div class="services w-100 text-center">
-                      <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-route"></span></div>
-                      <div class="text w-100">
-                        <h3 class="heading mb-2">Choose Your Pickup Location</h3>
+        </div>
+    </section>
+
+    <section class="ftco-section ftco-no-pt bg-light">
+        <div class="container" style="">
+            <div class="row no-gutters">
+
+
+              <div class="col-md-12 " >
+                  <form th:action="@{/searchCar}" class="searchForm" method="get" style="padding: 20px; border-radius: 5px; color: white;">
+
+                      <!-- Pick-up Location -->
+                      <div class="form-group mb-4 row col-6">
+                          <label for="pick-location" class="label" style="color: #1a91da;">Pick-up location</label>
+                          <input name="name" type="text" class="form-control" placeholder="Enter your location" id="pick-location" th:value="${name}">
+                          <small id="pick-location-error" style="color: red;"></small>
+                          <div th:if="${sendLocation != null}">
+                              <p class="validate-msg" th:text="${sendLocation}" style="color: red;"></p>
+                          </div>
                       </div>
-                    </div>
-                  </div>
-                  <div class="col-md-4 d-flex align-self-stretch ftco-animate">
-                    <div class="services w-100 text-center">
-                      <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-handshake"></span></div>
-                      <div class="text w-100">
-                        <h3 class="heading mb-2">Select the Best Deal</h3>
+
+                      <!-- Pick-up and Drop-off Details -->
+                      <div class="row">
+                          <!-- Pick-up Details -->
+                          <div class="col-md-6 row">
+                              <div class="form-group col-8">
+                                  <label for="book_pick_date" class="label" style="color: #1a91da;">Pick-up date</label>
+                                  <input name="pickDate" type="date" class="form-control" id="book_pick_dates" th:value="${pickDate}">
+                                  <small id="pick-date-error" style="color: red;"></small>
+                                  <div th:if="${sendPickDate != null}">
+                                      <p class="validate-msg" th:text="${sendPickDate}" style="color: red;"></p>
+                                  </div>
+                              </div>
+                              <div class="form-group col-4">
+                                  <label for="time_pick" class="label" style="color: #1a91da;">Pick-up time</label>
+                                  <input name="pickTime" type="time" class="form-control" id="time_picks" th:value="${pickTime}">
+                                  <small id="pick-time-error" style="color: red;"></small>
+                                  <div th:if="${sendPickTime != null}">
+                                      <p class="validate-msg" th:text="${sendPickTime}" style="color: red;"></p>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <!-- Drop-off Details -->
+                          <div class="col-md-6 row">
+                              <div class="form-group col-8">
+                                  <label for="book_drop_date" class="label" style="color: #1a91da;">Drop-off date</label>
+                                  <input name="dropDate" type="date" class="form-control" id="book_drop_dates" th:value="${dropDate}">
+                                  <small id="drop-date-error" style="color: red;"></small>
+                                  <div th:if="${sendDropDate != null}">
+                                      <p class="validate-msg" th:text="${sendDropDate}" style="color: red;"></p>
+                                  </div>
+                              </div>
+                              <div class="form-group col-4">
+                                  <label for="time_drop" class="label" style="color: #1a91da;">Drop-off time</label>
+                                  <input name="dropTime" type="time" class="form-control" id="time_drops" th:value="${dropTime}">
+                                  <small id="drop-time-error" style="color: red;"></small>
+                                  <div th:if="${sendDropTime != null}">
+                                      <p class="validate-msg" th:text="${sendDropTime}" style="color: red;"></p>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
-                    </div>
-                  </div>
-                  <div class="col-md-4 d-flex align-self-stretch ftco-animate">
-                    <div class="services w-100 text-center">
-                      <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-rent"></span></div>
-                      <div class="text w-100">
-                        <h3 class="heading mb-2">Reserve Your Rental Car</h3>
+
+                      <!-- Submit Button -->
+                      <div class="form-group text-center mt-4">
+                          <input type="submit" value="SEARCH" class="btn btn-primary py-2 px-4">
                       </div>
-                    </div>
-                  </div>
-                </div>
-                <p><a href="#" class="btn btn-primary py-3 px-4">Reserve Your Perfect Car</a></p>
+
+                      <!-- Global Error Messages -->
+                      <div id="error-messages" style="color: red; text-align: center;"></div>
+                  </form>
               </div>
+
+
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="ftco-section ftco-no-pt bg-light">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-12 heading-section text-center ftco-animate mb-5">
-          <span class="subheading">What we offer</span>
-          <h2 class="mb-2">Feeatured Vehicles</h2>
-        </div>
-      </div>
-      <div th:if="${size == 0}" style="display: flex ; justify-content: center">
-        <h4 style="color: black">There're no cars that are available for you!</h4>
-      </div>
-      <div th:if="${size > 0}" style="display: flex ; justify-content: center">
-        <h4 style="color: black">There're [[${size}]] cars that are available for you!</h4>
-      </div>
-      <th:block th:if="${list != null && !list.isEmpty()} ">
-        <!-- Search Results -->
-        <div class="search-results">
-
-
-          <div class="container">
-
-            <h2 style="color: #00c86f">Search Results</h2>
-
-            <div style="display: flex; justify-content: flex-end ; width: 20%; margin-left: 70%">
-              <input type="hidden" id="currentPage" th:value="${currentPage}">
-              <input type="hidden" id="name" th:value="${name}">
-              <input type="hidden" id="pickDate" th:value="${pickDate}">
-              <input type="hidden" id="dropDate" th:value="${dropDate}">
-              <input type="hidden" id="pickTime" th:value="${pickTime}">
-              <input type="hidden" id="dropTime" th:value="${dropTime}">
-              <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
-                <option value="newestToLatest" th:selected="${ sortBy == 'newestToLatest' }">Newest to Latest</option>
-                <option value="latestToNewest" th:selected="${sortBy == 'latestToNewest'}">Latest to Newest</option>
-                <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
-                <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
-                <option value="priceLowToHigh" th:selected="${sortBy == 'priceLowToHigh' }">Price: Low to High</option>
-                <option value="priceHighToLow" th:selected="${sortBy == 'priceHighToLow'}">Price: High to Low</option>
-              </select>
+        <div class="container">
+            <h2 style="color: #00c86f; ">Search Results</h2>
+            <div th:if="${size == 0}">
+                <p class="text-muted">There're no cars that are available for you!</p>
+            </div>
+            <div class="row" th:if="${size > 0}">
+                <div class="col-9">
+                    <p class="text-muted">There're [[${size}]] cars that are available for you!</p>
+                </div>
+                <div class="col-3">
+                    <input type="hidden" id="currentPage" th:value="${currentPage}">
+                    <input type="hidden" id="name" th:value="${name}">
+                    <input type="hidden" id="pickDate" th:value="${pickDate}">
+                    <input type="hidden" id="dropDate" th:value="${dropDate}">
+                    <input type="hidden" id="pickTime" th:value="${pickTime}">
+                    <input type="hidden" id="dropTime" th:value="${dropTime}">
+                    <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
+                        <option value="newestToLatest" th:selected="${ sortBy == 'newestToLatest' }">Newest to Latest
+                        </option>
+                        <option value="latestToNewest" th:selected="${sortBy == 'latestToNewest'}">Latest to Newest
+                        </option>
+                        <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
+                        <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
+                        <option value="priceLowToHigh" th:selected="${sortBy == 'priceLowToHigh' }">Price: Low to High
+                        </option>
+                        <option value="priceHighToLow" th:selected="${sortBy == 'priceHighToLow'}">Price: High to Low
+                        </option>
+                    </select>
+                </div>
             </div>
 
 
-            <div class="results-table">
+            <th:block th:if="${list != null && !list.isEmpty()} ">
+                <!-- Search Results -->
+                <div class="search-results">
 
-              <table>
-                <thead>
-                <tr>
-                  <th>No.</th>
-                  <th>Name</th>
-                  <th>Image</th>
-                  <th>Rating</th>
-                  <th>No. of Rides</th>
-                  <th>Price</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Sample Rows -->
 
-                <tr th:each="list, count : ${list}">
-                  <td style="color: #0b0b0b" th:text="${count.index + 1}"></td>
-                  <td style="color: #0b0b0b" th:text="${list.getCarName()}"></td>
-                  <td>
-                    <div class="car-image" style="width: 150px;height: 100px"><img th:src="'/'+${list.getFrontImage()} "
+                    <div class="container-fluid">
+
+
+                        <div class="results-table">
+
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>Image</th>
+                                    <th>Rating</th>
+                                    <th>No. of Rides</th>
+                                    <th>Price</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- Sample Rows -->
+
+                                <tr th:each="list, count : ${list}">
+                                    <td style="color: #0b0b0b" th:text="${count.index + 1}"></td>
+                                    <td style="color: #0b0b0b" th:text="${list.getCarName()}"></td>
+                                    <td>
+                                        <div class="car-image" style="width: 150px;height: 100px"><img
+                                                th:src="'/'+${list.getFrontImage()} "
                                                 style="background: #1a1a1a; width: 100%; height: 100%" alt=""></div>
-                  </td>
-                  <td style="color: #0b0b0b">No ratings</td>
-                  <td style="color: #0b0b0b">0</td>
-                  <td style="color: #0b0b0b" th:text="${list.getBasePrice() + ' VND/Day'}"></td>
-                  <td style="color: black" th:utext="${list.getAddress().province +','+ '<br>' + list.getAddress().district +','+ '<br>' + list.getAddress().ward + '.'}"></td>
+                                    </td>
+                                    <td style="color: #0b0b0b">No ratings</td>
+                                    <td style="color: #0b0b0b">0</td>
+                                    <td style="color: #0b0b0b" th:text="${list.getBasePrice() + ' VND/Day'}"></td>
+                                    <td style="color: black"
+                                        th:utext="${list.getAddress().province +','+ '<br>' + list.getAddress().district }"></td>
 
-                  <td style="color: green" th:text="${list.getCarStatus().name}"></td>
-                  <td>
-                    <th:block th:if="${list.getCarStatus().getStatusId() == 1}">
-                      <button class="btn-rent"><a
-                                                  class="btn-view"
-                                                  th:href="@{'/booking-car?CarId='+ ${list.getCarId()} + '&startDate=' + ${pickDate} + ' - ' + ${pickTime} + '&enDate=' + ${dropDate} +' - '+${dropTime} + '&address=' + ${name} + '&beforeNavigate=search'}"
-                      >Rent now</a></button>
-                    </th:block>
+                                    <td style="color: green" th:text="${list.getCarStatus().name}"></td>
+                                    <td>
+                                        <th:block th:if="${list.getCarStatus().getStatusId() == 1}">
+                                            <button class="btn-rent"><a
+                                                    class="btn-view"
+                                                    th:href="@{'/customer/booking-car?CarId='+ ${list.getCarId()} + '&startDate=' + ${pickDate} + ' - ' + ${pickTime} + '&enDate=' + ${dropDate} +' - '+${dropTime} + '&address=' + ${name} + '&beforeNavigate=search'}"
+                                            >Rent now</a></button>
+                                        </th:block>
 
-                    <th:block th:if="${list.getCarStatus().getStatusId() != 1}">
-                      <button class="btn-rent" onclick="showAlert()"> <span class="btn-view">Rent now</span></button>
-                    </th:block>
+                                        <th:block th:if="${list.getCarStatus().getStatusId() != 1}" >
+                                            <button style="padding: 7px 20px; margin-bottom: 5px" class="btn btn-success" onclick="showAlert()"><span style="font-size: 12px" >Rent now</span>
+                                            </button>
+                                        </th:block>
 
 
-                    <button class="btn-view"><a th:href="@{/carDetail/{id}(id=${list.getCarId()})}" class="btn-view">View details</a></button>
-                  </td>
-                </tr>
+                                        <button class="btn btn-info" ><a style="color:white; font-size: 12px" th:href="@{/carDetail/{id}(id=${list.getCarId()})}"
+                                                                    >View details</a></button>
+                                    </td>
+                                </tr>
 
-                <!-- Add more rows as needed -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="box-footer clearfix" style="margin-top: 10px">
-            <ul class="pagination pagination-sm no-margin pull-right">
-              <li th:if="${currentPage >1}"><a th:href="@{'?pageNo='+${currentPage - 1} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}"> << </a></li>
-              <li th:each="i:${#numbers.sequence(1,totalPage)}"
-                  th:classappend="${currentPage == i ? 'active' : ''}"><a
-                      th:href="@{'?pageNo='+${i} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}" th:text="${i}"></a></li>
-              <li th:if="${currentPage < totalPage}"><a th:href="@{'?pageNo='+${currentPage +1} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}"> >> </a></li>
-            </ul>
-          </div>
+                                <!-- Add more rows as needed -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="box-footer clearfix" style="margin-top: 30px">
+                        <ul class="pagination pagination-sm no-margin pull-right">
+                            <li th:if="${currentPage >1}"><a
+                                    th:href="@{'?pageNo='+${currentPage - 1} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}">
+                                << </a></li>
+                            <li th:each="i:${#numbers.sequence(1,totalPage)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}"><a
+                                    th:href="@{'?pageNo='+${i} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}"
+                                    th:text="${i}"></a></li>
+                            <li th:if="${currentPage < totalPage}"><a
+                                    th:href="@{'?pageNo='+${currentPage +1} + '&' +'name=' +${name} +'&'+'pickDate=' +${pickDate}+'&' +'dropDate=' +${dropDate}+'&' +'dropTime=' +${dropTime}+'&' +'pickTime=' +${pickTime}}">
+                                >> </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </th:block>
         </div>
-      </th:block>
+    </section>
+
+
+    <!--Location-->
+
+
+    <div id="ftco-loader" class="show fullscreen">
+        <svg class="circular" width="48px" height="48px">
+            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+                    stroke="#F96D00"/>
+        </svg>
     </div>
-  </section>
 
-
-
-
-
-
-
-  <!--Location-->
-
-
-  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
-
-  <script>
-    function showAlert() {
-      iziToast.error({
-        title: 'Error',
-        message: 'Lỗi: Xe hiện không có sẵn để đặt!',
-        position: 'topRight',
-        transitionIn: 'fadeInDown',
-        transitionOut: 'fadeOutUp'
-      });
-    }
-  </script>
-  <script>
-    document.querySelector('.request-form').addEventListener('submit', function(event) {
-      event.preventDefault();  // Prevent form submission for validation
-
-      // Clear previous error messages
-      document.getElementById('pick-location-error').textContent = '';
-      document.getElementById('pick-date-error').textContent = '';
-      document.getElementById('pick-time-error').textContent = '';
-      document.getElementById('drop-date-error').textContent = '';
-      document.getElementById('drop-time-error').textContent = '';
-      document.getElementById('error-messages').textContent = '';
-
-      // Get field values
-      const pickLocation = document.getElementById('pick-location').value.trim();
-      const pickDate = document.getElementById('book_pick_dates').value;
-      const pickTime = document.getElementById('time_picks').value;
-      const dropDate = document.getElementById('book_drop_dates').value;
-      const dropTime = document.getElementById('time_drops').value;
-
-      let valid = true;
-
-      // Get current date for comparison
-      const today = new Date();
-      const currentDate = today.toISOString().split('T')[0];
-      const currentTime = today.toTimeString().split(' ')[0].substring(0, 5); // HH:mm format
-
-      // Pick-up location validation
-
-
-      // Date and Time fields validation
-      if (!pickDate) {
-        document.getElementById('pick-date-error').textContent = 'Please enter pick-up date';
-        valid = false;
-      } else if (pickDate < currentDate) {
-        document.getElementById('pick-date-error').textContent = 'Pick-up date must not be in the past';
-        valid = false;
-      }
-
-      if (!pickTime) {
-        document.getElementById('pick-time-error').textContent = 'Please enter pick-up time';
-        valid = false;
-      } else if (pickDate === currentDate && pickTime < currentTime) {
-        document.getElementById('pick-time-error').textContent = 'Pick-up time must not be in the past if pick-up date is today';
-        valid = false;
-      }
-
-      if (!dropDate) {
-        document.getElementById('drop-date-error').textContent = 'Please enter drop-off date';
-        valid = false;
-      } else if (dropDate < currentDate) {
-        document.getElementById('drop-date-error').textContent = 'Drop-off date must not be in the past';
-        valid = false;
-      }
-
-      if (!dropTime) {
-        document.getElementById('drop-time-error').textContent = 'Please enter drop-off time';
-        valid = false;
-      }
-
-      // Validate date and time relationship between pick-up and drop-off
-      if (pickDate && pickTime && dropDate && dropTime) {
-        const pickDateTime = new Date(`${pickDate}T${pickTime}`);
-        const dropDateTime = new Date(`${dropDate}T${dropTime}`);
-
-        if (pickDateTime >= dropDateTime) {
-          document.getElementById('error-messages').textContent = 'Drop-off time must be after pick-up time if on the same day.';
-          valid = false;
-        } else if (pickDate === dropDate && pickDateTime.getHours() + 1 > dropDateTime.getHours()) {
-          document.getElementById('error-messages').textContent = 'Drop-off time must be at least 1 hour after pick-up time if on the same day.';
-          valid = false;
+    <script>
+        function showAlert() {
+            iziToast.error({
+                title: 'Error',
+                message: ' Car is currently not available for booking!',
+                position: 'topRight',
+                transitionIn: 'fadeInDown',
+                transitionOut: 'fadeOutUp'
+            });
         }
-      }
+    </script>
+    <script>
+        document.querySelector('.searchForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Ngăn form submit để kiểm tra dữ liệu
 
-      // Submit the form if validation passes
-      if (valid) {
-        event.target.submit();
-      }
-    });
+            // Xóa các thông báo lỗi cũ
+            document.getElementById('pick-location-error').textContent = '';
+            document.getElementById('pick-date-error').textContent = '';
+            document.getElementById('pick-time-error').textContent = '';
+            document.getElementById('drop-date-error').textContent = '';
+            document.getElementById('drop-time-error').textContent = '';
+            document.getElementById('error-messages').textContent = '';
 
-    function navigateToFilteredCars() {
-      // Get the selected sort option
-      const sortBy = document.getElementById("sortBy").value;
+            // Lấy giá trị từ form
+            const pickLocation = document.getElementById('pick-location').value.trim();
+            const pickDate = document.getElementById('book_pick_dates').value;
+            const pickTime = document.getElementById('time_picks').value;
+            const dropDate = document.getElementById('book_drop_dates').value;
+            const dropTime = document.getElementById('time_drops').value;
 
-      // Define sort and order based on the selected option
+            let valid = true;
+
+            // Lấy ngày giờ hiện tại để so sánh
+            const today = new Date();
+            const currentDate = today.toISOString().split('T')[0];
+            const currentTime = today.toTimeString().split(' ')[0].substring(0, 5); // HH:mm
+
+            // Kiểm tra các trường
+            // if (!pickLocation) {
+            //     document.getElementById('pick-location-error').textContent = 'Please enter pick-up location.';
+            //     valid = false;
+            // }
+
+            if (!pickDate) {
+                document.getElementById('pick-date-error').textContent = 'Please enter pick-up date.';
+                valid = false;
+            } else if (pickDate < currentDate) {
+                document.getElementById('pick-date-error').textContent = 'Pick-up date must not be in the past.';
+                valid = false;
+            }
+
+            if (!pickTime) {
+                document.getElementById('pick-time-error').textContent = 'Please enter pick-up time.';
+                valid = false;
+            } else if (pickDate === currentDate && pickTime < currentTime) {
+                document.getElementById('pick-time-error').textContent = 'Pick-up time must not be in the past if today.';
+                valid = false;
+            }
+
+            if (!dropDate) {
+                document.getElementById('drop-date-error').textContent = 'Please enter drop-off date.';
+                valid = false;
+            } else if (dropDate < currentDate) {
+                document.getElementById('drop-date-error').textContent = 'Drop-off date must not be in the past.';
+                valid = false;
+            }
+
+            if (!dropTime) {
+                document.getElementById('drop-time-error').textContent = 'Please enter drop-off time.';
+                valid = false;
+            }
+
+            // Kiểm tra mối quan hệ giữa pick-up và drop-off
+            if (pickDate && pickTime && dropDate && dropTime) {
+                const pickDateTime = new Date(`${pickDate}T${pickTime}`);
+                const dropDateTime = new Date(`${dropDate}T${dropTime}`);
+
+                if (pickDateTime >= dropDateTime) {
+                    document.getElementById('error-messages').textContent = 'Drop-off time must be after pick-up time.';
+                    valid = false;
+                } else if (pickDate === dropDate && dropDateTime - pickDateTime < 3600000) {
+                    document.getElementById('error-messages').textContent = 'Drop-off time must be at least 1 hour after pick-up time.';
+                    valid = false;
+                }
+            }
+
+            // Submit nếu hợp lệ
+            if (valid) {
+                event.target.submit();
+            }
+        });
 
 
-      // Get the values from the hidden fields
-      const pageNo = document.getElementById('currentPage').value;
-      const name = document.getElementById('name').value;
-      const pickDate = document.getElementById('pickDate').value;
-      const dropDate = document.getElementById('dropDate').value;
-      const pickTime = document.getElementById('pickTime').value;
-      const dropTime = document.getElementById('dropTime').value;
+        function navigateToFilteredCars() {
+            // Get the selected sort option
+            const sortBy = document.getElementById("sortBy").value;
 
-      // Construct the search URL with query parameters
-      const url = `/searchCar?sortBy=${sortBy}&pageNo=${pageNo}&name=${name}&pickDate=${pickDate}&dropDate=${dropDate}&pickTime=${pickTime}&dropTime=${dropTime}`;
-
-      // Redirect to the constructed URL
-      window.location.href = url;
-    }
-  </script>
+            // Define sort and order based on the selected option
 
 
+            // Get the values from the hidden fields
+            const pageNo = document.getElementById('currentPage').value;
+            const name = document.getElementById('name').value;
+            const pickDate = document.getElementById('pickDate').value;
+            const dropDate = document.getElementById('dropDate').value;
+            const pickTime = document.getElementById('pickTime').value;
+            const dropTime = document.getElementById('dropTime').value;
+
+            // Construct the search URL with query parameters
+            const url = `/searchCar?sortBy=${sortBy}&pageNo=${pageNo}&name=${name}&pickDate=${pickDate}&dropDate=${dropDate}&pickTime=${pickTime}&dropTime=${dropTime}`;
+
+            // Redirect to the constructed URL
+            window.location.href = url;
+        }
+    </script>
 
 
-  </body>
+    </body>
 </th:block>
 
 </body>

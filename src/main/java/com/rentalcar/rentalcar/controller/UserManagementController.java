@@ -27,7 +27,12 @@ public class UserManagementController {
             Model model
     ) {
         if (id != null) {
-            userRepo.findById(id).ifPresent(user -> model.addAttribute("user", user));
+            User user = userRepo.findById(id).orElse(null);
+            if(user != null) {
+                model.addAttribute("user", user);
+            }else{
+                return "redirect:/admin/user-list";
+            }
         }
         return "/admin/app-user-view-account";
     }
