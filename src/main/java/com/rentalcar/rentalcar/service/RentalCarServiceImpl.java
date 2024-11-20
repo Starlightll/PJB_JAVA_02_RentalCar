@@ -151,6 +151,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         Integer carId = bookingDto.getCarId();
         Car car = carRepository.findById(carId).orElse(null);
 
+
         System.out.println("Attempting to cancel booking with ID: " + bookingId);
 
         Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
@@ -173,6 +174,21 @@ public class RentalCarServiceImpl implements RentalCarService {
                     booking.setLastModified(new Date());
                     // Save the updated booking
                     rentalCarRepository.save(booking);
+                    // =============== Cập nhật ví của carOwner và customer ===============
+                    Double deposit = car.getDeposit();
+                    BigDecimal depositAmount = BigDecimal.valueOf(deposit);
+                    // Cộng tiền vào customer
+                    BigDecimal updatedCustomerWallet = user.getWallet().add(depositAmount);
+                    user.setWallet(updatedCustomerWallet);
+                    userRepository.save(user);
+                    transactionService.saveTransaction(user, depositAmount, TransactionType.RECEIVE_DEPOSIT, booking);
+
+                    // Trừ tiền từ ví car owner
+                    User carOwner = userRepository.getUserById(bookingDto.getCarOwnerId());
+                    BigDecimal updatedCarOwnerWallet = carOwner.getWallet().subtract(depositAmount);
+                    carOwner.setWallet(updatedCarOwnerWallet);
+                    userRepository.save(carOwner);
+                    transactionService.saveTransaction(carOwner,  depositAmount , TransactionType.REFUND_DEPOSIT, booking);
                     System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
                     // Update status xe thành "Available"
                     Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
@@ -681,13 +697,13 @@ public class RentalCarServiceImpl implements RentalCarService {
         BigDecimal updatedCustomerWallet = customer.getWallet().add(remainingMoney);
         customer.setWallet(updatedCustomerWallet);
         userRepository.save(customer);
-        transactionService.saveTransaction(customer, remainingMoney, TransactionType.RECEIVE_DEPOSIT, booking);
+        transactionService.saveTransaction(customer, remainingMoney, TransactionType.OFFSET_FINAL_BACK_REMAIN_DEPOSIT, booking);
 
         // Trừ tiền từ ví car owner
         BigDecimal updatedCarOwnerWallet = carOwner.getWallet().subtract(remainingMoney);
         carOwner.setWallet(updatedCarOwnerWallet);
         userRepository.save(carOwner);
-        transactionService.saveTransaction(carOwner, remainingMoney, TransactionType.REFUND_DEPOSIT, booking);
+        transactionService.saveTransaction(carOwner, remainingMoney, TransactionType.OFFSET_FINAL_PAYMENT_BACK_DEPOSIT, booking);
 
         // Update status xe thành "Available"
         Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);

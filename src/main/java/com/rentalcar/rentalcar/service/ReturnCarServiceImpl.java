@@ -181,11 +181,11 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 if (bookingOptional.isPresent()) {
                     Booking booking = bookingOptional.get();
                     //======================Cộng tiền vào ví chủ xe===========================
-                    transactionService.saveTransaction(carOwner, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT, booking);
+                    transactionService.saveTransaction(carOwner, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT_CAR_OWNER, booking);
                     //=================================================
 
                     // ======================Trừ tiền vào ví customer===========================
-                    transactionService.saveTransaction(user, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT, booking);
+                    transactionService.saveTransaction(user, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT_CUSTOMER, booking);
                     //=================================================
                     // Kiểm tra xem booking có phải của người dùng và đang ở trạng thái "In-Progress"
                     if (booking.getUser().getId().equals(user.getId()) &&
