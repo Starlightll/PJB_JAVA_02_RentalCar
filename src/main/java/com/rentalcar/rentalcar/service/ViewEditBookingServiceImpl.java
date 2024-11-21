@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.common.Constants;
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Booking;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
@@ -88,16 +90,19 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
     public void updateBooking(BookingDto bookingDto, MultipartFile[] files, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
+        User customer = userRepository.getUserById(user.getId());
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingDto.getBookingId()));
-        DriverDetail driverDetail = optionalDriverDetail.orElse(null);
-
-        if(driverDetail == null) {
-            throw new RuntimeException();
+        if(!Objects.equals(normalizedPhone, customer.getPhone()) && phoneNumberStandardService.isPhoneNumberExists(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
+            throw new RuntimeException("Phone number already exists");
         }
+
+
+
 
         String folderName = String.format("%s", user.getId());
         Path draftFolderPath = Paths.get("uploads/Driver/" + bookingDto.getBookingId() + "/Detail/", folderName);
@@ -107,46 +112,58 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 files[0].getSize();
                 String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "drivingLicense." + getExtension(files[0].getOriginalFilename()));
 
-                driverDetail.setDrivingLicense(storedPath);
+                customer.setDrivingLicense(storedPath);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         //Lưu thông tin người thuê xe
-        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
         String fullName = normalizeFullName(bookingDto.getRentFullName());
-        driverDetail.setFullName(fullName);
-        driverDetail.setEmail(bookingDto.getRentMail());
-        driverDetail.setPhone(normalizedPhone);
-        driverDetail.setNationalId(bookingDto.getRentNationalId());
-        driverDetail.setDob(bookingDto.getRentBookPickDate());
-        driverDetail.setCity(bookingDto.getRentProvince().trim());
-        driverDetail.setDistrict(bookingDto.getRentDistrict().trim());
-        driverDetail.setStreet(bookingDto.getRentStreet().trim());
-        driverDetail.setWard(bookingDto.getRentWard().trim());
+        customer.setFullName(fullName);
+        customer.setEmail(bookingDto.getRentMail());
+        customer.setPhone(normalizedPhone);
+        customer.setNationalId(bookingDto.getRentNationalId());
+        customer.setDob(bookingDto.getRentBookPickDate());
+        customer.setCity(bookingDto.getRentProvince().trim());
+        customer.setDistrict(bookingDto.getRentDistrict().trim());
+        customer.setStreet(bookingDto.getRentStreet().trim());
+        customer.setWard(bookingDto.getRentWard().trim());
+        userRepository.save(customer);
+
+
         Booking booking = bookingRepository.findById(Long.valueOf(bookingDto.getBookingId())).orElseThrow(
                 () -> new RuntimeException("Booking not found"));
-        driverDetail.setBooking(booking);
-        driverDetailRepository.save(driverDetail);
 
         booking.setLastModified(new Date());
         bookingRepository.save(booking);
 
 //
 //        //Update Driver
-//        if (bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
-//            // Xử lý driver khi ấn tích
-//            User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId())); // Lấy đối tượng User của Driver
-//            if (driver != null) {
-//                booking.setDriver(driver);
-//                bookingRepository.save(booking);
-//
-//                // THAY ĐỔI TRẠNG THÁI CHO DRIVER
-//                driver.setStatusDriverId(2);
-//                userRepository.save(driver);
-//            }
-//        }
+        if (bookingDto.getIsCheck() && bookingDto.getSelectedUserId() != null) {
+            // Xử lý driver khi ấn tích
+
+            Long oldDriverId = null;
+            if (booking.getDriver() != null && booking.getDriver().getId() != null) {
+                oldDriverId = booking.getDriver().getId();
+            }
+            if(oldDriverId != null){
+                User oldDriver = userRepository.getUserById(oldDriverId);
+                oldDriver.setStatus(UserStatus.ACTIVATED);
+                userRepository.save(oldDriver);
+            }
+
+            User driver = userRepository.getUserById(Long.valueOf(bookingDto.getSelectedUserId())); // Lấy đối tượng User của Driver
+            if (driver != null) {
+
+                booking.setDriver(driver);
+                bookingRepository.save(booking);
+
+                // THAY ĐỔI TRẠNG THÁI CHO DRIVER
+                driver.setStatus(UserStatus.RENTED);
+                userRepository.save(driver);
+            }
+        }
 
 
 

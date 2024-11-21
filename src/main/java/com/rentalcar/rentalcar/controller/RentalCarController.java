@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.Regex;
 import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
@@ -13,6 +14,7 @@ import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.service.PhoneNumberStandardService;
 import com.rentalcar.rentalcar.service.RentalCarService;
 import com.rentalcar.rentalcar.service.ReturnCarService;
 import jakarta.servlet.http.HttpSession;
@@ -52,8 +54,15 @@ public class RentalCarController {
 
     @Autowired
     ReturnCarService returnCarService;
+
     @Autowired
     private CarRepository carRepository;
+
+    @Autowired
+    UserRepo userRepository;
+
+    @Autowired
+    PhoneNumberStandardService phoneNumberStandardService;
 
     @GetMapping("/customer/my-bookings")
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -223,7 +232,7 @@ public class RentalCarController {
         BookingDto bookingInfor = objectMapper.readValue(BookingJson, BookingDto.class);
 
         String fullName = bookingInfor.getRentFullName();
-        if (fullName == null) {
+        if (fullName == null || fullName.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Full Name is required");
         }
         String email = bookingInfor.getRentMail();
@@ -239,6 +248,16 @@ public class RentalCarController {
         if (phone.isEmpty() || !matcher.matches()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Phone");
         }
+
+        User customer = userRepository.getUserById(user.getId());
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+
+
+        if(!Objects.equals(normalizedPhone, customer.getPhone()) && phoneNumberStandardService.isPhoneNumberExists(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already exists");
+        }
+
+
         String nationalId = bookingInfor.getRentNationalId();
         pattern = Pattern.compile(Regex.NATIONAL_ID_REGEX);
         matcher = pattern.matcher(nationalId);

@@ -1,5 +1,7 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.Constants;
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.mail.EmailService;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
@@ -69,6 +72,10 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         );
 
         Double totalPrice = calculateTotalPrice(bookingId);
+        LocalDateTime currentTime = LocalDateTime.now();
+        Double driverSalary = (double) Constants.DRIVER_SALARY * calculateNumberOfDays(bookingDto.getStartDate(), currentTime);
+
+
         if(totalPrice.equals(bookingDto.getDeposit())) {
             return ("Please confirm to return the car. The deposit you pay is equal to the rental fee.");
         } else if (totalPrice > bookingDto.getDeposit()) {
@@ -198,6 +205,22 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             booking.setLastModified(new Date());
                             rentalCarRepository.save(booking);
 
+                            //================Thay đổi trạng thái tài xế======================
+                            Long oldDriverId = null;
+                            if (booking.getDriver() != null && booking.getDriver().getId() != null) {
+                                oldDriverId = booking.getDriver().getId();
+                            }
+                            if(oldDriverId != null){
+                                User oldDriver = userRepository.getUserById(oldDriverId);
+                                oldDriver.setStatus(UserStatus.ACTIVATED);
+                                userRepository.save(oldDriver);
+
+                            }
+                            //==========================================
+
+
+
+
                             Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
                             if (carOptional.isPresent()) {
                                 Car car = carOptional.get();
@@ -247,6 +270,18 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
                             booking.setActualEndDate(currentDate);
                             rentalCarRepository.save(booking);
+
+                            //================Thay đổi trạng thái tài xế======================
+                            Long oldDriverId = null;
+                            if (booking.getDriver() != null && booking.getDriver().getId() != null) {
+                                oldDriverId = booking.getDriver().getId();
+                            }
+                            if(oldDriverId != null){
+                                User oldDriver = userRepository.getUserById(oldDriverId);
+                                oldDriver.setStatus(UserStatus.ACTIVATED);
+                                userRepository.save(oldDriver);
+                            }
+                            //==========================================
 
 
                             if (carOptional.isPresent()) {
@@ -369,4 +404,20 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         }
         return 0.0;
     }
+
+    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
+        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        // Tính chênh lệch thời gian (mili-giây)
+        long timeDiff = endMillis - startMillis;
+
+        // Chia để tính số ngày và làm tròn lên
+        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
+    }
+
 }
+
+
+

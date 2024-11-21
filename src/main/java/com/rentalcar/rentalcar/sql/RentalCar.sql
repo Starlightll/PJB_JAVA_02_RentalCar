@@ -4,11 +4,6 @@ USE RentalCar
 GO
 
 
-CREATE TABLE statusDriver (
-                              statusDriverId INT  IDENTITY (1,1) PRIMARY KEY NOT NULL,
-                              statusDriverName nvarchar(50)
-)
-
 -- Users table
 CREATE TABLE [dbo].[Users]
 (
@@ -27,8 +22,7 @@ CREATE TABLE [dbo].[Users]
     street         NVARCHAR(255),
     fullName       NVARCHAR(100),
     agreeTerms     int                not null,
-    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED')),
-    statusDriverId INT foreign key REFERENCES statusDriver(statusDriverId),
+    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED', 'RENTED')),
     PRIMARY KEY (userId)
     );
 
@@ -43,13 +37,6 @@ CREATE TABLE [dbo].[Notification]
     createAt       DATETIME,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId)
     );
-
-
-INSERT INTO statusDriver (statusDriverName)
-VALUES
-    ('Available'),  -- Available
-    (N'Rented'),      -- Rented
-    (N'Maintenance');    -- Maintenance
 
 CREATE TABLE VerificationToken
 (
@@ -261,23 +248,7 @@ CREATE TABLE [dbo].[Feedback]
     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
     );
 
--- Driver Details table
-CREATE TABLE [dbo].[DriverDetail]
-(
-    driverId       INT IDENTITY (1,1) PRIMARY KEY,
-    fullName       NVARCHAR(100),
-    phone          NVARCHAR(15),
-    nationalId     NVARCHAR(20),
-    dob            DATE,
-    email          NVARCHAR(100),
-    drivingLicense NVARCHAR(50),
-    city           NVARCHAR(100),
-    district       NVARCHAR(100),
-    ward           NVARCHAR(100),
-    street         NVARCHAR(255),
-    bookingId      INT,
-    FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
-    );
+
 
 -- BookingCar table (mapping between Booking and Car)
 CREATE TABLE [dbo].[BookingCar]
@@ -336,11 +307,11 @@ CREATE TABLE [dbo].[Transaction] (
 
 -- ĐÂY LÀ DỮ LIỆU TEST DRIVER, ANH EM TỤ THÊM TRONG BẢNG USER ROLE NHÉ , ROLE LÀ DRIVER(4)
 
-INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, statusDriverId)
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status)
 VALUES
-    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'1', N'8', N'334', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED', 1),
-    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'1', N'8', N'334', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 1),
-    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'1', N'8', N'334', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 1);
+    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'1', N'8', N'334', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED'),
+    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'1', N'8', N'334', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED'),
+    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'1', N'8', N'334', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED');
 
 INsert into UserRole
 values(1, 4), (2,4),(3,4)
@@ -356,11 +327,11 @@ values(1, 4), (2,4),(3,4)
 -- password: 123
 DECLARE @InsertedUsers TABLE (userId BIGINT);
 
-INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, statusDriverId)
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status)
     OUTPUT inserted.userId INTO @InsertedUsers
 VALUES (N'admin', '1990-01-15', N'admin@gmail.com', N'123456789', N'0123456789', N'DL123456', 9999999999.00,
     N'$2a$10$zTJMk41R7yUiRWED31NbtueNZTaIOV8mJm4HGavw2KIZVmCKgA8MW', N'1', N'8',
-    N'334', N'Cau Giay', N'Admin', 1, N'ACTIVATED', 1);
+    N'334', N'Cau Giay', N'Admin', 1, N'ACTIVATED');
 
 INSERT INTO [dbo].[UserRole] (userId, roleId)
 SELECT userId, 1 -- 1 == Admin
