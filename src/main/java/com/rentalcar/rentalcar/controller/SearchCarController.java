@@ -164,7 +164,7 @@ public class SearchCarController {
 
     @GetMapping("/cars")
     public String cars(Model model) {
-        List<Integer> statusIds = List.of(1, 2, 3);
+        List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
         List<Car> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds);
         model.addAttribute("cars", cars);
         return "products/cars";

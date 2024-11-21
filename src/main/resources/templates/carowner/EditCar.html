@@ -6,12 +6,12 @@
 <head>
     <title>Edit Car</title>
     <meta name="_csrf" th:content="${_csrf.token}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/webjars/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="/webjars/toastr/2.1.0/toastr.css">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
+    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="/css/carowner/edit-car.css">
     <style>
     </style>
@@ -759,6 +759,9 @@
                                     <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
                                             onclick="window.history.back()">Back
                                     </button>
+                                    <a th:if="${car.getCarStatus().getStatusId() == 8}" class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                            onclick="deleteCar()">Delete
+                                    </a>
                                     <th:block th:if="${car.getCarStatus().getStatusId() != 8}">
                                         <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
                                                 onclick="window.location.reload()">Discard
@@ -965,6 +968,72 @@
 
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
+        function deleteCar(){
+            const carId = document.getElementById('carId').value;
+            console.log("Delete car with carId:", carId);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                customClass: {
+                    confirmButton: 'my-custom-button',
+                    cancelButton: 'my-custom-button'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/car-owner/delete-car',
+                        type: 'GET',
+                        data: {carId: carId},
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        success: function (response) {
+                            console.log("Car deleted successfully", response);
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Your car has been deleted.',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    confirmButton: 'my-custom-button'
+                                }
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-cars';
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            if(xhr.status === 401){
+                                console.log("Unauthorized delete: ", xhr.responseText);
+                                Swal.fire({
+                                    title: 'Not Deleted!',
+                                    text: xhr.responseText,
+                                    icon: 'warning',
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        confirmButton: 'my-custom-button'
+                                    }
+                                });
+                            } else {
+                                console.log("Error deleting car", error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'An error occurred. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        confirmButton: 'my-custom-button'
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
 
         function updateCar() {
             const mileage = document.getElementById('mileage').value;

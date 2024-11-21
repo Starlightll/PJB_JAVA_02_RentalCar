@@ -316,3 +316,22 @@ td {
         transform: scale(1);
     }
 }
+
+.btn-danger {
+    color: #fff !important;
+    background-color: #dc3545;
+    border-color: #dc3545;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #9e0000 !important;
+    border-color: #ff0000;
+}
+
+
+
+.btn-primary:hover{
+    background-color: #0056b3 !important;
+    border-color: #0056b3;
+}
