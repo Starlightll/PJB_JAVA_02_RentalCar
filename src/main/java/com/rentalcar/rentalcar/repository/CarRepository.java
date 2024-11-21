@@ -49,4 +49,6 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     List<Car> findAllByCarStatus(Integer statusId);
 
     List<Car> findAllByCarStatus_StatusIdIsIn(Collection<Integer> carStatusStatusIds);
+
+    Page<Car> findAllByCarStatus_StatusIdInAndUserId(Collection<Integer> carStatusStatusIds, Long userId, Pageable pageable);
 }

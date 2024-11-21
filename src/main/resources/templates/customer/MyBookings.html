@@ -6,16 +6,11 @@
 <head>
     <title>My Bookings</title>
     <meta name="_csrf" th:content="${_csrf.token}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!--  CSS and JS (offline) -->
-    <link rel="stylesheet" href="/assets/css/iziToast.min.css">
-    <script src="/assets/js/iziToast.min.js"></script>
-    <link rel="stylesheet" href="/assets/css/sweetalert2.min.css">
-    <script src="/assets/js/sweetalert2.all.min.js"></script>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/webjars/toastr/2.1.0/toastr.css">
 
-
-
-
+    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
+    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
     <style>
         .hero-wrap {
             height: 200px !important;

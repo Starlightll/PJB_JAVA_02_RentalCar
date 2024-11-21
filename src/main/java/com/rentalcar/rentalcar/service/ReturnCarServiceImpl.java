@@ -48,7 +48,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
     @Autowired
     private TransactionService transactionService;
-
     @Override
     public String returnCar(Long bookingId, HttpSession session) {
 //        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
@@ -241,8 +240,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
                             booking.setLastModified(new Date());
                             rentalCarRepository.save(booking);
-
-
 
                             //================Thay đổi trạng thái tài xế======================
                             Long oldDriverId = null;
