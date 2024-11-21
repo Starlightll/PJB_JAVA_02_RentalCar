@@ -10,19 +10,13 @@
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="/css/carowner/edit-car.css">
-<!--    &lt;!&ndash; iziToast CSS &ndash;&gt;-->
-<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">-->
-<!--    &lt;!&ndash; iziToast JavaScript &ndash;&gt;-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>-->
 
-    <!-- iziToast CSS (offline) -->
+    <!--  CSS and JS (offline) -->
     <link rel="stylesheet" href="/assets/css/iziToast.min.css">
-
-    <!-- iziToast JavaScript (offline) -->
     <script src="/assets/js/iziToast.min.js"></script>
+    <link rel="stylesheet" href="/assets/css/sweetalert2.min.css">
+    <script src="/assets/js/sweetalert2.all.min.js"></script>
 
     <style>
         .hero-wrap {
@@ -718,7 +712,7 @@
                                                             <!-- Label hiển thị tên file -->
                                                             <label class="custom-file-label" id="fileName" style="font-size: small !important;">
                                                                 <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                <span th:if="${rentUser.getDrivingLicense() != null}" th:text="'Current file: ' + ${rentUser.getDrivingLicense()}"></span>
+                                                                <span th:if="${rentUser.getDrivingLicense() != null}" th:text="'Current file: '"></span>
                                                                 <span th:if="${rentUser.getDrivingLicense() == null}">Choose file</span>
                                                             </label>
 
