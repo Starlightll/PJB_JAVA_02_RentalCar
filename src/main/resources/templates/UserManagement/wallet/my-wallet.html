@@ -87,12 +87,10 @@
                             or  transaction.transactionType == 'Offset final payment'
                             or transaction.transactionType == 'Pay final payment'
                             or transaction.transactionType == 'Return remaining deposit'
-                            or transaction.transactionType == 'Refund deposit'
-                            or transaction.transactionType == 'Pay for driver rental'? '-' : '+')
+                            or transaction.transactionType == 'Refund deposit' ? '-' : '+')
                             + transaction.getAmount() + ' VND'}"
                                 th:class="${transaction.transactionType == 'Withdraw' or transaction.transactionType == 'Pay deposit' or transaction.transactionType == 'Offset final payment'  or transaction.transactionType == 'Pay final payment'
-                            or transaction.transactionType == 'Return remaining deposit' or transaction.transactionType == 'Refund deposit'
-                             or transaction.transactionType == 'Pay for driver rental' ? 'text-danger' : 'text-success'}">
+                            or transaction.transactionType == 'Return remaining deposit' or transaction.transactionType == 'Refund deposit' ? 'text-danger' : 'text-success'}">
                             </td>
                             <td th:text="${transaction.getTransactionType()}"></td>
                             <td th:text="${#temporals.format(transaction.getTransactionDate(), 'dd/MM/yyyy HH:mm')}"></td>
