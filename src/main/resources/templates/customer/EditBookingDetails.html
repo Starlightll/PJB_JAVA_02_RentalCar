@@ -547,10 +547,8 @@
                                                                th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;' :
                  (booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;' :
                  (booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;' :
-                  booking.bookingStatus == 'Pending cancel' ? 'color: #000000; font-weight: bold;' :
                  (booking.bookingStatus == 'Pending deposit' || booking.bookingStatus == 'Pending payment' ? 'color: #FF0000; font-weight: bold;' :
                  (booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' :
-
                  'font-weight: bold;'))))}">
                                                             </p>
                                                         </div>
@@ -567,14 +565,14 @@
                                                     <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
                                                     <a th:href="'#'" id="confirm-booking-detail-btn"
                                                        style="background: #d5dcd5 !important; color: black !important;"
-                                                       th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                       th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
                                                         Pick-up</a>
 
 <!--                                                     Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses-->
                                                     <a th:href="'#'" style="background: #e82b46 !important;" id="cancel-booking-btn"
                                                        th:if="${( booking.getBookingStatus() == 'Confirmed' or  booking.getBookingStatus() == 'Pending deposit' or  booking.getBookingStatus() == 'Stopped')
-                                                        and  booking.getBookingStatus() != 'Pending payment' and booking.bookingStatus !='Pending cancel' and  booking.getBookingStatus() != 'Cancelled' and  booking.getBookingStatus() != 'Completed' and booking.getBookingStatus() != 'In-Progress'}"
+                                                        and  booking.getBookingStatus() != 'Pending payment' and  booking.getBookingStatus() != 'Cancelled' and  booking.getBookingStatus() != 'Completed' and booking.getBookingStatus() != 'In-Progress'}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center" >Cancel
                                                         Booking</a>
 

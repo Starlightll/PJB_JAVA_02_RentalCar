@@ -166,7 +166,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                             booking.getBookingStatus().getName().equals("Stopped"))) {
 
                 // Fetch the "Cancelled" BookingStatus from the database
-                Optional<BookingStatus> cancelledStatusOptional = bookingStatusRepository.findById(7L);
+                Optional<BookingStatus> cancelledStatusOptional = bookingStatusRepository.findByName("Cancelled");
 
                 if (cancelledStatusOptional.isPresent()) {
                     BookingStatus cancelledStatus = cancelledStatusOptional.get();
@@ -187,8 +187,24 @@ public class RentalCarServiceImpl implements RentalCarService {
                     }
                     //==========================================
 
-                    // Update status xe thành "Pending cancel"
-                    Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(15);
+                    // =============== Cập nhật ví của carOwner và customer ===============
+                    Double deposit = car.getDeposit();
+                    BigDecimal depositAmount = BigDecimal.valueOf(deposit);
+                    // Cộng tiền vào customer
+                    BigDecimal updatedCustomerWallet = user.getWallet().add(depositAmount);
+                    user.setWallet(updatedCustomerWallet);
+                    userRepository.save(user);
+                    transactionService.saveTransaction(user, depositAmount, TransactionType.RECEIVE_DEPOSIT, booking);
+
+                    // Trừ tiền từ ví car owner
+                    User carOwner = userRepository.getUserById(bookingDto.getCarOwnerId());
+                    BigDecimal updatedCarOwnerWallet = carOwner.getWallet().subtract(depositAmount);
+                    carOwner.setWallet(updatedCarOwnerWallet);
+                    userRepository.save(carOwner);
+                    transactionService.saveTransaction(carOwner,  depositAmount , TransactionType.REFUND_DEPOSIT, booking);
+                    System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
+                    // Update status xe thành "Available"
+                    Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
                     if (availableStatusOptional.isEmpty()) {
                         System.out.println("Car status 'Available' not found.");
                         return false;
@@ -526,12 +542,6 @@ public class RentalCarServiceImpl implements RentalCarService {
             System.out.println("Booked status not found.");
             return false; // If the "Booked" status is not found, return false
         }
-        // Gửi email thông báo
-        emailService.sentNotiConfirmedBooking(
-                booking.getUser(),
-                booking,
-                car
-        );
 
         System.out.println("Car and Booking successfully updated for booking ID: " + bookingId);
         return true;
@@ -748,137 +758,6 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         System.out.println("Payment confirmed and booking completed.");
         return 1; // Thành công
-    }
-
-    @Override
-    public boolean confirmCancelBookingCar(Long carId, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-
-        // Check if the user is logged in
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-
-        System.out.println("Attempting to confirm cancel Car with ID: " + carId);
-
-        // Fetch the car and booking details with "Pending deposit" status
-        Object[] nestedArray = carRepository.findCarAndBookingByCarId(carId, 7);
-
-        // Check if the result is not empty
-        if (nestedArray == null || nestedArray.length == 0) {
-            System.out.println("Car with ID " + carId + " not found.");
-            return false;
-        }
-
-        // Extract the relevant data from the nested array and populate the CarDto
-        Object[] result = (Object[]) nestedArray[0];
-        CarDto carDto = new CarDto(
-                Long.valueOf((Integer) result[0]), // booking Id
-                (String) result[1],   // name
-                (String) result[2],   // licensePlate
-                (String) result[3],   // model
-                (String) result[4],   // color
-                (Integer) result[5],  // seatNo
-                (Integer) result[6],  // productionYear
-                (String) result[7],   // transmission
-                (String) result[8],   // fuel
-                ((BigDecimal) result[9]).doubleValue(),  // mileage
-                ((BigDecimal) result[10]).doubleValue(),  // fuelConsumption
-                ((BigDecimal) result[11]).doubleValue(),  // basePrice
-                ((BigDecimal) result[12]).doubleValue(),  // deposit
-                (String) result[13],  // description
-                (String) result[14],  // termOfUse
-                ((BigDecimal) result[15]).doubleValue(),  // carPrice
-                (String) result[16],  // front
-                (String) result[17],  // back
-                (String) result[18],  // left
-                (String) result[19],  // right
-                (String) result[20],  // registration
-                (String) result[21],  // certificate
-                (String) result[22],  // insurance
-                (Date) result[23],    // lastModified
-                (Integer) result[24], // userId
-                (Integer) result[25], // brandId
-                (Integer) result[26], // statusId
-                (Integer) result[27], // bookingStatusId
-                (String) result[28],  // bookingStatusName
-                Long.valueOf((Integer) result[29]) // booking Id
-                // bookingId
-        );
-
-        // Check the booking status and booking ID
-        String bookingStatusName = carDto.getBookingStatusName();
-        if (!"Pending cancel".equals(bookingStatusName)) {
-            System.out.println("Booking status is not 'Pending cancel'.");
-            return false; // Return false if the status is not "Pending deposit"
-        }
-
-        Long bookingId = carDto.getBookingId();
-        if (bookingId == null) {
-            System.out.println("Booking ID not found.");
-            return false; // Return false if no booking ID found
-        }
-
-        // Retrieve and update the booking
-        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (!bookingOptional.isPresent()) {
-            System.out.println("Booking with ID " + bookingId + " not found.");
-            return false; // If booking not found, return false
-        }
-
-        Booking booking = bookingOptional.get();
-
-
-        // Update the booking status to "Cancelled"
-        Optional<BookingStatus> confirmedStatusOptional = bookingStatusRepository.findById(6L);
-        if (confirmedStatusOptional.isPresent()) {
-            BookingStatus confirmedStatus = confirmedStatusOptional.get();
-            booking.setBookingStatus(confirmedStatus);
-            booking.setLastModified(new Date());
-            bookingRepository.save(booking);
-        } else {
-            System.out.println("Cancelled status not found.");
-            return false; // If the "Confirmed" status is not found, return false
-        }
-
-        // Update the car status to "Available"
-        Car car = carRepository.getCarByCarId(carDto.getCarId().intValue());
-        Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(1);
-        if (bookedStatusOptional.isPresent()) {
-            CarStatus bookedStatus = bookedStatusOptional.get();
-            car.setCarStatus(bookedStatus);
-            carRepository.save(car);
-        } else {
-            System.out.println("Booked status not found.");
-            return false; // If the "Booked" status is not found, return false
-        }
-
-        // =============== Cập nhật ví của carOwner và customer ===============
-        Double deposit = car.getDeposit();
-        BigDecimal depositAmount = BigDecimal.valueOf(deposit);
-        // trừ tiền vào car owner
-        BigDecimal updatedCustomerWallet = user.getWallet().subtract(depositAmount);
-        user.setWallet(updatedCustomerWallet);
-        userRepository.save(user);
-        transactionService.saveTransaction(user, depositAmount, TransactionType.REFUND_DEPOSIT, booking);
-
-        // cộng tiền từ ví customer
-        User customer = booking.getUser();
-        BigDecimal updatedCarOwnerWallet = customer.getWallet().add(depositAmount);
-        customer.setWallet(updatedCarOwnerWallet);
-        userRepository.save(customer);
-        transactionService.saveTransaction(customer,  depositAmount , TransactionType.RECEIVE_DEPOSIT, booking);
-        System.out.println("Booking with ID " + bookingId + " has been successfully cancelled.");
-
-        // Gửi email thông báo
-        emailService.sendConfirmCancelBooking(
-                customer,
-                booking,
-                car
-        );
-
-        System.out.println("Car and Booking successfully updated for booking ID: " + bookingId);
-        return true;
     }
 
 
