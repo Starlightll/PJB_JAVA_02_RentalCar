@@ -11,7 +11,7 @@
     <!--Vendor css-->
     <link rel="stylesheet" href="/webjars/select2/4.1.0-rc.0/dist/css/select2.css">
     <link rel="stylesheet" href="/webjars/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
 
     <style>
         .validate-msg {
@@ -67,9 +67,9 @@
                     ...
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-secondary" id="confirm">Yes</button>
-                    <button type="button" class="btn btn-secondary" id="notConfirm">No</button>
+                    <a type="button" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                    <a type="button" class="btn btn-secondary" id="confirm">Yes</a>
+                    <a type="button" class="btn btn-secondary" id="notConfirm">No</a>
                 </div>
             </div>
         </div>
@@ -667,7 +667,7 @@
                                                                     <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
                                                                         Location: </p>
                                                                     <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                        th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''} + ', ' + ${carDraft.getHome()}"
+                                                                        th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''}"
                                                                     >No</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
@@ -1434,9 +1434,10 @@
             //Load location
             const province = document.getElementById('province');
             const district = document.getElementById('district');
-            const ward = document.getElementById('district');
+            const ward = document.getElementById('ward');
             const previewLocation = document.getElementById('previewLocation');
-            ward.addEventListener('change', function(){
+
+            $('#ward').on('select2:select', function (e) {
                 previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
             });
 
