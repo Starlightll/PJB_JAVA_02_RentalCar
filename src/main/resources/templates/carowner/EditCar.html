@@ -196,20 +196,38 @@
                                                             <div class="col-lg-12 mb-3">
                                                                 <div class="input-group input-group-sm">
                                                                     <div class="input-group-prepend">
-                                                                        <label class="input-group-text"
-                                                                               for="province">Status</label>
+                                                                        <label class="input-group-text" for="province">Status</label>
                                                                     </div>
                                                                     <select class="custom-select" id="carStatus">
-                                                                        <th:block th:each="carStatus : ${carStatuses}">
-                                                                            <option th:value="${carStatus.statusId}"
-                                                                                    th:text="${carStatus.name}"
-                                                                                    th:selected="${carStatus.statusId == car.carStatus.statusId}"></option>
+                                                                        <th:block th:if="${car.carStatus.statusId == 1 or car.carStatus.statusId == 3}">
+                                                                            <option th:value="1" th:text="'Available'" th:selected="${car.carStatus.statusId == 1}">${car.carStatus.name}</option>
+                                                                            <option th:value="3" th:text="'Stopped'" th:selected="${car.carStatus.statusId == 3}">${car.carStatus.name}</option>
+                                                                        </th:block>
+
+                                                                        <th:block th:if="${car.carStatus.statusId == 2 or car.carStatus.statusId == 11 or car.carStatus.statusId == 14 or car.carStatus.statusId == 15}">
+                                                                            <option th:value="${car.carStatus.statusId}" th:text="'Booked'" th:disabled="true" th:selected="${car.carStatus.statusId == 2 or car.carStatus.statusId == 11 or car.carStatus.statusId == 14 or car.carStatus.statusId == 15}">
+                                                                                Booked
+                                                                            </option>
+                                                                        </th:block>
+
+
+                                                                        <!-- For all other statuses, show all options and allow selection -->
+                                                                        <th:block th:if="${car.carStatus.statusId != 1 and car.carStatus.statusId != 3 and car.carStatus.statusId != 2 and car.carStatus.statusId != 11 and car.carStatus.statusId != 14 and car.carStatus.statusId != 15}">
+                                                                            <th:block th:each="carStatus : ${carStatuses}">
+                                                                                <option th:value="${carStatus.statusId}"
+                                                                                        th:text="${carStatus.name}"
+                                                                                        th:selected="${carStatus.statusId == car.carStatus.statusId}">
+                                                                                </option>
+                                                                            </th:block>
                                                                         </th:block>
                                                                     </select>
                                                                 </div>
                                                                 <a class="validate-msg">Invalid</a>
                                                             </div>
                                                         </th:block>
+
+
+
                                                     </div>
                                                 </div>
                                                 <th:block th:if="${car.getCarStatus().getStatusId() == 14}">
@@ -223,8 +241,19 @@
                                                         </a>
                                                     </div>
                                                 </th:block>
+                                                <th:block th:if="${car.getCarStatus().getStatusId() == 15}">
+                                                    <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
+                                                        <a
+                                                                th:id="'confirm-cancel-btn-' + ${car.getCarId()}"
+                                                                class="btn btn-primary"
+                                                                th:attr="data-car-id=${car.getCarId()}"
+                                                                style="background: #000000 !important;">
+                                                            Confirm cancel
+                                                        </a>
+                                                    </div>
+                                                </th:block>
                                                 <th:block th:if="${car.getCarStatus().getStatusId() == 11}">
-                                                <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
+                                                    <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
                                                         <a th:if="${bookingStatus == 4}"
                                                            th:id="'confirm-payment-btn-' + ${car.getCarId()}"
                                                            class="btn btn-primary"
@@ -233,7 +262,7 @@
                                                            th:onclick="'checkPayment(' + ${car.getCarId()} + ')'">
                                                             Confirm Payment
                                                         </a>
-                                                </div>
+                                                    </div>
                                                 </th:block>
                                             </div>
 
@@ -865,6 +894,39 @@
             )
             ;
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+
+            const confirmCancelBtns = document.querySelectorAll('[id^="confirm-cancel-btn-"]');
+            confirmCancelBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Lấy carId từ data-car-id
+                    const carId = this.getAttribute('data-car-id');
+
+                    Swal.fire({
+                        title: 'Confirm cancel booking and refund deposit to customer!',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the cancel for car with ID:', carId);
+                            window.location.href = `/car-owner/confirm-cancel?carId=${carId}`;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
 
 
         document.addEventListener('DOMContentLoaded', function () {

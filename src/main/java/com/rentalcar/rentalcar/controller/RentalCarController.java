@@ -340,7 +340,7 @@ public class RentalCarController {
                                 Model model) {
         boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
         if (isCancelled) {
-            model.addAttribute("message_" + bookingId, "Booking has been successfully cancelled.");
+            model.addAttribute("message_" + bookingId, "Waiting CarOwner confirm cancel this booking!");
         } else {
             model.addAttribute("error", "Unable to cancel the booking. Please try again.");
         }
