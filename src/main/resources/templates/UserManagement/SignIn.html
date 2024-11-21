@@ -5,10 +5,14 @@
     <title> Login and Registration Form in HTML & CSS | CodingLab </title>
     <!-- Fontawesome CDN Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">-->
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>-->
+
+    <link rel="stylesheet" href="/assets/css/sweetalert2.min.css">
+    <script src="/assets/js/sweetalert2.all.min.js"></script>
+
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -280,6 +284,22 @@
         }
 
 
+        button:disabled {
+            background-color: black;
+            color: white;
+            border: 1px solid gray;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+
+        .forms .form-content .button input:disabled:hover {
+            background-color: black;
+            color: white;
+            border-color: gray;
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
@@ -438,7 +458,16 @@
     function toggleSubmitButton() {
         const checkbox = document.getElementById("agree-term");
         const submitButton = document.getElementById("signup");
-        if (checkbox.checked) {
+
+        // Kiểm tra điều kiện checkbox và các trường hợp lệ
+        const emailError = document.getElementById("emailError").textContent;
+        const phoneError = document.getElementById("phoneError").textContent;
+        const passwordError = document.getElementById("passwordError").textContent;
+        const confirmPasswordError = document.getElementById("confirmPasswordError").textContent;
+
+        const allValid = !emailError && !phoneError && !passwordError && !confirmPasswordError;
+
+        if (checkbox.checked && allValid) {
             submitButton.disabled = false;
             submitButton.classList.add('active');
         } else {
@@ -447,29 +476,37 @@
         }
     }
 
+    // Gọi lại `toggleSubmitButton` trong từng hàm kiểm tra
     function validateEmail() {
         const email = document.getElementById("email").value;
         const emailError = document.getElementById("emailError");
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
         if (!emailPattern.test(email)) {
             emailError.textContent = "Please enter a valid email address.";
         } else {
-            emailError.textContent = "";  // Clear error if no frontend error
+            emailError.textContent = ""; // Clear error if no frontend error
         }
         emailError.style.fontSize = errorFontSize;
+
+        toggleSubmitButton();
     }
 
     function validatePhone() {
         const phone = document.getElementById("phoneNumber").value;
         const phoneError = document.getElementById("phoneError");
         const phonePattern = /^(0|(\+84))?(3|5|7|8|9)\d{8}$/;
+
         if (!phonePattern.test(phone)) {
             phoneError.textContent = "Invalid phone number format.";
         } else {
-            phoneError.textContent = "";  // Clear error if no frontend error
+            phoneError.textContent = ""; // Clear error if no frontend error
         }
         phoneError.style.fontSize = errorFontSize;
+
+        toggleSubmitButton();
     }
+
     function validatePassword() {
         const password = document.getElementById("pass").value;
         const passwordError = document.getElementById("passwordError");
@@ -481,6 +518,8 @@
             passwordError.textContent = "";
         }
         passwordError.style.fontSize = errorFontSize;
+
+        toggleSubmitButton();
     }
 
     function validateConfirmPassword() {
@@ -489,15 +528,18 @@
         const confirmPasswordError = document.getElementById("confirmPasswordError");
         const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*(){}\[\]_\-+=~`|:;\"'<>,.\/?])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 
-        if(!regex.test(confirmPassword)) {
+        if (!regex.test(confirmPassword)) {
             confirmPasswordError.textContent = "Password must have (A-Z), (a-z), (0-9), a special char, and be 8+ chars.";
-        }else if (confirmPassword !== password) {
+        } else if (confirmPassword !== password) {
             confirmPasswordError.textContent = "Passwords do not match.";
         } else {
             confirmPasswordError.textContent = "";
         }
         confirmPasswordError.style.fontSize = errorFontSize;
+
+        toggleSubmitButton();
     }
+
 
 </script>
 

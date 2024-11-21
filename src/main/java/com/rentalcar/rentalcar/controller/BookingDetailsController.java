@@ -221,7 +221,8 @@ public class BookingDetailsController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your wallet must be greater than deposit");
                 case "Other Pay Method not helps now, please use your wallet":
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Other Pay Method not helps now, please use your wallet");
-
+                case "Phone number already exists":
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already exists");
             }
         }
 

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
@@ -90,12 +91,16 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
         User user = (User) session.getAttribute("user");
         User customer = userRepository.getUserById(user.getId());
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-//        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingDto.getBookingId()));
-//        DriverDetail driverDetail = optionalDriverDetail.orElse(null);
+        if(!Objects.equals(normalizedPhone, customer.getPhone()) && phoneNumberStandardService.isPhoneNumberExists(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
+            throw new RuntimeException("Phone number already exists");
+        }
+
 
 
 
@@ -114,7 +119,6 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         }
 
         //Lưu thông tin người thuê xe
-        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
         String fullName = normalizeFullName(bookingDto.getRentFullName());
         customer.setFullName(fullName);
         customer.setEmail(bookingDto.getRentMail());

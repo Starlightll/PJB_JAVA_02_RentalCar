@@ -489,7 +489,7 @@
                                                                             <!-- Label hiển thị tên file -->
                                                                             <label class="custom-file-label" id="fileName1" style="font-size: small !important;">
                                                                                 <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                                <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: ' + ${user.getDrivingLicense()}"></span>
+                                                                                <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: '"></span>
                                                                                 <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
                                                                             </label>
                                                                         </div>

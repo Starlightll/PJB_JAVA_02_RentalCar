@@ -174,6 +174,19 @@ public class RentalCarServiceImpl implements RentalCarService {
                     booking.setLastModified(new Date());
                     // Save the updated booking
                     rentalCarRepository.save(booking);
+
+                    //================Thay đổi trạng thái tài xế======================
+                    Long oldDriverId = null;
+                    if (booking.getDriver() != null && booking.getDriver().getId() != null) {
+                        oldDriverId = booking.getDriver().getId();
+                    }
+                    if(oldDriverId != null){
+                        User oldDriver = userRepository.getUserById(oldDriverId);
+                        oldDriver.setStatus(UserStatus.ACTIVATED);
+                        userRepository.save(oldDriver);
+                    }
+                    //==========================================
+
                     // =============== Cập nhật ví của carOwner và customer ===============
                     Double deposit = car.getDeposit();
                     BigDecimal depositAmount = BigDecimal.valueOf(deposit);
@@ -299,26 +312,24 @@ public class RentalCarServiceImpl implements RentalCarService {
     @Override
     public Booking saveBooking(BookingDto bookingDto, MultipartFile[] files, HttpSession session) {
         Booking booking = new Booking();
-        DriverDetail driverDetail = new DriverDetail();
         Car car = carRepository.getCarByCarId(bookingDto.getCarID());
         User user = (User) session.getAttribute("user");
         User customer = userRepository.getUserById(user.getId());
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
 
 //        if(userRepository.getUserByEmail(customer.getEmail()) != null) {
 //            throw new RuntimeException("Email already exists");
 //        }
 
-//        if(phoneNumberStandardService.isPhoneNumberExists(customer.getPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
-//            throw new RuntimeException("Phone number already exists");
-//        }
+        if(!Objects.equals(normalizedPhone, customer.getPhone()) && phoneNumberStandardService.isPhoneNumberExists(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
+            throw new RuntimeException("Phone number already exists");
+        }
 
         //============CHỌN VÍ ĐỂ TRẢ CỌC============================
         BigDecimal myWallet = customer.getWallet() != null ? customer.getWallet() : BigDecimal.ZERO; // VÍ CỦA CUSTOMER
         User carOwner = userRepository.getUserById(car.getUser().getId());
         BigDecimal deposit = new BigDecimal(bookingDto.getDeposit());
+
         if(bookingDto.getSelectedPaymentMethod() != 1) {// CHỌN PHƯƠNG THỨC THANH TOÁN KHÁC
              throw new RuntimeException("Other Pay Method not helps now, please use your wallet");
         }
@@ -350,9 +361,11 @@ public class RentalCarServiceImpl implements RentalCarService {
             //Lưu booking
             int numberOfDays = calculateNumberOfDays(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
             Double totalPrice = car.getBasePrice() * numberOfDays;
+            String fullName = normalizeFullName(bookingDto.getRentFullName());
+
             booking.setStartDate(bookingDto.getPickUpDate());
             booking.setEndDate(bookingDto.getReturnDate());
-            booking.setDriverInfo(bookingDto.getRentFullName());
+            booking.setDriverInfo(fullName);
             booking.setActualEndDate(bookingDto.getReturnDate());
             booking.setTotalPrice(totalPrice);
             booking.setUser(user);
@@ -377,8 +390,6 @@ public class RentalCarServiceImpl implements RentalCarService {
 
 
             //Lưu thông tin người thuê xe
-            String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(bookingDto.getRentPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
-            String fullName = normalizeFullName(bookingDto.getRentFullName());
             customer.setFullName(fullName);
             customer.setEmail(bookingDto.getRentMail());
             customer.setPhone(normalizedPhone);
@@ -724,6 +735,17 @@ public class RentalCarServiceImpl implements RentalCarService {
         booking.setLastModified(new Date());
         bookingRepository.save(booking);
 
+        //================Thay đổi trạng thái tài xế======================
+        Long oldDriverId = null;
+        if (booking.getDriver() != null && booking.getDriver().getId() != null) {
+            oldDriverId = booking.getDriver().getId();
+        }
+        if(oldDriverId != null){
+            User oldDriver = userRepository.getUserById(oldDriverId);
+            oldDriver.setStatus(UserStatus.ACTIVATED);
+            userRepository.save(oldDriver);
+        }
+        //==========================================
 
         // Gửi email thông báo
         emailService.sendPaymentConfirmation(
