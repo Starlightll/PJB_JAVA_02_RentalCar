@@ -166,6 +166,25 @@
             <scope>provided</scope>
         </dependency>
 
+<!--        FE Libs-->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>select2</artifactId>
+            <version>4.1.0-rc.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.bowergithub.berkanakyurek</groupId>
+            <artifactId>select2-bootstrap4-theme</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

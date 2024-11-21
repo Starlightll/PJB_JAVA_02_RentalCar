@@ -103,7 +103,7 @@ public class CarOwnerController {
             pageable = PageRequest.of(page - 1, size);
             carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
         } else {
-            List<Integer> statusIds = List.of(1, 2, 3, 8);
+            List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 8, 10, 11, 14);
             carPage = carRepository.findAllByCarStatus_StatusIdInAndUserId(statusIds, user.getId(), pageable);
         }
         List<Car> cars = carPage.getContent();
