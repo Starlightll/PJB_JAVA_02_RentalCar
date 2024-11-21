@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -74,25 +73,40 @@ public class CarAPI {
         }
     }
 
-    @GetMapping("/update-car-status/{carId}")
-    public ResponseEntity<?> updateCarStatus(@RequestParam Integer statusId, @PathVariable("carId") Integer carId) {
+    @GetMapping("/approve-car")
+    public ResponseEntity<?> updateCarStatus(@RequestParam Integer carId) {
         try {
             Car car = carRepository.findById(carId).orElse(null);
+
+            // Check if car exists and status is 'Verifying'
             if (car == null) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "Car not found"));
             }
-            carOwnerService.setCarStatus(carId, statusId);
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("title1", "Bravo!");
-            variables.put("title2", "Your Car is Approved and Ready to Rent.");
-            variables.put("body", "The first mate and his Skipper too will do their very best to make the others comfortable in their tropic island nest. Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels..");
+            if(car.getCarStatus().getStatusId() != 8){
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Car status must be 'Verifying'"));
+            }
+
+            // Update car status
+            carOwnerService.setCarStatus(carId, 1);
+
+            // Send email
+            Map<String, Object> variables = getStringObjectMap();
             emailService.sendEmailApprovedCar(car.getUser().getEmail(), "Car Approve", variables);
             return ResponseEntity.ok(Map.of("success", true));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error updating car status"));
         }
+    }
+
+    private static Map<String, Object> getStringObjectMap() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("title1", "Bravo!");
+        variables.put("title2", "Your Car is Approved and Ready to Rent.");
+        variables.put("body", "The first mate and his Skipper too will do their very best to make the others comfortable in their tropic island nest. Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels..");
+        return variables;
     }
 
 }

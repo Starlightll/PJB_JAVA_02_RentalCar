@@ -6,11 +6,11 @@
 <head>
     <title>My Cars</title>
     <meta name="_csrf" th:content="${_csrf.token}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/webjars/toastr/2.1.0/toastr.css">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
+    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
     <style>
         .hero-wrap {
             height: 200px !important;
@@ -382,41 +382,16 @@
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Status: </p>
-                                                                <th:block
-                                                                        th:if="${car.getCarStatus().getStatusId() == 8}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #ff9100">Verifying</p>
-                                                                </th:block>
-                                                                <th:block
-                                                                        th:if="${car.getCarStatus().getStatusId() == 1}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #00d79d">Available</p>
-                                                                </th:block>
-                                                                <th:block
-                                                                        th:if="${car.getCarStatus().getStatusId() == 2}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #0080ff">Booked</p>
-                                                                </th:block>
-                                                                <th:block
-                                                                        th:if="${car.getCarStatus().getStatusId() == 3}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #ff0000">Stopped</p>
-                                                                </th:block>
-                                                                <th:block
-                                                                        th:if="${car.getCarStatus().getStatusId() == 4}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #303030">Deleted</p>
-                                                                </th:block>
-                                                                <th:block
-                                                                        th:if="${car.getCarStatus().getStatusId() == 11}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #008cf4">Pending payment</p>
-                                                                </th:block>
-                                                                <th:block
-                                                                        th:if="${car.getCarStatus().getStatusId() == 14}">
-                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #008cf4">Pending deposit</p>
-                                                                </th:block>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 1}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #28bf00;max-width: fit-content;background-color: #d9ffd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 2}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #5900ff;max-width: fit-content;background-color: #d8d1ff;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 3}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff0000;max-width: fit-content;background-color: #ffd1d1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 5}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #5f5f5f;max-width: fit-content;background-color: #d9d9d9;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 6}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 8}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 10}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #00a6ff;max-width: fit-content;background-color: #d1ecff;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 11}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 14}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+
                                                             </div>
                                                         </div>
                                                     </div>

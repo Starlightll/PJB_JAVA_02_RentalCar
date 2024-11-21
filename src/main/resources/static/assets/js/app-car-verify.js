@@ -80,7 +80,7 @@ $(function () {
                     2: {title: "Professional", class: "bg-label-success"},
                     3: {title: "Rejected", class: "bg-label-danger"},
                     4: {title: "Resigned", class: "bg-label-warning"},
-                    8: {title: "Pending", class: "bg-label-warning"},
+                    8: {title: "Verifying", class: "bg-label-warning"},
                 };
                 return void 0 === l[t] ? e : '<span class="badge ' + l[t].class + '">' + l[t].title + "</span>"
             }
@@ -156,7 +156,7 @@ function verifyCar(carId) {
     }).then(function (e) {
         if (e.value) {
             $.ajax({
-                url: `/carAPI/update-car-status/${carId}?statusId=1`,
+                url: `/carAPI/approve-car?carId=${carId}`,
                 method: "GET",
                 contentType: "application/json",
                 success: function (response) {
@@ -171,15 +171,25 @@ function verifyCar(carId) {
                         $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
                 },
                 error: function (e, a, t) {
-                    console.error("Error confirming car: ", t),
-                        Swal.fire({
-                            icon: "error",
-                            title: "Failed to approve the car. Please try again.",
-                            showConfirmButton: !1,
-                            timer: 1500,
-                            customClass: {confirmButton: "btn btn-primary"},
-                            buttonsStyling: !1
-                        })
+                    console.error("Error confirming car: ", e);
+
+                    let errorMessage = "An unknown error occurred";
+                    if (e.responseJSON && e.responseJSON.error) {
+                        errorMessage = e.responseJSON.error;
+                    } else if (e.responseText) {
+                        errorMessage = e.responseText;
+                    }
+
+                    Swal.fire({
+                        icon: "question",
+                        title: "Failed to approve the car",
+                        text: errorMessage,
+                        showConfirmButton: !1,
+                        timer: 1500,
+                        customClass: { confirmButton: "btn btn-primary" },
+                        buttonsStyling: !1
+                    });
+                    $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
                 }
             })
         }

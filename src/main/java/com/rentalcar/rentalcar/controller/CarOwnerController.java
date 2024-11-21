@@ -103,7 +103,8 @@ public class CarOwnerController {
             pageable = PageRequest.of(page - 1, size);
             carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
         } else {
-            carPage = carRepository.findAllByUser(user, pageable);
+            List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 8, 10, 11, 14);
+            carPage = carRepository.findAllByCarStatus_StatusIdInAndUserId(statusIds, user.getId(), pageable);
         }
         List<Car> cars = carPage.getContent();
         if (cars.isEmpty()) {
@@ -152,9 +153,11 @@ public class CarOwnerController {
     @GetMapping("edit-car/{carId}")
     public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
-        if (car == null) {
+        // Check if car is not found or car is deleted
+        if (car == null || car.getCarStatus().getStatusId() == 4) {
             return "redirect:/car-owner/my-cars";
         } else {
+            // Check if user is allowed to edit this car
             if (!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())) {
                 throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
@@ -288,8 +291,20 @@ public class CarOwnerController {
 
 
     @GetMapping("/delete-car")
-    public String deleteCar() {
-        return "carowner/MyCars";
+    public ResponseEntity<?> deleteCar(
+            @RequestParam("carId") Integer carId,
+            HttpSession session
+    ) {
+        User user = (User) session.getAttribute("user");
+        Car car = carRepository.getCarByCarId(carId);
+        if (car == null) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Car not found");
+        }
+        if (!Objects.equals(car.getUser().getId(), user.getId()) || car.getCarStatus().getStatusId() != 8) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to delete this car");
+        }
+        carOwnerService.deleteCar(carId);
+        return ResponseEntity.ok("Car deleted successfully");
     }
 
 

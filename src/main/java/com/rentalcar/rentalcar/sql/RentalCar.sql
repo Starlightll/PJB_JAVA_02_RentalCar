@@ -26,6 +26,18 @@ CREATE TABLE [dbo].[Users]
     PRIMARY KEY (userId)
     );
 
+
+-- Notification table
+CREATE TABLE [dbo].[Notification]
+(
+    notificationId INT IDENTITY (1,1) PRIMARY KEY,
+    content        NVARCHAR(MAX),
+    isRead         BIT,
+    userId         INT,
+    createAt       DATETIME,
+    FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId)
+    );
+
 CREATE TABLE VerificationToken
 (
     tokenId    INT IDENTITY (1,1) PRIMARY KEY,
@@ -269,7 +281,7 @@ INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
 
 
 -- insert BookingStatus
-    INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (2, N'Confirmed')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (3, N'In-Progress')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (4, N'Pending payment')
