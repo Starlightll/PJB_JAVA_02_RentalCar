@@ -103,7 +103,7 @@ public class CarOwnerController {
             pageable = PageRequest.of(page - 1, size);
             carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
         } else {
-            List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 8, 10, 11, 14);
+            List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 8, 10, 11, 14, 15);
             carPage = carRepository.findAllByCarStatus_StatusIdInAndUserId(statusIds, user.getId(), pageable);
         }
         List<Car> cars = carPage.getContent();
@@ -182,7 +182,7 @@ public class CarOwnerController {
             model.addAttribute("registrationUrl", "/" + registrationPath);
             model.addAttribute("certificateUrl", "/" + certificatePath);
             model.addAttribute("insuranceUrl", "/" + insurancePath);
-            List<Integer> statusIds = List.of(1, 3);
+            List<Integer> statusIds = List.of(1,2,3);
             List<CarStatus> carStatus = carStatusRepository.findCarStatusesByStatusIdIsIn(statusIds);
             model.addAttribute("carStatuses", carStatus);
 
@@ -321,6 +321,19 @@ public class CarOwnerController {
         return editCar(carId.intValue(), model, session);
     }
 
+    @GetMapping("/confirm-cancel")
+    public String confirmCancel(@RequestParam("carId") Long carId,
+                                 HttpSession session,
+                                 Model model) {
+        boolean isConfirmDeposit = rentalCarService.confirmCancelBookingCar(carId, session);
+        if (isConfirmDeposit) {
+            model.addAttribute("message_" + carId, "Confirm booking cancellation and refund deposit to customer!");
+        } else {
+            model.addAttribute("error", "Unable to confirm cancel the booking. Please try again!!");
+        }
+        return editCar(carId.intValue(), model, session);
+    }
+
     @GetMapping("/confirm-deposit-mycar")
     public String confirmDepositmyCar(@RequestParam("carId") Long carId,
                                       @RequestParam(defaultValue = "1") int page,
@@ -334,6 +347,76 @@ public class CarOwnerController {
             model.addAttribute("message_" + carId, "The Car deposit has been confirmed.");
         } else {
             model.addAttribute("error", "Unable to confirm deposit the booking. Please try again!!");
+        }
+        User user = (User) session.getAttribute("user");
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+            case "available", "booked":
+                findByStatus = true;
+                break;
+            default:
+                break;
+        }
+        Sort.Direction sorDirection = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(sorDirection, sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Page<Car> carPage;
+        if (findByStatus) {
+            int statusId = 0;
+            if (sortBy.equalsIgnoreCase("available")) {
+                statusId = 1;
+            } else {
+                statusId = 2;
+            }
+            pageable = PageRequest.of(page - 1, size);
+            carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
+        } else {
+            carPage = carRepository.findAllByUser(user, pageable);
+        }
+        List<Car> cars = carPage.getContent();
+        if (cars.isEmpty()) {
+            model.addAttribute("message", "You have no cars");
+        } else {
+            model.addAttribute("carList", cars);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", carPage.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+        }
+        return "/carowner/MyCars";
+
+    }
+
+    @GetMapping("/confirm-cancel-mycar")
+    public String confirmCancelmyCar(@RequestParam("carId") Long carId,
+                                      @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "5") int size,
+                                      @RequestParam(defaultValue = "lastModified") String sortBy,
+                                      @RequestParam(defaultValue = "desc") String order,
+                                      HttpSession session,
+                                      Model model) {
+        boolean isConfirmDeposit = rentalCarService.confirmCancelBookingCar(carId, session);
+        if (isConfirmDeposit) {
+            model.addAttribute("message_" + carId, "Confirm booking cancellation and refund deposit to customer!");
+        } else {
+            model.addAttribute("error", "Unable to confirm cancel the booking. Please try again!!");
         }
         User user = (User) session.getAttribute("user");
         boolean findByStatus = false;

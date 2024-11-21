@@ -200,10 +200,26 @@
                                                                                for="province">Status</label>
                                                                     </div>
                                                                     <select class="custom-select" id="carStatus">
-                                                                        <th:block th:each="carStatus : ${carStatuses}">
-                                                                            <option th:value="${carStatus.statusId}"
-                                                                                    th:text="${carStatus.name}"
-                                                                                    th:selected="${carStatus.statusId == car.carStatus.statusId}"></option>
+                                                                        <th:block th:if="${car.carStatus.statusId == 1 or car.carStatus.statusId == 3}">
+                                                                            <option th:value="1" th:text="'Available'" th:selected="${car.carStatus.statusId == 1}">${car.carStatus.name}</option>
+                                                                            <option th:value="3" th:text="'Stopped'" th:selected="${car.carStatus.statusId == 3}">${car.carStatus.name}</option>
+                                                                        </th:block>
+
+                                                                        <th:block th:if="${car.carStatus.statusId == 2 or car.carStatus.statusId == 11 or car.carStatus.statusId == 14 or car.carStatus.statusId == 15}">
+                                                                            <option th:value="${car.carStatus.statusId}" th:text="'Booked'" th:disabled="true" th:selected="${car.carStatus.statusId == 2 or car.carStatus.statusId == 11 or car.carStatus.statusId == 14 or car.carStatus.statusId == 15}">
+                                                                                Booked
+                                                                            </option>
+                                                                        </th:block>
+
+
+                                                                        <!-- For all other statuses, show all options and allow selection -->
+                                                                        <th:block th:if="${car.carStatus.statusId != 1 and car.carStatus.statusId != 3 and car.carStatus.statusId != 2 and car.carStatus.statusId != 11 and car.carStatus.statusId != 14 and car.carStatus.statusId != 15}">
+                                                                            <th:block th:each="carStatus : ${carStatuses}">
+                                                                                <option th:value="${carStatus.statusId}"
+                                                                                        th:text="${carStatus.name}"
+                                                                                        th:selected="${carStatus.statusId == car.carStatus.statusId}">
+                                                                                </option>
+                                                                            </th:block>
                                                                         </th:block>
                                                                     </select>
                                                                 </div>
@@ -220,6 +236,17 @@
                                                            th:attr="data-car-id=${car.getCarId()}"
                                                            style="background: #da1b1b !important;">
                                                             Confirm deposit
+                                                        </a>
+                                                    </div>
+                                                </th:block>
+                                                <th:block th:if="${car.getCarStatus().getStatusId() == 15}">
+                                                    <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
+                                                        <a
+                                                                th:id="'confirm-cancel-btn-' + ${car.getCarId()}"
+                                                                class="btn btn-primary"
+                                                                th:attr="data-car-id=${car.getCarId()}"
+                                                                style="background: #000000 !important;">
+                                                            Confirm cancel
                                                         </a>
                                                     </div>
                                                 </th:block>
@@ -873,6 +900,40 @@
         document.addEventListener('DOMContentLoaded', function () {
             console.log("DOM fully loaded and parsed");
 
+            const confirmCancelBtns = document.querySelectorAll('[id^="confirm-cancel-btn-"]');
+            confirmCancelBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Lấy carId từ data-car-id
+                    const carId = this.getAttribute('data-car-id');
+
+                    Swal.fire({
+                        title: 'Confirm cancel booking and refund deposit to customer!',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the cancel for car with ID:', carId);
+                            window.location.href = `/car-owner/confirm-cancel?carId=${carId}`;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+
             const confirmDepositBtns = document.querySelectorAll('[id^="confirm-deposit-btn-"]');
             confirmDepositBtns.forEach(btn => {
                 btn.addEventListener('click', function (event) {
@@ -906,72 +967,6 @@
 
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
-        function deleteCar(){
-            const carId = document.getElementById('carId').value;
-            console.log("Delete car with carId:", carId);
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-                customClass: {
-                    confirmButton: 'my-custom-button',
-                    cancelButton: 'my-custom-button'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/car-owner/delete-car',
-                        type: 'GET',
-                        data: {carId: carId},
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        success: function (response) {
-                            console.log("Car deleted successfully", response);
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Your car has been deleted.',
-                                icon: 'success',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    confirmButton: 'my-custom-button'
-                                }
-                            }).then(() => {
-                                window.location.href = '/car-owner/my-cars';
-                            });
-                        },
-                        error: function (xhr, status, error) {
-                            if(xhr.status === 401){
-                                console.log("Unauthorized delete: ", xhr.responseText);
-                                Swal.fire({
-                                    title: 'Not Deleted!',
-                                    text: xhr.responseText,
-                                    icon: 'warning',
-                                    confirmButtonText: 'OK',
-                                    customClass: {
-                                        confirmButton: 'my-custom-button'
-                                    }
-                                });
-                            } else {
-                                console.log("Error deleting car", error);
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'An error occurred. Please try again.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
-                                    customClass: {
-                                        confirmButton: 'my-custom-button'
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            });
-        }
 
         function updateCar() {
             const mileage = document.getElementById('mileage').value;

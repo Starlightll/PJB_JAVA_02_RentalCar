@@ -346,6 +346,7 @@
 
                                                         </div>
 
+
                                                         <input type="hidden" id="bookingId"
                                                                th:value="${booking.getBookingId()}">
 
@@ -392,20 +393,23 @@
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${booking.bookingId}">No</p>
                                                         </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
+                                                        <div class="col-lg-12 row" style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Booking status:
                                                             </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               th:text="${booking.bookingStatus}"
-                                                               th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
-                 : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
-                 : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
-                 : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
-                 : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' : 'font-weight: bold;' }">
+                                                               th:text="${#temporals.createNow().isAfter(booking.getEndDate()) ? 'Overdue' : booking.bookingStatus}"
+                                                               th:style="${#temporals.createNow().isAfter(booking.getEndDate()) ? 'color: #FF0000; font-weight: bold;'
+                : booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
+                : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+                : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
+                : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
+                : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;'
+                : booking.bookingStatus == 'Pending cancel' ? 'color: #000000; font-weight: bold;'
+                : 'font-weight: bold;' }">
                                                             </p>
                                                         </div>
+
 
 
                                                     </div>
@@ -419,7 +423,7 @@
                                                     <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
                                                     <a
                                                             style="background: #d5dcd5 !important; color: black !important;"
-                                                            th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                            th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
                                                             th:id="'confirm-booking-btn-' + ${iterStat.index}"
                                                             class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
                                                         Pick-up</a>
@@ -431,6 +435,7 @@
                                                        th:id="'cancel-booking-btn-' + ${iterStat.index}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Cancel
                                                         Booking</a>
+
 
 
                                                     <!-- Return Car button: visible only if status is In-Progress -->

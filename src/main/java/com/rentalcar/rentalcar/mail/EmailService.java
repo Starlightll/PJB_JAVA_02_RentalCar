@@ -337,6 +337,84 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
+    public void sentNotiConfirmedBooking(User user, Booking booking, Car car) {
+        String recipientAddress = user.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        Integer carId = car.getCarId();
+        String urlToBooking = "http://localhost:8080/customer/booking-detail?bookingId=" + bookingNumber + "&carId=" + carId + "&navigate=mybookings";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
+        String startDate = booking.getStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Congratulations!</h2>" +
+                    "<p style='font-size: 16px;'>Your booking <strong style='color: #FF5722;'>" + bookingNumber + "</strong> has been successfully confirmed and the deposit has been made by the car owner on <strong style='color: #2196F3;'>" + bookingDate + "</strong>.</p>" +
+                    "<p style='font-size: 16px;'>Please visit your booking to check and then confirm the pickup when you receive the car.</p>" +
+                    "<p style='font-size: 16px;'>Please attention, you will receive the car on <strong style='color: #FF5722;'>" + startDate + "</strong>.</p>" +
+                    "<a href='" + urlToBooking + "' style='display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Go to My Booking</a>" +
+                    "<p style='font-size: 16px;'>Thank you for choosing us! If you have any questions, feel free to contact our support team.</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you did not make this booking, please contact our support team immediately.</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Your booking has been confirmed - Booking No. " + bookingNumber);
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Async
+    public void sendConfirmCancelBooking(User user, Booking booking, Car car) {
+        String recipientAddress = user.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        Integer carId = car.getCarId();
+        String urlToBooking = "http://localhost:8080/customer/booking-detail?bookingId=" + bookingNumber + "&carId=" + carId + "&navigate=mybookings";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
+        String startDate = booking.getStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Booking Cancellation Confirmation</h2>" +
+                    "<p style='font-size: 16px;'>Your booking <strong style='color: #FF5722;'>" + bookingNumber + "</strong> has been confirmed as cancelled by the car owner on <strong style='color: #2196F3;'>" + bookingDate + "</strong>.</p>" +
+                    "<p style='font-size: 16px;'>Please visit your booking to check and confirm if the refund has been processed.</p>" +
+                    "<p style='font-size: 16px;'>Thank you for choosing our service, and we hope to serve you again in the future!</p>" +
+                    "<a href='" + urlToBooking + "' style='display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Go to My Booking</a>" +
+                    "<p style='font-size: 16px;'>If you have any questions, feel free to contact our support team.</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you did not make this booking, please contact our support team immediately.</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Your booking has been cancelled - Booking No. " + bookingNumber);
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 
 }
