@@ -126,7 +126,12 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     @Override
     public void deleteCar(int carId) {
-
+        try{
+            setCarStatus(carId, 4);
+        }catch (Exception e){
+            System.out.println("Something wrong when delete car in car owner service" + e.getMessage());
+            throw new RuntimeException("Something wrong when delete car in car owner service");
+        }
     }
 
     @Override
@@ -253,7 +258,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     private void setCarAdditionalFunction(CarDraft carDraft, Car car) {
         try {
-//            carAdditionalFunctionRepository.deleteAllByCarId(car.getCarId());
             Set<AdditionalFunction> additionalFunctions = new HashSet<>();
             String[] functionIds = carDraft.getAdditionalFunction().split(",");
             for (String idStr : functionIds) {
@@ -272,11 +276,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     private void setCarAdditionalFunction(Car car, Car carUpdate) {
         try {
-////            carAdditionalFunctionRepository.deleteAllByCarId(car.getCarId());
-//            Set<AdditionalFunction> additionalFunctions = car.getAdditionalFunctions();
-//            additionalFunctions.clear();
-//            additionalFunctions = carUpdate.getAdditionalFunctions();
-//            car.setAdditionalFunctions(additionalFunctions);
             car.getAdditionalFunctions().clear();
             car.setAdditionalFunctions(carUpdate.getAdditionalFunctions());
         }catch (Exception e){

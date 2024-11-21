@@ -30,8 +30,20 @@ CREATE TABLE [dbo].[Users]
     status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED')),
     statusDriverId INT foreign key REFERENCES statusDriver(statusDriverId),
     PRIMARY KEY (userId)
-
     );
+
+
+-- Notification table
+CREATE TABLE [dbo].[Notification]
+(
+    notificationId INT IDENTITY (1,1) PRIMARY KEY,
+    content        NVARCHAR(MAX),
+    isRead         BIT,
+    userId         INT,
+    createAt       DATETIME,
+    FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId)
+    );
+
 
 INSERT INTO statusDriver (statusDriverName)
 VALUES

@@ -208,7 +208,7 @@
                                 <div class="perfect-fleet-item fleets-collection-item wow fadeInUp" style="display: flex; flex-direction: column">
                                     <!-- Image Box Start -->
                                     <div class="image-box" style="	border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
-                                        <img th:src="${car.getFrontImage()}" onerror="this.onerror=null;this.src='/images/no-image-available.png';"  style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;" alt="">
+                                        <img th:src="${car.getFrontImage()}"   style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;" alt="">
                                     </div>
                                     <!-- Image Box End -->
 
@@ -217,8 +217,11 @@
                                         <!-- Perfect Fleets Title Start -->
                                         <div class="perfect-fleet-title">
                                             <h3 th:if="${car.getCarStatus().getStatusId() == 1}" th:text="${car.getCarStatus().getName()}" style="color: #2c8b00; background-color: #e2ffde">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 2}" th:text="${car.getCarStatus().getName()}" style="color: #ff0000; background-color: #ffeded">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 3}" th:text="${car.getCarStatus().getName()}" style="color: #ff8c00; background-color: #ffedde">Undefined</h3>
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 2}" th:text="${car.getCarStatus().getName()}" style="color: #7300ff; background-color: #f3edff">Undefined</h3>
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 3}" th:text="${car.getCarStatus().getName()}" style="color: #ff0000; background-color: #ffdede">Undefined</h3>
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 5}" th:text="${car.getCarStatus().getName()}" style="color: #3d3d3d; background-color: #e4e4e4">Undefined</h3>
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 6}" th:text="${car.getCarStatus().getName()}" style="color: #ff8c00; background-color: #ffedde">Undefined</h3>
+                                            <h3 th:if="${car.getCarStatus().getStatusId() == 10}" th:text="${car.getCarStatus().getName()}" style="color: #00c4ff; background-color: #defbff">Undefined</h3>
                                             <h2 th:text="${car.getCarName()}">Undefined</h2>
                                         </div>
                                         <!-- Perfect Fleets Content End -->
