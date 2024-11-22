@@ -186,10 +186,10 @@
                                             >Rent now</a></button>
                                         </th:block>
 
-                                        <th:block th:if="${list.getCarStatus().getStatusId() != 1}" >
-                                            <button style="padding: 7px 20px; margin-bottom: 5px" class="btn btn-success" onclick="showAlert()"><span style="font-size: 12px" >Rent now</span>
-                                            </button>
-                                        </th:block>
+<!--                                        <th:block th:if="${list.getCarStatus().getStatusId() != 1}" >-->
+<!--                                            <button style="padding: 7px 20px; margin-bottom: 5px" class="btn btn-success" onclick="showAlert()"><span style="font-size: 12px" >Rent now</span>-->
+<!--                                            </button>-->
+<!--                                        </th:block>-->
 
 
                                         <button class="btn btn-info" ><a style="color:white; font-size: 12px" th:href="@{/carDetail/{id}(id=${list.getCarId()})}"
