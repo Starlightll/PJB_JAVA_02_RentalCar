@@ -90,12 +90,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         NumberFormat currencyFormatter = NumberFormat.getInstance(Locale.US);
 
         if (bookingDto.getDriverId() == null) {
-            if(currentTime.isBefore(bookingDto.getStartDate())) {
-                return String.format(
-                        "Please confirm to return the car. The exceeding amount of %s VND will be returned to your wallet. (-10% deposit because return before use.)",
-                        currencyFormatter.format(driverSalaryBig)
-                );
-            }
+
             if (totalPrice.equals(bookingDto.getDeposit())) {
                 return "Please confirm to return the car. The deposit you pay is equal to the rental fee.";
             } else if (totalPrice > bookingDto.getDeposit()) {
@@ -110,12 +105,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 );
             }
         } else {
-            if(currentTime.isBefore(bookingDto.getStartDate())) {
-                return String.format(
-                        "Please confirm to return the car. The exceeding amount of %s VND will be returned to your wallet. (-10% deposit because return before use.)",
-                        currencyFormatter.format(driverSalaryBig)
-                );
-            }
+
             if (totalPrice.equals(bookingDto.getDeposit())) {
                 return String.format(
                         "Please confirm to return the car. The deposit you pay is equal to the rental fee. Driver rental payment: %s VND",
