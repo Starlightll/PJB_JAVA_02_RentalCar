@@ -1053,7 +1053,7 @@
                                                         <input type="text" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="mileage" name="mileage" th:value="${car.model}"
+                                                               id="mileage" name="mileage" th:value="${car.getMileage()}"
                                                                readonly>
                                                     </div>
                                                     <a class="validate-msg" id="mileageValidate">Invalid</a>
@@ -1067,7 +1067,7 @@
                                                         <input type="text" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="fuelConsumption" name="fuelConsumption" th:value="${car.model}"
+                                                               id="fuelConsumption" name="fuelConsumption" th:value="${car.getFuelConsumption()}"
                                                                readonly>
                                                     </div>
                                                     <a class="validate-msg" id="fuelConsumptionValidate">Invalid</a>
@@ -1081,7 +1081,8 @@
                                                         <input type="text" class="form-control"
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
-                                                               id="address" name="address" th:value="${car.model}"
+                                                               id="address" name="address"
+                                                               th:value="${car.getAddress().getWard() +', '+ car.getAddress().getDistrict()  +', ' + car.getAddress().getProvince()}"
                                                                readonly>
                                                     </div>
                                                     <a class="validate-msg" id="addressValidate">Invalid</a>

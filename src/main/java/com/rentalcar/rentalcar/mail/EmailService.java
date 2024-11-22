@@ -416,5 +416,51 @@ public class EmailService {
 
 
 
+    @Async
+    public void sendBookingNotificationToDriver(User driver, Booking booking, Integer carId, String carName, LocalDateTime startDate, LocalDateTime endDate) {
+        String recipientAddress = driver.getEmail();
+        String urlToBookingDetails = "http://localhost:8080/customer/booking-detail?bookingId="+booking.getBookingId() +"&carId=" + carId + "&navigate=mybookings";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String formattedStartDate = startDate.format(dateTimeFormatter);
+        String formattedEndDate = endDate.format(dateTimeFormatter);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // HTML message content for the driver
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>New Booking Assigned!</h2>" +
+                    "<p style='font-size: 16px;'>Hello <strong>" + driver.getFullName() + "</strong>,</p>" +
+                    "<p style='font-size: 16px;'>You have been assigned a new booking for the car <strong style='color: #FF5722;'>" + carName + " (Car ID: " + carId + ")</strong>.</p>" +
+                    "<p style='font-size: 16px;'>Here are the details of the booking:</p>" +
+                    "<ul style='font-size: 16px;'>" +
+                    "<li><strong>Booking Number:</strong> " + booking.getBookingId() + "</li>" +
+                    "<li><strong>Start Date:</strong> " + formattedStartDate + "</li>" +
+                    "<li><strong>End Date:</strong> " + formattedEndDate + "</li>" +
+                    "</ul>" +
+                    "<p style='font-size: 16px;'>Please ensure that the car is ready for the renter during the specified time period.</p>" +
+                    "<a href='" + urlToBookingDetails + "' style='display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>View Booking Details</a>" +
+                    "<p style='font-size: 16px;'>Thank you for your cooperation!</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you have any questions or concerns, please contact our support team.</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("New Booking Assigned - Booking No. " + booking.getBookingId());
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
 }
