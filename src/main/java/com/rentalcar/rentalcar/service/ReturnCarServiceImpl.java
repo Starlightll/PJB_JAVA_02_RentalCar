@@ -229,10 +229,10 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             booking.setLastModified(new Date());
 
                             // set lai actual end date va total Price
-                            if(currentTime.isBefore(booking.getEndDate())) {
+
                                 booking.setActualEndDate(currentTime);
                                 booking.setTotalPrice(totalPrice.doubleValue());
-                            }
+
                             rentalCarRepository.save(booking);
 
                             //================Thay đổi trạng thái tài xế======================
