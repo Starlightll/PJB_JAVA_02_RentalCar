@@ -94,6 +94,7 @@ public class BookingDetailsController {
         if(car == null) {
             return "redirect:/";
         }
+
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
         model.addAttribute("carStatus", carStatusRepository.findAll());

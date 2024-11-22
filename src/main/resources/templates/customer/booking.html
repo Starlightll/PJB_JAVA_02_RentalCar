@@ -533,6 +533,7 @@
 
                                                                             <th scope="col">Name</th>
                                                                             <th scope="col">Date</th>
+                                                                            <th scope="col">Base Price</th>
                                                                         </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -542,6 +543,7 @@
                                                                             </th>
                                                                             <td th:text="${user.getFullName()}"></td>
                                                                             <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
+                                                                            <td th:text="${#numbers.formatDecimal(499000, 0, 'COMMA', 0, 'POINT')} + ' /DAY'">></td>
                                                                         </tr>
 
                                                                         <!-- Các hàng khác... -->
@@ -642,20 +644,26 @@
         </div>
     </section>
 
+<!--    <script>-->
+<!--        function chooseFile(fileInput) {-->
+<!--            if (fileInput.files && fileInput.files[0]) {-->
+<!--                var reader = new FileReader();-->
+
+<!--                reader.onload = function (e) {-->
+<!--                    $('#image').attr('src', e.target.result);-->
+<!--                };-->
+<!--                reader.readAsDataURL(fileInput.files[0]);-->
+<!--            }-->
+<!--        }-->
+<!--    </script>-->
+
     <script>
-        function chooseFile(fileInput) {
-            if (fileInput.files && fileInput.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    $('#image').attr('src', e.target.result);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            }
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const differentInfoCheckbox = document.getElementById('differentInfoCheckbox');
+            differentInfoCheckbox.checked = false;
+            toggleDriverInfoFields();
+        });
     </script>
-
-
 
 
     <script>
@@ -694,6 +702,23 @@
             }
 
             console.log(drivingLicense)
+
+            //kiểm tra xem có driver nào đc chọn khi ấn tích không
+            const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
+            // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
+            let selectedUserId = null;
+            const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
+
+            if (selectedCheckbox) {
+                selectedUserId = selectedCheckbox.value;
+            }
+
+            if(checked && selectedUserId == null) {
+                alert(`Please fill all required fields`);
+                return false;
+            }
+
+
 
             // Thu thập dữ liệu cho renter
             const formData = {
