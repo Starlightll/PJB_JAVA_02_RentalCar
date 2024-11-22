@@ -8,17 +8,18 @@ import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 import static com.rentalcar.rentalcar.common.Constants.FINE_COST;
 
@@ -49,7 +50,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
     @Autowired
     private TransactionService transactionService;
 
-    @Override
     public String returnCar(Long bookingId, HttpSession session) {
 //        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
         Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
@@ -74,10 +74,18 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
         );
 
+
         Double totalPrice = calculateTotalPrice(bookingId);
         LocalDateTime currentTime = LocalDateTime.now();
-        Double driverSalary = (double) Constants.DRIVER_SALARY * calculateNumberOfDays(bookingDto.getStartDate(), currentTime);
-
+        long hours = Math.abs(Duration.between(bookingDto.getStartDate(), currentTime).toHours());
+        long days = (long) Math.ceil(hours / 24.0);
+        double driverSalary;
+        if(currentTime.isBefore(bookingDto.getStartDate())) {
+            driverSalary = 0.0;
+        } else {
+            driverSalary = (double) Constants.DRIVER_SALARY * Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
+        }
+        BigDecimal driverSalaryBig =  BigDecimal.valueOf(driverSalary);
         // Sử dụng NumberFormat để định dạng tiền tệ
         NumberFormat currencyFormatter = NumberFormat.getInstance(Locale.US);
 
@@ -99,71 +107,27 @@ public class ReturnCarServiceImpl implements ReturnCarService {
             if (totalPrice.equals(bookingDto.getDeposit())) {
                 return String.format(
                         "Please confirm to return the car. The deposit you pay is equal to the rental fee. Driver rental payment: %s VND",
-                        currencyFormatter.format(driverSalary)
+                        currencyFormatter.format(driverSalaryBig)
                 );
             } else if (totalPrice > bookingDto.getDeposit()) {
                 return String.format(
                         "Please confirm to return the car. The remaining amount of %s VND will be deducted from your wallet. Driver rental payment: %s VND",
                         currencyFormatter.format(totalPrice - bookingDto.getDeposit()),
-                        currencyFormatter.format(driverSalary)
+                        currencyFormatter.format(driverSalaryBig)
                 );
             } else {
                 return String.format(
                         "Please confirm to return the car. The exceeding amount of %s VND will be returned to your wallet. Driver rental payment: %s VND",
                         currencyFormatter.format(bookingDto.getDeposit() - totalPrice),
-                        currencyFormatter.format(driverSalary)
+                        currencyFormatter.format(driverSalaryBig)
                 );
             }
         }
     }
 
     @Override
-    public Double calculateTotalPrice(Long bookingId) {
-        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
-        Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
-        Object[] result = (Object[]) nestedArray[0];
-        MyBookingDto bookingDto = new MyBookingDto(
-                Long.valueOf((Integer) result[0]),
-                ((Timestamp) result[1]).toLocalDateTime(), //start date
-                ((Timestamp) result[2]).toLocalDateTime(), //end date
-                (String) result[3], // driverInfo
-                ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
-                ((BigDecimal) result[5]).doubleValue(), // total price
-                Long.valueOf((Integer) result[6]), //userId
-                (Integer) result[7], //bookingStatus
-                (Integer) result[8], //paymentMethod
-                result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
-
-                ((BigDecimal) result[10]).doubleValue(), // basePrice
-                ((BigDecimal) result[11]).doubleValue(), // deposit
-                (BigDecimal) result[12], //carowner wallet
-                Long.valueOf((Integer) result[13]),
-                (String) result[14], //car name
-                (Integer) result[15] //cariD
-
-        );
-
-        if (bookingOptional.isPresent()) {
-            Booking booking = bookingOptional.get();
-
-
-            LocalDateTime currentDate = LocalDateTime.now();
-
-            long numberOfDaysOverdue = ChronoUnit.DAYS.between(booking.getEndDate(), currentDate);
-            long numberOfDaysNotOverdue = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate());
-
-            if (currentDate.isBefore(booking.getEndDate())) {
-                return booking.getTotalPrice();
-            } else {
-                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice();
-            }
-
-        }
-        return 0.0;
-    }
-
-    @Override
     public int confirmReturnCar(Long bookingId, HttpSession session) {
+
         Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
         Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
         User user = (User) session.getAttribute("user");
@@ -190,21 +154,33 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 (Integer) result[15] //cariD
 
         );
+
         User carowner = userRepository.getUserById(bookingDto.getCarOwnerId());
 
         BigDecimal deposit = BigDecimal.valueOf(bookingDto.getDeposit());
         BigDecimal myWallet = userdb.getWallet();
         BigDecimal totalPrice = BigDecimal.valueOf(calculateTotalPrice(bookingId));
 
+
         // lay tien thue tai xe
+        double driverSalary;
         LocalDateTime currentTime = LocalDateTime.now();
-        double driverSalary = (double) Constants.DRIVER_SALARY * calculateNumberOfDays(bookingDto.getStartDate(), currentTime);
+
+//        if(currentTime.isBefore(bookingDto.getStartDate())) {
+//            return 0;
+//        }
+
+            if(currentTime.isBefore(bookingDto.getStartDate())) {
+            driverSalary = 0.0;
+        } else {
+            driverSalary = (double) Constants.DRIVER_SALARY * Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
+        }
         BigDecimal driverSalaryBig =  BigDecimal.valueOf(driverSalary);
 
 
         if (totalPrice.compareTo(deposit) >= 0) {
             // Kiểm tra ví người dùng
-            if ((totalPrice.subtract(deposit)).compareTo(myWallet) > 0) {
+            if (((totalPrice.subtract(deposit)).add(driverSalaryBig)).compareTo(myWallet) > 0) {
                 return -1;
             } else {
                 // Nếu ví người dùng đủ tiền, trừ tiền vào ví của khách hàng và chuyển cho chủ xe
@@ -226,7 +202,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                     Booking booking = bookingOptional.get();
                     //======================Cộng tiền vào ví chủ xe===========================
                     transactionService.saveTransaction(carOwner, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT_CAR_OWNER, booking);
-                    //=================================================
 
                     // ======================Trừ tiền vào ví customer===========================
                     transactionService.saveTransaction(user, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT_CUSTOMER, booking);
@@ -240,9 +215,13 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             BookingStatus completedStatus = completedStatusOptional.get();
                             booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
                             booking.setLastModified(new Date());
+
+                            // set lai actual end date va total Price
+                            if(currentTime.isBefore(booking.getEndDate())) {
+                                booking.setActualEndDate(currentTime);
+                                booking.setTotalPrice(totalPrice.doubleValue());
+                            }
                             rentalCarRepository.save(booking);
-
-
 
                             //================Thay đổi trạng thái tài xế======================
                             Long oldDriverId = null;
@@ -252,11 +231,14 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             if (oldDriverId != null) {
                                 User oldDriver = userRepository.getUserById(oldDriverId);
                                 // =====cong tien vao vi driver ===
-                                BigDecimal updatedWallet = oldDriver.getWallet().add(driverSalaryBig);
-                                oldDriver.setWallet(updatedWallet);
-                                //==== tru tien thue nguoi lai vao vi customer
-                                BigDecimal updatedUserWalletDriver = myWallet.subtract(driverSalaryBig);
-                                user.setWallet(updatedUserWalletDriver);
+                                if(booking.getDriver().getId() != null) {
+
+                                    BigDecimal updatedWallet = oldDriver.getWallet().add(driverSalaryBig);
+                                    oldDriver.setWallet(updatedWallet);
+                                    //==== tru tien thue nguoi lai vao vi customer
+                                    BigDecimal updatedUserWalletDriver = myWallet.subtract(driverSalaryBig);
+                                    user.setWallet(updatedUserWalletDriver);
+                                }
                                 userRepository.save(user);
                                 session.setAttribute("user", user);
 
@@ -304,6 +286,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 }
             }
         } else {
+            if(myWallet.compareTo(driverSalaryBig) < 0) {
+                return -1;
+            }
             // Cập nhật trạng thái booking
             if (bookingOptional.isPresent()) {
                 Booking booking = bookingOptional.get();
@@ -319,6 +304,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                         LocalDateTime currentDate = LocalDateTime.now();
 
                         booking.setActualEndDate(currentDate);
+                        booking.setTotalPrice(totalPrice.doubleValue());
                         rentalCarRepository.save(booking);
 
                         //================Thay đổi trạng thái tài xế======================
@@ -328,22 +314,26 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                         }
                         if (oldDriverId != null) {
                             User oldDriver = userRepository.getUserById(oldDriverId);
+
+                            if(booking.getDriver().getId() != null) {
+
+                                //==== cong tien thue nguoi lai vao vi driver
+                                BigDecimal updatedWallet = oldDriver.getWallet().add(driverSalaryBig);
+                                oldDriver.setWallet(updatedWallet);
+                                //==== tru tien thue nguoi lai vao vi customer
+                                BigDecimal updatedUserWalletDriver = myWallet.subtract(driverSalaryBig);
+                                user.setWallet(updatedUserWalletDriver);
+                            }
+                            userRepository.save(user);
+                            session.setAttribute("user", user);
+
+                            // update vao transaction
+                            if(!driverSalaryBig.equals(BigDecimal.ZERO)) {
+                                transactionService.saveTransaction(user, driverSalaryBig, TransactionType.OFFSET_FINAL_PAYMENT_RENTAL_DRIVER, booking);
+                            }
                             oldDriver.setStatus(UserStatus.ACTIVATED);
                             userRepository.save(oldDriver);
                         }
-                        //==========================================
-
-                        //==== tru tien thue nguoi lai vao vi customer
-                        BigDecimal updatedUserWalletDriver = myWallet.subtract(driverSalaryBig);
-                        user.setWallet(updatedUserWalletDriver);
-                        userRepository.save(user);
-                        session.setAttribute("user", user);
-
-                        // update vao transaction
-                        if(!driverSalaryBig.equals(BigDecimal.ZERO)) {
-                            transactionService.saveTransaction(user, driverSalaryBig, TransactionType.OFFSET_FINAL_PAYMENT_RENTAL_DRIVER, booking);
-                        }
-
 
 
                         if (carOptional.isPresent()) {
@@ -451,16 +441,79 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         if (bookingOptional.isPresent()) {
             Booking booking = bookingOptional.get();
 
+            LocalDateTime currentDate = LocalDateTime.now();
+            long hours0 = Math.abs(Duration.between(bookingDto.getActualEndDate(), booking.getEndDate()).toHours());
+            long numberOfDaysRental = Math.abs((long) Math.ceil(Math.abs(hours0) / 24.0));
+
+            if(currentDate.isBefore(booking.getStartDate())) {
+                return 0.0;
+            }
+
+            if (currentDate.isBefore(booking.getEndDate())) {
+                return numberOfDaysRental * bookingDto.getBasePrice();
+            } else {
+                long hours = Math.abs(Duration.between(booking.getEndDate(), bookingDto.getActualEndDate()).toHours());
+                long numberOfDaysOverdue = Math.abs((long) Math.ceil(hours / 24.0));
+
+                long hours1 = Math.abs(Duration.between(booking.getStartDate(), booking.getEndDate()).toHours());
+                long numberOfDaysNotOverdue = (long) Math.ceil(hours1 / 24.0);
+
+                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice(); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
+            }
+
+        }
+        return 0.0;
+    }
+
+    @Override
+    public Double calculateTotalPrice(Long bookingId) {
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
+        Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
+        Object[] result = (Object[]) nestedArray[0];
+        MyBookingDto bookingDto = new MyBookingDto(
+                Long.valueOf((Integer) result[0]),
+                ((Timestamp) result[1]).toLocalDateTime(), //start date
+                ((Timestamp) result[2]).toLocalDateTime(), //end date
+                (String) result[3], // driverInfo
+                ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
+                ((BigDecimal) result[5]).doubleValue(), // total price
+                Long.valueOf((Integer) result[6]), //userId
+                (Integer) result[7], //bookingStatus
+                (Integer) result[8], //paymentMethod
+                result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
+
+                ((BigDecimal) result[10]).doubleValue(), // basePrice
+                ((BigDecimal) result[11]).doubleValue(), // deposit
+                (BigDecimal) result[12], //carowner wallet
+                Long.valueOf((Integer) result[13]),
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
+
+        );
+
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
 
             LocalDateTime currentDate = LocalDateTime.now();
 
-            long numberOfDaysOverdue = ChronoUnit.DAYS.between(booking.getEndDate(), booking.getActualEndDate()); // lấy ngày thuê trong hợp đồng
-            long numberOfDaysNotOverdue = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate()); // lấy ngày thuê quá hạn
+            long hours2 = Math.abs(Duration.between( booking.getStartDate(), currentDate).toHours());
+            long numberOfDaysRental= (long) Math.ceil(hours2 / 24.0);
 
-            if (currentDate.isBefore(booking.getEndDate())) { // check xem có quá hạn không
-                return booking.getTotalPrice(); // nếu không quá hạn thì vẫn giá cũ kể cả trả trước hay sau
+
+            if(currentDate.isBefore(booking.getStartDate())) {
+                return 0.0;
+            }
+
+            if (currentDate.isBefore(booking.getEndDate())) {
+                return numberOfDaysRental * bookingDto.getBasePrice();
             } else {
-                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice(); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
+                long hours = Math.abs(Duration.between(currentDate, booking.getEndDate()).toHours());
+                long numberOfDaysOverdue = (long) Math.ceil(hours / 24.0);
+
+                long hours1 = Math.abs(Duration.between(booking.getStartDate(), booking.getEndDate()).toHours());
+                long numberOfDaysNotOverdue = (long) Math.ceil(hours1 / 24.0);
+
+                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice();
             }
 
         }
