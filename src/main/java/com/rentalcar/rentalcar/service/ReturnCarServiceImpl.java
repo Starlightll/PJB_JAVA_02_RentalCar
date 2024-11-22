@@ -288,7 +288,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 }
             }
         } else {
-            if(myWallet.compareTo(driverSalaryBig) < 0) {
+            if(bookingDto.getDriverId() != null &&  myWallet.compareTo(driverSalaryBig) < 0) {
                 return -1;
             }
             // Cập nhật trạng thái booking
