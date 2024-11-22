@@ -472,8 +472,6 @@ public class RentalCarController {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
         response.put("message", responseMessage);
-
-
         return ResponseEntity.ok(response);
 
     }
