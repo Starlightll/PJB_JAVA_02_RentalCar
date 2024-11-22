@@ -446,7 +446,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
             long numberOfDaysRental = Math.abs((long) Math.ceil(Math.abs(hours0) / 24.0));
 
             if(currentDate.isBefore(booking.getStartDate())) {
-                return 0.0;
+                return bookingDto.getDeposit() * 0.1;
             }
 
             if (currentDate.isBefore(booking.getEndDate())) {
@@ -501,7 +501,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
 
             if(currentDate.isBefore(booking.getStartDate())) {
-                return 0.0;
+                return bookingDto.getDeposit() * 0.1;
             }
 
             if (currentDate.isBefore(booking.getEndDate())) {
