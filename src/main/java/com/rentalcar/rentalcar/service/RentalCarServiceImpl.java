@@ -690,7 +690,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         // Cập nhật ví của carOwner và customer
         Double totalPrice = returnCarService.calculateTotalPriceForActualEnddateCarOwner(booking.getBookingId());
         Double deposit = car.getDeposit();
-        Double remainingAmount = deposit - totalPrice;
+        double remainingAmount = deposit - totalPrice;
         BigDecimal remainingMoney = BigDecimal.valueOf(remainingAmount);
 
        // Cộng tiền vào customer
