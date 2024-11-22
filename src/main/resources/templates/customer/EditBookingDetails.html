@@ -489,6 +489,15 @@
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>To Date:</label>
                                                             </div>
+                                                            <p th:text="${#temporals.format(booking.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+
+                                                        </div>
+                                                        <div class="col-lg-12 row mt-2"
+                                                             th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'}">
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label>Actual End Date:</label>
+                                                            </div>
                                                             <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
@@ -543,14 +552,15 @@
                                                                 Booking status:
                                                             </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               th:text="${booking.getBookingStatus()}"
-                                                               th:style="${booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;' :
-                 (booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;' :
-                 (booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;' :
-                  booking.bookingStatus == 'Pending cancel' ? 'color: #000000; font-weight: bold;' :
-                 (booking.bookingStatus == 'Pending deposit' || booking.bookingStatus == 'Pending payment' ? 'color: #FF0000; font-weight: bold;' :
-                 (booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;' :
-                 'font-weight: bold;'))))}">
+                                                               th:text="${#temporals.createNow().isAfter(booking.getEndDate()) ? 'Overdue' : booking.bookingStatus}"
+                                                               th:style="${#temporals.createNow().isAfter(booking.getEndDate()) ? 'color: #FF0000; font-weight: bold;'
+                : booking.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
+                : booking.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+                : booking.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
+                : (booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
+                : booking.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;'
+                : booking.bookingStatus == 'Pending cancel' ? 'color: #000000; font-weight: bold;'
+                : 'font-weight: bold;' }">
                                                             </p>
                                                         </div>
 
