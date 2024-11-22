@@ -594,7 +594,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         User carOwner = userRepository.findById(Long.valueOf(carDto.getUserId())).get();
 
-        double remainingMoney = carDto.getDeposit() - totalPrice;
+        double remainingMoney = Math.abs(carDto.getDeposit() - totalPrice);
         NumberFormat formatter = NumberFormat.getInstance(Locale.US);
         String formattedMoney = formatter.format(remainingMoney);
         Optional<BookingStatus> confirmedStatusOptional = bookingStatusRepository.findById(1L);
