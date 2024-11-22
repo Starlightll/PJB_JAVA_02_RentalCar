@@ -60,7 +60,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getStatus().equals(UserStatus.ACTIVATED);
+        return user.getStatus().equals(UserStatus.ACTIVATED) || user.getStatus().equals(UserStatus.RENTED);
     }
 
 

@@ -396,6 +396,8 @@ public class RentalCarServiceImpl implements RentalCarService {
                     // THAY ĐỔI TRẠNG THÁI CHO DRIVER
                     driver.setStatus(UserStatus.RENTED);
                     userRepository.save(driver);
+                    //MAIL TO DRIVER
+                    emailService.sendBookingNotificationToDriver(driver, booking, car.getCarId(), car.getCarName(), booking.getStartDate(), booking.getEndDate());
                 }
             }
 
@@ -414,9 +416,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         //MAIL TO CUSTOMER
         emailService.sendBookingConfirmation(customer, bookingDto, booking, car);
         //MAIL TO CAR OWNER
-
         emailService.sendBookingConfirmationWithDeposit(carOwner, booking, car, Double.parseDouble(bookingDto.getDeposit()));
-
         return booking;
     }
 
