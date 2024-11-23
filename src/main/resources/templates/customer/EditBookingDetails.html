@@ -7,14 +7,19 @@
     <title>Edit Booking Details</title>
     <meta name="_csrf" th:content="${_csrf.token}">
     <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.10.0/dist/css/bootstrap-datepicker3.min.css">
-    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
-    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
-    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/webjars/select2/4.1.0-rc.0/dist/css/select2.css">
+    <link rel="stylesheet" href="/webjars/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css">
     <link rel="stylesheet" href="/css/carowner/edit-car.css">
+    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
     <!-- iziToast CSS -->
     <link rel="stylesheet" href="/webjars/izitoast/1.4.0/dist/css/iziToast.min.css">
+
+
+
+    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/webjars/select2/4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
     <!-- iziToast JavaScript -->
     <script src="/webjars/izitoast/1.4.0/dist/js/iziToast.min.js"></script>
 
@@ -310,6 +315,19 @@
             height: 100%;
             object-fit: cover;
         }
+        .select2{
+            flex: 1
+        }
+
+        .select2-selection__rendered{
+            font-size: 0.875rem;
+            overflow: unset;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option{
+            padding: .30rem .30rem;
+            font-size: 0.875rem;
+        }
 
 
     </style>
@@ -483,22 +501,33 @@
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>From Date:</label>
                                                             </div>
-                                                            <p th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="pickupDate" th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
                                                         <div class="col-lg-12 row mt-2">
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>To Date:</label>
                                                             </div>
-                                                            <p th:text="${#temporals.format(booking.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="returnDate" th:text="${#temporals.format(booking.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
+<!--                                                        In ra actual khi đã hoàn thành và không tự tanăng theo thời gian thực-->
                                                         <div class="col-lg-12 row mt-2"
-                                                             th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'}">
+                                                             th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
+                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
                                                             </div>
-                                                            <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="actualDateDb" th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                        </div>
+<!--                                                        Ngược lại-->
+                                                        <div class="col-lg-12 row mt-2"
+                                                             th:if="${#temporals.createNow().isAfter(booking.getEndDate())}">
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label>Actual End Date:</label>
+                                                            </div>
+                                                            <p id="actualDate" th:text="${#temporals.format(timNow, 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
                                                         <input type="hidden" id="bookingId"
@@ -507,14 +536,20 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Number of days: </p>
-                                                            <p th:text="${booking.getNumberOfDays() > 0 ? booking.getNumberOfDays() : 0}"></p>
-
+                                                            <p th:text="${booking.getStr_numberOfDays() != null ? booking.getStr_numberOfDays() : 0}"></p>
+                                                            <!-- Kiểm tra nếu trễ hạn -->
+                                                            <p th:if="${booking.getLateTime() != null}"
+                                                               style="color: red; font-style: italic;">
+                                                                (
+                                                                <span th:text="${booking.getLateTime()}"></span>
+                                                                )
+                                                            </p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Base price: </p>
-                                                            <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                            <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + ' K/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -527,6 +562,7 @@
                                                                th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -535,6 +571,27 @@
                                                                id="previewDeposit"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${#numbers.formatDecimal(booking.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Fine LateTime: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="fineLateTime"
+                                                               th:style="${booking.getFineLateTime() > 0} ? 'color: red;' : 'color: inherit;'"
+                                                               th:text="${#numbers.formatDecimal(booking.getFineLateTime(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Total Payment: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="returnDeposit"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -834,34 +891,201 @@
                                                     </label>
                                                 </div>
                                                 <div id="driverInfoTable" style="display: none; width: 100%">
-                                                    <div>
-                                                        <table class="table table-dark table-hover">
-                                                            <thead>
-                                                            <tr>
-                                                                <!--                                                                            <th scope="col">-->
-                                                                <!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
-                                                                <!--                                                                            </th>-->
-                                                                <th></th>
 
-                                                                <th scope="col">Name</th>
-                                                                <th scope="col">Date</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr th:each="user : ${users}">
-                                                                <th scope="row">
-                                                                    <input type="checkbox" th:attr="value=${user.getUserId()}"   name="selectRow"
-                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                                           th:checked="${user.getUserId() == booking.getDriverId()}" onclick="selectOnlyOne(this)" />
-                                                                </th>
-                                                                <td th:text="${user.getFullName()}"></td>
-                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
-                                                            </tr>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Full Name</span>
+                                                                </div>
+                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver">
+                                                                    <option value="">Select</option>
+                                                                </select>
+                                                                <input type="hidden" th:value="${booking.getDriverId()}" id="driverId">
+                                                            </div>
+                                                            <span id="fullNameErrorDriver" class="text-danger"></span>
 
-                                                            <!-- Các hàng khác... -->
-                                                            </tbody>
-                                                        </table>
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3">
+
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Date Of Birth</span>
+                                                                </div>
+                                                                <input readonly type="date" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="book_pick_dateDriver">
+
+                                                                <!--                                                        <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>-->
+
+                                                            </div>
+                                                            <div id="dateErrorDriver" style="color: red"></div>
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Phone Number</span>
+                                                                </div>
+                                                                <input readonly type="text"  class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="phoneDriver" name="phoneNumber"
+                                                                       >
+                                                            </div>
+                                                            <div id="phoneErrorDriver" style="color: red"></div>
+
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Email Address</span>
+                                                                </div>
+                                                                <input  type="text" readonly  class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="emailDriver" name="emailAddress"
+                                                                       >
+                                                            </div>
+                                                            <div id="emailErrorDriver" style="color: red"></div>
+
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >National ID No:</span>
+                                                                </div>
+                                                                <input readonly type="text" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="nationalIdDriver" name="nationalIDNo"
+                                                                      >
+                                                            </div>
+                                                            <div id="nationalIdErrorDriver" style="color: red"></div>
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend" style="max-height: 33.5px;">
+                                                                    <span class="input-group-text" id="inputGroupFileAddonDriver" >Driving license</span>
+                                                                </div>
+                                                                <div class="custom-file">
+                                                                    <!-- Input file -->
+                                                                    <input disabled type="file" accept="image/*" class="custom-file-input" id="inputGroupFileDriver">
+
+                                                                    <!-- Label hiển thị tên file -->
+                                                                    <label class="custom-file-label" id="fileNameDriver" style="font-size: small !important;">
+                                                                        <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
+                                                                        <span th:if="${rentUser.getDrivingLicense() != null}" th:text="'Current file: '"></span>
+                                                                        <span th:if="${rentUser.getDrivingLicense() == null}">Choose file</span>
+                                                                    </label>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <!--                                                    &lt;!&ndash; Khung hiển thị ảnh &ndash;&gt;-->
+                                                            <!--                                                    <div id="previewContainer" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">-->
+                                                            <!--                                                        <img id="previewImage" th:src="'/'+${rentUser.getDrivingLicense()}"-->
+                                                            <!--                                                             alt="Image preview"-->
+                                                            <!--                                                             style="width: 100%; height: 100%; object-fit: cover;">-->
+                                                            <!--                                                    </div>-->
+
+                                                            <input type="hidden" id="currentDrivingLicenseDriver" th:value="${rentUser.getDrivingLicense()}">
+                                                            <div id="drivingLicenseErrorDriver" style="color: red"></div>
+
+                                                        </div>
+
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Salary Driver:</span>
+                                                                </div>
+                                                                <input readonly type="text" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="salaryDriver" name="salary"
+                                                                >
+                                                            </div>
+                                                            <div  style="width: 100%;  margin-top: 20px; overflow: auto">
+                                                                <h6 >Address</h6>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="province">Province</label>
+                                                                        </div>
+                                                                        <select disabled class="custom-select" id="provinceDriver" >
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="district">District</label>
+                                                                        </div>
+                                                                        <select disabled class="custom-select" id="districtDriver">
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="ward">Ward</label>
+                                                                        </div>
+                                                                        <select disabled class="custom-select" id="wardDriver" >
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">Home</span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                               id="streetDriver"
+                                                                               readonly>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Khung hiển thị ảnh -->
+                                                        <div  class="col-lg-6 mb-3 " id="previewContainerDriver">
+                                                            <img id="previewImageDriver" th:src="'/'+${rentUser.getDrivingLicense()}"
+                                                                 alt="Image preview"
+                                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                                        </div>
+                                                        <!--                                                <div class="row" style="width: 100%; overflow: auto">-->
+
+
                                                     </div>
+
+
+
+
+
+
                                                 </div>
 
                                             </div>
@@ -1198,6 +1422,18 @@
 
 
     <script>
+
+        $('#fullNameDriver').select2({
+            placeholder: "Select a driver",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+
+    </script>
+
+
+    <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
@@ -1410,6 +1646,21 @@
             // console.log("editPickupDate:", document.getElementById("editPickupDate").value);
             // console.log("editReturnDate:", document.getElementById("editReturnDate").value);
 
+
+
+            //kiểm tra xem có driver nào đc chọn khi ấn tích không
+            const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
+            // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
+            // let selectedUserId = null;
+            const selectedDriverId = document.getElementById("fullNameDriver").value;
+            // const selectedId = $('#fullNameDriver').val();
+
+            console.log("selectedUserId = " ,selectedDriverId)
+            if(checked && !selectedDriverId) {
+                alert(`Please fill all required fields`);
+                return false;
+            }
+
             const currentDrivingLicense = document.getElementById("currentDrivingLicense").value // Dữ liệu từ DB
             let drivingLicense = document.getElementById("inputGroupFile011").value;
             console.log("currentDrivingLicense:",currentDrivingLicense);
@@ -1489,16 +1740,8 @@
                 const district =  document.getElementById('district').value;
                 const ward =  document.getElementById('ward').value;
                 const street = document.getElementById('street').value;
+                const selectedDriverId = document.getElementById("fullNameDriver").value;
 
-                // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
-                let selectedUserId = null;
-                const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
-
-                if (selectedCheckbox) {
-                    selectedUserId = selectedCheckbox.value;
-                }
-
-                console.log("Selected User IDs:", selectedUserId);
 
 
 
@@ -1522,7 +1765,7 @@
                     rentDistrict: district,
                     rentWard: ward,
                     rentStreet: street,
-                    selectedUserId: selectedUserId,
+                    selectedUserId: selectedDriverId,
                 };
 
                 console.log(bookingInfor)
@@ -2056,6 +2299,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/update-car-validate.js"></script>
+    <script src="/js/customer/driver_Information.js"></script>
+    <script src="/js/customer/calculate-time.js"></script>
     </body>
 </th:block>
 </body>

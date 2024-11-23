@@ -183,7 +183,7 @@
                                             <button style="padding: 7px 20px; margin-bottom: 5px" class="btn btn-success"><a
                                                     style="font-size: 12px; color: white"
                                                     th:href="@{'/customer/booking-car?CarId='+ ${list.getCarId()} + '&startDate=' + ${pickDate} + ' - ' + ${pickTime} + '&enDate=' + ${dropDate} +' - '+${dropTime} + '&address=' + ${name} + '&beforeNavigate=search'}"
-                                            >Rent now</a></button>
+                                                    class="rentNowLink" >Rent now</a></button>
                                         </th:block>
 
 <!--                                        <th:block th:if="${list.getCarStatus().getStatusId() != 1}" >-->
@@ -243,6 +243,21 @@
                 transitionOut: 'fadeOutUp'
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const rentNowLinks = document.querySelectorAll('.rentNowLink');
+
+            rentNowLinks.forEach(function (rentNowLink) {
+                rentNowLink.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    localStorage.removeItem('rulesAccepted');
+                    window.location.href = rentNowLink.href;
+                });
+            });
+        });
+
+
+
     </script>
     <script>
         document.querySelector('.searchForm').addEventListener('submit', function (event) {

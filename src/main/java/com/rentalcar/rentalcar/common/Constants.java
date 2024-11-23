@@ -13,7 +13,7 @@ public class Constants {
 
     public static final int DEFAULT_COUNTRY_CODE = 84;
 
-    public static final int FINE_COST = 120;
+    public static final int FINE_COST = 20;
 
     public static final int DRIVER_SALARY = 499000;
 

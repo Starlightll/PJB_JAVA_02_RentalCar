@@ -723,7 +723,19 @@
     <script src="/webjars/select2/4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
             $('#province, #district , #ward').select2({
-                placeholder: "Select a car",
+                placeholder: "Select a province",
+                allowClear: true,
+                theme: 'bootstrap4',
+                fontsize: '10px'
+            })
+            $('#district').select2({
+                placeholder: "Select a district",
+                allowClear: true,
+                theme: 'bootstrap4',
+                fontsize: '10px'
+            })
+            $('#ward').select2({
+                placeholder: "Select a ward",
                 allowClear: true,
                 theme: 'bootstrap4',
                 fontsize: '10px'

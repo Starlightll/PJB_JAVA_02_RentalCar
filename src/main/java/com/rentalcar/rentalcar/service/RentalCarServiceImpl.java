@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.CalculateNumberOfDays;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.BookingDto;
@@ -25,6 +26,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static com.rentalcar.rentalcar.common.Constants.FINE_COST;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 @Service
@@ -90,9 +92,43 @@ public class RentalCarServiceImpl implements RentalCarService {
         for (Object[] result : resultsPage.getContent()) {
             LocalDateTime startDate = ((Timestamp) result[2]).toLocalDateTime();
             LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
+            LocalDateTime endDate = ((Timestamp) result[3]).toLocalDateTime();
+            String bookingStatus = (String) result[11];
+            double totalPrice = ((BigDecimal) result[6]).doubleValue(); // total pric
+            double basprice = ((BigDecimal) result[9]).doubleValue();
+            String lateTime = null;
+            double fineLateTime = 0;
+            double returnDeposit = 0;
+            double fineLateTimePerDay = basprice * FINE_COST / 100;
+            double fineLateTimePerHour = fineLateTimePerDay / 24;
 
-            // Tính toán số ngày giữa startDate và actualEndDate
-            int numberOfDays = calculateNumberOfDays(startDate, actualEndDate);
+            if(LocalDateTime.now().isBefore(startDate)) {
+                returnDeposit = basprice;
+            }
+
+            Map<String, Long> map_numberOfDays = new HashMap<>();
+            if(bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
+                    bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+//            tính late date
+                if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
+                    lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
+                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, fineLateTimePerDay,fineLateTimePerHour);
+                }
+            }
+            else if(LocalDateTime.now().isAfter(endDate)) {
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
+                double hourlyRate = basprice / 24;
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
+                if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
+                    lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
+                }
+            } else {
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+                double hourlyRate = basprice / 24;
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
+            }
+            String str_numberOfDays = map_numberOfDays.get("days") + " d " + map_numberOfDays.get("hours") + " h ";
 
             MyBookingDto bookingDto = new MyBookingDto(
                     Long.valueOf((Integer) result[0]),
@@ -103,7 +139,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                     ((Timestamp) result[5]).toLocalDateTime(),//actualEndDate
                     ((BigDecimal) result[6]).doubleValue(), // total price
                     Long.valueOf((Integer) result[7]), //userId
-                    numberOfDays, //numberOfDays
+                    str_numberOfDays, //numberOfDays
                     (Integer) result[8], //paymentMethod
                     ((BigDecimal) result[9]).doubleValue(), // basePrice
                     ((BigDecimal) result[10]).doubleValue(), // deposit
@@ -112,7 +148,10 @@ public class RentalCarServiceImpl implements RentalCarService {
                     (String) result[13],
                     (String) result[14],
                     (String) result[15],
-                    (Integer) result[16]
+                    (Integer) result[16],
+                    lateTime,
+                    fineLateTime,
+                    returnDeposit
             );
             bookingDtos.add(bookingDto);
         }
@@ -343,8 +382,10 @@ public class RentalCarServiceImpl implements RentalCarService {
         try {
 
             //Lưu booking
-            int numberOfDays = calculateNumberOfDays(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
-            Double totalPrice = car.getBasePrice() * numberOfDays;
+            Map<String, Long>  rentalInfo = CalculateNumberOfDays.calculateNumberOfDays(bookingDto.getPickUpDate(), bookingDto.getReturnDate());
+            double dailyRate = car.getBasePrice();  // Giá thuê xe 1 ngày
+            double hourlyRate = dailyRate / 24;  // Giá thuê xe 1 giờ
+            Double totalPrice = CalculateNumberOfDays.calculateRentalFee(rentalInfo, dailyRate, hourlyRate);
             String fullName = normalizeFullName(bookingDto.getRentFullName());
 
             booking.setStartDate(bookingDto.getPickUpDate());
@@ -900,17 +941,6 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     }
 
-    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
-        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        // Tính chênh lệch thời gian (mili-giây)
-        long timeDiff = endMillis - startMillis;
-
-        // Chia để tính số ngày và làm tròn lên
-        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
-    }
 
 
     public String normalizeFullName(String fullName) {

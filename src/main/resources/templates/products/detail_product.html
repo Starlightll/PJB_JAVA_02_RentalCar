@@ -784,7 +784,7 @@
                 </div>
                 <div>
 
-                  <a class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
+                  <a class="btn-primary btn rentNowLink" style="width: 100px; margin: 10px 0 10px 0"
                      th:href="@{'/customer/booking-car?CarId='+ ${car.getCarId()} + '&startDate='  + '&enDate='  + '&address=' + '&beforeNavigate=detailCar'}">Rent now</a>
 
                 </div>
@@ -811,6 +811,23 @@
 
 
   <script>
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const rentNowLinks = document.querySelectorAll('.rentNowLink');
+
+      rentNowLinks.forEach(function (rentNowLink) {
+        rentNowLink.addEventListener('click', function (event) {
+          event.preventDefault();
+          localStorage.removeItem('rulesAccepted');
+          window.location.href = rentNowLink.href;
+        });
+      });
+    });
+
+
+
     const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
