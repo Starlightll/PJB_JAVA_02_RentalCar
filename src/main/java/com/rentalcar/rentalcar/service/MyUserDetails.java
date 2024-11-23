@@ -11,10 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class MyUserDetails implements UserDetails {
-    private User user;
+    private final User user;
 
 
     public MyUserDetails(User user) {
@@ -24,7 +23,7 @@ public class MyUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        Set<Role> roles = user.getRoles();
+        List<Role> roles = user.getRoles();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
         for (Role role : roles) {
@@ -61,7 +60,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getStatus().equals(UserStatus.ACTIVATED);
+        return user.getStatus().equals(UserStatus.ACTIVATED) || user.getStatus().equals(UserStatus.RENTED);
     }
 
 

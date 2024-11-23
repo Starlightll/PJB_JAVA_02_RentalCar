@@ -2,19 +2,14 @@ package com.rentalcar.rentalcar.configs;
 import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
 import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 @Configuration
 @EnableAsync
@@ -50,13 +45,20 @@ public class WebConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/homepage-guest").permitAll()
-                        .requestMatchers("/myProfile", "/change-password", "/carowner").hasAnyAuthority("Customer", "Car Owner")
-                        .requestMatchers("/homepage-customer").hasAuthority("Customer")
-                        .requestMatchers("/homepage-carowner").hasAuthority("Car Owner")
-                        .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**").permitAll()
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/login", "/register", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service")) // Tắt CSRF cho các URL này
+                .authorizeHttpRequests(requests -> requests
+                        // Các URL công khai, không yêu cầu xác thực
+                        .requestMatchers("/", "/homepage-guest", "/error/**", "/faq", "/contacts", "/privacy").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**", "/assets/**", "/cars/**", "/uploads/**", "/webjars/**").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
+                        .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner", "Admin")
+                        .requestMatchers("/homepage-customer").hasAnyAuthority("Customer", "Admin")
+                        .requestMatchers("/customer/**").hasAnyAuthority("Customer", "Admin")
+                        .requestMatchers("/homepage-carowner", "/car-owner/**", "/car-draft/**", "/carAPI/**").hasAnyAuthority("Car Owner", "Admin")
+                        .requestMatchers("/admin/**").hasAuthority("Admin")
+
+                        // Mọi yêu cầu khác đều yêu cầu xác thực
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -71,17 +73,10 @@ public class WebConfiguration {
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                );
-//                .exceptionHandling(exception -> exception
-//                        .accessDeniedPage("/403")
-//                );
+                )
+                ;
 
         return http.build();
-    }
-
-
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
     }
 
 }

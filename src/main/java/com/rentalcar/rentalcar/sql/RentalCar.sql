@@ -3,6 +3,7 @@ GO
 USE RentalCar
 GO
 
+
 -- Users table
 CREATE TABLE [dbo].[Users]
 (
@@ -12,7 +13,7 @@ CREATE TABLE [dbo].[Users]
     email          NVARCHAR(100)      NOT NULL,
     nationalId     NVARCHAR(20),
     phone          NVARCHAR(15)       NOT NULL,
-    drivingLicense NVARCHAR(50),
+    drivingLicense NVARCHAR(200),
     wallet         DECIMAL(18, 2),
     password       NVARCHAR(255)      NOT NULL,
     city           NVARCHAR(100),
@@ -21,11 +22,21 @@ CREATE TABLE [dbo].[Users]
     street         NVARCHAR(255),
     fullName       NVARCHAR(100),
     agreeTerms     int                not null,
-    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED'))
-        PRIMARY KEY (userId)
-);
+    status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED', 'RENTED')),
+    PRIMARY KEY (userId)
+    );
 
 
+-- Notification table
+CREATE TABLE [dbo].[Notification]
+(
+    notificationId INT IDENTITY (1,1) PRIMARY KEY,
+    content        NVARCHAR(MAX),
+    isRead         BIT,
+    userId         INT,
+    createAt       DATETIME,
+    FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId)
+    );
 
 CREATE TABLE VerificationToken
 (
@@ -39,9 +50,9 @@ CREATE TABLE VerificationToken
 -- Car Status table
 CREATE TABLE [dbo].[CarStatus]
 (
-    CarStatusId INT IDENTITY (1,1) PRIMARY KEY,
+    CarStatusId INT PRIMARY KEY,
     name        NVARCHAR(50),
-);
+    );
 
 
 -- Brand table
@@ -49,7 +60,7 @@ CREATE TABLE [dbo].[Brand]
 (
     BrandId   INT IDENTITY (1,1) PRIMARY KEY,
     brandName NVARCHAR(50),
-);
+    );
 
 
 
@@ -87,7 +98,7 @@ CREATE TABLE [dbo].[Car]
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (brandId) REFERENCES [dbo].[Brand] (brandId),
     FOREIGN KEY (statusId) REFERENCES [dbo].[CarStatus] (CarStatusId)
-);
+    );
 
 -- Car Address table
 CREATE TABLE [dbo].[CarAddress]
@@ -102,7 +113,7 @@ CREATE TABLE [dbo].[CarAddress]
     street    NVARCHAR(255),
     carId     INT UNIQUE NOT NULL,
     FOREIGN KEY (carId) REFERENCES [dbo].[Car] (carId)
-);
+    );
 
 CREATE TABLE CarDraft
 (
@@ -140,37 +151,28 @@ CREATE TABLE CarDraft
     brandId         INT,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (brandId) REFERENCES [dbo].[Brand] (brandId),
-);
+    );
 
 -- Role table
 CREATE TABLE [dbo].[Role]
 (
     RoleId   INT IDENTITY (1,1) PRIMARY KEY,
     roleName NVARCHAR(50)
-);
+    );
 
 insert into [Role]
 values ('Admin'),
-       ('Car Owner'),
-       ('Customer')
-
-
--- Feedback table
-CREATE TABLE [dbo].[Feedback]
-(
-    FeedbackId INT IDENTITY (1,1) PRIMARY KEY,
-    rating     INT CHECK (rating BETWEEN 1 AND 5),
-    content    NVARCHAR(MAX),
-    dateTime   DATETIME
-);
-
+    ('Car Owner'),
+    ('Customer'),
+    ('Driver')
 
 -- Booking Status table
 CREATE TABLE [dbo].[BookingStatus]
 (
-    BookingStatusId INT IDENTITY (1,1) PRIMARY KEY,
+    BookingStatusId INT PRIMARY KEY,
     name            NVARCHAR(50)
-);
+    );
+
 
 
 -- Payment Method table
@@ -178,14 +180,21 @@ CREATE TABLE [dbo].[PaymentMethod]
 (
     PaymentMethodId INT IDENTITY (1,1) PRIMARY KEY,
     name            NVARCHAR(50)
-);
+    );
+
+
+
+INSERT [dbo].[PaymentMethod]  VALUES ( N'Wallet')
+INSERT [dbo].[PaymentMethod]  VALUES ( N'VNPay')
+INSERT [dbo].[PaymentMethod]  VALUES  (N'Money')
+INSERT [dbo].[PaymentMethod]  VALUES ( N'MOMO')
 
 -- Additional Function table
 CREATE TABLE [dbo].[AdditionalFunction]
 (
     AdditionalFunctionId INT IDENTITY (1,1) PRIMARY KEY,
     functionName         NVARCHAR(50)
-);
+    );
 
 
 -- UserRole table (mapping between Users and Role)
@@ -196,7 +205,7 @@ CREATE TABLE [dbo].[UserRole]
     PRIMARY KEY (userId, roleId),
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (roleId) REFERENCES [dbo].[Role] (RoleId)
-);
+    );
 
 -- CarAdditionalFunction table (mapping between Car and Additional Functions)
 CREATE TABLE [dbo].[CarAdditionalFunction]
@@ -206,7 +215,7 @@ CREATE TABLE [dbo].[CarAdditionalFunction]
     PRIMARY KEY (carId, AdditionalFunctionId),
     FOREIGN KEY (carId) REFERENCES [dbo].[Car] (carId),
     FOREIGN KEY (AdditionalFunctionId) REFERENCES [dbo].[AdditionalFunction] (AdditionalFunctionId)
-);
+    );
 
 -- Booking table
 CREATE TABLE [dbo].[Booking]
@@ -218,32 +227,28 @@ CREATE TABLE [dbo].[Booking]
     actualEndDate   DATETIME,
     totalPrice      DECIMAL(18, 2),
     userId          INT,
-    feedbackId      INT,
     bookingStatusId INT,
     paymentMethodId INT,
+    lastModified    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    driverId INT foreign key references [dbo].[Users] (userId) Null,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
-    FOREIGN KEY (feedbackId) REFERENCES [dbo].[Feedback] (FeedbackId),
     FOREIGN KEY (bookingStatusId) REFERENCES [dbo].[BookingStatus] (BookingStatusId),
     FOREIGN KEY (paymentMethodId) REFERENCES [dbo].[PaymentMethod] (PaymentMethodId)
-);
+    );
 
--- Driver Details table
-CREATE TABLE [dbo].[DriverDetail]
+
+-- Feedback table
+CREATE TABLE [dbo].[Feedback]
 (
-    driverId       INT IDENTITY (1,1) PRIMARY KEY,
-    fullName       NVARCHAR(100),
-    phone          NVARCHAR(15),
-    nationalId     NVARCHAR(20),
-    dob            DATE,
-    email          NVARCHAR(100),
-    drivingLicense NVARCHAR(50),
-    city           NVARCHAR(100),
-    district       NVARCHAR(100),
-    ward           NVARCHAR(100),
-    street         NVARCHAR(255),
-    bookingId      INT,
+    FeedbackId INT IDENTITY (1,1) PRIMARY KEY,
+    bookingId  INT UNIQUE,
+    rating     INT CHECK (rating BETWEEN 1 AND 5),
+    content    NVARCHAR(MAX),
+    dateTime   DATETIME
     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
-);
+    );
+
+
 
 -- BookingCar table (mapping between Booking and Car)
 CREATE TABLE [dbo].[BookingCar]
@@ -253,17 +258,87 @@ CREATE TABLE [dbo].[BookingCar]
     PRIMARY KEY (carId, bookingId),
     FOREIGN KEY (carId) REFERENCES [dbo].[Car] (carId),
     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
-);
+    );
 
 INSERT INTO Brand (brandName) VALUES ('Toyota'), ('Honda'), ('Hyundai'), ('Kia'), ('Mazda'), ('Ford'), ('Chevrolet'), ('Mercedes-Benz'), ('BMW'), ('Audi'), ('Lexus'), ('Nissan'), ('Volkswagen'), ('Peugeot'), ('Suzuki'), ('Subaru'), ('Mitsubishi'), ('Volvo'), ('Land Rover'), ('Jeep'), ('Porsche'), ('Jaguar'), ('Ferrari'), ('Lamborghini'), ('Rolls-Royce'), ('Bentley'), ('Bugatti'), ('Maserati'), ('McLaren'), ('Aston Martin'), ('Lotus'), ('Alfa Romeo'), ('Fiat'), ('Citroen'), ('Renault'), ('Skoda'), ('Seat'), ('Opel'), ('Dacia'), ('Lada'), ('ZAZ'), ('GAZ'), ('UAZ'), ('Moskvich'), ('Kamaz'), ('PAZ'), ('KAvZ'), ('Ikarus'), ('Neoplan'), ('Setra'), ('Van Hool'), ('Volvo'), ('Scania')
 
-INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('Sun roof'), ('DVD'), ('Ski Rack'), ('Car Cover'), ('Car Wash'), ('Car Wax'), ('Car Polish'), ('Car Vacuum'), ('Car Freshener'), ('Car Shampoo');
+    INSERT INTO AdditionalFunction (functionName) VALUES ('GPS'), ('Child lock'), ('Sun roof'), ('DVD'), ('Ski Rack'), ('Car Cover'), ('Car Wash'), ('Car Wax'), ('Car Polish'), ('Car Vacuum'), ('Car Freshener'), ('Car Shampoo');
 
-INSERT INTO CarStatus (name) VALUES ('AVAILABLE'), ('BOOKED'), ('STOPPED'), ('DELETED');
+INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
+                                                 (2,'Booked'),
+                                                 (3, 'Stopped'),
+                                                 (4,'Deleted'),
+                                                 (5, 'Maintenance'),
+                                                 (6, 'Rented'),
+                                                 (7,'Returned'),
+                                                 (8,'Verifying'),
+                                                 (9,'Confirmed'),
+                                                 (10,'In-Progress'),
+                                                 (11, 'Pending payment'),
+                                                 (12, 'Completed'),
+                                                 (13,'Cancelled'),
+                                                 (14, 'Pending deposit'),
+                                                 (15, 'Pending cancel')
 
+
+
+-- insert BookingStatus
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (2, N'Confirmed')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (3, N'In-Progress')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (4, N'Pending payment')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (5, N'Completed')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (6, N'Cancelled')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (7, N'Pending cancel')
+
+
+-- Transaction table
+CREATE TABLE [dbo].[Transaction] (
+                                     transactionId   INT IDENTITY (1,1) PRIMARY KEY,
+    transactionType VARCHAR(50) NOT NULL CHECK (transactionType IN ('Withdraw', 'Top-up', 'Pay deposit', 'Receive deposit', 'Refund deposit', 'Offset final payment', 'Pay final payment', 'Receive final payment','Receive remaining deposit', 'Return remaining deposit', 'Pay for driver rental')),
+    amount          DECIMAL(18, 2) NOT NULL,
+    transactionDate DATETIME DEFAULT GETDATE(),
+    userId          INT NOT NULL,
+    bookingId       INT NULL, -- Used for booking-related transactions like deposits
+    FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
+    FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
+    );
+
+
+
+
+
+
+-- ĐÂY LÀ DỮ LIỆU TEST DRIVER, ANH EM TỤ THÊM TRONG BẢNG USER ROLE NHÉ , ROLE LÀ DRIVER(4)
+
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status)
+VALUES
+    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'1', N'8', N'334', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED'),
+    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'1', N'8', N'334', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED'),
+    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'1', N'8', N'334', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED');
+
+INsert into UserRole
+values(1, 4), (2,4),(3,4)
 
 -- SQL to delete all information of carDraft, Car and relative information of Car
 -- DELETE FROM CarDraft WHERE CarDraft.draftId > 0;
 -- DELETE FROM CarAdditionalFunction WHERE CarAdditionalFunction.AdditionalFunctionId > 0;
 -- DELETE FROM CarAddress WHERE CarAddress.addressId > 0;
 -- DELETE FROM Car WHERE Car.carId > 0;
+
+
+-- SQL to INSERT AN ADMIN
+-- password: 123
+DECLARE @InsertedUsers TABLE (userId BIGINT);
+
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status)
+    OUTPUT inserted.userId INTO @InsertedUsers
+VALUES (N'admin', '1990-01-15', N'admin@gmail.com', N'123456789', N'0123456789', N'DL123456', 9999999999.00,
+    N'$2a$10$zTJMk41R7yUiRWED31NbtueNZTaIOV8mJm4HGavw2KIZVmCKgA8MW', N'1', N'8',
+    N'334', N'Cau Giay', N'Admin', 1, N'ACTIVATED');
+
+INSERT INTO [dbo].[UserRole] (userId, roleId)
+SELECT userId, 1 -- 1 == Admin
+FROM @InsertedUsers;
+
+

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+ lang="en">
 <head>
-    <title>Carbook - Free Bootstrap 4 Template by Colorlib</title>
+    <title>Carbook</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- jQuery -->
@@ -41,12 +41,13 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/my-profile">My Profile</a>
                             <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
-                                <a class="dropdown-item" href="/my-bookings">My Booking</a>
+                                <a class="dropdown-item" href="/customer/my-bookings">My Booking</a>
                             </th:block>
                             <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Car Owner')}">
-                                <a class="dropdown-item" href="/my-cars">My Cars</a>
+                                <a class="dropdown-item" href="/car-owner/my-cars">My Cars</a>
+                                <a class="dropdown-item" href="/homepage-carowner/my-feedback">My Report</a>
                             </th:block>
-                                <a class="dropdown-item" href="/wallet">My Wallet</a>
+                                <a class="dropdown-item" href="/wallet/my-wallet">My Wallet</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/logout" id="logout-link">Logout</a>
                         </div>
@@ -57,13 +58,14 @@
                 <th:block th:if="${session.user == null}">
                     <li class="nav-item" style="display: flex; align-items: center">
                         <a href="/login" class="login-btn nav-link"
-                           style="padding: 2px 30px; width: 100px; height: 40px; display: flex; align-items: center">Login</a>
+                           style="padding: 2px 30px !important; width: 100px !important; height: 40px !important; display: flex !important; align-items: center !important">Login</a>
                     </li>
                 </th:block>
             </ul>
         </div>
     </div>
 </nav>
-
+<script>
+</script>
 </body>
 </html>

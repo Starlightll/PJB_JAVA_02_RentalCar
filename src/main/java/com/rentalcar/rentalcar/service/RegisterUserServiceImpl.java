@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -63,6 +64,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         user.setAgreeTerms(true);
         user.setUsername(userDto.getUsername());
         user.setStatus(UserStatus.PENDING);
+        user.setWallet(BigDecimal.valueOf(0));
         userRepository.save(user);
 
 

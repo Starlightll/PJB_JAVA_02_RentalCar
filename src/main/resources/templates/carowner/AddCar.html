@@ -6,9 +6,13 @@
 <head>
     <title>Add Car</title>
     <meta name="_csrf" th:content="${_csrf.token}">
-    <link rel="stylesheet" href="/css/addcar.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/carowner/add-car.css">
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <!--Vendor css-->
+    <link rel="stylesheet" href="/webjars/select2/4.1.0-rc.0/dist/css/select2.css">
+    <link rel="stylesheet" href="/webjars/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css"/>
+    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
+
     <style>
         .validate-msg {
             display: none;
@@ -31,6 +35,20 @@
             background-color: #c82333 !important;
             border-color: #bd2130;
         }
+
+        .select2{
+            flex: 1
+        }
+
+        .select2-selection__rendered{
+            font-size: 0.875rem;
+            overflow: unset;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option{
+            padding: .30rem .30rem;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <th:block layout:fragment="content">
@@ -49,9 +67,9 @@
                     ...
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-secondary" id="confirm">Yes</button>
-                    <button type="button" class="btn btn-secondary" id="notConfirm">No</button>
+                    <a type="button" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                    <a type="button" class="btn btn-secondary" id="confirm">Yes</a>
+                    <a type="button" class="btn btn-secondary" id="notConfirm">No</a>
                 </div>
             </div>
         </div>
@@ -63,7 +81,7 @@
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs">
                         <span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span class="mr-2"><a href="/my-cars">MY CARS <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span class="mr-2"><a href="/car-owner/my-cars">MY CARS <i class="ion-ios-arrow-forward"></i></a></span>
                         <span>ADD CAR <i class="ion-ios-arrow-forward"></i></span>
                     </p>
                     <h1 class="mb-3 bread">ADD CAR</h1>
@@ -72,8 +90,8 @@
         </div>
     </section>
     <section class="ftco-section pt-0">
-        <div class="container-fluid" id="grad1">
-            <div class="row justify-content-center mt-0">
+        <div class="container-fluid d-flex justify-content-center" id="grad1">
+            <div class="add-car-section row justify-content-center mt-0">
                 <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
 
                     <div class="card px-0 pt-4 pb-0 mt-3 mb-3 mt-lg-5">
@@ -292,7 +310,7 @@
                                             </div>
                                         </div>
                                         <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                onclick="window.location.href='/my-cars'">Cancel</a>
+                                                onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
                                         <input type="button" name="next" class="next action-button"
                                                value="Next Step"/>
                                     </fieldset>
@@ -396,17 +414,18 @@
                                                     </div>
                                                     <h5 class="card-title">Additional functions</h5>
                                                     <div>
-                                                        <div class="row">
+                                                        <div class="row pl-3 pr-3">
                                                             <th:block th:each="function : ${additionalFunction}">
-                                                                <div class="form-check col-lg-3 col-md-4 col-6">
-                                                                    <input class="form-check-input" type="checkbox"
+                                                                <label class="checkbox bounce col-lg-3 col-md-4 col-6 p-0 d-flex" style="align-items: center;column-gap: 6px;">
+                                                                    <input type="checkbox"
                                                                            th:value="${function.functionId}"
                                                                            name="additionalFunction"
                                                                            th:checked="${carDraft.additionalFunction != null && #lists.contains(carDraft.additionalFunction, function.functionId.toString())}">
-                                                                    <label class="form-check-label">
-                                                                        <span th:text="${function.functionName}"></span>
-                                                                    </label>
-                                                                </div>
+                                                                    <svg viewBox="0 0 21 21">
+                                                                        <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                    </svg>
+                                                                    <span th:text="${function.functionName}"></span>
+                                                                </label>
                                                             </th:block>
                                                         </div>
                                                     </div>
@@ -485,7 +504,7 @@
                                             </div>
                                         </div>
                                         <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                onclick="window.location.href='/my-cars'">Cancel</a>
+                                                onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
                                         <input type="button" name="next" class="next action-button"
@@ -568,7 +587,7 @@
                                             </div>
                                         </div>
                                         <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                onclick="window.location.href='/my-cars'">Cancel</a>
+                                                onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
                                         <input type="button" name="make_payment" class="next action-button"
@@ -588,16 +607,16 @@
                                                                 <input type="radio" name="slide" id="three">
                                                                 <input type="radio" name="slide" id="four">
                                                                 <div class="img img-1">
-                                                                    <img id="carFrontImage" th:src="${carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carFrontImage" th:src="${'/'+carDraft.getFrontImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-2">
-                                                                    <img id="carBackImage" th:src="${carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carBackImage" th:src="${'/'+carDraft.getBackImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-3">
-                                                                    <img id="carLeftImage" th:src="${carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carLeftImage" th:src="${'/'+carDraft.getLeftImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="img img-4">
-                                                                    <img id="carRightImage" th:src="${carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
+                                                                    <img id="carRightImage" th:src="${'/'+carDraft.getRightImage()}" style="background: #1a1a1a" alt="">
                                                                 </div>
                                                                 <div class="sliders">
                                                                     <label for="one" class="one"></label>
@@ -641,21 +660,22 @@
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
                                                                         Price: </p>
-                                                                    <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" id="previewPrice">0k/Day</p>
+                                                                    <p th:text="${#numbers.formatDecimal(carDraft.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'VND/Day'" id="previewPrice">0k/Day</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2" >
                                                                         Location: </p>
                                                                     <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" id="previewLocation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                        th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''} + ', ' + ${carDraft.getHome()}"
+                                                                        th:text="${carDraft.getProvince() != null && carDraft.getProvince().contains(',') ? carDraft.getProvince().split(',')[1] : ''} + ', ' + ${carDraft.getDistrict() != null && carDraft.getDistrict().contains(',') ? carDraft.getDistrict().split(',')[1] : ''} + ', ' + ${carDraft.getWard() != null && carDraft.getWard().contains(',') ? carDraft.getWard().split(',')[1] : ''}"
                                                                     >No</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                         Status: </p>
-                                                                    <p style="color: #5bd77a; font-weight: bold">Available</p>
+<!--                                                                    <p style="color: #5bd77a; font-weight: bold">Available</p>-->
+                                                                    <p style="color: #ff9100; font-weight: bold">Pending Verify</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -665,7 +685,7 @@
                                             </div>
                                         </div>
                                         <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                                onclick="window.location.href='/my-cars'">Cancel</a>
+                                                onclick="window.location.href='/car-owner/my-cars'">Cancel</a>
                                         <input type="button" name="previous" class="previous action-button-previous"
                                                value="Previous"/>
                                         <input type="button" name="next" class="action-button" onclick="showConfirm()"
@@ -699,9 +719,144 @@
             </div>
         </div>
     </section>
+    <!--Vendor Script -->
+    <script src="/webjars/select2/4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+            $('#province, #district , #ward').select2({
+                placeholder: "Select a car",
+                allowClear: true,
+                theme: 'bootstrap4',
+                fontsize: '10px'
+            })
+    </script>
+
 <!--Validate-->
     <script>
+        let pageStep = 1;
+        console.log(pageStep)
 
+        let currentStep = document.getElementById('currentStep').value;
+        goToStep(currentStep ? parseInt(currentStep) : 1);
+        $(document).ready(function () {
+
+            let current_fs, next_fs, previous_fs; //fieldsets
+            let opacity;
+
+            $(".next").click(async function () {
+                console.log(pageStep);
+                if (pageStep === 1) {
+                    const isLicensePlateValid = await validateLicensePlate();
+                    const isStep1Valid = checkStep1();
+                    const isModelValid = validateModel();
+                    if (!isLicensePlateValid || !isStep1Valid || !isModelValid) {
+                        console.log('fail step 1');
+                        return;
+                    }
+                    saveDraft();
+                    pageStep++;
+                }else if (pageStep === 2) {
+                    if (!checkStep2() || !validateMileage() || !validateFuelConsumption()) {
+                        console.log('fail step 2');
+                        return;
+                    }
+                    saveDraft();
+                    pageStep++;
+                }else if (pageStep === 3) {
+                    if (!checkStep3() || !validateCarPrice() || !validateBasePrice() || !validateDeposit()) {
+                        console.log('fail step 3');
+                        return;
+                    }
+                    saveDraft();
+                    pageStep++;
+                }else if (pageStep === 4) {
+                    if (!checkStep4()) {
+                        console.log('fail step 4');
+                        return;
+                    }
+                }
+
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
+
+                //Add Class Active
+                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+                //show the next fieldset
+                next_fs.show();
+                // window.scrollTo(0, 0);
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        next_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            $(".previous").click(function () {
+                pageStep--;
+                current_fs = $(this).parent();
+                previous_fs = $(this).parent().prev();
+
+                //Remove class active
+                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+                //show the previous fieldset
+                previous_fs.show();
+                // window.scrollTo(0, 0);
+
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        previous_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            // $('.radio-group .radio').click(function () {
+            //     $(this).parent().find('.radio').removeClass('selected');
+            //     $(this).addClass('selected');
+            // });
+
+            $(".submit").click(function () {
+                return false;
+            })
+
+        });
+
+        function goToStep(targetStep) {
+            if(targetStep > 4){
+                targetStep = 4;
+            }
+            if(targetStep < 1){
+                targetStep = 1;
+            }
+            pageStep = targetStep;
+
+            // Cập nhật progress bar
+            $("#progressbar li").removeClass("active");
+            for (let i = 0; i < targetStep; i++) {
+                $("#progressbar li").eq(i).addClass("active");
+            }
+
+            $("fieldset").hide();
+            $("fieldset").eq(targetStep - 1).show();
+        }
 
     </script>
     <script>
@@ -799,10 +954,6 @@
     </script>
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
-
-
-
-
 
         function saveDraft() {
             const licensePlate = document.getElementById('licensePlate').value;
@@ -912,7 +1063,7 @@
             }
             console.log(formData);
             $.ajax({
-                url: '/save-draft',
+                url: '/car-draft/save-draft',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -955,21 +1106,32 @@
                 });
                 $('#notConfirm').click(function () {
                     deleteDraft();
-                    window.location.href = '/my-cars';
+                    window.location.href = '/car-owner/my-cars';
                 });
             }
 
             function addCar(){
                 if(checkStep1() && checkStep2() && checkStep3() && checkStep4()){
                     $.ajax({
-                        url: '/add-car',
+                        url: '/car-owner/add-car',
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken
                         },
                         success: function (response) {
-                            console.log("Car saved successfully", response);
-                            window.location.href = '/my-cars';
+                            // Display the custom error message from the server
+                            $('#confirmModal').modal('show');
+                            $('#ModalTitle').text("Nice!");
+                            $('#ModalBody').html("<div style=\"padding: 20px; background-color: #f5f5f5; border-radius: 8px; text-align: center; font-family: Arial, sans-serif;\">\n" +
+                                "    <h3 style=\"color: #383838; margin-bottom: 10px;\">Car Saved Successfully!</h3>\n" +
+                                "    <p>Your car listing is awaiting admin approval.</p>\n" +
+                                "    <p>Check the status anytime on the <a href=\"/my-cars\" style=\"text-decoration: none; color: #008cf4;\">'My Cars'</a> page.</p>\n" +
+                                "</div>");
+                            $('#confirm').text("OK").click(function () {
+                                console.log("Car saved successfully", response);
+                                window.location.href = '/car-owner/my-cars';
+                            });
+                            $('#notConfirm').hide();
                         },
                         error: function (xhr, status, error) {
                             console.error("Error saving car:", error);
@@ -1035,14 +1197,14 @@
 
             function deleteDraft() {
                 $.ajax({
-                    url: '/delete-draft',
+                    url: '/car-draft/delete-draft',
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
                     },
                     success: function (response) {
                         alert("Draft deleted.");
-                        window.location.href = '/my-cars';
+                        window.location.href = '/car-owner/my-cars';
                     },
                     error: function (error) {
                         console.error("Error:", error);
@@ -1083,7 +1245,7 @@
         function displayExistingImage(imageView, imageUrl) {
             if (imageUrl) {
                 if (imageUrl.match(/\.(jpg|jpeg|png)$/i)) {
-                    imageView.style.backgroundImage = 'url('+ imageUrl.replaceAll("\\", "/")+')';
+                    imageView.style.backgroundImage = 'url(/'+ imageUrl.replaceAll("\\", "/")+')';
                     imageView.style.backgroundSize = "cover";
                     imageView.style.backgroundPosition = "center";
                     imageView.innerHTML = "";
@@ -1221,19 +1383,37 @@
             });
         }
 
-        // Event listeners to load data on selection
-        document.getElementById('province').addEventListener('change', function () {
-            fetchDistricts(this.value);
-            document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
-            document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
-            document.getElementById('district').value = ""; // Reset district value
-            document.getElementById('ward').disabled = true; // Disable ward selection
-        });
+            // Select 2 library
+            $('#province').on('select2:select', function (e) {
+                console.log("Province selected");
+                const selectedProvince = $(this).val();
+                fetchDistricts(selectedProvince);
+                $('#ward').html('<option value="">Select Ward</option>').prop('disabled', true);
+                $('#district').val("").prop('disabled', selectedProvince === "");
+            });
 
-        document.getElementById('district').addEventListener('change', function () {
-            fetchWards(this.value);
-            document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
-        });
+
+            // Select 2 library
+            $('#district').on('select2:select', function (e) {
+                console.log("District selected");
+                const selectedDistrict = $(this).val();
+                fetchWards(selectedDistrict);
+                $('#ward').prop('disabled', selectedDistrict === "");
+            });
+
+        // // Event listeners to load data on selection
+        // document.getElementById('province').addEventListener('change', function () {
+        //     fetchDistricts(this.value);
+        //     document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
+        //     document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
+        //     document.getElementById('district').value = ""; // Reset district value
+        //     document.getElementById('ward').disabled = true; // Disable ward selection
+        // });
+        //
+        // document.getElementById('district').addEventListener('change', function () {
+        //     fetchWards(this.value);
+        //     document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
+        // });
 
 
         // Load provinces on page load with default values
@@ -1248,15 +1428,16 @@
             const basePricePreview = document.getElementById('previewPrice');
             basePrice.addEventListener('input', function () {
                 const value = parseFloat(basePrice.value) || 0;
-                basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' K/Day';
+                basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' VN/Day';
             });
 
             //Load location
             const province = document.getElementById('province');
             const district = document.getElementById('district');
-            const ward = document.getElementById('district');
+            const ward = document.getElementById('ward');
             const previewLocation = document.getElementById('previewLocation');
-            ward.addEventListener('change', function(){
+
+            $('#ward').on('select2:select', function (e) {
                 previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
             });
 
@@ -1274,10 +1455,11 @@
                 previewName.textContent = brand.options[brand.selectedIndex].text +' '+ model.value +' '+ productionYear.value;
             });
 
-
-
     </script>
     <script src="/js/add-car-validate.js"></script>
+
+
+
     </body>
 </th:block>
 </html>

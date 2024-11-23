@@ -2,203 +2,68 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head>
+ lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> My Feedback</title>
-<!--    <link href="css/myProfileStyle.css" rel="stylesheet">-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <link rel="stylesheet" href="/css/feedback.css">
-    <style>
-        body {
-            font-family: "Poppins", Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");
-            background-size: cover;
-            background-position: center;
-        }
+<style>
 
-        .container-myProfile {
-            position: relative;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 40px;
-            z-index: 400;
-            display: flex;
-            flex-direction: column;
-            top: 15%;
-
-        }
-
-        .container {
-            width: 80%;
-            margin: auto;
-        }
-
-
-        .average-rating {
-            text-align: center;
-            font-size: 24px;
-            margin: 10px 0;
-        }
-
-        .stars {
-            color: gold;
-        }
-
-        .filter {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .feedback-list {
-            border-top: 1px solid #ccc;
-        }
-
-        .feedback-item {
-            border-bottom: 1px solid #ccc;
-            padding: 15px 0;
-        }
-
-        .user-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-        }
-
-        .car-info {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .car-info img {
-            width: 100px;
-            height: 60px;
-            margin-right: 10px;
-        }
-
-        .pagination {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .pagination span {
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #01d28e;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 50px;
-
-        }
-    </style>
+</style>
 </head>
-<body>
 <th:block layout:fragment="content">
 <body>
 <div class="blur-background"></div>
-
-<div class="container">
+<div class="container-custom">
 
     <div class="wrapper mt-md-0 mt-sm-0 mt-lg-5">
     <div class="container-myProfile mt-lg-5">
     <h2>My Feedback</h2>
+        <p id="total-feedbacks"></p>
     <p>Average Ratings</p>
     <div class="average-rating">
-        <span>4.25</span>
-        <div class="stars">
-            <!-- Display average rating stars here -->
+        <span th:text="${avg}"></span>
+        <div class="stars-outer">
             ★★★★★
+            <div class="stars-inner" th:style="'width:' + (${avg} * 20) + '%'">
+                ★★★★★
+            </div>
         </div>
     </div>
 
+
     <div class="filter">
-        <button>All (200)</button>
-        <button>5 Stars (100)</button>
-        <button>4 Stars (50)</button>
-        <button>3 Stars (50)</button>
-        <button>2 Stars (0)</button>
-        <button>1 Star (0)</button>
+        <button onclick="updateRatingAndLoadFeedbacks(0)" th:text="'All (' + ${counts[0] + counts[1] + counts[2] + counts[3] + counts[4]} +')'"></button>
+        <button onclick="updateRatingAndLoadFeedbacks(5)" th:text="'5 Stars (' + ${counts[4]} + ')'"></button>
+        <button onclick="updateRatingAndLoadFeedbacks(4)" th:text="'4 Stars (' + ${counts[3]} + ')'"></button>
+        <button onclick="updateRatingAndLoadFeedbacks(3)" th:text="'3 Stars (' + ${counts[2]} + ')'"></button>
+        <button onclick="updateRatingAndLoadFeedbacks(2)" th:text="'2 Stars (' + ${counts[1]} + ')'"></button>
+        <button onclick="updateRatingAndLoadFeedbacks(1)" th:text="'1 Star (' + ${counts[0]} + ')'"></button>
     </div>
 
     <div class="feedback-list">
-        <div class="feedback-item">
-            <div class="user-info">
-                <span>User 1234</span>
-                <div class="stars">
-                    ★★★★☆
-                </div>
-                <span class="date">12/02/2022 08:30</span>
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vehicula placerat faucibus.</p>
-            <div class="car-info">
-                <img src="car-placeholder.png" alt="Car Image">
-                <div>
-                    <strong>Nissan Navara E1 2017</strong>
-                    <p>From: 13/02/2022 - 12:00 PM</p>
-                    <p>To: 23/02/2022 - 14:00 PM</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="feedback-item">
-            <div class="user-info">
-                <span>User 1234</span>
-                <div class="stars">
-                    ★★★★☆
-                </div>
-                <span class="date">12/02/2022 08:30</span>
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vehicula placerat faucibus.</p>
-            <div class="car-info">
-                <img src="car-placeholder.png" alt="Car Image">
-                <div>
-                    <strong>Nissan Navara E1 2017</strong>
-                    <p>From: 13/02/2022 - 12:00 PM</p>
-                    <p>To: 23/02/2022 - 14:00 PM</p>
-                </div>
-            </div>
-        </div>
-        <!-- Repeat feedback items as necessary -->
+<!--        InforMation-->
     </div>
 
-    <div class="pagination">
-        <span>&laquo;</span>
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>&raquo;</span>
-    </div>
+        <div class="pagination-container">
+            <div class="pagination" id="pagination-numbers">
+                <!-- Page numbers will be dynamically added here -->
+            </div>
+            <div class="limit-selector">
+                <button onclick="adjustLimit(-1)">-</button>
+                <label for="limit"></label><input type="number" id="limit" value="1" min="1" readonly />
+                <button onclick="adjustLimit(1)">+</button>
+                <span>per page</span>
+            </div>
+        </div>
     </div>
     </div>
 </div>
 
+<script src="/js/MyFeedback.js"></script>
 </body>
 </th:block>
-</body>
+
 </html>

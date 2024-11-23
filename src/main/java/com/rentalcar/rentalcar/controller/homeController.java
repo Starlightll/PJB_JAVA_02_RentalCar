@@ -7,9 +7,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.ui.Model;
 
 
 @Controller
@@ -32,6 +32,8 @@ public class homeController {
                 return "redirect:/homepage-customer";
             } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Car Owner"))) {
                 return "redirect:/homepage-carowner";
+            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Admin"))) {
+                return "redirect:/admin/dashboard";
             }
         }
         return "redirect:/homepage-guest";
@@ -49,23 +51,6 @@ public class homeController {
     public String logoutPage(HttpSession session) {
         session.invalidate();
         return "redirect:/";
-    }
-
-
-
-    @GetMapping("/addcar")
-    public String addCar() {
-        return "carowner/AddCar";
-    }
-
-    @GetMapping("/rating-star")
-    public String ratingStar() {
-        return "feedback/ratingStar";
-    }
-
-   @GetMapping("/my-feedback")
-    public String myFeedback() {
-        return "feedback/MyFeedback";
     }
 
 }

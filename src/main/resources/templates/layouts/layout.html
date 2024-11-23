@@ -15,24 +15,67 @@
     <link rel="stylesheet" href="/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="/css/magnific-popup.css">
 
-    <link rel="stylesheet" href="/css/aos.css">
+<!--    <link rel="stylesheet" href="/css/aos.css">-->
 
     <link rel="stylesheet" href="/css/ionicons.min.css">
 
     <link rel="stylesheet" href="/css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="/css/jquery.timepicker.css">
 
+    <!-- Mouse Cursor Css File -->
+    <link rel="stylesheet" href="/cars/css/mousecursor.css">
 
     <link rel="stylesheet" href="/css/flaticon.css">
     <link rel="stylesheet" href="/css/icomoon.css">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/webjars/font-awesome/6.6.0/css/all.min.css"/>
+    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/webjars/aos/2.3.4/dist/aos.css" />
+    <style>
+        .custom-confirm-btn, .custom-cancel-btn {
+            width: 100px; /* Make both buttons the same width */
+            padding: 10px; /* Add padding for better appearance */
+        }
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+        .custom-confirm-btn {
+            background-color: #333; /* Set OK button color to black */
+            color: white;
+            border: none;
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .custom-confirm-btn:hover {
+            background-color: #01d28e; /* Change OK button to green on hover */
+        }
+
+        /*!* Áp dụng cho toàn bộ trang *!*/
+        /*body {*/
+        /*    overflow-y: auto;*/
+        /*    scrollbar-gutter: stable;*/
+        /*    scrollbar-width: thin;*/
+        /*    scrollbar-color: #01d28e transparent;*/
+        /*}*/
+
+        /* Cho các trình duyệt Webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #01d28e;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #00b377;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+    </style>
 </head>
 <body style="height: 100vh">
 <header>
@@ -46,8 +89,9 @@
 <footer>
     <div th:replace="fragments/footer :: footer"></div>
 </footer>
-<script src="/js/aos.js"></script>
-<script src="/js/jquery-3.7.1.min.js"></script>
+<script src="/webjars/aos/2.3.4/dist/aos.js"></script>
+<script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.js"></script>
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
 <script src="/js/jquery-migrate-3.0.1.min.js"></script>
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
@@ -62,27 +106,37 @@
 <script src="/js/scrollax.min.js"></script>
 <script src="/js/main.js"></script>
 
-<script>
-    document.getElementById("logout-link").addEventListener("click", function(event) {
-        event.preventDefault();
+<!-- MagicCursor js file -->
+<script src="/cars/js/gsap.min.js"></script>
+<script src="/cars/js/magiccursor.js"></script>
 
-        Swal.fire({
-            title: "Are you sure want to logout?",
-            icon: "question",
-            iconHtml: "؟",
-            confirmButtonText: "OK",
-            cancelButtonText:"Cancel",
-            showCancelButton: true,
-            showCloseButton: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log("Người dùng đã chọn tiếp tục");
-                window.location.href = "/logout";
-            } else if (result.isDismissed) {
-                console.log("Người dùng đã hủy hành động");
-            }
+<script>
+    const logoutLink = document.getElementById('logout-link');
+    if(logoutLink) {
+        logoutLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure you want to logout?',
+                icon: 'question',
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                showCloseButton: true,
+                customClass: {
+                    confirmButton: 'custom-confirm-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('Người dùng đã chọn tiếp tục');
+                    window.location.href = '/logout';
+                } else if (result.isDismissed) {
+                    console.log('Người dùng đã hủy hành động');
+                }
+            });
+
         });
-    });
+    }
 </script>
 </body>
 </html>

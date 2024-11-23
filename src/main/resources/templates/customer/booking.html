@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+>
+<head>
+    <title>Book Car</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <link rel="stylesheet" href="/css/customer/book-car.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.10.0/dist/css/bootstrap-datepicker3.min.css">
+    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+
+
+    <!-- iziToast CSS -->
+    <link rel="stylesheet" href="/webjars/izitoast/1.4.0/dist/css/iziToast.min.css">
+    <!-- iziToast JavaScript -->
+    <script src="/webjars/izitoast/1.4.0/dist/js/iziToast.min.js"></script>
+
+    <style>
+        .validate-msg {
+            display: none;
+            color: #dc3545;
+            font-size: 80%;
+            margin-top: 0.25rem;
+        }
+
+        ::placeholder {
+            color: #a9adb3 !important;
+        }
+
+        .btn-danger{
+            color: #fff !important;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover{
+            color: #fff;
+            background-color: #c82333 !important;
+            border-color: #bd2130;
+        }
+
+        .btn-warning{
+            color: #fff !important;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .btn-warning:hover{
+            color: #fff;
+            background-color: #e0a800 !important;
+            border-color: #d39e00;
+        }
+
+        .table{
+            min-width: 100% !important;
+        }
+
+        .table tbody tr td{
+            padding: 0 !important;
+        }
+
+        .button:focus{
+            outline: 0 solid !important;
+        }
+
+        .custom-file-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        #previewContainer {
+            width: 100%;
+            aspect-ratio: 2 / 1;
+            border: 1px solid #ddd;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        #previewImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    </style>
+</head>
+<th:block layout:fragment="content">
+    <body>
+    <!-- Modal -->
+<!--    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">-->
+<!--        <div class="modal-dialog modal-dialog-centered" role="document">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="ModalTitle">No Title</h5>-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                <div class="modal-body" id="ModalBody">-->
+<!--                    ...-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-warning" data-dismiss="modal" id="close1">Close</button>-->
+<!--                    <button type="button" class="btn btn-primary" id="confirm">Yes</button>-->
+<!--                    <button type="button" class="btn btn-danger" id="notConfirm">No</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs">
+                        <span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <th:block th:if="${lastLink == 'search'}">
+                            <span class="mr-2"><a
+                            th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">SEARCH CARS <i class="ion-ios-arrow-forward"></i></a></span>
+                        </th:block>
+                        <th:block th:if="${lastLink == 'detailCar'}">
+                            <span class="mr-2"><a th:href="${'/carDetail/'+ car.getCarId()}">CAR DETAIL <i class="ion-ios-arrow-forward"></i></a></span>
+                        </th:block>
+                        <span>BOOKING CAR <i class="ion-ios-arrow-forward"></i></span>
+                    </p>
+                    <h1 class="mb-3 bread">Booking Car</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="ftco-section pt-0">
+        <div class="container-fluid" id="grad1">
+            <div class="row justify-content-center mt-0">
+                <div class="booking-detail col-12 mt-5 d-flex justify-content-center">
+                    <div class="card text-white bg-primary mb-3" id="bookingDetail" style="border: 2px solid #e3e3e3; max-width: 700px">
+                        <div class="card-header">
+                            Booking Details
+                        </div>
+                        <div class="card-body">
+                            <ul class="pl-2" style="font-size: 15px;color: #01d28e;font-weight: bold;">
+                                <li class="card-text">Pickup location: <span id="pickupLocation" style="color: white; font-weight: normal;"  th:value="${address}"   th:text="${address}"></span></li>
+                                <li class="card-text">Pickup date and time: <span id="pickupDate" style="color: white; font-weight: normal;" th:value="${startDate}"   th:text="${startDate}"></span></li>
+                                <li class="card-text">Return date and time: <span id="returnDate"  style="color: white; font-weight: normal;" th:value="${enDate}"   th:text="${enDate}"></span></li>
+                            </ul>
+                            <button href="#" class="btn btn-primary" onclick="changeDetail()">Change details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal để chỉnh sửa chi tiết -->
+                <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="ModalTitle" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ModalTitle">Booking Details!</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Form để chỉnh sửa thông tin -->
+                                <div class="form-group">
+                                    <label for="editPickupLocation">Pickup location:</label>
+                                    <input type="text" class="form-control" id="editPickupLocation">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editPickupDate">Pickup date and time:</label>
+                                    <input type="datetime-local" class="form-control" id="editPickupDate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editReturnDate">Return date and time:</label>
+                                    <input type="datetime-local" class="form-control" id="editReturnDate">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="saveChanges()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="carId" th:value="${car.getCarId()}"/>
+
+                <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
+
+                    <div class="card px-0 pt-4 pb-0 mb-3">
+                        <div class="row">
+                            <div class="col-md-12 mx-0">
+                                <form id="msform" class="m-auto" style="max-width: 1200px;">
+                                    <input id="currentStep" hidden>
+                                    <!-- progressbar -->
+                                    <ul id="progressbar" class="d-flex justify-content-center">
+                                        <li class="active" id="basic"><strong>Step1. Booking Information</strong></li>
+                                        <li id="pricing"><strong>Step2. Payment</strong></li>
+                                        <li id="finish"><strong>Step3. Finish</strong></li>
+                                    </ul>
+                                    <!-- fieldsets -->
+                                    <div class="row" id="previewSection">
+                                        <div class="col-12 col-sm-12 col-md-6 col-lg-6 p-3">
+                                            <th:block th:if="${car != null}" th:object="${car}">
+                                            </th:block>
+                                            <th:block>
+                                                <div class="col-lg-12 row p-0 m-auto">
+                                                    <div class="col-12 d-flex align-items-center">
+                                                        <div class="wrapper" style="max-height: 270px">
+                                                            <input type="radio" name="slide-1" id="one-1" checked>
+                                                            <input type="radio" name="slide-1" id="two-1">
+                                                            <input type="radio" name="slide-1" id="three-1">
+                                                            <input type="radio" name="slide-1" id="four-1">
+                                                            <div class="img img-1">
+                                                                <img th:src="'/'+${car.getFront()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="img img-2">
+                                                                <img th:src="'/'+${car.getBack()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="img img-3">
+                                                                <img th:src="'/'+${car.getLeft()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="img img-4">
+                                                                <img th:src="'/'+${car.getRight()}"
+                                                                     style="background: #1a1a1a" alt="">
+                                                            </div>
+                                                            <div class="sliders">
+                                                                <label for="one-1" id="label-one-1" class="one"></label>
+                                                                <label for="two-1" id="label-two-1" class="two"></label>
+                                                                <label for="three-1" id="label-three-1"
+                                                                       class="three"></label>
+                                                                <label for="four-1" id="label-four-1" class="four"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 justify-content-center align-items-center">
+                                                        <div class="row justify-content-center align-items-center align-content-center" style="text-align: start">
+                                                            <h1 class="col-lg-12 col-md-12 col-sm-12 text-center"
+                                                                style="font-size: 1.5rem" th:text="${car.getName()}">
+                                                            </h1>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
+                                                                    Ratings: </p>
+                                                                <div class="rating">
+                                                                    <div class="star"
+                                                                         th:style="'width:' + (${car.getAverageRating()} * 20) + '%'">
+
+                                                                    <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                    </div>
+                                                                    <div class="star-base">
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
+                                                                    No. of rides: </p>
+                                                                <p class="m-0" th:text="${car.getMileage()}"></p>
+                                                            </div>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
+                                                                    Price: </p>
+                                                                <p  th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" class="m-0"></p>
+                                                            </div>
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
+                                                                    Location: </p>
+                                                                <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0 m-0"
+                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                 th:text="${carAddress.getAddress().getWard() +', '+ carAddress.getAddress().getDistrict()  +', ' + carAddress.getAddress().getProvince()}">No</p>
+                                                            </div>
+                                                            <div class="col-lg-12 mb-3"  style="display: flex; justify-content: center">
+                                                                <div class="input-group input-group-sm" >
+                                                                    <p class="m-0">No Status</p>
+                                                                </div>
+
+                                                                <th:block th:if="${car.getStatusId() == 1}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #00d79d">Available</p>
+                                                                </th:block>
+                                                                <th:block th:if="${car.getStatusId()  == 2}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #0080ff">Booked</p>
+                                                                </th:block>
+                                                                <th:block th:if="${car.getStatusId()  == 3}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #ff0000" >Stopped</p>
+                                                                </th:block>
+                                                                <th:block th:if="${car.getStatusId()  == 4}">
+                                                                    <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="color: #303030">Deleted</p>
+                                                                </th:block>
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <div class="col-12 col-sm-12 col-md-6 col-lg-6 p-3">
+                                            <!--                                                        <h5 class="card-title">Booking Summary</h5>-->
+                                            <!--                                                        <div class="d-flex flex-column align-items-end">-->
+                                            <!--                                                            <p>Number of days: <span>15</span></p>-->
+                                            <!--                                                            <p>Price per day: <span>900,000 VND</span></p>-->
+                                            <!--                                                            <p style="width: 80%; height: 2px; background: #00c86f"></p>-->
+                                            <!--                                                            <p>Total: <span>13,500,000 VND</span></p>-->
+                                            <!--                                                            <p>Deposit: <span>15,000,000 VND</span></p>-->
+                                            <!--                                                        </div>-->
+                                            <table class="table table-dark table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col" colspan="3">Booking Summary</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <th scope="row">1</th>
+                                                    <td>Number of days</td>
+                                                    <td id="numberOfDays">0</td> <!-- Số ngày thuê -->
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">2</th>
+                                                    <td>Price per day</td>
+                                                    <td  th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">3</th>
+                                                    <td>Deposit</td>
+                                                    <td id="deposite" th:text="${#numbers.formatDecimal(car.getDeposit(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">4</th>
+                                                    <td>Total</td>
+                                                    <td id="totalPrice" style="color: #00ff86">0</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <fieldset>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="card align-items-start display-flex-center" style="">
+                                                <div class="card-body text-left w-100 row align-self-center p-0">
+                                                    <div class="col-12 p-3">
+                                                        <div>
+                                                            <h5 class="card-title">Renter Information</h5>
+                                                            <div class="row">
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend" >
+                                                                        <span class="input-group-text ">Full name</span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                              th:value="${user.getFullName()}" oninput="validateFullName()" id="fullName1">
+                                                                    </div>
+                                                                    <span id="fullNameError" class="text-danger"></span>
+                                                                    <a class="validate-msg" id="fullNameValidate1">Invalid</a>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend" >
+                                                                            <span class="input-group-text ">Date of birth</span>
+                                                                        </div>
+                                                                        <input type="date" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                               th:value="${user.getDob()}" oninput="validateDob()" id="book_pick_date1">
+                                                                    </div>
+                                                                    <div id="dateError1" style="color: red"></div>
+                                                                    <a class="validate-msg" id="dateOfBirthValidate1">Invalid</a>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend" >
+                                                                            <span class="input-group-text ">Phone</span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                               th:value="${user.getPhone()}" oninput="validatePhone()" id="phone1">
+                                                                    </div>
+                                                                    <div id="phoneError1" style="color: red"></div>
+                                                                    <a class="validate-msg" id="phoneValidate1">Invalid</a>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend" >
+                                                                            <span class="input-group-text ">email</span>
+                                                                        </div>
+                                                                        <input readonly type="email" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                               th:value="${user.getEmail()}" oninput="validateEmail()" id="email1">
+                                                                    </div>
+                                                                    <div id="emailError1" style="color: red"></div>
+                                                                    <a class="validate-msg" id="emailValidate1">Invalid</a>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend" >
+                                                                            <span class="input-group-text ">National ID</span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                               th:value="${user.getNationalId()}" oninput="validateNationalId()" id="nationalId1">
+                                                                    </div>
+                                                                    <div id="nationalIdError1" style="color: red"></div>
+                                                                    <a class="validate-msg" id="nationalIdValidate1">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text" for="province">Province</label>
+                                                                        </div>
+                                                                        <select class="custom-select" th:data-default="${user.getCity()}"  id="province">
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text" for="district">District</label>
+                                                                        </div>
+                                                                        <select class="custom-select" th:data-default="${user.getDistrict()}" id="district">
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="ward">Ward</label>
+                                                                        </div>
+                                                                        <select class="custom-select" th:data-default="${user.getWard()}"  id="ward">
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">Home</span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                               th:value="${user.getStreet()}" id="street">
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3 required-label">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend" style="max-height: 33.5px;">
+                                                                            <span class="input-group-text" id="inputGroupFileAddon011" >Driving license</span>
+                                                                        </div>
+                                                                        <div class="custom-file">
+                                                                            <!-- Input file -->
+                                                                            <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile011"
+                                                                                   aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
+
+                                                                            <!-- Label hiển thị tên file -->
+                                                                            <label class="custom-file-label" id="fileName1" style="font-size: small !important;">
+                                                                                <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
+                                                                                <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: '"></span>
+                                                                                <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
+                                                                            </label>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <!-- Khung hiển thị ảnh -->
+                                                                    <div id="previewContainer" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">
+                                                                        <img id="previewImage" th:src="'/'+${user.getDrivingLicense()}"
+                                                                             alt="Image preview"
+                                                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    </div>
+
+                                                                    <input type="hidden" id="currentDrivingLicense" th:value="${user.getDrivingLicense()}">
+                                                                    <div id="drivingLicenseError1" style="color: red"></div>
+                                                                    <a class="validate-msg" id="drivingLicenseValidate1">Invalid</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="card-title">Driver's information</h5>
+                                                            <div class="row">
+                                                                        <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
+                                                                            <input type="checkbox" id="differentInfoCheckbox"
+                                                                                   name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                                            <svg viewBox="0 0 21 21">
+                                                                                <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                            </svg>
+                                                                            <span>Different than Renter's information</span>
+                                                                        </label>
+                                                            </div>
+                                                            <div id="driverInfoTable" style="display: none; width: 100%">
+                                                                <div>
+                                                                    <table class="table table-dark table-hover">
+                                                                        <thead>
+                                                                        <tr>
+<!--                                                                            <th scope="col">-->
+<!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
+<!--                                                                            </th>-->
+                                                                            <th></th>
+
+                                                                            <th scope="col">Name</th>
+                                                                            <th scope="col">Date</th>
+                                                                            <th scope="col">Base Price</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        <tr th:each="user : ${users}">
+                                                                            <th scope="row">
+                                                                                <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow" onclick="selectOnlyOne(this)" />
+                                                                            </th>
+                                                                            <td th:text="${user.getFullName()}"></td>
+                                                                            <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
+                                                                            <td th:text="${#numbers.formatDecimal(499000, 0, 'COMMA', 0, 'POINT')} + ' /DAY'">></td>
+                                                                        </tr>
+
+                                                                        <!-- Các hàng khác... -->
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                           onclick="window.history.back()">Cancel
+                                        </a>
+                                        <input type="button" id="nextButton" name="next" class="next btn-secondary btn"
+                                               value="Next Step"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="card align-items-start display-flex-center" style="">
+                                                <div class="card-body text-left w-100">
+                                                    <h5 class="card-title">Please select your payment method</h5>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-3">
+                                                            <div class="nav nav-pills d-flex flex-row" id="v-pills-tab" role="tablist" aria-orientation="vertical" style="row-gap: 5px; column-gap: 5px">
+                                                                <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">My Wallet</button>
+                                                                <button class="nav-link" id="v-pills-profile-tab" data-toggle="pill" data-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Cash</button>
+                                                                <button class="nav-link" id="v-pills-messages-tab" data-toggle="pill" data-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Bank Transfer</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-9" style="border-left: 2px #00c86f solid">
+                                                            <div class="tab-content" id="v-pills-tabContent">
+                                                                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                                    <p>
+                                                                        Current balance:
+                                                                        <span th:classappend="${userRepo.getWallet() < car.getDeposit()} ? 'text-danger' : 'text-success'"
+                                                                              th:text="${#numbers.formatDecimal(userRepo.getWallet(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        </span>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
+                                                                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Vùng thông báo lỗi -->
+                                                    <div id="error-message" class="text-danger mt-3"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+<!--                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"-->
+<!--                                           onclick="window.location.href='/car-owner/my-cars'">Cancel</a>-->
+                                            <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                               onclick="window.history.back()"
+                                            >Cancel</a>
+                                        <input type="button" name="previous" class="previous btn-black btn"
+                                               value="Previous"/>
+                                        <input type="button" name="next" class="next btn-secondary btn"
+                                               value="Confirm payment" onclick="confirmBooking()"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="card align-items-start display-flex-center" style="">
+                                                <div class="card-body text-left w-80" style="align-self: center; color: #5d5d5d">
+                                                    <p>You have successfully booked
+                                                        <span style="color: #00c86f" th:text="${car.getName()}"></span>
+                                                        from
+                                                        <span class="start-date" style="color: #ffb300"></span>
+                                                        to
+                                                        <span class="end-date" style="color: #ffb300"></span>
+                                                    </p>
+                                                    <p>Your booking number is: <span class="booking-number" style="color: royalblue"></span></p>
+                                                    <p>Our operator will contact you soon to guidance you pick up.</p>
+                                                    <p>Thank you for choosing our service!</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a class="btn-primary btn" style="; margin: 10px 0 10px 0"
+                                           onclick="window.location.href='/'">Homepage</a>
+                                        <th:block th:if="${lastLink == 'search'}">
+                                            <a class="btn-warning btn" th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">Book another car</a>
+                                        </th:block>
+
+                                        <th:block th:if="${lastLink == 'detailCar'}">
+                                            <a class="btn-warning btn" th:href="${'/searchCar?name=&pickDate=&pickTime=&dropDate=&dropTime='}">Book another car</a>
+                                        </th:block>
+                                        <a class="btn-secondary btn">View Booking</a>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!--    <script>-->
+<!--        function chooseFile(fileInput) {-->
+<!--            if (fileInput.files && fileInput.files[0]) {-->
+<!--                var reader = new FileReader();-->
+
+<!--                reader.onload = function (e) {-->
+<!--                    $('#image').attr('src', e.target.result);-->
+<!--                };-->
+<!--                reader.readAsDataURL(fileInput.files[0]);-->
+<!--            }-->
+<!--        }-->
+<!--    </script>-->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const differentInfoCheckbox = document.getElementById('differentInfoCheckbox');
+            differentInfoCheckbox.checked = false;
+            toggleDriverInfoFields();
+        });
+    </script>
+
+
+    <script>
+
+        function selectOnlyOne(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="selectRow"]');
+            checkboxes.forEach((cb) => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+        }
+
+
+        function checkStep1() {
+            const pickupLocation = document.getElementById('pickupLocation').innerText;
+            const pickupDate = document.getElementById('pickupDate').innerText;
+            const returnDate = document.getElementById('returnDate').innerText;
+
+            const pickupDateFormatted = pickupDate ? formatToDatetimeDB(pickupDate) : null;
+            const returnDateFormatted = returnDate ? formatToDatetimeDB(returnDate) : null;
+
+            document.getElementById('editPickupLocation').value = pickupLocation;
+            document.getElementById('editPickupDate').value = pickupDateFormatted || "";
+            document.getElementById('editReturnDate').value = returnDateFormatted || "";
+
+
+            console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
+            console.log("editPickupDate:", document.getElementById("editPickupDate").value);
+            console.log("editReturnDate:", document.getElementById("editReturnDate").value);
+
+            const currentDrivingLicense = document.getElementById("currentDrivingLicense").value // Dữ liệu từ DB
+            let drivingLicense = document.getElementById("inputGroupFile011").value;
+            console.log("currentDrivingLicense:",currentDrivingLicense);
+
+            if(!drivingLicense) {
+                drivingLicense = currentDrivingLicense;
+            }
+
+            console.log(drivingLicense)
+
+            //kiểm tra xem có driver nào đc chọn khi ấn tích không
+            const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
+            // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
+            let selectedUserId = null;
+            const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
+
+            if (selectedCheckbox) {
+                selectedUserId = selectedCheckbox.value;
+            }
+
+            if(checked && selectedUserId == null) {
+                alert(`Please fill all required fields`);
+                return false;
+            }
+
+
+
+            // Thu thập dữ liệu cho renter
+            const formData = {
+                pickUpLocation: document.getElementById("editPickupLocation").value,
+                pickUpDateTime: pickupDateFormatted,
+                returnDateTime: returnDateFormatted,
+
+                carId: document.getElementById("carId").value,
+                fullName: document.getElementById("fullName1").value,
+                bookPickDate: document.getElementById("book_pick_date1").value,
+                phone: document.getElementById("phone1").value,
+                email: document.getElementById("email1").value,
+                nationalId: document.getElementById("nationalId1").value,
+                drivingLicense: drivingLicense,
+                province: document.getElementById("province").value,
+                district: document.getElementById("district").value,
+                ward: document.getElementById("ward").value,
+                // street: document.getElementById("street").value
+            };
+
+            console.log(formData);
+
+            // Kiểm tra từng thuộc tính xem có bị trống không
+            for (const key in formData) {
+                if (formData[key] === '') {
+                    console.log(`Trường ${key} đang bị trống.`);
+                    // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
+                    alert(`Please fill all required fields`);
+                    return false;
+
+                }
+            }
+            return true;
+        }
+
+
+            let selectedPaymentMethod = 1;
+
+            // Lắng nghe sự kiện khi người dùng thay đổi tab
+            $('#v-pills-tab button').on('click', function (e) {
+                // Lấy ID của tab đã chọn
+                var selectedTab = $(this).attr('id');
+
+                // Kiểm tra tab được chọn và xử lý
+                if (selectedTab === 'v-pills-home-tab') {
+                    selectedPaymentMethod = 1;
+                    console.log("User selected: My Wallet");
+                    // Xử lý My Wallet
+                } else if (selectedTab === 'v-pills-profile-tab') {
+                    selectedPaymentMethod = 2;
+                    console.log("User selected: Cash");
+                    // Xử lý Cash
+                } else if (selectedTab === 'v-pills-messages-tab') {
+                    selectedPaymentMethod = 3;
+                    console.log("User selected: Bank Transfer");
+                    // Xử lý Bank Transfer
+                }
+            });
+
+            // Hiển thị hoặc sử dụng phương thức thanh toán được chọn
+            console.log("Selected Payment Method:", selectedPaymentMethod);
+
+        let depositText = document.getElementById("deposite").textContent;
+
+        function saveBooking() {
+            return new Promise((resolve, reject) => {
+                const pickupLocationTxt = document.getElementById('pickupLocation').innerText;
+                const pickupDate = document.getElementById('pickupDate').innerText;
+                const returnDate = document.getElementById('returnDate').innerText;
+
+                const pickupDateFormatted = pickupDate ? formatToDatetimeDB(pickupDate) : null;
+                const returnDateFormatted = returnDate ? formatToDatetimeDB(returnDate) : null;
+
+                document.getElementById('editPickupLocation').value = pickupLocationTxt;
+                document.getElementById('editPickupDate').value = pickupDateFormatted;
+                document.getElementById('editReturnDate').value = returnDateFormatted;
+
+                console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
+                console.log("editPickupDate:", document.getElementById("editPickupDate").value);
+                console.log("editReturnDate:", document.getElementById("editReturnDate").value);
+                //==========================================================================
+
+                const pickUpLocation = pickupDateFormatted; document.getElementById("editPickupLocation").value;
+                const pickUpDateTime = pickupDateFormatted;
+                const returnDateTime = returnDateFormatted;
+                const depositValue = depositText.replace(/[^0-9]/g, '');
+                const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
+                const carId = document.getElementById("carId").value;
+                const fullName = document.getElementById('fullName1').value;
+                const bookPickDate = document.getElementById('book_pick_date1').value;
+                const phone = document.getElementById('phone1').value;
+                const email = document.getElementById('email1').value;
+                const nationalId = document.getElementById("nationalId1").value;
+                const drivingLicense = document.getElementById("inputGroupFile011").value;
+                const province =  document.getElementById('province').value
+                const district =  document.getElementById('district').value;
+                const ward =  document.getElementById('ward').value;
+                const street = document.getElementById('street').value;
+
+                // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
+                let selectedUserId = null;
+                const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
+
+                if (selectedCheckbox) {
+                    selectedUserId = selectedCheckbox.value;
+                }
+
+                console.log("Selected User IDs:", selectedUserId);
+
+
+                // Tạo thông tin booking
+                let actualStep = pageStep + 1;
+                if (actualStep > 3) {
+                    actualStep = 3;
+                } else if (actualStep < 1) {
+                    actualStep = 1;
+                }
+
+                const bookingInfor = {
+                    location: pickUpLocation,
+                    pickUpDate: pickUpDateTime,
+                    returnDate: returnDateTime,
+                    deposit: depositValue,
+                    step: actualStep,
+                    isCheck: checked,
+                    carID: carId,
+                    rentFullName: fullName,
+                    rentBookPickDate: bookPickDate,
+                    rentPhone: phone,
+                    rentMail: email,
+                    rentNationalId: nationalId,
+                    rentDrivingLicense: drivingLicense,
+                    rentProvince: province,
+                    rentDistrict: district,
+                    rentWard: ward,
+                    rentStreet: street,
+                    selectedPaymentMethod : selectedPaymentMethod,
+                    selectedUserId: selectedUserId,
+                };
+
+                console.log(bookingInfor)
+                // Tạo FormData
+                const formData = new FormData();
+                formData.append("booking", JSON.stringify(bookingInfor));
+
+                const fileInputs = {
+                    "drivingLicense": document.getElementById("inputGroupFile011"),
+                    "driverDrivingLicense": document.getElementById("inputGroupFile01"),
+                };
+
+                // Kiểm tra các file và thêm vào FormData
+                for (const [key, input] of Object.entries(fileInputs)) {
+                    if (input && input.files && input.files[0]) {
+                        formData.append(key, input.files[0]);
+                    } else {
+                        formData.append(key, new Blob([], { type: 'application/octet-stream' }));
+                    }
+                }
+
+                // Gửi AJAX request
+                $.ajax({
+                    url: '/booking-car',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function (response) {
+
+                        // Lấy thông tin từ Map
+                        const message = response.message;
+
+                        if(message === "Step 2 validated successfully.") {
+                            const bookingInfo = response.bookingInfo;
+                            try {
+                                console.log("Response:", response);
+                                // Định dạng ngày bắt đầu và kết thúc
+                                const formattedStartDate = new Date(bookingInfo.startDate).toLocaleString('vi-VN', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short'
+                                });
+                                const formattedEndDate = new Date(bookingInfo.endDate).toLocaleString('vi-VN', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short'
+                                });
+                                const formattedBookingNumber = bookingInfo.id;
+                                // Gán lại giá trị href của thẻ <a> với bookingId mới
+                                const viewBookingLink = document.querySelector('a.btn-secondary.btn');
+                                viewBookingLink.href = `/customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&navigate=home`;
+                                console.log("Updated booking link:", viewBookingLink.href);
+
+                                // Cập nhật từng phần tử cụ thể
+                                $('.start-date').text(formattedStartDate);
+                                $('.end-date').text(formattedEndDate);
+                                $('.booking-number').text(formattedBookingNumber);
+                            } catch (error) {
+                                console.error("JSON parse error:", error);
+                            }
+
+                        }
+                        if(message === "Step 2 validated successfully.") {
+                            const previewSection = document.getElementById('previewSection');
+                            const bookingDetail = document.getElementById('bookingDetail');
+                            previewSection.style.display = 'none';
+                            bookingDetail.style.display = 'none';
+                        }
+
+                        console.log("Booking saved successfully", message);
+                        resolve(true); // Thành công
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 400) {
+                            if(xhr.responseText === "Your current balance is insufficient. Please top up or choose another payment method") {
+
+                                const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Top up</a>`;
+                                const errorMessage = `Your wallet doesn't have enough money to book a car. ${topUpLink}  to continue.`;
+
+                                $('#error-message').html(errorMessage);
+                            }
+                            alert(xhr.responseText); // Hiển thị lỗi nếu có
+                        } else {
+                            console.log("Other Error:", error);
+                        }
+                        resolve(false); // Thất bại
+                    }
+                });
+            });
+        }
+
+
+
+
+    </script>
+    <script th:inline="javascript">
+        var car = /*[[${car}]]*/ {};
+    </script>
+
+    <script>
+        const csrfToken = $('meta[name="_csrf"]').attr('content');
+    </script>
+    <script th:inline="javascript">
+        function confirmBooking(){
+
+        }
+
+        window.onload = function () {
+            calculateOnPageLoad();
+        };
+        
+        function calculateOnPageLoad() {
+            const pickupLocation = document.getElementById('pickupLocation').innerText;
+            const pickupDate = document.getElementById('pickupDate').innerText;
+            const returnDate = document.getElementById('returnDate').innerText;
+
+
+            const input = "2024/11/28 - 14:19";
+            const formattedDate = formatToDatetimeLocal(input);
+            console.log("Formatted Date: ", formattedDate);
+
+            const dateObj = new Date(formattedDate);
+            console.log("Date Object: ", dateObj);
+
+
+            if (pickupDate && returnDate && pickupLocation) {
+                document.getElementById('editPickupLocation').value = pickupLocation;
+                document.getElementById('editPickupDate').value = formatToDatetimeOnLoad(pickupDate);
+                document.getElementById('editReturnDate').value = formatToDatetimeOnLoad(returnDate);
+
+                // const newReturnDate = document.getElementById('editReturnDate').value;
+                saveChanges();
+            } else {
+                const newPickupDate = formatToDatetimeOnLoad(pickupDate);
+                const newReturnDate = formatToDatetimeOnLoad(returnDate);
+
+                LoadSaveChanges(newPickupDate, newReturnDate);
+            }
+
+        }
+
+
+
+        function changeDetail() {
+            // Lấy giá trị hiện tại và định dạng lại cho phù hợp với `datetime-local`
+            const pickupDate = document.getElementById('pickupDate').innerText;
+            const returnDate = document.getElementById('returnDate').innerText;
+
+            document.getElementById('editPickupLocation').value = document.getElementById('pickupLocation').innerText;
+            if(pickupDate && returnDate) {
+                document.getElementById('editPickupDate').value = formatToDatetimeDB(pickupDate);
+                document.getElementById('editReturnDate').value = formatToDatetimeDB(returnDate);
+            }
+            // Hiển thị modal
+            $('#confirmModal').modal('show');
+        }
+
+
+
+        function saveChanges() {
+            // Lấy giá trị từ các input
+            const newPickupLocation = document.getElementById('editPickupLocation').value;
+            const newPickupDate = document.getElementById('editPickupDate').value;
+            const newReturnDate = document.getElementById('editReturnDate').value;
+
+            // Kiểm tra tính hợp lệ của dữ liệu
+            if (!newPickupLocation || !newPickupDate || !newReturnDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Please fill in all the information.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+
+            // Chuyển đổi chuỗi thời gian thành đối tượng Date để so sánh
+            const pickupDateObj = new Date(newPickupDate);
+            const returnDateObj = new Date(newReturnDate);
+
+            // Lấy ngày hiện tại
+            const currentDate = new Date();
+
+            // Kiểm tra xem ngày pickupDate có phải là ngày trong quá khứ không
+            if (pickupDateObj < currentDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Pickup date cannot be in the past.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+            // Kiểm tra xem ngày returnDate có phải là ngày trong quá khứ không
+            if (returnDateObj < currentDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Return date cannot be in the past.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+
+            if (returnDateObj <= pickupDateObj) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Return date must be later than pickup date.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+            // Tính số ngày
+            const days = calculateNumberOfDays(newPickupDate, newReturnDate);
+
+            // Cập nhật lại nội dung của các `span`
+            document.getElementById('pickupLocation').innerText = newPickupLocation;
+            document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDate);
+            document.getElementById('returnDate').innerText = formatToDisplay(newReturnDate);
+            document.getElementById('editPickupDate').value = newPickupDate;
+            document.getElementById('editReturnDate').value = newReturnDate;
+            document.getElementById('numberOfDays').innerText = days;
+            console.log("Số ngày: " + days);
+            const totalPrice = days * car.basePrice;
+            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString() + ' VND';
+            console.log("Tổng tiền: " + totalPrice);
+
+            // Đóng modal
+            $('#confirmModal').modal('hide');
+        }
+
+        function LoadSaveChanges(newPickupDatee, newReturnDatee) {
+
+            console.log("aa", newPickupDatee)
+            console.log("abc", newReturnDatee)
+            // Kiểm tra tính hợp lệ của dữ liệu
+            if ( !newPickupDatee || !newReturnDatee) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Please fill in all the information.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+
+            // Chuyển đổi chuỗi thời gian thành đối tượng Date để so sánh
+            const pickupDateObj = new Date(newPickupDatee);
+            const returnDateObj = new Date(newReturnDatee);
+            console.log("aa", pickupDateObj)
+            console.log("abc", returnDateObj)
+
+            // Lấy ngày hiện tại
+            const currentDate = new Date();
+            console.log("currentDate", currentDate)
+            // Kiểm tra xem ngày pickupDate có phải là ngày trong quá khứ không
+            if (pickupDateObj < currentDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Pickup date cannot be in the past.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+            // Kiểm tra xem ngày returnDate có phải là ngày trong quá khứ không
+            if (returnDateObj < currentDate) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Return date cannot be in the past.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+
+            if (returnDateObj <= pickupDateObj) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Return date must be later than pickup date.',
+                    position: 'topRight',
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
+                return;
+            }
+
+            // Tính số ngày
+            const days = calculateNumberOfDays(newPickupDatee, newReturnDatee);
+
+            // Cập nhật lại nội dung của các `span`
+            document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDatee);
+            document.getElementById('returnDate').innerText = formatToDisplay(newReturnDatee);
+            document.getElementById('numberOfDays').innerText = days;
+            document.getElementById('editPickupDate').value = newPickupDatee;
+            document.getElementById('editReturnDate').value = newReturnDatee;
+            console.log("Số ngày: " + days);
+            const totalPrice = days * car.basePrice;
+            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString() + ' VND';
+            console.log("Tổng tiền: " + totalPrice);
+
+            // Đóng modal
+            $('#confirmModal').modal('hide');
+        }
+
+        // Hàm để chuyển định dạng `datetime-local` thành định dạng hiển thị
+        function formatToDisplay(datetime) {
+            const date = new Date(datetime);
+            return date.toLocaleDateString("en-GB") + ' - ' + date.toLocaleTimeString("en-US", {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true // Chuyển sang định dạng 12 giờ với AM/PM
+            }).toUpperCase();
+        }
+
+        // Hàm để chuyển định dạng hiển thị thành `datetime-local`
+        function formatToDatetimeLocal(displayDate) {
+            const [date, time] = displayDate.split(" - ");
+            const [day, month, year] = date.split("/");
+            const [hour, minute] = time.split(":");
+            return `${year}-${month}-${day}T${hour}:${minute}`;
+        }
+
+
+        function formatToDatetimeOnLoad(displayDate) {
+            // Tách ngày và giờ từ chuỗi input
+            const [date, time] = displayDate.split(" - ");
+            const [year, month, day] = date.split("/"); // Tách năm, tháng, ngày
+
+            // Định dạng lại thành chuỗi chuẩn ISO 8601: YYYY-MM-DDTHH:mm
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${time}`;
+        }
+
+        function formatToDatetimeDB(displayDate) {
+            const [date, timeWithPeriod] = displayDate.split(" - ");
+            const [day, month, year] = date.split("/");
+
+
+            let [time, period] = timeWithPeriod.split(" ");
+            let [hour, minute] = time.split(":");
+
+
+            hour = parseInt(hour);
+            if (period === "PM" && hour < 12) {
+                hour += 12;
+            } else if (period === "AM" && hour === 12) {
+                hour = 0;
+            }
+
+            // Định dạng lại giờ phút thành chuỗi hai chữ số
+            const hourString = hour.toString().padStart(2, '0');
+            const minuteString = minute.padStart(2, '0');
+
+            return `${year}-${month}-${day}T${hourString}:${minuteString}`;
+        }
+
+        // Hàm để tính số ngày giữa 2 ngày
+        function calculateNumberOfDays(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const timeDiff = end - start;
+            return Math.ceil(timeDiff / (1000 * 3600 * 24));  // Chuyển đổi ms thành số ngày
+        }
+
+
+        // Load provinces on page load with default values
+        document.addEventListener('DOMContentLoaded', function () {
+            const defaultCity = document.getElementById('province').getAttribute('data-default');
+            fetchProvinces(defaultCity);
+        });
+
+        const fileInput1 = document.getElementById('inputGroupFile011');
+        fileInput1.addEventListener('change', function () {
+            const fileName = this.files[0].name;
+            console.log(fileName);
+            const label = document.getElementById('fileName1');
+            label.textContent = fileName;
+        });
+
+
+        // Check if all fields are valid before enabling the "Next" button
+        function checkAllValidations() {
+            const nextButton = document.getElementById("nextButton");
+
+            // Collect error messages
+            const emailError = document.getElementById("emailError1").textContent;
+            const fullNameError = document.getElementById("fullNameError").textContent;
+            const phoneError1 = document.getElementById("phoneError1").textContent;
+            const dobError = document.getElementById("dateError1").textContent;
+            const nationalIdError = document.getElementById("nationalIdError1").textContent;
+            const fileNameError = document.getElementById("drivingLicenseError1").textContent;
+
+            // If all error messages are empty, enable the button; otherwise, disable it
+            if (!emailError && !phoneError1 && !dobError && !nationalIdError && !fileNameError && !fullNameError) {
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
+        }
+
+        function validateFullName() {
+            const fullName = document.getElementById("fullName1").value.trim();
+            const fullNameError = document.getElementById("fullNameError");
+
+            if (fullName === "") {
+                fullNameError.textContent = "Full name cannot be empty.";
+            } else {
+                fullNameError.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // Email Validation
+        function validateEmail() {
+            const email = document.getElementById("email1").value;
+            const emailError = document.getElementById("emailError1");
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email)) {
+                emailError.textContent = "Please enter a valid email address.";
+            } else {
+                emailError.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // Phone Validation
+        function validatePhone() {
+            const phone1 = document.getElementById("phone1").value;
+            const phoneError1 = document.getElementById("phoneError1");
+            const phonePattern = /^(0|(\+84))?(3|5|7|8|9)\d{8}$/;
+            if (!phonePattern.test(phone1)) {
+                phoneError1.textContent = "Invalid phone number format.";
+            } else {
+                phoneError1.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // Date of Birth Validation with 18+ Age Check
+        function validateDob() {
+            const dob = document.getElementById("book_pick_date1").value;
+            const dobError = document.getElementById("dateError1");
+            const dobDate = new Date(dob);
+            const today = new Date();
+            const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+            const maxAgeDate = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
+
+            if (!dob || dobDate > minAgeDate || dobDate < maxAgeDate) {
+                dobError.textContent = "Age must be between 18 and 80 years.";
+            } else {
+                dobError.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // National ID Validation
+        function validateNationalId() {
+            const nationalId = document.getElementById("nationalId1").value;
+            const nationalIdError = document.getElementById("nationalIdError1");
+            const nationalIdPattern = /^[0-9]{9,}$/;
+            if (!nationalIdPattern.test(nationalId)) {
+                nationalIdError.textContent = "Please enter a valid national ID.";
+            } else {
+                nationalIdError.textContent = "";
+            }
+            checkAllValidations();
+        }
+
+        // Driving License Validation
+        function validateDrivingLicense() {
+            const fileInput = document.getElementById("inputGroupFile011"); // Input file
+            const fileNameDisplay = document.getElementById("fileName1"); // Label hiển thị tên file
+            const fileErrorDisplay = document.getElementById("drivingLicenseError1"); // Vùng hiển thị lỗi
+            const previewImage = document.getElementById("previewImage"); // Thẻ img để hiển thị ảnh
+            const previewContainer = document.getElementById("previewContainer"); // Container ảnh
+            const file = fileInput.files[0]; // File được chọn
+            const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+            const maxFileSize = 200 * 1024 * 1024; // 200MB
+
+            // Reset thông báo lỗi, hình ảnh và nhãn hiển thị
+            fileErrorDisplay.textContent = "";
+            previewImage.src = "";
+            previewImage.style.display = "none";
+            if (file) {
+                // Kiểm tra định dạng file
+                if (!validImageTypes.includes(file.type)) {
+                    fileNameDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
+                    fileNameDisplay.style.color = "red";
+                    fileInput.value = ""; // Reset input file nếu không hợp lệ
+                    fileErrorDisplay.textContent = "Only accept file type: .jpg, .jpeg, .png";
+
+                } else if (file.size > maxFileSize) {
+                    // Kiểm tra kích thước file
+                    fileNameDisplay.textContent = "File size exceeds 200MB";
+                    fileNameDisplay.style.color = "red";
+                    fileInput.value = ""; // Reset input file nếu không hợp lệ
+                    fileErrorDisplay.textContent = "File size must not exceed 200MB.";
+
+                } else {
+                    // File hợp lệ, hiển thị tên file
+                    fileNameDisplay.textContent = `File selected: ${file.name}`;
+                    fileNameDisplay.style.color = "green";
+                    fileErrorDisplay.textContent = "";
+
+                    // Hiển thị ảnh xem trước
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImage.src = e.target.result; // Gán src bằng dữ liệu base64 của ảnh
+                        previewImage.style.display = "block"; // Hiển thị ảnh
+                        previewImage.style.backgroundSize = "cover";
+                        previewImage.style.backgroundPosition = "center";
+                    };
+                    reader.readAsDataURL(file); // Đọc file dưới dạng DataURL
+                }
+            } else {
+                // Không có file nào được chọn
+                fileErrorDisplay.textContent = "Please upload a driving license image.";
+                fileNameDisplay.textContent = "Choose file";
+                fileNameDisplay.style.color = "";
+            }
+
+            // Gọi hàm kiểm tra tổng hợp nếu cần
+            checkAllValidations();
+        }
+
+
+
+        function toggleDriverInfoFields() {
+            const checkbox = document.getElementById('differentInfoCheckbox');
+            const table = document.getElementById('driverInfoTable');
+
+            // Hiển thị bảng nếu checkbox được chọn
+            table.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+    </script>
+    <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/js/customer/book-car.js"></script>
+    </body>
+</th:block>
+</html>

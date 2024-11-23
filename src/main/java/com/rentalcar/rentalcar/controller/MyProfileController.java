@@ -14,12 +14,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,13 +100,46 @@ public class MyProfileController {
     public String saveUser(@Valid @ModelAttribute("userInfo") UserInfoDto userInfoRequest,
                            BindingResult bindingResult,
                            HttpSession session,
-                           RedirectAttributes models , Model model) {
+                           RedirectAttributes models , Model model,
+                           @RequestParam(value = "drivingLicense", required = false) MultipartFile drivingLicense) {
 
         User user = (User) session.getAttribute("user");
 
-        if (!userInfoRequest.getPhone().equals(user.getPhone())
-                && userService.checkPhone(userInfoRequest.getPhone())) {
+        if (!normalizePhone(userInfoRequest.getPhone()).equals(user.getPhone())
+                && userService.checkPhone(normalizePhone(userInfoRequest.getPhone()))) {
             bindingResult.rejectValue("phone", "error.userInfo", "Phone number already exists");
+        }
+        if (drivingLicense.isEmpty() && user.getDrivingLicense() == null) {
+            bindingResult.rejectValue("drivingLicense", "error.userInfo", "File upload is required : ");
+
+        }else{
+
+            try {
+                String fileName = drivingLicense.getOriginalFilename();
+                if(fileName.length() > 50){
+                    bindingResult.rejectValue("drivingLicense", "error.userInfo", "Filename is too long. Please rename the file.");
+
+                }
+                else if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$") && !fileName.isEmpty()) {
+                    bindingResult.rejectValue("drivingLicense", "error.userInfo", "Invalid file extension. Only JPG, PNG, and GIF are allowed.");
+
+                }else if (drivingLicense.getSize() > 200 * 1024 * 1024) { // 200MB = 200 * 1024 * 1024 bytes
+                    bindingResult.rejectValue("drivingLicense", "error.userInfo", "File size exceeds 200MB. Please upload a smaller file.");
+                }
+                else {
+                    String uploadDir = "uploads/DriveLicense/" + user.getId()+ "_" + user.getUsername() +  "/"; // Specify your upload directory
+                    Path filePath = Paths.get(uploadDir, fileName);
+                    Files.write(filePath, drivingLicense.getBytes());
+
+                    // Set the file path in the new field
+                    userInfoRequest.setDrivingLicensePath(filePath.toString());
+                }
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         String dobError = null;
         String emailError = null;
@@ -145,9 +180,10 @@ public class MyProfileController {
             models.addFlashAttribute("emailError", emailError);
             models.addFlashAttribute("nationalIdError", nationalIdError);
             models.addFlashAttribute("phoneError", phoneError);
-            models.addFlashAttribute("drivingLicenseError", drivingLicenseError);
             models.addFlashAttribute("streetError", streetError);
             models.addFlashAttribute("fullNameError", fullNameError);
+            models.addFlashAttribute("drivingLicenseError", drivingLicenseError);
+
             //User user = (User) session.getAttribute("user");
 
             // model.addAttribute("userInfo", user);
@@ -158,9 +194,25 @@ public class MyProfileController {
             return "redirect:/my-profile";
         }
 
+
         userService.saveUser(userInfoRequest, session);
         models.addFlashAttribute("success1", "Update successfully!!!");
         return "redirect:/my-profile";
     }
+    private String normalizePhone(String phone) {
+        // Loại bỏ khoảng trắng và các ký tự không phải số
+        phone = phone.trim().replaceAll("\\D", "");
+
+        // Nếu số bắt đầu bằng "0", thay thế "0" bằng "+84" để chuẩn hóa quốc tế
+        if (phone.startsWith("0")) {
+            phone = "+84" + phone.substring(1);
+        } else if (!phone.startsWith("+")) {
+            // Trường hợp khác: nếu không bắt đầu bằng "+" và không phải dạng chuẩn
+            phone = "+84" + phone;
+        }
+
+        return phone;
+    }
+
 
 }

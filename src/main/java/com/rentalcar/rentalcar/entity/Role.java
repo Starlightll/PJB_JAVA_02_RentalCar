@@ -1,10 +1,18 @@
 package com.rentalcar.rentalcar.entity;
 
-import lombok.Data;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+import java.util.Set;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Role")
 public class Role {
@@ -16,4 +24,8 @@ public class Role {
     public String toString() {
         return this.roleName;
     }
+
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
+    private Set<User> users;
 }

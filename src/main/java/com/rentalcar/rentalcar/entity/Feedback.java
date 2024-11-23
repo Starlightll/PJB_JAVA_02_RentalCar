@@ -1,16 +1,16 @@
 package com.rentalcar.rentalcar.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Feedback {
 
     @Id
@@ -19,6 +19,10 @@ public class Feedback {
     private Long id;
     private int rating;
     private String content;
-    private Date dateTime;
-    
+
+    private LocalDateTime dateTime;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "bookingId", nullable = false,  unique = true)
+    private Booking booking;
 }

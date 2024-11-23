@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.AuthenticationException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -53,6 +54,9 @@ public class CarOwnerServiceImpl implements CarOwnerService {
     public void updateCar(Car carUpdate, MultipartFile[] files, User user, Integer carId, Integer statusId) {
         try{
             Car car = carRepository.findById(carId).get();
+            if(!Objects.equals(car.getUser().getId(), user.getId()) || car.getCarStatus().getStatusId() == 8 && user.getRoles().get(0).getId() != 1){
+                throw new AuthenticationException("You are not allowed to update this car");
+            }
             // Create folder path
             String folderName = String.format("%s", car.getCarId()+"");
             Path carFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", folderName);
@@ -122,7 +126,12 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     @Override
     public void deleteCar(int carId) {
-
+        try{
+            setCarStatus(carId, 4);
+        }catch (Exception e){
+            System.out.println("Something wrong when delete car in car owner service" + e.getMessage());
+            throw new RuntimeException("Something wrong when delete car in car owner service");
+        }
     }
 
     @Override
@@ -137,6 +146,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                     if(!Objects.equals(userOwnLicence, user.getId())) {
                         throw new RuntimeException("Liscense plate already owned by another user");
                     }
+                    car.setLicensePlate(carDraft.getLicensePlate());
                 }else{
                     car.setLicensePlate(carDraft.getLicensePlate());
                 }
@@ -175,10 +185,29 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         }
     }
 
+    @Override
+    public List<Car> getCarsByStatus(Integer statusId) {
+        return carRepository.findAllByCarStatus(statusId);
+    }
+
+    @Override
+    public void setCarStatus(Integer carId, Integer statusId) {
+        try{
+            Car car = carRepository.getCarByCarId(carId);
+            CarStatus carStatus = new CarStatus();
+            carStatus.setStatusId(statusId);
+            car.setCarStatus(carStatus);
+            carRepository.save(car);
+        }catch (Exception e){
+            System.out.println("Something wrong when set car status in car owner service" + e.getMessage());
+            throw new RuntimeException("Something wrong when set car status in car owner service");
+        }
+    }
+
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
-        carStatus.setStatusId(1);
+        carStatus.setStatusId(8);
         car.setCarStatus(carStatus);
     }
 
@@ -229,7 +258,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     private void setCarAdditionalFunction(CarDraft carDraft, Car car) {
         try {
-//            carAdditionalFunctionRepository.deleteAllByCarId(car.getCarId());
             Set<AdditionalFunction> additionalFunctions = new HashSet<>();
             String[] functionIds = carDraft.getAdditionalFunction().split(",");
             for (String idStr : functionIds) {
@@ -248,11 +276,6 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     private void setCarAdditionalFunction(Car car, Car carUpdate) {
         try {
-////            carAdditionalFunctionRepository.deleteAllByCarId(car.getCarId());
-//            Set<AdditionalFunction> additionalFunctions = car.getAdditionalFunctions();
-//            additionalFunctions.clear();
-//            additionalFunctions = carUpdate.getAdditionalFunctions();
-//            car.setAdditionalFunctions(additionalFunctions);
             car.getAdditionalFunctions().clear();
             car.setAdditionalFunctions(carUpdate.getAdditionalFunctions());
         }catch (Exception e){

@@ -1,10 +1,14 @@
 package com.rentalcar.rentalcar.common;
 
 public class TimeFormatter {
+
+    private TimeFormatter() {
+    }
+
     public static String formatTime(int minutes) {
-        int days = minutes / (24 * 60);         // Tính số ngày
-        int hours = (minutes % (24 * 60)) / 60; // Tính số giờ còn lại
-        int remainingMinutes = minutes % 60;    // Tính số phút còn lại
+        int days = minutes / (24 * 60);         // Calculate number of days
+        int hours = (minutes % (24 * 60)) / 60; // Calculate number of hours
+        int remainingMinutes = minutes % 60;    // Calculate number of minutes
 
         StringBuilder formattedTime = new StringBuilder();
         if (days > 0) {
@@ -13,15 +17,10 @@ public class TimeFormatter {
         if (hours > 0) {
             formattedTime.append(hours).append(" hour").append(hours > 1 ? "s " : " ");
         }
-        if (remainingMinutes > 0 || formattedTime.length() == 0) {
+        if (remainingMinutes > 0 || formattedTime.isEmpty()) {
             formattedTime.append(remainingMinutes).append(" minute").append(remainingMinutes > 1 ? "s" : "");
         }
 
         return formattedTime.toString().trim();
-    }
-
-    public static void main(String[] args) {
-        int minutes = 10; // Ví dụ: 8900 phút
-        System.out.println(formatTime(minutes));
     }
 }
