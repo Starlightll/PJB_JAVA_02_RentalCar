@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.rentalcar.rentalcar.common.CalculateNumberOfDays;
 import com.rentalcar.rentalcar.common.Regex;
 import com.rentalcar.rentalcar.dto.*;
 import com.rentalcar.rentalcar.entity.*;
@@ -16,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -68,6 +66,11 @@ public class BookingDetailsController {
         User user = (User) session.getAttribute("user");
         User rentUser = userRepo.getUserById(user.getId());
         MyBookingDto booking = new MyBookingDto();
+
+        Car car = carRepository.getCarByCarId(carId);
+        if(car == null) {
+            return "redirect:/";
+        }
         try {
              booking = viewEditBookingService.getBookingDetail(bookingId, carId, session);
         } catch (RuntimeException e) {
@@ -87,13 +90,19 @@ public class BookingDetailsController {
         Feedback feedback = opFeedback.orElse(null);
         boolean isRating = feedback == null && booking.getBookingStatus().equalsIgnoreCase("Completed");
 
+        String lateTime = "";
+        LocalDateTime timeNow = LocalDateTime.now();
+        if(CalculateNumberOfDays.calculateLateTime(booking.getEndDate(), timeNow) != null) {
+            lateTime = CalculateNumberOfDays.calculateLateTime(booking.getEndDate(), timeNow);
+        }
+
+
+        Map<String, Long> map = CalculateNumberOfDays.calculateNumberOfDays(booking.getStartDate(), timeNow);
+        Double hourlyRate = car.getBasePrice() / 24;
+        Double totalPrice = CalculateNumberOfDays.calculateRentalFee(map,car.getBasePrice(),  hourlyRate);
 
         //=========================================================== Car detail ===================================================
 
-        Car car = carRepository.getCarByCarId(carId);
-        if(car == null) {
-            return "redirect:/";
-        }
 
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
@@ -128,6 +137,9 @@ public class BookingDetailsController {
         model.addAttribute("navigate", navigate);
         model.addAttribute("feedbackDto", new FeedbackDto());
         model.addAttribute("isRating",isRating); // có hiện đánh giá hay không
+        model.addAttribute("lateTime",lateTime);
+        model.addAttribute("timNow",timeNow);
+        model.addAttribute("totalPrice",totalPrice);
         return "customer/EditBookingDetails";
     }
 
@@ -261,6 +273,12 @@ public class BookingDetailsController {
         return bookingDetail(bookingId.intValue(), carId, navigate, model, session);
     }
 
+
+    @GetMapping("/api/update-drivers/{id}")
+    public ResponseEntity<List<UserDto>> getAllDrivers(@PathVariable Integer id) {
+        List<UserDto> drivers = getAllDriverAvailable(id);
+        return ResponseEntity.ok(drivers);
+    }
 
     public List<UserDto> getAllDriverAvailable(Integer bookingId) {
         List<Object[]> results = userRepo.getAllDriver(bookingId);

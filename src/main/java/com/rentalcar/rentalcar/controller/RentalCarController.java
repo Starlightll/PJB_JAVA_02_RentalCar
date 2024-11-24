@@ -11,6 +11,7 @@ import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Car;
+import com.rentalcar.rentalcar.entity.DriverDetail;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
@@ -24,13 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Driver;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -211,6 +210,21 @@ public class RentalCarController {
 
         return userDtos;
     }
+
+
+    @GetMapping("/api/drivers")
+    public ResponseEntity<List<UserDto>> getAllDrivers() {
+        List<UserDto> drivers = getAllDriverAvailable();
+        return ResponseEntity.ok(drivers);
+    }
+
+    @GetMapping("/api/drivers/{id}")
+    public ResponseEntity<User> getDriverById(@PathVariable Long id) {
+        return userRepo.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 
 
     @PostMapping(value = "/booking-car")

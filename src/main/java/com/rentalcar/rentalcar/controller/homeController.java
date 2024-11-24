@@ -53,4 +53,10 @@ public class homeController {
         return "redirect:/";
     }
 
+
+    @GetMapping ("/test")
+    public String test(Model model) {
+        return "customer/test";
+    }
+
 }
