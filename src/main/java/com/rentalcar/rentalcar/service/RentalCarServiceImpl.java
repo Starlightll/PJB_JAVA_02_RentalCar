@@ -206,23 +206,26 @@ public class RentalCarServiceImpl implements RentalCarService {
 
                 // Fetch the "Cancelled" BookingStatus from the database
                 Optional<BookingStatus> cancelledStatusOptional = bookingStatusRepository.findById(7L);
-
+                double totalPriceCanceled = calculateTotalCancel(booking.getStartDate(), booking.getEndDate(), booking.getTotalPrice());
                 if (cancelledStatusOptional.isPresent()) {
                     BookingStatus cancelledStatus = cancelledStatusOptional.get();
                     booking.setBookingStatus(cancelledStatus); // Update the status of the booking
                     booking.setLastModified(new Date());
+                    booking.setTotalPrice(totalPriceCanceled);
+                    booking.setActualEndDate(LocalDateTime.now());
+
                     // Save the updated booking
                     rentalCarRepository.save(booking);
 
                     //================Thay đổi trạng thái tài xế======================
-                    Long oldDriverId = null;
+                    Long DriverId = null;
                     if (booking.getDriver() != null && booking.getDriver().getId() != null) {
-                        oldDriverId = booking.getDriver().getId();
+                        DriverId = booking.getDriver().getId();
                     }
-                    if(oldDriverId != null){
-                        User oldDriver = userRepository.getUserById(oldDriverId);
-                        oldDriver.setStatus(UserStatus.ACTIVATED);
-                        userRepository.save(oldDriver);
+                    if(DriverId != null){
+                        User Driver = userRepository.getUserById(DriverId);
+                        Driver.setStatus(UserStatus.ACTIVATED);
+                        userRepository.save(Driver);
                     }
                     //==========================================
 
@@ -960,6 +963,20 @@ public class RentalCarServiceImpl implements RentalCarService {
         return normalized.toString().trim();
     }
 
+
+    public double calculateTotalCancel(LocalDateTime start, LocalDateTime end, double currentTotal) {
+        LocalDateTime timeNow = LocalDateTime.now();
+        if(timeNow.isBefore(start)) {
+            return 0;
+        }
+
+        if(timeNow.isBefore(end)) {
+            return currentTotal;
+        }
+
+        return 0;
+
+    }
 
 
 }
