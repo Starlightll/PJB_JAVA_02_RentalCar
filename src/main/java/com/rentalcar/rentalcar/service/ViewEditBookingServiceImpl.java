@@ -71,20 +71,19 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         double fineLateTimePerDay = (basprice * FINE_COST) / 100; //tiền phạt trên ngày
         double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
 
-
-        Map<String, Long> map_numberOfDays = new HashMap<>();
+        Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
         //Lấy dữ liệu trong db
         if(bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
                 bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
-                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+            Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
         //  tính late date
             if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) { // Lấy từ db
                 lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
-                fineLateTime = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, fineLateTimePerDay,fineLateTimePerHour);
+                fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);
             }
         }
         else if(LocalDateTime.now().isAfter(endDate)) { //Lấy động dữ liệu theo thời gian thực khi bị phạt
-            map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+
             Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
             totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
             if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
@@ -93,7 +92,6 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
             }
         } else {// còn lại
-            map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
             totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
         }
         Map<String, Double> map_amount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
