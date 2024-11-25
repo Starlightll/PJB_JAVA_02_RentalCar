@@ -520,15 +520,12 @@ public class RentalCarController {
 
         // Handle response based on caseReturn value
         if (caseReturn == 1 ) {
-            return generateResponse(response, "success1", "Booking has been successfully completed.");
+            return generateResponse(response, "success1", "Car return request sent successfully!!");
         } else if (caseReturn == 2) {
             return generateResponse(response, "success2", "Car return request sent. Waiting for Car-Owner to confirm payment.");
 
         } else if (caseReturn == -1) {
-            return generateResponse(response, "error", "Your wallet doesn’t have enough balance. Please top-up your wallet and try again");
-        } else if (caseReturn == -2) {
-            boolean isUpdate = returnCarService.updateBookingPendingPayment(bookingId, session);
-            return generateResponse(response, "error", "Car-owner doesn’t have enough balance. Please try again later!");
+            return generateResponse(response, "error", "Your wallet does’t have enough balance to pay driver salary. Please top-up your wallet and try again");
         }
 
         boolean findByStatus = false;

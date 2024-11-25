@@ -74,56 +74,26 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
         );
 
-
-        Double totalPrice = calculateTotalPrice(bookingId);
         LocalDateTime currentTime = LocalDateTime.now();
         long hours = Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
-        long days = (long) Math.ceil(hours / 24.0);
         double driverSalary;
-        if(currentTime.isBefore(bookingDto.getStartDate())) {
+        User driver = userRepository.getUserById(bookingDto.getDriverId());
+        if (currentTime.isBefore(bookingDto.getStartDate())) {
             driverSalary = 0.0;
         } else {
-            driverSalary = (double) Constants.DRIVER_SALARY * Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
+            driverSalary = driver.getSalaryDriver() * hours;
         }
-        BigDecimal driverSalaryBig =  BigDecimal.valueOf(driverSalary);
-        // Sử dụng NumberFormat để định dạng tiền tệ
+        BigDecimal driverSalaryBig = BigDecimal.valueOf(driverSalary);
         NumberFormat currencyFormatter = NumberFormat.getInstance(Locale.US);
 
-        if (bookingDto.getDriverId() == null) {
+        if (bookingDto.getDriverId() != null) {
+            return String.format(
+                    "Please confirm to send request return the car. \nDriver rental payment: %s VND",
+                    currencyFormatter.format(driverSalaryBig)
+            );
 
-            if (totalPrice.equals(bookingDto.getDeposit())) {
-                return "Please confirm to return the car. The deposit you pay is equal to the rental fee.";
-            } else if (totalPrice > bookingDto.getDeposit()) {
-                return String.format(
-                        "Please confirm to return the car. The remaining amount of %s VND will be deducted from your wallet.",
-                        currencyFormatter.format(totalPrice - bookingDto.getDeposit())
-                );
-            } else {
-                return String.format(
-                        "Please confirm to return the car. The exceeding amount of %s VND will be returned to your wallet. Driver will ACTIVATED",
-                        currencyFormatter.format(bookingDto.getDeposit() - totalPrice)
-                );
-            }
         } else {
-
-            if (totalPrice.equals(bookingDto.getDeposit())) {
-                return String.format(
-                        "Please confirm to return the car. The deposit you pay is equal to the rental fee. Driver rental payment: %s VND",
-                        currencyFormatter.format(driverSalaryBig)
-                );
-            } else if (totalPrice > bookingDto.getDeposit()) {
-                return String.format(
-                        "Please confirm to return the car. The remaining amount of %s VND will be deducted from your wallet. Driver rental payment: %s VND",
-                        currencyFormatter.format(totalPrice - bookingDto.getDeposit()),
-                        currencyFormatter.format(driverSalaryBig)
-                );
-            } else {
-                return String.format(
-                        "Please confirm to return the car. The exceeding amount of %s VND will be returned to your wallet. Driver rental payment: %s VND",
-                        currencyFormatter.format(bookingDto.getDeposit() - totalPrice),
-                        currencyFormatter.format(driverSalaryBig)
-                );
-            }
+            return ("Please confirm to send request return the car.");
         }
     }
 
@@ -157,210 +127,147 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
         );
 
-        User carowner = userRepository.getUserById(bookingDto.getCarOwnerId());
+        User car_owner = userRepository.getUserById(bookingDto.getCarOwnerId());
 
         BigDecimal deposit = BigDecimal.valueOf(bookingDto.getDeposit());
         BigDecimal myWallet = userdb.getWallet();
-        BigDecimal totalPrice = BigDecimal.valueOf(calculateTotalPrice(bookingId));
 
-
-        // lay tien thue tai xe
+        // calculate driver salary
         double driverSalary;
         LocalDateTime currentTime = LocalDateTime.now();
+        long hours = Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
+        User driver = userRepository.getUserById(bookingDto.getDriverId());
 
-//        if(currentTime.isBefore(bookingDto.getStartDate())) {
-//            return 0;
-//        }
-
-        if(currentTime.isBefore(bookingDto.getStartDate())) {
+        if (currentTime.isBefore(bookingDto.getStartDate())) {
             driverSalary = 0.0;
         } else {
-            driverSalary = (double) Constants.DRIVER_SALARY * Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
+            driverSalary = driver.getSalaryDriver() * hours;
         }
-        BigDecimal driverSalaryBig =  BigDecimal.valueOf(driverSalary);
+        BigDecimal driverSalaryBig = BigDecimal.valueOf(driverSalary);
 
 
-        if (totalPrice.compareTo(deposit) >= 0) {
-            // Kiểm tra ví người dùng
-            if (((totalPrice.subtract(deposit)).add(driverSalaryBig)).compareTo(myWallet) > 0) {
+        if (bookingDto.getDriverId() != null) {
+            // check wallet user
+            if (driverSalary > user.getWallet().doubleValue()) {
                 return -1;
             } else {
-                // Nếu ví người dùng đủ tiền, trừ tiền vào ví của khách hàng và chuyển cho chủ xe
-                BigDecimal updatedUserWallet = myWallet.subtract(totalPrice.subtract(deposit));
+                // Pay money for driver
+                BigDecimal updatedUserWallet = myWallet.subtract(driverSalaryBig);
                 user.setWallet(updatedUserWallet);
                 userRepository.save(user);
                 session.setAttribute("user", user);
 
-                // Cập nhật ví của chủ xe
-                BigDecimal carOwnerWallet = bookingDto.getCarOwnerWallet() != null ? bookingDto.getCarOwnerWallet() : BigDecimal.ZERO;
-                BigDecimal updatedCarOwnerWallet = carOwnerWallet.add(totalPrice.subtract(deposit));
-                User carOwner = userRepository.getUserById(bookingDto.getCarOwnerId());
-                carOwner.setWallet(updatedCarOwnerWallet);
-                userRepository.save(carOwner);
+                // Driver receive money
+                BigDecimal updatedCarOwnerWallet = driver.getWallet().add(driverSalaryBig);
+                driver.setWallet(updatedCarOwnerWallet);
+                userRepository.save(driver);
 
 
-                // Cập nhật trạng thái booking
+                // update booking Status
                 if (bookingOptional.isPresent()) {
                     Booking booking = bookingOptional.get();
-                    //======================Cộng tiền vào ví chủ xe===========================
-                    transactionService.saveTransaction(carOwner, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT_CAR_OWNER, booking);
+                    //======================Cộng tiền vào ví driver===========================
+                    transactionService.saveTransaction(driver, driverSalaryBig, TransactionType.OFFSET_FINAL_RECEIVE_SALARY, booking);
 
                     // ======================Trừ tiền vào ví customer===========================
-                    transactionService.saveTransaction(user, totalPrice.subtract(deposit), TransactionType.OFFSET_FINAL_PAYMENT_CUSTOMER, booking);
+                    transactionService.saveTransaction(user, driverSalaryBig, TransactionType.OFFSET_FINAL_PAYMENT_RENTAL_DRIVER, booking);
                     //=================================================
-                    // Kiểm tra xem booking có phải của người dùng và đang ở trạng thái "In-Progress"
+                    // Check booking status is In-Progress.
                     if (booking.getUser().getId().equals(user.getId()) &&
                             booking.getBookingStatus().getBookingStatusId() == 3) {
 
-                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(5L);
+                        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(8L);
                         if (completedStatusOptional.isPresent()) {
                             BookingStatus completedStatus = completedStatusOptional.get();
-                            booking.setBookingStatus(completedStatus); // Cập nhật trạng thái booking
+                            booking.setBookingStatus(completedStatus);
                             booking.setLastModified(new Date());
-
-                            // set lai actual end date va total Price
-
-                                booking.setActualEndDate(currentTime);
-                                booking.setTotalPrice(totalPrice.doubleValue());
-
                             rentalCarRepository.save(booking);
 
-                            //================Thay đổi trạng thái tài xế======================
+                            //================Update driver status======================
                             Long oldDriverId = null;
                             if (booking.getDriver() != null && booking.getDriver().getId() != null) {
                                 oldDriverId = booking.getDriver().getId();
                             }
                             if (oldDriverId != null) {
                                 User oldDriver = userRepository.getUserById(oldDriverId);
-                                // =====cong tien vao vi driver ===
-                                if(booking.getDriver().getId() != null) {
-
-                                    BigDecimal updatedWallet = oldDriver.getWallet().add(driverSalaryBig);
-                                    oldDriver.setWallet(updatedWallet);
-                                    //==== tru tien thue nguoi lai vao vi customer
-                                    BigDecimal updatedUserWalletDriver = myWallet.subtract(driverSalaryBig);
-                                    user.setWallet(updatedUserWalletDriver);
-                                }
                                 userRepository.save(user);
                                 session.setAttribute("user", user);
-
-                                // update vao transaction
-                                if(!driverSalaryBig.equals(BigDecimal.ZERO)) {
-                                    transactionService.saveTransaction(user, driverSalaryBig, TransactionType.OFFSET_FINAL_PAYMENT_RENTAL_DRIVER, booking);
-                                }
-
                                 oldDriver.setStatus(UserStatus.ACTIVATED);
                                 userRepository.save(oldDriver);
                             }
-                            //==========================================
-
 
                             Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
                             if (carOptional.isPresent()) {
                                 Car car = carOptional.get();
-                                Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(1);
+                                Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(16);
                                 if (bookedStatusOptional.isPresent()) {
                                     CarStatus bookedStatus = bookedStatusOptional.get();
-                                    car.setCarStatus(bookedStatus); // Cập nhật trạng thái xe
+                                    car.setCarStatus(bookedStatus);
                                     carRepository.save(car);
                                 } else {
-                                    System.out.println("Car status 'Available' not found.");
-                                    return 0; // Trạng thái "Booked" không tồn tại
+                                    System.out.println("Car status 'Pending confirm' not found.");
+                                    return 0;
                                 }
                             } else {
                                 System.out.println("Car with ID " + bookingDto.getCarId() + " not found.");
-                                return 0; // Xe không tồn tại
+                                return 0;
                             }
-
-                            emailService.sendReturnCarSuccessfully(carowner, booking, bookingDto.getCarId(), bookingDto.getCarname(), totalPrice.subtract(deposit).doubleValue());
+                            emailService.sendRequestReturnCar(car_owner, booking, bookingDto.getCarId(), bookingDto.getCarname());
+                            emailService.sendPaymentDriverSalary(driver,  booking, driverSalary);
                             return 1;
                         } else {
                             System.out.println("Completed status not found.");
-                            return 0; // Trạng thái "Completed" không tồn tại
+                            return 0;
                         }
                     } else {
                         System.out.println("Booking does not belong to the user or is not in an 'In-Progress' state.");
-                        return 0; // Booking không thuộc về người dùng hoặc không ở trạng thái "In-Progress"
+                        return 0;
                     }
                 } else {
                     System.out.println("Booking with ID " + bookingId + " not found.");
-                    return 0; // Booking không tồn tại
+                    return 0;
                 }
             }
         } else {
-            if(bookingDto.getDriverId() != null &&  myWallet.compareTo(driverSalaryBig) < 0) {
-                return -1;
-            }
-            // Cập nhật trạng thái booking
+            // update booking Status
             if (bookingOptional.isPresent()) {
                 Booking booking = bookingOptional.get();
+
+                // Check booking status is In-Progress.
                 if (booking.getUser().getId().equals(user.getId()) &&
                         booking.getBookingStatus().getBookingStatusId() == 3) {
 
-                    Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(4L);
-                    Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
-                    // cap nhat trang thai xe thanh Pending payment
+                    Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(8L);
                     if (completedStatusOptional.isPresent()) {
                         BookingStatus completedStatus = completedStatusOptional.get();
                         booking.setBookingStatus(completedStatus);
-                        LocalDateTime currentDate = LocalDateTime.now();
-
-                        booking.setActualEndDate(currentDate);
-                        booking.setTotalPrice(totalPrice.doubleValue());
+                        booking.setLastModified(new Date());
                         rentalCarRepository.save(booking);
 
-                        //================Thay đổi trạng thái tài xế======================
-                        Long oldDriverId = null;
-                        if (booking.getDriver() != null && booking.getDriver().getId() != null) {
-                            oldDriverId = booking.getDriver().getId();
-                        }
-                        if (oldDriverId != null) {
-                            User oldDriver = userRepository.getUserById(oldDriverId);
-
-                            if(booking.getDriver().getId() != null) {
-
-                                //==== cong tien thue nguoi lai vao vi driver
-                                BigDecimal updatedWallet = oldDriver.getWallet().add(driverSalaryBig);
-                                oldDriver.setWallet(updatedWallet);
-                                //==== tru tien thue nguoi lai vao vi customer
-                                BigDecimal updatedUserWalletDriver = myWallet.subtract(driverSalaryBig);
-                                user.setWallet(updatedUserWalletDriver);
-                            }
-                            userRepository.save(user);
-                            session.setAttribute("user", user);
-
-                            // update vao transaction
-                            if(!driverSalaryBig.equals(BigDecimal.ZERO)) {
-                                transactionService.saveTransaction(user, driverSalaryBig, TransactionType.OFFSET_FINAL_PAYMENT_RENTAL_DRIVER, booking);
-                            }
-                            oldDriver.setStatus(UserStatus.ACTIVATED);
-                            userRepository.save(oldDriver);
-                        }
-
-
+                        Optional<Car> carOptional = carRepository.findById(bookingDto.getCarId());
                         if (carOptional.isPresent()) {
                             Car car = carOptional.get();
-                            Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(11);
+                            Optional<CarStatus> bookedStatusOptional = carStatusRepository.findById(16);
                             if (bookedStatusOptional.isPresent()) {
                                 CarStatus bookedStatus = bookedStatusOptional.get();
                                 car.setCarStatus(bookedStatus);
                                 carRepository.save(car);
                             } else {
-                                System.out.println("Car status 'Pending payment' not found.");
+                                System.out.println("Car status 'Pending confirm' not found.");
                                 return 0;
                             }
                         } else {
                             System.out.println("Car with ID " + bookingDto.getCarId() + " not found.");
-                            return 0; // Xe không tồn tại
+                            return 0;
                         }
-                        emailService.sendRequestConfirmPayment(carowner, booking, bookingDto.getCarId(), bookingDto.getCarname(), deposit.subtract(totalPrice).doubleValue());
-                        return 2;
+                        emailService.sendRequestReturnCar(car_owner, booking, bookingDto.getCarId(), bookingDto.getCarname());
+                        return 1;
                     } else {
                         System.out.println("Completed status not found.");
                         return 0;
                     }
                 } else {
-                    System.out.println("Booking does not belong to the user or is not in a cancellable state.");
+                    System.out.println("Booking does not belong to the user or is not in an 'In-Progress' state.");
                     return 0;
                 }
             } else {
@@ -444,23 +351,18 @@ public class ReturnCarServiceImpl implements ReturnCarService {
             Booking booking = bookingOptional.get();
 
             LocalDateTime currentDate = LocalDateTime.now();
-            long hours0 = Math.abs(Duration.between(bookingDto.getActualEndDate(), booking.getEndDate()).toHours());
-            long numberOfDaysRental = Math.abs((long) Math.ceil(Math.abs(hours0) / 24.0));
+            long hoursActualToEnd = Math.abs(Duration.between(bookingDto.getActualEndDate(), booking.getEndDate()).toHours());
+            long hoursStartToEnd = Math.abs(Duration.between(booking.getStartDate(), booking.getEndDate()).toHours());
+            long hoursStartToActual = Math.abs(Duration.between(booking.getStartDate(), currentDate).toHours());
 
-            if(currentDate.isBefore(booking.getStartDate())) {
+            if (currentDate.isBefore(booking.getStartDate())) {
                 return bookingDto.getDeposit() * 0.1;
             }
 
             if (currentDate.isBefore(booking.getEndDate())) {
-                return numberOfDaysRental * bookingDto.getBasePrice();
+                return hoursActualToEnd * (bookingDto.getBasePrice() / 24);
             } else {
-                long hours = Math.abs(Duration.between(booking.getEndDate(), bookingDto.getActualEndDate()).toHours());
-                long numberOfDaysOverdue = Math.abs((long) Math.ceil(hours / 24.0));
-
-                long hours1 = Math.abs(Duration.between(booking.getStartDate(), booking.getEndDate()).toHours());
-                long numberOfDaysNotOverdue = (long) Math.ceil(hours1 / 24.0);
-
-                return numberOfDaysOverdue * bookingDto.getBasePrice() * FINE_COST / 100 + numberOfDaysNotOverdue * bookingDto.getBasePrice(); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
+                return hoursActualToEnd * bookingDto.getBasePrice() * FINE_COST / 100 + hoursStartToEnd * bookingDto.getBasePrice(); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
             }
 
         }
@@ -498,11 +400,11 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
             LocalDateTime currentDate = LocalDateTime.now();
 
-            long hours2 = Math.abs(Duration.between( booking.getStartDate(), currentDate).toHours());
-            long numberOfDaysRental= (long) Math.ceil(hours2 / 24.0);
+            long hours2 = Math.abs(Duration.between(booking.getStartDate(), currentDate).toHours());
+            long numberOfDaysRental = (long) Math.ceil(hours2 / 24.0);
 
 
-            if(currentDate.isBefore(booking.getStartDate())) {
+            if (currentDate.isBefore(booking.getStartDate())) {
                 return bookingDto.getDeposit() * 0.1;
             }
 
