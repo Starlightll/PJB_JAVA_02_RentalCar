@@ -351,18 +351,19 @@ public class ReturnCarServiceImpl implements ReturnCarService {
             Booking booking = bookingOptional.get();
 
             LocalDateTime currentDate = LocalDateTime.now();
-            long hoursActualToEnd = Math.abs(Duration.between(bookingDto.getActualEndDate(), booking.getEndDate()).toHours());
-            long hoursStartToEnd = Math.abs(Duration.between(booking.getStartDate(), booking.getEndDate()).toHours());
-            long hoursStartToActual = Math.abs(Duration.between(booking.getStartDate(), currentDate).toHours());
+            long hoursActualToEnd = Math.max(1, (long) Math.ceil(Duration.between(bookingDto.getActualEndDate(), booking.getEndDate()).toMinutes() / 60.0));
+            long hoursStartToEnd = Math.max(1, (long) Math.ceil(Duration.between(booking.getStartDate(), booking.getEndDate()).toMinutes() / 60.0));
+            long hoursStartToActual = Math.max(1, (long) Math.ceil(Duration.between(booking.getStartDate(), currentDate).toMinutes() / 60.0));
+
 
             if (currentDate.isBefore(booking.getStartDate())) {
                 return bookingDto.getDeposit() * 0.1;
             }
 
             if (currentDate.isBefore(booking.getEndDate())) {
-                return hoursActualToEnd * (bookingDto.getBasePrice() / 24);
+                return hoursStartToActual * (bookingDto.getBasePrice() / 24);
             } else {
-                return hoursActualToEnd * bookingDto.getBasePrice() * FINE_COST / 100 + hoursStartToEnd * bookingDto.getBasePrice(); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
+                return hoursActualToEnd * (bookingDto.getBasePrice() / 24) * FINE_COST / 100 + hoursStartToEnd * (bookingDto.getBasePrice() / 24); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
             }
 
         }
