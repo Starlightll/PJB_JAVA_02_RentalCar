@@ -365,30 +365,9 @@ public class ReturnCarServiceImpl implements ReturnCarService {
             fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay, fineLateTimePerHour);// tổng số tiền phạt
 
         }
-        if (LocalDateTime.now().isBefore(bookingDto.getStartDate())) {
-            if (totalPrice > deposit) {
-                return totalPrice - deposit;
-            }
-            return deposit - totalPrice;
-        }
-
-        if (LocalDateTime.now().isBefore(bookingDto.getEndDate())) {
-            if (totalPrice > deposit) {
-                return totalPrice - deposit;
-            }
-            return deposit - totalPrice;
-        }
 
         if (LocalDateTime.now().isAfter(bookingDto.getEndDate())) {
-            if (totalPrice > deposit) {
-                return (totalPrice - deposit) + fineLateTime;
-            }
-
-            double total = totalPrice + fineLateTime; // số tiền khi tiền phạt mà cộng với total
-            if (total > deposit) {
-                return total - deposit;
-            }
-            return deposit - total;
+            return totalPrice + fineLateTime;
         }
 
 //        if (bookingOptional.isPresent()) {
