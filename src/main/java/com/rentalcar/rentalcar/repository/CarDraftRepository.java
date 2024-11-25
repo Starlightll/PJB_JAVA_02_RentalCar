@@ -9,9 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CarDraftRepository extends JpaRepository<CarDraft, Integer> {
 
-    CarDraft findTopByUser_IdOrderByLastModifiedDesc(Long userId);
+    CarDraft findTopByUser_IdAndCarIdNotNullOrderByLastModifiedDesc(Long userId);
+    CarDraft findTopByUser_IdAndCarIdIsNullOrderByLastModifiedDesc(Long userId);
 
-    //Write me deleteDraftByUserId
+
     @Modifying
     @Transactional
     @Query("DELETE FROM CarDraft cd WHERE cd.user.id = :userId")

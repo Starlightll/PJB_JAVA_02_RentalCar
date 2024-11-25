@@ -150,6 +150,8 @@ CREATE TABLE CarDraft
     certificate     NVARCHAR(200),
     insurance       NVARCHAR(200),
     brandId         INT,
+    carId           INT NULL UNIQUE,
+    FOREIGN KEY (carId) REFERENCES [dbo].Car(carId),
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (brandId) REFERENCES [dbo].[Brand] (brandId),
     );

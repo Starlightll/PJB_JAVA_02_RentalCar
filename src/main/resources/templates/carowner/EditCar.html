@@ -168,11 +168,14 @@
                                                             <p>0</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
+                                                             style="display: flex; align-items: center; white-space: nowrap;">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Price: </p>
-                                                            <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
-                                                               id="previewPrice">0k/Day</p>
+                                                            <div class="d-flex" style="max-width: 316px;">
+                                                                <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'POINT', 0, 'POINT')}"
+                                                                   id="previewPrice" style="overflow: hidden;text-overflow: ellipsis;width: 100%;white-space: nowrap;">0</p>
+                                                                <p style="padding-left: 5px">VND/day</p>
+                                                            </div>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
@@ -289,6 +292,9 @@
                                         <div class="tab-content" id="nav-tabContent">
                                             <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
                                                  aria-labelledby="nav-home-tab">
+                                                <div class="mb-3" th:if="${car.getCarStatus().getStatusId() == 1 || car.getCarStatus().getStatusId() == 3}">
+                                                    <a class="btn-primary btn">Want to change this?, click here!</a>
+                                                </div>
                                                 <div class="row">
                                                     <div class="col-lg-6 mb-3 ">
                                                         <div class="input-group input-group-sm">
@@ -300,7 +306,8 @@
                                                                    aria-label="Sizing example input"
                                                                    aria-describedby="inputGroup-sizing-default"
                                                                    id="licensePlate" name="licensePlate"
-                                                                   th:value="${car.licensePlate}" readonly>
+                                                                   th:value="${car.licensePlate}"
+                                                                   disabled>
                                                         </div>
                                                         <a class="validate-msg" id="LicensePlateValidate">Invalid</a>
                                                     </div>
@@ -312,7 +319,8 @@
                                                                 >Color</label>
                                                             </div>
                                                             <select class="custom-select"
-                                                                    id="color" name="color" disabled>
+                                                                    id="color" name="color"
+                                                                    disabled>
                                                                 <option value="" th:selected="${car.color == null}">
                                                                     Choose...
                                                                 </option>
@@ -374,9 +382,9 @@
                                                             <input type="text" class="form-control"
                                                                    aria-label="Sizing example input"
                                                                    aria-describedby="inputGroup-sizing-default"
-                                                                   id="model" name="licensePlate"
+                                                                   id="model" name="model"
                                                                    th:value="${car.model}"
-                                                                   readonly>
+                                                                   disabled>
                                                         </div>
                                                         <a class="validate-msg" id="ModelValidate">Invalid</a>
                                                     </div>
@@ -389,8 +397,9 @@
                                                             <input type="text" class="form-control"
                                                                    aria-label="Sizing example input"
                                                                    aria-describedby="inputGroup-sizing-default"
-                                                                   id="productionYear" name="licensePlate"
-                                                                   th:value="${car.productionYear}" readonly>
+                                                                   id="productionYear" name="productionYear"
+                                                                   th:value="${car.productionYear}"
+                                                                   disabled>
                                                         </div>
                                                         <a class="validate-msg" id="productionYearValidate">Invalid</a>
                                                     </div>
@@ -403,40 +412,62 @@
                                                             <input type="text" class="form-control"
                                                                    aria-label="Sizing example input"
                                                                    aria-describedby="inputGroup-sizing-default"
-                                                                   id="seat" name="licensePlate" th:value="${car.seat}"
-                                                                   readonly>
+                                                                   id="seat" name="seatNo" th:value="${car.seat}"
+                                                                   disabled>
                                                         </div>
                                                         <a class="validate-msg" id="seatValidate">Invalid</a>
                                                     </div>
-                                                    <div class="col-lg-6 mb-3 ">
-                                                        <div class="input-group input-group-sm">
-                                                            <div class="input-group-prepend">
-                                                                        <span class="input-group-text "
-                                                                        >Transmission</span>
-                                                            </div>
-                                                            <input type="text" class="form-control"
-                                                                   aria-label="Sizing example input"
-                                                                   aria-describedby="inputGroup-sizing-default"
-                                                                   id="transmission" name="licensePlate"
-                                                                   th:value="${car.transmission}" readonly>
+                                                    <div class="col-lg-6 mb-3" style="pointer-events: none">
+                                                        <p>Transmission</p>
+                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                            <label class="btn btn-secondary" th:classappend="${car.transmission == 'Automatic'} ? 'active'">
+                                                                <input type="radio" name="transmission" id="option1" value="Automatic" th:checked="${car.transmission == 'Automatic'}"> Automatic
+                                                            </label>
+                                                            <label class="btn btn-secondary" th:classappend="${car.transmission == 'Manual'} ? 'active'">
+                                                                <input type="radio" name="transmission" id="option2" value="Manual" th:checked="${car.transmission == 'Manual'}"> Manual
+                                                            </label>
                                                         </div>
-                                                        <a class="validate-msg" id="TransmissionValidate">Invalid</a>
                                                     </div>
-                                                    <div class="col-lg-6 mb-3 ">
-                                                        <div class="input-group input-group-sm">
-                                                            <div class="input-group-prepend">
-                                                                        <span class="input-group-text "
-                                                                        >Fuel</span>
-                                                            </div>
-                                                            <input type="text" class="form-control"
-                                                                   aria-label="Sizing example input"
-                                                                   aria-describedby="inputGroup-sizing-default"
-                                                                   id="fuel" name="licensePlate"
-                                                                   th:value="${car.fuelType}"
-                                                                   readonly>
+                                                    <div class="col-lg-6" style="pointer-events: none">
+                                                        <p>Fuel</p>
+                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                            <label class="btn btn-secondary" th:classappend="${car.fuelType == 'Gasoline'} ? 'active'">
+                                                                <input type="radio" name="fuel" id="option3" value="Gasoline" th:checked="${car.fuelType == 'Gasoline'}"> Gasoline
+                                                            </label>
+                                                            <label class="btn btn-secondary" th:classappend="${car.fuelType == 'Diesel'} ? 'active'">
+                                                                <input type="radio" name="fuel" id="option4" value="Diesel" th:checked="${car.fuelType == 'Diesel'}"> Diesel
+                                                            </label>
                                                         </div>
-                                                        <a class="validate-msg" id="fuelValidate">Invalid</a>
                                                     </div>
+<!--                                                    <div class="col-lg-6 mb-3 ">-->
+<!--                                                        <div class="input-group input-group-sm">-->
+<!--                                                            <div class="input-group-prepend">-->
+<!--                                                                        <span class="input-group-text "-->
+<!--                                                                        >Transmission</span>-->
+<!--                                                            </div>-->
+<!--                                                            <input type="text" class="form-control"-->
+<!--                                                                   aria-label="Sizing example input"-->
+<!--                                                                   aria-describedby="inputGroup-sizing-default"-->
+<!--                                                                   id="transmission" name="licensePlate"-->
+<!--                                                                   th:value="${car.transmission}">-->
+<!--                                                        </div>-->
+<!--                                                        <a class="validate-msg" id="TransmissionValidate">Invalid</a>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-lg-6 mb-3 ">-->
+<!--                                                        <div class="input-group input-group-sm">-->
+<!--                                                            <div class="input-group-prepend">-->
+<!--                                                                        <span class="input-group-text "-->
+<!--                                                                        >Fuel</span>-->
+<!--                                                            </div>-->
+<!--                                                            <input type="text" class="form-control"-->
+<!--                                                                   aria-label="Sizing example input"-->
+<!--                                                                   aria-describedby="inputGroup-sizing-default"-->
+<!--                                                                   id="fuel" name="licensePlate"-->
+<!--                                                                   th:value="${car.fuelType}"-->
+<!--                                                                   >-->
+<!--                                                        </div>-->
+<!--                                                        <a class="validate-msg" id="fuelValidate">Invalid</a>-->
+<!--                                                    </div>-->
                                                     <div style="width: 100%; overflow: auto">
                                                         <h5>Documents</h5>
                                                         <table class="table table-striped col-lg-12">
@@ -600,7 +631,7 @@
                                                     <div class="document row m-auto w-100">
                                                         <div class="col-lg-3 col-sm-6">
                                                             <input type="hidden" id="frontImage"
-                                                                   th:value="${car.registration}">
+                                                                   th:value="${car.getFrontImage()}">
                                                             <p class="">Front</p>
                                                             <label for="input-file4" class="drop-area"
                                                                    id="drop-area4">
@@ -618,7 +649,7 @@
                                                         </div>
                                                         <div class="col-lg-3 col-sm-6">
                                                             <input type="hidden" id="backImage"
-                                                                   th:value="${car.registration}">
+                                                                   th:value="${car.getBackImage()}">
                                                             <p class="">Back</p>
                                                             <label for="input-file5" class="drop-area"
                                                                    id="drop-area5">
@@ -636,7 +667,7 @@
                                                         </div>
                                                         <div class="col-lg-3 col-sm-6">
                                                             <input type="hidden" id="leftImage"
-                                                                   th:value="${car.registration}">
+                                                                   th:value="${car.getLeftImage()}">
                                                             <p class="">Left</p>
                                                             <label for="input-file6" class="drop-area"
                                                                    id="drop-area6">
@@ -654,7 +685,7 @@
                                                         </div>
                                                         <div class="col-lg-3 col-sm-6">
                                                             <input type="hidden" id="rightImage"
-                                                                   th:value="${car.registration}">
+                                                                   th:value="${car.getRightImage()}">
                                                             <p class="">Right</p>
                                                             <label for="input-file7" class="drop-area"
                                                                    id="drop-area7">
@@ -753,6 +784,7 @@
                                         </div>
                                     </form>
                                 </div>
+<!--                                <p th:if="${car.getCarStatus().getStatusId() != 1 || car.getCarStatus().getStatusId() != 3}" style="color: red">You can't change this car information now!</p>-->
                                 <div>
                                     <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
                                             onclick="window.history.back()">Back
@@ -760,7 +792,7 @@
                                     <a th:if="${car.getCarStatus().getStatusId() == 8}" class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
                                             onclick="deleteCar()">Delete
                                     </a>
-                                    <th:block th:if="${car.getCarStatus().getStatusId() != 8}">
+                                    <th:block th:if="${car.getCarStatus().getStatusId() == 1 || car.getCarStatus().getStatusId() == 3}">
                                         <button class="btn-primary btn" style="width: 100px; margin: 10px 0 10px 0"
                                                 onclick="window.location.reload()">Discard
                                         </button>
@@ -794,8 +826,7 @@
     <script>
 
         const statusCar = document.getElementById('statusCar').value;
-        if (statusCar == 8) {
-            console.log("Car is verifying, cannot update");
+        if (statusCar != 1 && statusCar != 3) {
             $("#formCarUpdate :input").prop('disabled', true);
         }
 
@@ -1030,8 +1061,6 @@
             console.log(carData);
             console.log(fileInputs);
             if (!validate()) {
-                console.warn("Validation failed, try again!.");
-                alert("Validation failed");
                 return false;
             } else {
                 $.ajax({
@@ -1059,14 +1088,24 @@
                     },
                     error: function (xhr, status, error) {
                         if (xhr.status === 400) {
-                            // Display the custom error message from the server
-                            $('#confirmModal').modal('show');
-                            $('#ModalTitle').text("Format!");
-                            $('#ModalBody').html(xhr.responseText);
-                            $('#confirm').text("OK").click(function () {
-                                $('#confirmModal').modal('hide');
+                            // // Display the custom error message from the server
+                            // $('#confirmModal').modal('show');
+                            // $('#ModalTitle').text("Format!");
+                            // $('#ModalBody').html(xhr.responseText);
+                            // $('#confirm').text("OK").click(function () {
+                            //     $('#confirmModal').modal('hide');
+                            // });
+                            // $('#notConfirm').hide();
+                            console.log("Bad request: ", xhr.responseText);
+                            Swal.fire({
+                                title: 'Not Updated!',
+                                text: xhr.responseText,
+                                icon: 'warning',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    confirmButton: 'my-custom-button'
+                                }
                             });
-                            $('#notConfirm').hide();
                         } else if (xhr.status === 401) {
                             console.log("Unauthorized update: ", xhr.responseText);
                             Swal.fire({
@@ -1085,6 +1124,73 @@
                     }
                 });
             }
+        }
+
+        function deleteCar(){
+            const carId = document.getElementById('carId').value;
+            console.log("Delete car with carId:", carId);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                customClass: {
+                    confirmButton: 'my-custom-button',
+                    cancelButton: 'my-custom-button'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/car-owner/delete-car',
+                        type: 'GET',
+                        data: {carId: carId},
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        success: function (response) {
+                            console.log("Car deleted successfully", response);
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Your car has been deleted.',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    confirmButton: 'my-custom-button'
+                                }
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-cars';
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            if(xhr.status === 401){
+                                console.log("Unauthorized delete: ", xhr.responseText);
+                                Swal.fire({
+                                    title: 'Not Deleted!',
+                                    text: xhr.responseText,
+                                    icon: 'warning',
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        confirmButton: 'my-custom-button'
+                                    }
+                                });
+                            } else {
+                                console.log("Error deleting car", error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'An error occurred. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        confirmButton: 'my-custom-button'
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
         }
 
         const MAX_FILE_MB = 200;
@@ -1289,7 +1395,7 @@
         const basePricePreview = document.getElementById('previewPrice');
         basePrice.addEventListener('input', function () {
             const value = parseFloat(basePrice.value) || 0;
-            basePricePreview.textContent = new Intl.NumberFormat('en-US').format(value) + ' K/Day';
+            basePricePreview.textContent = new Intl.NumberFormat('vi-VN').format(value);
         });
 
         const province = document.getElementById('province');
@@ -1302,6 +1408,28 @@
 
 
         function checkDetails() {
+            // const licensePlate = document.getElementById('licensePlate').value;
+            // const color = document.getElementById('color').value;
+            // const brand = document.getElementById('brand').value;
+            // const model = document.getElementById('model').value;
+            // const productionYear = document.getElementById('productionYear').value;
+            // const seatNo = document.getElementById('seat').value;
+            //
+            // // Lấy giá trị của radio button
+            // const transmission = document.querySelector('input[name="transmission"]:checked');
+            // const transmissionValue = transmission ? transmission.value : null;
+            // const fuel = document.querySelector('input[name="fuel"]:checked');
+            // const fuelValue = fuel ? fuel.value : null;
+            //
+            // const registration = document.getElementById("input-file1");
+            // const certification = document.getElementById("input-file2");
+            // const insurance = document.getElementById("input-file3")
+            // const registrationUrl = document.getElementById('registrationImg').value;
+            // const certificationUrl = document.getElementById('certificateImg').value;
+            // const insuranceUrl = document.getElementById('insuranceImg').value;
+
+            // console.log(transmissionValue, fuelValue);
+
             const mileage = document.getElementById('mileage').value;
             const fuelConsumption = document.getElementById('fuelConsumption').value;
             const province = document.getElementById('province').value;
@@ -1321,7 +1449,19 @@
 
             console.log(checkedValues);
 
-            if (mileage === ''
+            if (
+                // licensePlate === ''
+                // || color === ''
+                // || brand === ''
+                // || model === ''
+                // || productionYear === ''
+                // || seatNo === ''
+                // || transmissionValue === null
+                // || fuelValue === null
+                // || (registration.files.length === 0 && registrationUrl === '')
+                // || (certification.files.length === 0 && certificationUrl === '')
+                // || (insurance.files.length === 0 && insuranceUrl === '') ||
+                mileage === ''
                 || fuelConsumption === ''
                 || province === ''
                 || district === ''
@@ -1330,10 +1470,15 @@
                 || (backImage.files.length === 0 && backImageUrl === '')
                 || (leftImage.files.length === 0 && leftImageUrl === '')
                 || (rightImage.files.length === 0 && rightImageUrl === '')) {
-                alert('Please fill all required fields');
+                Swal.fire({
+                    title: 'Alert!',
+                    text: 'Please fill in all required fields correctly.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
                 return false;
             }
-            return true;
+            return false;
         }
     </script>
     <script src="/js/update-car-validate.js"></script>

@@ -31,7 +31,7 @@ public class CarDraftServiceImpl implements CarDraftService {
 
     @Override
     public CarDraft getDraftByLastModified(Long userId) {
-        return carDraftRepository.findTopByUser_IdOrderByLastModifiedDesc(userId);
+        return carDraftRepository.findTopByUser_IdAndCarIdIsNullOrderByLastModifiedDesc(userId);
     }
 
     @Override
