@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -448,7 +449,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                     driver.setStatus(UserStatus.RENTED);
                     userRepository.save(driver);
                     //MAIL TO DRIVER
-                    emailService.sendBookingNotificationToDriver(driver, booking, car.getCarId(), car.getCarName(), booking.getStartDate(), booking.getEndDate());
+                    emailService.sendBookingNotificationToDriver(driver, booking, car.getCarId(), car.getCarName(), booking.getStartDate(), booking.getEndDate(), customer);
                 }
             }
 
@@ -930,6 +931,17 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         System.out.println("Car and Booking successfully updated for booking ID: " + bookingId);
         return true;
+    }
+
+    @Override
+    public List<Booking> getRentalsNearEndDate() {
+        LocalDate today = LocalDate.now();
+        LocalDate targetDate = today.plusDays(3); // Nhắc trước 3 ngày
+
+        // Đặt thời gian bắt đầu và kết thúc của ngày cần tìm
+        LocalDateTime startOfDay = targetDate.atStartOfDay(); // 00:00:00
+        LocalDateTime endOfDay = targetDate.atTime(23, 59, 59); // 23:59:59
+        return bookingRepository.findByEndDateBetween(startOfDay,endOfDay);
     }
 
 

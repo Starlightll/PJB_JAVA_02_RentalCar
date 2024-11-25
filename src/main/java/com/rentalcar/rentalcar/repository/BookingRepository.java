@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "SELECT TOP (1000) \n" +
@@ -33,4 +36,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE b.bookingId = :bookingId",
             nativeQuery = true)
     Object[] findByBookingId(@Param("bookingId") Long bookingId);
+
+
+    @Query("SELECT b FROM Booking b WHERE b.endDate BETWEEN :startOfDay AND :endOfDay")
+    List<Booking> findByEndDateBetween(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+
+
 }
