@@ -643,7 +643,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             if (totalPrice > carDto.getDeposit()) {
                 return Map.of(
                         "status", "success",
-                        "message", "The customer will return an amount of " + formattedMoney +
+                        "message", "The customer will pay an amount of " + formattedMoney +
                                 " VND to complete this booking. \nPress OK and wait for customer to pay!"
                 );
             } else if(totalPrice == carDto.getDeposit()) {
