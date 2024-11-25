@@ -80,6 +80,9 @@ public class RentalCarServiceImpl implements RentalCarService {
             throw new RuntimeException("User not found");
         }
 
+        boolean isCustomer = user.getRoles().stream()
+                .anyMatch(role -> "Customer".equals(role.getRoleName()));
+
         List<MyBookingDto> bookingDtos = new ArrayList<>();
         // Kiểm tra nếu sortBy là "lastModified", ánh xạ nó thành "b.lastModified"
         String mappedSortBy = sortBy.equalsIgnoreCase("lastModified") ? "b.lastModified" : sortBy;
@@ -87,7 +90,11 @@ public class RentalCarServiceImpl implements RentalCarService {
         Sort sort = Sort.by(sorDirection, mappedSortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         Page<Object[]> resultsPage;
-        resultsPage = rentalCarRepository.findAllWithPagination(user.getId(), pageable);
+        resultsPage =  isCustomer ? rentalCarRepository.findAllWithPagination(user.getId(), pageable)
+                                  : rentalCarRepository.findAllWithPaginationOfCarOwner(user.getId(), pageable);
+
+
+
 
         for (Object[] result : resultsPage.getContent()) {
             LocalDateTime startDate = ((Timestamp) result[2]).toLocalDateTime();

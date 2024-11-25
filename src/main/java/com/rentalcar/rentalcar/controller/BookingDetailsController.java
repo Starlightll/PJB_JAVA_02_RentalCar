@@ -61,10 +61,10 @@ public class BookingDetailsController {
 
 
     @GetMapping({"/customer/booking-detail", "/car-owner/booking-detail"})
-    public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
+    public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId, @RequestParam Integer userId ,@RequestParam String navigate,  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
-        User rentUser = userRepo.getUserById(user.getId());
+        User rentUser = userRepo.getUserById(Long.valueOf(userId));
         MyBookingDto booking = new MyBookingDto();
 
         Car car = carRepository.getCarByCarId(carId);
@@ -72,7 +72,7 @@ public class BookingDetailsController {
             return "redirect:/";
         }
         try {
-             booking = viewEditBookingService.getBookingDetail(bookingId, carId, session);
+             booking = viewEditBookingService.getBookingDetail(bookingId, carId, session, userId);
         } catch (RuntimeException e) {
             switch (e.getMessage()) {
                 case "user not found":
@@ -100,6 +100,11 @@ public class BookingDetailsController {
         Map<String, Long> map = CalculateNumberOfDays.calculateNumberOfDays(booking.getStartDate(), timeNow);
         Double hourlyRate = car.getBasePrice() / 24;
         Double totalPrice = CalculateNumberOfDays.calculateRentalFee(map,car.getBasePrice(),  hourlyRate);
+
+        boolean isCustomer = user.getRoles().stream()
+                .anyMatch(role -> "Customer".equals(role.getRoleName()));
+
+
 
         //=========================================================== Car detail ===================================================
 
@@ -140,6 +145,7 @@ public class BookingDetailsController {
         model.addAttribute("lateTime",lateTime);
         model.addAttribute("timNow",timeNow);
         model.addAttribute("totalPrice",totalPrice);
+        model.addAttribute("isCustomer", isCustomer);
         return "customer/EditBookingDetails";
     }
 
@@ -246,7 +252,7 @@ public class BookingDetailsController {
 
 
     @GetMapping("/cancel-booking-detail")
-    public String cancelBooking(@RequestParam Long bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
+    public String cancelBooking(@RequestParam Long bookingId,@RequestParam Integer carId, @RequestParam Integer userId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
         if (isCancelled) {
@@ -255,12 +261,12 @@ public class BookingDetailsController {
             model.addAttribute("error", "Unable to cancel the booking. Please try again.");
         }
 
-       return bookingDetail(bookingId.intValue(), carId, navigate, model, session);
+       return bookingDetail(bookingId.intValue(), carId, userId, navigate, model, session);
     }
 
 
     @GetMapping("/confirm-pickup-booking-detail")
-    public String confirmPickupBooking(@RequestParam Long bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
+    public String confirmPickupBooking(@RequestParam Long bookingId,@RequestParam Integer carId,@RequestParam Integer userId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         boolean isConfirm = rentalCarService.confirmPickupBooking(bookingId, session);
 
@@ -270,7 +276,7 @@ public class BookingDetailsController {
             model.addAttribute("error", "Unable to confirm the booking. Please try again.");
         }
 
-        return bookingDetail(bookingId.intValue(), carId, navigate, model, session);
+        return bookingDetail(bookingId.intValue(), carId, userId, navigate, model, session);
     }
 
 

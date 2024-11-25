@@ -63,7 +63,7 @@ public class RentalCarController {
     @Autowired
     PhoneNumberStandardService phoneNumberStandardService;
 
-    @GetMapping("/customer/my-bookings")
+    @GetMapping({"/customer/my-bookings", "/car-owner/my-bookings"})
     public String myBooking(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "5") int size,
                             @RequestParam(defaultValue = "lastModified") String sortBy,
@@ -96,7 +96,8 @@ public class RentalCarController {
 
 
         Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
-
+        boolean isCustomer = user.getRoles().stream()
+                .anyMatch(role -> "Customer".equals(role.getRoleName()));
         List<MyBookingDto> bookingList = bookingPages.getContent();
         //check so on-going bookings
         long onGoingBookings = bookingList.stream()
@@ -118,6 +119,9 @@ public class RentalCarController {
             model.addAttribute("order", order);
             model.addAttribute("size", size);
             model.addAttribute("totalElement", bookingPages.getTotalElements());
+            model.addAttribute("user", user);
+            model.addAttribute("isCustomer", isCustomer);
+
         }
         return "customer/MyBookings";
     }

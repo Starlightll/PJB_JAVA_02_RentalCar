@@ -664,7 +664,7 @@
 
 <!--                                                    &lt;!&ndash; Return Car button: visible only if status is In-Progress &ndash;&gt;-->
                                                     <a th:href="'#'" style="background: #707070 !important;"
-                                                       th:if="${booking.bookingStatus == 'In-Progress'}"
+                                                       th:if="${!isCustomer and booking.bookingStatus == 'In-Progress'}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
                                                        th:onclick="'returnCarDetail(' + ${booking.getBookingId()} + ')'"
                                                     >Return Car</a>
@@ -709,7 +709,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="fullName" oninput="validateFullName()"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                th:value="${rentUser.getFullName()}" name="fullName">
                                                     </div>
                                                     <span id="fullNameError" class="text-danger"></span>
@@ -726,7 +726,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                th:value="${rentUser.getDob()}"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                oninput="validateDate()" id="book_pick_date1">
 
 <!--                                                        <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>-->
@@ -745,7 +745,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="phone" name="phoneNumber"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                oninput="validatePhone()">
                                                     </div>
                                                     <div id="phoneError" style="color: red"></div>
@@ -777,7 +777,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="nationalId" name="nationalIDNo"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                oninput="validateNationalId()">
                                                     </div>
                                                     <div id="nationalIdError" style="color: red"></div>
@@ -791,7 +791,7 @@
                                                         <div class="custom-file">
                                                             <!-- Input file -->
                                                             <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile011"
-                                                                   th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                   th:disabled="${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                    aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
 
                                                             <!-- Label hiển thị tên file -->
@@ -828,7 +828,7 @@
                                                                            for="province">Province</label>
                                                                 </div>
                                                                 <select class="custom-select" id="province" th:value="${rentUser.getCity()}" th:data-default="${rentUser.getCity()}"
-                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
+                                                                    th:attr="disabled=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -842,7 +842,7 @@
                                                                            for="district">District</label>
                                                                 </div>
                                                                 <select class="custom-select" id="district" th:value="${rentUser.getDistrict()}" th:data-default="${rentUser.getDistrict()}"
-                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
+                                                                    th:attr="disabled=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -856,7 +856,7 @@
                                                                            for="ward">Ward</label>
                                                                 </div>
                                                                 <select class="custom-select" id="ward" th:value="${rentUser.getWard()}" th:data-default="${rentUser.getWard()}"
-                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}" >
+                                                                    th:attr="disabled=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}" >
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -872,7 +872,7 @@
                                                                        aria-label="Sizing example input"
                                                                        aria-describedby="inputGroup-sizing-default"
                                                                        id="street"
-                                                                       th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                       th:attr="readonly=${ !isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                        th:value="${rentUser.getStreet()}">
                                                             </div>
                                                             <a class="validate-msg">Invalid</a>
@@ -913,7 +913,8 @@
                                                                         <span class="input-group-text "
                                                                         >Full Name</span>
                                                                 </div>
-                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver">
+                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver"
+                                                                        th:attr="disabled=${ !isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                                 <input type="hidden" th:value="${booking.getDriverId()}" id="driverId">
@@ -1103,6 +1104,8 @@
                                                 </div>
 
                                             </div>
+
+                                            <th:block th:if="${isCustomer}">
                                             <div id="button">
                                                 <button class="btn-primary btn" style="width: 100px; margin: 10px 10px 10px 10px"
                                                         onclick="window.history.back()">Discard
@@ -1113,6 +1116,8 @@
                                                     Save
                                                 </button>
                                             </div>
+                                            </th:block>
+
                                             <div th:if="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
                                                  style="color: red; margin-top: 10px;">
                                                 This booking cannot be edited as its status is <span th:text="${booking.getBookingStatus()}"></span>.
@@ -1401,7 +1406,7 @@
                                                             </div>
                                                             <input readonly type="text" class="form-control"
                                                                    aria-label="Text input with checkbox" id="currentBalance"
-                                                                   th:value="${#numbers.formatDecimal(user.getWallet(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                   th:value="${#numbers.formatDecimal(rentUser.getWallet(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                         </div>
                                                     </div>
                                                     <span>Please make sure to have sufficient balance the car.</span>
@@ -1433,6 +1438,7 @@
         </svg>
     </div>
     <input type="hidden" id="triggerPopup" name="rating" th:value="${isRating}">
+    <input type="hidden" id="userId" name="rating" th:value="${rentUser.getId()}">
 
 
     <script>
@@ -1461,6 +1467,7 @@
             const cancelBookingBtn = document.getElementById('cancel-booking-btn'); // ID của nút Cancel
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
 
             if (cancelBookingBtn) {
                 cancelBookingBtn.addEventListener('click', function (event) {
@@ -1485,7 +1492,7 @@
                             console.log('User chose to cancel the booking with ID:', bookingId);
 
                             // Gửi yêu cầu xóa (bạn có thể dùng fetch hoặc window.location)
-                            window.location.href = '/cancel-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&navigate=' + navigate;
+                            window.location.href = '/cancel-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                         } else {
                             console.log('User canceled the booking action');
                         }
@@ -1502,6 +1509,7 @@
             const cancelBookingBtn = document.getElementById('confirm-booking-detail-btn'); // ID của nút Confirm
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
 
             if (cancelBookingBtn) {
                 cancelBookingBtn.addEventListener('click', function (event) {
@@ -1525,7 +1533,7 @@
                         if (result.isConfirmed) {
                             console.log('User chose to confirm the pick-up with ID:', bookingId);
                             // Gửi yêu cầu xóa (bạn có thể dùng fetch hoặc window.location)
-                            window.location.href = '/confirm-pickup-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&navigate=' + navigate;
+                            window.location.href = '/confirm-pickup-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId + '&navigate=' + navigate;
                       }
                     });
                 });
@@ -1574,6 +1582,8 @@
         function confirmReturnCarViewDetail(bookingId) {
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+
             console.log(bookingId);
             $.ajax({
                 url: '/confirm-return-car',
@@ -1592,6 +1602,7 @@
 
                             let url = '/customer/booking-detail?bookingId=' + bookingId +
                                 '&carId=' + carId +
+                                '&userId=' + userId +
                                 '&navigate=' + navigate;
                                 url += '&triggerPopup=true';
 
@@ -1606,7 +1617,7 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                         });
                     } else {
                         Swal.fire({
@@ -1615,7 +1626,7 @@
                             icon: 'error',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
                         });
                     }
                 },
@@ -1627,7 +1638,7 @@
                         icon: 'error',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
                     });
                 }
             });
@@ -1755,7 +1766,8 @@
                 const ward =  document.getElementById('ward').value;
                 const street = document.getElementById('street').value;
                 const selectedDriverId = document.getElementById("fullNameDriver").value;
-
+                const navigate = document.getElementById("navigate").value;
+                const userId = document.getElementById("userId").value;
 
 
 
@@ -1824,6 +1836,8 @@
                                 customClass: {
                                     confirmButton: 'custom-confirm-btn'
                                 }
+                            }).then(() => {
+                                window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
                             });
                         }
 
@@ -2039,7 +2053,9 @@
             // Hiển thị bảng nếu checkbox được chọn
             table.style.display = checkbox.checked ? 'block' : 'none';
         }
-
+        // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
+        document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
+        window.addEventListener('pageshow', toggleDriverInfoFields);
 
 
 

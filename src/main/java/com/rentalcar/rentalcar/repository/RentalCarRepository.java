@@ -42,6 +42,42 @@ public interface RentalCarRepository extends JpaRepository<Booking, Long> {
             nativeQuery = true)
     Page<Object[]> findAllWithPagination(@Param("userId") Long userId, Pageable pageable);
 
+
+    @Query(value = "SELECT b.[bookingId]\n" +
+            "\t  ,c.name\n" +
+            "      ,[startDate]\n" +
+            "      ,[endDate]\n" +
+            "      ,[driverInfo]\n" +
+            "      ,[actualEndDate]\n" +
+            "      ,[totalPrice]\n" +
+            "      ,b.[userId]\n" +
+            "      ,[paymentMethodId]\n" +
+            "\t  ,c.basePrice\n" +
+            "\t  ,c.deposit\n" +
+            "\t  ,bs.name\n" +
+            "\t  ,c.front\n" +
+            "\t  ,c.back\n" +
+            "\t  ,c.[left]\n" +
+            "\t  ,c.[right]\n" +
+            "\t  ,c.carId\n" +
+            "  FROM [RentalCar].[dbo].[Booking] b\n" +
+            "  Join [dbo].[Users] u On u.userId = b.userId\n" +
+            "  Join [dbo].[BookingCar] bc on bc.bookingId = b.bookingId\n" +
+            "  Join [dbo].[Car] c On c.carId = bc.carId\n" +
+            "  Join [dbo].[BookingStatus] bs On bs.BookingStatusId = b.bookingStatusId\n" +
+            "  where c.userId = :userId ",
+            countQuery = "  SELECT COUNT(*)\n" +
+                    "    FROM [RentalCar].[dbo].[Booking] b\n" +
+                    "  Join [dbo].[Users] u On u.userId = b.userId\n" +
+                    "  Join [dbo].[BookingCar] bc on bc.bookingId = b.bookingId\n" +
+                    "  Join [dbo].[Car] c On c.carId = bc.carId\n" +
+                    "  Join [dbo].[BookingStatus] bs On bs.BookingStatusId = b.bookingStatusId\n" +
+                    "  where c.userId = :userId ",
+            nativeQuery = true)
+    Page<Object[]> findAllWithPaginationOfCarOwner(@Param("userId") Long userId, Pageable pageable);
+
+
+
     @Query(value = "  SELECT b.bookingId,\n" +
             "       c.name,\n" +
             "       b.startDate,\n" +

@@ -260,6 +260,8 @@
                 <!--            <div style="display: flex; justify-content: end;">-->
                 <!--                <a class="sort-asc"><i class="fa fa-sort-amount-desc" aria-hidden="true"></i></a>-->
                 <!--            </div>-->
+                <input type="hidden" id="userId" th:value="${user.getId()}">
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="table-wrap">
@@ -419,9 +421,21 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                                     <!-- View Details button: always visible -->
-                                                    <a th:href="${'/customer/booking-detail?bookingId=' +booking.getBookingId()+'&carId='+ booking.getCarId() + '&navigate=mybookings'}"
-                                                       class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
-                                                        Details</a>
+                                                    <th:block th:if="${isCustomer}">
+                                                        <a th:href="${'/customer/booking-detail?bookingId=' +booking.getBookingId()+'&carId='+ booking.getCarId() +'&userId=' + user.getId() + '&navigate=mybookings'}"
+                                                           class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
+                                                            Details
+                                                        </a>
+                                                    </th:block>
+                                                    <th:block th:if="${!isCustomer}">
+                                                        <a th:href="${'/car-owner/booking-detail?bookingId=' +booking.getBookingId()+'&carId='+ booking.getCarId() +'&userId=' + booking.getUserId() + '&navigate=mybookings'}"
+                                                           class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
+                                                            Details
+                                                        </a>
+                                                    </th:block>
+
+
+
 
                                                     <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
                                                     <a
@@ -573,6 +587,7 @@
             console.log("DOM fully loaded and parsed");
             const sortBy = document.getElementById('sortBy').value;
             const pageSize = document.getElementById('pageSize').value;
+
 
             // Cancel Booking Button Event
             const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn-"]');
