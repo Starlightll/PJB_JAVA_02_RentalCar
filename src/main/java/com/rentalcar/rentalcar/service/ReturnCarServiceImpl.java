@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.CalculateNumberOfDays;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
@@ -347,27 +348,71 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
         );
 
-        if (bookingOptional.isPresent()) {
-            Booking booking = bookingOptional.get();
+        double totalPrice = 0; // total pric
+        double hourlyRate = bookingDto.getBasePrice() / 24;
+        double deposit = bookingDto.getDeposit();
+        String lateTime = null; //muộn bao nhiêu ngày
+        double fineLateTime = 0; //phí phạt
+        double fineLateTimePerDay = (bookingDto.getBasePrice() * FINE_COST) / 100; //tiền phạt trên ngày
+        double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
 
-            LocalDateTime currentDate = LocalDateTime.now();
-            long hoursActualToEnd = Math.max(1, (long) Math.ceil(Duration.between(bookingDto.getActualEndDate(), booking.getEndDate()).toMinutes() / 60.0));
-            long hoursStartToEnd = Math.max(1, (long) Math.ceil(Duration.between(booking.getStartDate(), booking.getEndDate()).toMinutes() / 60.0));
-            long hoursStartToActual = Math.max(1, (long) Math.ceil(Duration.between(booking.getStartDate(), currentDate).toMinutes() / 60.0));
+        Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(bookingDto.getStartDate(), LocalDateTime.now());// tổng số ngày thực
+        totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual, bookingDto.getBasePrice(), hourlyRate);
 
-
-            if (currentDate.isBefore(booking.getStartDate())) {
-                return bookingDto.getDeposit() * 0.1;
-            }
-
-            if (currentDate.isBefore(booking.getEndDate())) {
-                return hoursStartToActual * (bookingDto.getBasePrice() / 24);
-            } else {
-                return hoursActualToEnd * (bookingDto.getBasePrice() / 24) * FINE_COST / 100 + hoursStartToEnd * (bookingDto.getBasePrice() / 24); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
-            }
+        //Tính sô ngày phạt nếu actual date > end date
+        if (CalculateNumberOfDays.calculateLateTime(bookingDto.getEndDate(), LocalDateTime.now()) != null) {
+            Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(bookingDto.getEndDate(), LocalDateTime.now());// tổng số ngày quá hạn
+            fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay, fineLateTimePerHour);// tổng số tiền phạt
 
         }
-        return 0.0;
+        if (LocalDateTime.now().isBefore(bookingDto.getStartDate())) {
+            if (totalPrice > deposit) {
+                return totalPrice - deposit;
+            }
+            return deposit - totalPrice;
+        }
+
+        if (LocalDateTime.now().isBefore(bookingDto.getEndDate())) {
+            if (totalPrice > deposit) {
+                return totalPrice - deposit;
+            }
+            return deposit - totalPrice;
+        }
+
+        if (LocalDateTime.now().isAfter(bookingDto.getEndDate())) {
+            if (totalPrice > deposit) {
+                return (totalPrice - deposit) + fineLateTime;
+            }
+
+            double total = totalPrice + fineLateTime; // số tiền khi tiền phạt mà cộng với total
+            if (total > deposit) {
+                return total - deposit;
+            }
+            return deposit - total;
+        }
+
+//        if (bookingOptional.isPresent()) {
+//            Booking booking = bookingOptional.get();
+//
+//            LocalDateTime currentDate = LocalDateTime.now();
+//            long hoursActualToEnd = Math.max(1, (long) Math.ceil(Duration.between(bookingDto.getActualEndDate(), booking.getEndDate()).toMinutes() / 60.0));
+//            long hoursStartToEnd = Math.max(1, (long) Math.ceil(Duration.between(booking.getStartDate(), booking.getEndDate()).toMinutes() / 60.0));
+//            long hoursStartToActual = Math.max(1, (long) Math.ceil(Duration.between(booking.getStartDate(), currentDate).toMinutes() / 60.0));
+//
+//
+//            if (currentDate.isBefore(booking.getStartDate())) {
+//                return bookingDto.getDeposit() * 0.1;
+//            }
+//
+//            if (currentDate.isBefore(booking.getEndDate())) {
+//                return hoursStartToActual * (bookingDto.getBasePrice() / 24);
+//            } else {
+//                return hoursActualToEnd * (bookingDto.getBasePrice() / 24) * FINE_COST / 100 + hoursStartToEnd * (bookingDto.getBasePrice() / 24); // số tiền theo hợp đồng  +  số ngày quá hạn * giá thuê * phạt 20%
+//            }
+//
+//        }
+        return totalPrice;
+
     }
 
     @Override

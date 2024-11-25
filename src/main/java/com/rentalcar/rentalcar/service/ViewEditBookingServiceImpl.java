@@ -86,7 +86,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
             Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
             totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
-            if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
+            if(CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
                 lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
                 Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
                 fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt

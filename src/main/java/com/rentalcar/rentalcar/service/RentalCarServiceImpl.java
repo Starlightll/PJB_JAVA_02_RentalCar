@@ -631,7 +631,14 @@ public class RentalCarServiceImpl implements RentalCarService {
                 (String) result[28],  // bookingStatusName
                 Long.valueOf((Integer) result[29]) // booking Id
         );
+
+
+        //============================TÍNH TOTAL PRICE =================================================================
         double totalPrice = returnCarService.calculateTotalPriceForActualEnddateCarOwner(carDto.getBookingId());
+
+        //==============================================================================================================
+
+
 
         User carOwner = userRepository.findById(Long.valueOf(carDto.getUserId())).get();
 
