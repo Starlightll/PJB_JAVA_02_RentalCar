@@ -81,7 +81,7 @@
                         </thead>
                         <tbody class="text-center">
                         <tr th:each="transaction, iterStat : ${transactions}">
-                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${iterStat.index + 1 + 5 * currentPage - 5}"></td>
                             <td th:text="${(transaction.transactionType == 'Withdraw'
                             or transaction.transactionType == 'Pay deposit'
                             or  transaction.transactionType == 'Offset final payment'
@@ -103,37 +103,57 @@
                     </table>
 
                     <nav aria-label="Transaction history pagination">
-                        <ul class="pagination justify-content-center" th:if="${fromDate != null && toDate != null}">
+                        <ul class="pagination justify-content-center">
+                            <!-- Nút Previous -->
                             <li th:classappend="${currentPage == 1} ? 'disabled' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${currentPage - 1}, fromDate=${fromDate}, toDate=${toDate})}"
-                                   class="page-link">Previous</a>
+                                <a th:href="${fromDate != null && toDate != null} ?
+                          @{/wallet/my-wallet(page=${currentPage - 1}, fromDate=${fromDate}, toDate=${toDate})} :
+                          @{/wallet/my-wallet(page=${currentPage - 1})}"
+                                   class="page-link">Prev</a>
                             </li>
-                            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+
+                            <!-- Trang đầu tiên -->
+                            <li th:if="${currentPage > 3}" class="page-item">
+                                <a th:href="${fromDate != null && toDate != null} ?
+                          @{/wallet/my-wallet(page=${1}, fromDate=${fromDate}, toDate=${toDate})} :
+                          @{/wallet/my-wallet(page=${1})}"
+                                   class="page-link">1</a>
+                            </li>
+                            <li th:if="${currentPage > 3}" class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+
+                            <!-- Các trang ở giữa -->
+                            <li th:each="i : ${#numbers.sequence(currentPage - 2 > 1 ? currentPage - 2 : 1,
+                                            currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}"
                                 th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${i}, fromDate=${fromDate}, toDate=${toDate})}"
+                                <a th:href="${fromDate != null && toDate != null} ?
+                          @{/wallet/my-wallet(page=${i}, fromDate=${fromDate}, toDate=${toDate})} :
+                          @{/wallet/my-wallet(page=${i})}"
                                    th:text="${i}" class="page-link"></a>
                             </li>
+
+                            <!-- Trang cuối cùng -->
+                            <li th:if="${currentPage < totalPages - 2}" class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li th:if="${currentPage < totalPages - 2}" class="page-item">
+                                <a th:href="${fromDate != null && toDate != null} ?
+                          @{/wallet/my-wallet(page=${totalPages}, fromDate=${fromDate}, toDate=${toDate})} :
+                          @{/wallet/my-wallet(page=${totalPages})}"
+                                   th:text="${totalPages}" class="page-link"></a>
+                            </li>
+
+                            <!-- Nút Next -->
                             <li th:classappend="${currentPage == totalPages} ? 'disabled' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${currentPage + 1}, fromDate=${fromDate}, toDate=${toDate})}"
+                                <a th:href="${fromDate != null && toDate != null} ?
+                          @{/wallet/my-wallet(page=${currentPage + 1}, fromDate=${fromDate}, toDate=${toDate})} :
+                          @{/wallet/my-wallet(page=${currentPage + 1})}"
                                    class="page-link">Next</a>
                             </li>
                         </ul>
-
-                        <ul class="pagination justify-content-center" th:if="${fromDate == null || toDate == null}">
-                            <li th:classappend="${currentPage == 1} ? 'disabled' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${currentPage - 1})}"
-                                   class="page-link">Previous</a>
-                            </li>
-                            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
-                                th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${i})}" th:text="${i}" class="page-link"></a>
-                            </li>
-                            <li th:classappend="${currentPage == totalPages} ? 'disabled' : ''" class="page-item">
-                                <a th:href="@{/wallet/my-wallet(page=${currentPage + 1})}" class="page-link">Next</a>
-                            </li>
-                        </ul>
-
                     </nav>
+
 
                 </div>
             </div>
