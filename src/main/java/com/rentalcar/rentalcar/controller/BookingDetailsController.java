@@ -60,7 +60,7 @@ public class BookingDetailsController {
     RatingStarRepository ratingStarRepo;
 
 
-    @GetMapping("/customer/booking-detail")
+    @GetMapping({"/customer/booking-detail", "/car-owner/booking-detail"})
     public String bookingDetail(@RequestParam Integer bookingId,@RequestParam Integer carId,@RequestParam String navigate,  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
@@ -78,7 +78,7 @@ public class BookingDetailsController {
                 case "user not found":
                     return "redirect:/login";
                 case "booking detail not found":
-                    return "redirect:/my-bookings";
+                    return "redirect:/customer/my-bookings";
             }
         }
         List<UserDto> listDriver = getAllDriverAvailable(bookingId);

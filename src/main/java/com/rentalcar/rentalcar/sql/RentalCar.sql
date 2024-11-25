@@ -23,6 +23,7 @@ CREATE TABLE [dbo].[Users]
     fullName       NVARCHAR(100),
     agreeTerms     int                not null,
     status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED', 'RENTED')),
+    salaryDriver   DECIMAL(18, 2),
     PRIMARY KEY (userId)
     );
 
@@ -283,7 +284,7 @@ INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
 
 
 -- insert BookingStatus
-INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
+    INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (1, N'Pending deposit')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (2, N'Confirmed')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (3, N'In-Progress')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (4, N'Pending payment')
@@ -311,11 +312,11 @@ CREATE TABLE [dbo].[Transaction] (
 
 -- ĐÂY LÀ DỮ LIỆU TEST DRIVER, ANH EM TỤ THÊM TRONG BẢNG USER ROLE NHÉ , ROLE LÀ DRIVER(4)
 
-INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status)
+INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, salaryDriver)
 VALUES
-    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'1', N'8', N'334', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED'),
-    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'1', N'8', N'334', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED'),
-    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'1', N'8', N'334', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED');
+    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'1', N'8', N'334', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED', 500000),
+    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'1', N'8', N'334', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 499000),
+    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'1', N'8', N'334', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 459000);
 
 INsert into UserRole
 values(1, 4), (2,4),(3,4)

@@ -66,23 +66,24 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         double hourlyRate = basprice / 24;
         String lateTime = null; //muộn bao nhiêu ngày
         double fineLateTime = 0; //phí phạt
-        double returnDeposit = 0; //tiền phải thánh toán
+        double totalMoney = 0; //tiền phải thánh toán
+        double returnDeposit = 0; //tiền phải hoàn trả
         double fineLateTimePerDay = (basprice * FINE_COST) / 100; //tiền phạt trên ngày
         double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
 
-
-        Map<String, Long> map_numberOfDays = new HashMap<>();
+        Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+        //Lấy dữ liệu trong db
         if(bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
                 bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
-                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+            Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
         //  tính late date
             if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) { // Lấy từ db
                 lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
-                fineLateTime = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, fineLateTimePerDay,fineLateTimePerHour);
+                fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);
             }
         }
-        else if(LocalDateTime.now().isAfter(endDate)) { //Lấy động theo thời gian thực
-            map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+        else if(LocalDateTime.now().isAfter(endDate)) { //Lấy động dữ liệu theo thời gian thực khi bị phạt
+
             Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
             totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
             if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
@@ -90,12 +91,12 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
                 fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
             }
-        } else {
-            map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+        } else {// còn lại
             totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
         }
-
-        returnDeposit = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
+        Map<String, Double> map_amount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
+        totalMoney = map_amount.get("totalMoney");
+        returnDeposit = map_amount.get("returnDeposit");
 
         String str_numberOfDays = map_numberOfDays.get("days") + " days " + map_numberOfDays.get("hours") + " h ";
 
@@ -123,7 +124,8 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 result[17] != null ? Long.valueOf((Integer) result[17]) : null,
                 lateTime,
                 fineLateTime,
-                returnDeposit
+                returnDeposit,
+                totalMoney
         );
         return bookingDto;
     }
@@ -240,29 +242,45 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
     }
 
 
-    public double calculateAmountToPay(LocalDateTime startDate, LocalDateTime endDate,  double totalPrice, double deposit, double fineLateTime) {
+    public Map<String, Double> calculateAmountToPay(LocalDateTime startDate, LocalDateTime endDate,  double totalPrice, double deposit, double fineLateTime) {
+        Map<String, Double> result = new HashMap<>();
+        result.put("totalMoney", 0D);
+        result.put("returnDeposit", 0D);
+
         if(LocalDateTime.now().isBefore(startDate)) {
             if(totalPrice > deposit) {
-                return (totalPrice - deposit);
+                result.put("totalMoney", totalPrice - deposit);
+                return result;
             }
-            return  deposit - totalPrice;
+            result.put("returnDeposit",  deposit - totalPrice);
+            return result;
         }
 
         if(LocalDateTime.now().isBefore(endDate)) {
             if(totalPrice > deposit) {
-                return (totalPrice - deposit);
+                result.put("totalMoney", totalPrice - deposit);
+                return result;
             }
-            return  deposit - totalPrice;
+            result.put("returnDeposit",  deposit - totalPrice);
+            return result;
         }
 
         if(LocalDateTime.now().isAfter(endDate)) {
             if(totalPrice > deposit) {
-                return (totalPrice - deposit) + fineLateTime;
+                result.put("totalMoney", (totalPrice - deposit) + fineLateTime);
+                return result;
             }
-            return  (deposit - totalPrice) + fineLateTime; //trường hợp hi hữu
+
+            double total =  totalPrice + fineLateTime; // số tiền khi tiền phạt mà cộng với total
+            if(total > deposit) {
+                result.put("totalMoney", total - deposit);
+                return result;
+            }
+            result.put("returnDeposit",  deposit - total);
+            return result;
         }
 
-        return 0;
+        return result;
     }
 
 }

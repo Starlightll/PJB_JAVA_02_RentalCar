@@ -48,6 +48,7 @@ function fetchDriverDetailsAjax() {
         $('#provinceDriver').empty();
         $('#districtDriver').empty();
         $('#wardDriver').empty();
+        $('#salaryDriver').empty();
         return;
     }
 
@@ -63,6 +64,7 @@ function fetchDriverDetailsAjax() {
             $('#emailDriver').val(driver.email);
             $('#nationalIdDriver').val(driver.nationalId);
             $('#streetDriver').val(driver.street);
+            $('#salaryDriver').val(driver.salaryDriver);
             // Hiển thị ảnh bằng cách thay đổi src
             $('#previewImageDriver').attr('src', driver.drivingLicense);
             // Gọi hàm để hiển thị tên địa điểm
