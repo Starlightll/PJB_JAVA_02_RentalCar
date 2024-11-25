@@ -44,13 +44,13 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
 
     @Override
-    public MyBookingDto getBookingDetail(Integer bookingId, Integer carId, HttpSession session) {
+    public MyBookingDto getBookingDetail(Integer bookingId, Integer carId, HttpSession session, Integer userId) {
 
         User user = (User) session.getAttribute("user");
         if (user == null) {
             throw new RuntimeException("user not found");
         }
-        Object[] obj = rentalCarRepository.findBookingDetail(user.getId(),carId,bookingId);
+        Object[] obj = rentalCarRepository.findBookingDetail(Long.valueOf(userId),carId,bookingId);
         if(obj == null || obj.length == 0){
             throw new RuntimeException("booking detail not found");
         }

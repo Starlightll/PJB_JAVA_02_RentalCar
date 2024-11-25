@@ -306,6 +306,7 @@
                 </div>
 
                 <input type="hidden" id="carId" th:value="${car.getCarId()}"/>
+                <input type="hidden" id="userId" th:value="${user.getId()}"/>
 
                 <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
 
@@ -1117,6 +1118,8 @@
                 const ward =  document.getElementById('ward').value;
                 const street = document.getElementById('street').value;
                 const selectedDriverId = document.getElementById("fullNameDriver").value;
+                const userId = document.getElementById("userId").value;
+
                 // const selectedId = $('#fullNameDriver').val();
 
 
@@ -1204,7 +1207,7 @@
                                 const formattedBookingNumber = bookingInfo.id;
                                 // Gán lại giá trị href của thẻ <a> với bookingId mới
                                 const viewBookingLink = document.querySelector('a.btn-secondary.btn');
-                                viewBookingLink.href = `/customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&navigate=home`;
+                                viewBookingLink.href = `/customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&userId=${userId}&navigate=home`;
                                 console.log("Updated booking link:", viewBookingLink.href);
 
                                 // Cập nhật từng phần tử cụ thể
