@@ -11561,7 +11561,7 @@ h1, h2, h3, h4, h5,
     top: 20px;
     left: 0;
     right: 0;
-    z-index: 3;
+    z-index: 100;
 }
 
 @media (max-width: 991.98px) {

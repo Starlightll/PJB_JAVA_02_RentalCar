@@ -17,4 +17,5 @@ public interface CarOwnerService {
     void addCar(CarDraft carDraft, User user);
     List<Car> getCarsByStatus(Integer statusId);
     void setCarStatus(Integer carId, Integer statusId);
+    boolean requestChangeBasicInformation(CarDraft carDraft, MultipartFile[] files, User user, Integer carId);
 }

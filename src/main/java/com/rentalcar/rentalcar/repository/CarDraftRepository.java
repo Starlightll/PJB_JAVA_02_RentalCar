@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CarDraftRepository extends JpaRepository<CarDraft, Integer> {
 
-    CarDraft findTopByUser_IdAndCarIdNotNullOrderByLastModifiedDesc(Long userId);
+    CarDraft findTopByUser_IdAndCarId(Long user_id, Integer carId);
     CarDraft findTopByUser_IdAndCarIdIsNullOrderByLastModifiedDesc(Long userId);
 
 

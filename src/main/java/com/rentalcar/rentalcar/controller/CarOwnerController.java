@@ -182,7 +182,7 @@ public class CarOwnerController {
             model.addAttribute("registrationUrl", "/" + registrationPath);
             model.addAttribute("certificateUrl", "/" + certificatePath);
             model.addAttribute("insuranceUrl", "/" + insurancePath);
-            List<Integer> statusIds = List.of(1,2,3);
+            List<Integer> statusIds = List.of(1, 2, 3);
             List<CarStatus> carStatus = carStatusRepository.findCarStatusesByStatusIdIsIn(statusIds);
             model.addAttribute("carStatuses", carStatus);
 
@@ -288,6 +288,49 @@ public class CarOwnerController {
         carOwnerService.updateCar(carUpdate, files, user, carId, carStatus);
         return ResponseEntity.ok("Car updated successfully");
     }
+
+    @PostMapping("/request-change-basic-information")
+    public ResponseEntity<?> requestChangeBasicInformation(
+            @RequestParam(value = "carId") Integer carId,
+            @RequestParam(value = "licensePlate") String licensePlate,
+            @RequestParam(value = "model") String model,
+            @RequestParam(value = "color") String color,
+            @RequestParam(value = "productionYear") Integer productionYear,
+            @RequestParam(value = "seatNo") Integer seatNo,
+            @RequestParam(value = "transmissionType") String transmissionType,
+            @RequestParam(value = "fuelType") String fuelType,
+            @RequestParam(value = "registration", required = false) MultipartFile registration,
+            @RequestParam(value = "certificate", required = false) MultipartFile certificate,
+            @RequestParam(value = "insurance", required = false) MultipartFile insurance,
+            HttpSession session
+    ) throws IOException {
+        User user = (User) session.getAttribute("user");
+        Car car = carRepository.getCarByCarId(carId);
+        if (car == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Car not found");
+        }
+        List<Integer> statusIds = List.of(1, 3);
+        if (!Objects.equals(car.getUser().getId(), user.getId()) || !statusIds.contains(car.getCarStatus().getStatusId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not allowed to update this car");
+        }
+        if(licensePlate == null || model == null || color == null || productionYear == null || seatNo == null || transmissionType == null || fuelType == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data");
+        }
+
+        CarDraft carDraft = new CarDraft();
+        carDraft.setLicensePlate(licensePlate);
+        carDraft.setModel(model);
+        carDraft.setColor(color);
+        carDraft.setProductionYear(productionYear);
+        carDraft.setSeat(seatNo);
+        carDraft.setTransmission(transmissionType);
+        carDraft.setFuelType(fuelType);
+
+        MultipartFile[] files = {registration, certificate, insurance};
+        carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId);
+        return ResponseEntity.ok("Request sent successfully");
+    }
+
 
 
     @GetMapping("/delete-car")

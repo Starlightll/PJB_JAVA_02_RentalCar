@@ -204,6 +204,10 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         }
     }
 
+    @Override
+    public boolean requestChangeBasicInformation(CarDraft carDraft, MultipartFile[] files, User user, Integer carId) {
+        return false;
+    }
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
