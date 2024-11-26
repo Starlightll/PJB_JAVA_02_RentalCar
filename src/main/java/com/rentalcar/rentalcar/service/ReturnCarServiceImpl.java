@@ -106,7 +106,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         User user = (User) session.getAttribute("user");
 
         User userdb = userRepository.getUserById(user.getId());
-        User users = userRepository.getUserById(user.getId());
         Object[] result = (Object[]) nestedArray[0];
         MyBookingDto bookingDto = new MyBookingDto(
                 Long.valueOf((Integer) result[0]),
@@ -214,7 +213,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                                 return 0;
                             }
                             emailService.sendRequestReturnCar(car_owner, booking, bookingDto.getCarId(), bookingDto.getCarname());
-                            emailService.sendPaymentDriverSalary(driver,  booking, driverSalary);
+                            emailService.sendPaymentDriverSalary(driver, booking, driverSalary);
                             return 1;
                         } else {
                             System.out.println("Completed status not found.");
@@ -324,7 +323,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 
     @Override
     public Double calculateTotalPriceForActualEnddateCarOwner(Long bookingId) {
-        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
+
         Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
         Object[] result = (Object[]) nestedArray[0];
         MyBookingDto bookingDto = new MyBookingDto(
@@ -391,6 +390,140 @@ public class ReturnCarServiceImpl implements ReturnCarService {
 //
 //        }
         return totalPrice;
+
+    }
+
+    @Override
+    public String checkPayment(Long bookingId, HttpSession session) {
+        Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
+        Object[] result = (Object[]) nestedArray[0];
+        MyBookingDto bookingDto = new MyBookingDto(
+                Long.valueOf((Integer) result[0]),
+                ((Timestamp) result[1]).toLocalDateTime(), //start date
+                ((Timestamp) result[2]).toLocalDateTime(), //end date
+                (String) result[3], // driverInfo
+                ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
+                ((BigDecimal) result[5]).doubleValue(), // total price
+                Long.valueOf((Integer) result[6]), //userId
+                (Integer) result[7], //bookingStatus
+                (Integer) result[8], //paymentMethod
+                result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
+                ((BigDecimal) result[10]).doubleValue(), // basePrice
+                ((BigDecimal) result[11]).doubleValue(), // deposit
+                (BigDecimal) result[12], //carowner wallet
+                Long.valueOf((Integer) result[13]),
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
+
+        );
+        User user = userRepository.getUserById(bookingDto.getUserId());
+
+        Double totalPrice = bookingDto.getTotalPrice();
+        double deposit = bookingDto.getDeposit();
+        double remainingMoney = Math.abs(totalPrice - deposit);
+
+        NumberFormat currencyFormatter = NumberFormat.getInstance(Locale.US);
+        String formattedRemainingMoney = currencyFormatter.format(remainingMoney);
+
+
+        if (remainingMoney <= user.getWallet().doubleValue()) {
+            return String.format(
+                    "You need to pay an additional amount of %s VND to complete the booking.",
+                    formattedRemainingMoney
+            );
+        } else {
+            return String.format(
+                    "Your wallet balance is insufficient. Please top up and try again. You need an additional %s VND.",
+                    formattedRemainingMoney
+            );
+        }
+    }
+
+    @Override
+    public int confirmPayment(Long bookingId, HttpSession session) {
+        Optional<Booking> bookingOptional = rentalCarRepository.findById(bookingId);
+        Object[] nestedArray = bookingRepository.findByBookingId(bookingId);
+        User user = (User) session.getAttribute("user");
+
+        User userdb = userRepository.getUserById(user.getId());
+        Object[] result = (Object[]) nestedArray[0];
+        MyBookingDto bookingDto = new MyBookingDto(
+                Long.valueOf((Integer) result[0]),
+                ((Timestamp) result[1]).toLocalDateTime(), // start date
+                ((Timestamp) result[2]).toLocalDateTime(), // end date
+                (String) result[3], // driverInfo
+                ((Timestamp) result[4]).toLocalDateTime(), // actualEndDate
+                ((BigDecimal) result[5]).doubleValue(), // total price
+                Long.valueOf((Integer) result[6]), // userId
+                (Integer) result[7], // bookingStatus
+                (Integer) result[8], // paymentMethod
+                result[9] != null ? Long.valueOf((Integer) result[9]) : null, // driver
+                ((BigDecimal) result[10]).doubleValue(), // basePrice
+                ((BigDecimal) result[11]).doubleValue(), // deposit
+                (BigDecimal) result[12], // carOwner wallet
+                Long.valueOf((Integer) result[13]),
+                (String) result[14], //car name
+                (Integer) result[15] //cariD
+
+        );
+
+        User car_owner = userRepository.getUserById(bookingDto.getCarOwnerId());
+        BigDecimal myWallet = userdb.getWallet();
+
+        Double totalPrice = bookingDto.getTotalPrice();
+        double deposit = bookingDto.getDeposit();
+        double remainingMoney = Math.abs(totalPrice - deposit);
+        BigDecimal remainingMoneyBig = new BigDecimal(remainingMoney);
+
+
+        if (remainingMoney > user.getWallet().doubleValue()) {
+            return -1;
+
+        } else {
+            if (bookingOptional.isPresent()) {
+                Booking booking = bookingOptional.get();
+                //======================Cộng tiền vào ví car_owner===========================
+                // Driver receive money
+                BigDecimal updatedCarOwnerWallet = car_owner.getWallet().add(remainingMoneyBig);
+                car_owner.setWallet(updatedCarOwnerWallet);
+                userRepository.save(car_owner);
+                transactionService.saveTransaction(car_owner, remainingMoneyBig, TransactionType.OFFSET_FINAL_PAYMENT_CAR_OWNER, booking);
+
+                // ======================Trừ tiền vào ví customer===========================
+                // Pay money for car-owner
+                BigDecimal updatedUserWallet = myWallet.subtract(remainingMoneyBig);
+                user.setWallet(updatedUserWallet);
+                userRepository.save(user);
+                session.setAttribute("user", user);
+                transactionService.saveTransaction(user, remainingMoneyBig, TransactionType.OFFSET_FINAL_PAYMENT_CUSTOMER, booking);
+                //=================================================
+                // Check booking status is In-Progress.
+                if (booking.getUser().getId().equals(user.getId()) &&
+                        booking.getBookingStatus().getBookingStatusId() == 4) {
+
+                    Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(5L);
+                    if (completedStatusOptional.isPresent()) {
+                        BookingStatus completedStatus = completedStatusOptional.get();
+                        booking.setBookingStatus(completedStatus);
+                        booking.setLastModified(new Date());
+                        rentalCarRepository.save(booking);
+
+
+                        emailService.sendPaymentConfirmation(car_owner, booking, bookingDto.getCarId(), bookingDto.getCarname(), remainingMoney);
+                        return 1;
+                    } else {
+                        System.out.println("Completed status not found.");
+                        return 0;
+                    }
+                } else {
+                    System.out.println("Booking does not belong to the user or is not in an 'In-Progress' state.");
+                    return 0;
+                }
+            } else {
+                System.out.println("Booking with ID " + bookingId + " not found.");
+                return 0;
+            }
+        }
 
     }
 

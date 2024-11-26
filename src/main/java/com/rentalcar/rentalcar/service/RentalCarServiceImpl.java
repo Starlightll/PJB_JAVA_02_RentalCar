@@ -638,8 +638,6 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         //==============================================================================================================
 
-
-
         User carOwner = userRepository.findById(Long.valueOf(carDto.getUserId())).get();
 
         double remainingMoney = Math.abs(carDto.getDeposit() - totalPrice);
@@ -653,13 +651,12 @@ public class RentalCarServiceImpl implements RentalCarService {
                         "message", "The customer will pay an amount of " + formattedMoney +
                                 " VND to complete this booking. \nPress OK and wait for customer to pay!"
                 );
-            } else if(totalPrice == carDto.getDeposit()) {
+            } else if (totalPrice == carDto.getDeposit()) {
                 return Map.of(
                         "status", "success",
                         "message", "The deposit amount equals the amount the customer needs to pay. \nPlease press OK to complete this booking."
                 );
-            }
-            else {
+            } else {
 
                 if (remainingMoney <= carOwner.getWallet().doubleValue()) {
                     return Map.of(
@@ -680,7 +677,7 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     @Override
     public int confirmReturnCar(Long carId, HttpSession session) {
-        Object[] nestedArray = carRepository.findCarAndBookingByCarId(carId, 4);
+        Object[] nestedArray = carRepository.findCarAndBookingByCarId(carId, 8);
 
         Object[] result = (Object[]) nestedArray[0];
         CarDto carDto = new CarDto(
@@ -715,7 +712,6 @@ public class RentalCarServiceImpl implements RentalCarService {
                 (String) result[28],  // bookingStatusName
                 Long.valueOf((Integer) result[29]) // booking Id
         );
-        // Lấy thông tin người dùng từ session
         User user = (User) session.getAttribute("user");
         if (user == null) {
             System.out.println("User not logged in.");
@@ -730,9 +726,9 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
         Car car = carOptional.get();
 
-        // Kiểm tra trạng thái xe
-        if (!car.getCarStatus().getStatusId().equals(11)) {
-            System.out.println("Car is not in 'Booked' status.");
+        // check car status
+        if (!car.getCarStatus().getStatusId().equals(16)) {
+            System.out.println("Car is not in 'Pending return' status.");
             return 0;
         }
 
@@ -750,67 +746,90 @@ public class RentalCarServiceImpl implements RentalCarService {
         User carOwner = userRepository.getUserById(Long.valueOf(carDto.getUserId()));
         User customer = booking.getUser();
 
-        // Cập nhật ví của carOwner và customer
         Double totalPrice = returnCarService.calculateTotalPriceForActualEnddateCarOwner(booking.getBookingId());
         Double deposit = car.getDeposit();
         double remainingAmount = Math.abs(deposit - totalPrice);
         BigDecimal remainingMoney = BigDecimal.valueOf(remainingAmount);
+        LocalDateTime currentTime = LocalDateTime.now();
+        if (totalPrice < carDto.getDeposit()) {
+            // Cộng tiền vào customer
+            BigDecimal updatedCustomerWallet = customer.getWallet().add(remainingMoney);
+            customer.setWallet(updatedCustomerWallet);
+            userRepository.save(customer);
+            transactionService.saveTransaction(customer, remainingMoney, TransactionType.OFFSET_FINAL_BACK_REMAIN_DEPOSIT, booking);
 
-        // Cộng tiền vào customer
-        BigDecimal updatedCustomerWallet = customer.getWallet().add(remainingMoney);
-        customer.setWallet(updatedCustomerWallet);
-        userRepository.save(customer);
-        transactionService.saveTransaction(customer, remainingMoney, TransactionType.OFFSET_FINAL_BACK_REMAIN_DEPOSIT, booking);
+            // Trừ tiền từ ví car owner
+            BigDecimal updatedCarOwnerWallet = carOwner.getWallet().subtract(remainingMoney);
+            carOwner.setWallet(updatedCarOwnerWallet);
+            userRepository.save(carOwner);
+            transactionService.saveTransaction(carOwner, remainingMoney, TransactionType.OFFSET_FINAL_PAYMENT_BACK_DEPOSIT, booking);
 
-        // Trừ tiền từ ví car owner
-        BigDecimal updatedCarOwnerWallet = carOwner.getWallet().subtract(remainingMoney);
-        carOwner.setWallet(updatedCarOwnerWallet);
-        userRepository.save(carOwner);
-        transactionService.saveTransaction(carOwner, remainingMoney, TransactionType.OFFSET_FINAL_PAYMENT_BACK_DEPOSIT, booking);
+            // Update status xe thành "Available"
+            Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
+            if (availableStatusOptional.isEmpty()) {
+                System.out.println("Car status 'Available' not found.");
+                return 0;
+            }
+            CarStatus availableStatus = availableStatusOptional.get();
+            car.setCarStatus(availableStatus);
+            carRepository.save(car);
 
-        // Update status xe thành "Available"
-        Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
-        if (availableStatusOptional.isEmpty()) {
-            System.out.println("Car status 'Available' not found.");
-            return 0;
+            Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(5L);
+            if (completedStatusOptional.isEmpty()) {
+                System.out.println("Booking status 'Completed' not found.");
+                return 0;
+            }
+            BookingStatus completedStatus = completedStatusOptional.get();
+            booking.setBookingStatus(completedStatus);
+            booking.setLastModified(new Date());
+            booking.setActualEndDate(currentTime);
+            booking.setTotalPrice(totalPrice);
+            bookingRepository.save(booking);
+
+            // Gửi email thông báo
+            emailService.sendPaymentConfirmation(
+                    customer,
+                    booking,
+                    carDto.getCarId().intValue(),
+                    car.getCarName(),
+                    remainingAmount
+            );
+
+            System.out.println("Payment confirmed and booking completed.");
+            return 1;
+        } else {
+            // Update status xe thành "Pending payment"
+            Optional<CarStatus> availableStatusOptional = carStatusRepository.findById(1);
+            if (availableStatusOptional.isEmpty()) {
+                System.out.println("Car status 'Available' not found.");
+                return 0;
+            }
+            CarStatus availableStatus = availableStatusOptional.get();
+            car.setCarStatus(availableStatus);
+            carRepository.save(car);
+
+            Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(4L);
+            if (completedStatusOptional.isEmpty()) {
+                System.out.println("Booking status 'Pending payment' not found.");
+                return 0;
+            }
+            BookingStatus completedStatus = completedStatusOptional.get();
+            booking.setBookingStatus(completedStatus);
+            booking.setLastModified(new Date());
+            bookingRepository.save(booking);
+
+            emailService.sendPaymentConfirmation(
+                    customer,
+                    booking,
+                    carDto.getCarId().intValue(),
+                    car.getCarName(),
+                    remainingAmount
+            );
+
+            System.out.println("Pending customer confirm payment!");
+            return 2;
         }
-        CarStatus availableStatus = availableStatusOptional.get();
-        car.setCarStatus(availableStatus);
-        carRepository.save(car);
 
-        Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findByName("Completed");
-        if (completedStatusOptional.isEmpty()) {
-            System.out.println("Booking status 'Completed' not found.");
-            return 0;
-        }
-        BookingStatus completedStatus = completedStatusOptional.get();
-        booking.setBookingStatus(completedStatus);
-        booking.setLastModified(new Date());
-        bookingRepository.save(booking);
-
-        //================Thay đổi trạng thái tài xế======================
-        Long oldDriverId = null;
-        if (booking.getDriver() != null && booking.getDriver().getId() != null) {
-            oldDriverId = booking.getDriver().getId();
-        }
-        if (oldDriverId != null) {
-            User oldDriver = userRepository.getUserById(oldDriverId);
-            oldDriver.setStatus(UserStatus.ACTIVATED);
-            userRepository.save(oldDriver);
-        }
-        //==========================================
-
-        // Gửi email thông báo
-        emailService.sendPaymentConfirmation(
-                customer,
-                booking,
-                carDto.getCarId().intValue(),
-                car.getCarName(),
-                remainingAmount
-        );
-
-        System.out.println("Payment confirmed and booking completed.");
-        return 1; // Thành công
     }
 
     @Override

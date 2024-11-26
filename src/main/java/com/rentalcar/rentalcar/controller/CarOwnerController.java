@@ -503,6 +503,8 @@ public class CarOwnerController {
         // Handle response based on caseReturn value
         if (casePayment == 1) {
             return generateResponse(response, "success1", "Booking has been successfully completed.");
+        } else if(casePayment == -1) {
+            return generateResponse(response, "success1", "Not enough money!");
         }
 
         Car car = carRepository.getCarByCarId(carId.intValue());
@@ -547,6 +549,19 @@ public class CarOwnerController {
             }
         }
         return generateResponse(response, "error", "Error Return!");
+    }
+
+
+    @GetMapping("/check-payment")
+    public ResponseEntity<?> checkPayment(@RequestParam("carId") Long carId,
+                                         HttpSession session) {
+        Map<String, String> response = rentalCarService.checkReturnCar(carId, session);
+
+        if ("success".equals(response.get("status"))) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     private ResponseEntity<Map<String, Object>> generateResponse(Map<String, Object> response, String status, String message) {
