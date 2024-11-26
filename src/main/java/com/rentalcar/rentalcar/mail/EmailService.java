@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.mail;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.TimeFormatter;
 import com.rentalcar.rentalcar.dto.BookingDto;
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
@@ -461,12 +462,12 @@ public class EmailService {
 
 
     @Async
-    public void sendReminderEmail(User user, Booking booking, Integer carId, String carName, LocalDateTime endlDate, double remainingMoney) {
+    public void sendReminderEmail(User user, MyBookingDto booking, Integer carId, String carName, LocalDateTime endDate, double remainingMoney) {
         String recipientAddress = user.getEmail();
         String baseUrl = "http://localhost:8080/customer/booking-detail?bookingId=" + booking.getBookingId() + "&carId=" + carId + "&userId=" + user.getId() + "&navigate=mybookings";
         String urlToEditCar = baseUrl + carId;
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String formattedDueDate = endlDate.format(dateFormatter);
+        String formattedDueDate = endDate.format(dateFormatter);
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
         String remainingMoneyString = currencyFormatter.format(remainingMoney);
 

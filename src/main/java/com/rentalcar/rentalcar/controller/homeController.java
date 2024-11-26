@@ -1,7 +1,9 @@
 package com.rentalcar.rentalcar.controller;
 
 
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.dto.RegisterDto;
+import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 
 @Controller
@@ -54,9 +58,5 @@ public class homeController {
     }
 
 
-    @GetMapping ("/test")
-    public String test(Model model) {
-        return "customer/test";
-    }
 
 }

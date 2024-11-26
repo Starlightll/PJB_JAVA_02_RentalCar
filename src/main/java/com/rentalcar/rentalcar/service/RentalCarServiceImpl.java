@@ -934,14 +934,41 @@ public class RentalCarServiceImpl implements RentalCarService {
     }
 
     @Override
-    public List<Booking> getRentalsNearEndDate() {
+    public List<MyBookingDto> getRentalsNearEndDate() {
         LocalDate today = LocalDate.now();
         LocalDate targetDate = today.plusDays(3); // Nhắc trước 3 ngày
 
-        // Đặt thời gian bắt đầu và kết thúc của ngày cần tìm
-        LocalDateTime startOfDay = targetDate.atStartOfDay(); // 00:00:00
-        LocalDateTime endOfDay = targetDate.atTime(23, 59, 59); // 23:59:59
-        return bookingRepository.findByEndDateBetween(startOfDay,endOfDay);
+        LocalDateTime startOfDay = targetDate.atStartOfDay();
+        LocalDateTime endOfDay = targetDate.atTime(23, 59, 59);
+        List<MyBookingDto> bookingDtos = new ArrayList<>();
+        List<Object[]> results  = bookingRepository.findByEndDateBetween(startOfDay,endOfDay);
+        if(results  == null || results.isEmpty()){
+            throw new RuntimeException("No bookings found within the given date range.");
+        }
+
+        for (Object[] result : results) {
+
+            MyBookingDto bookingDto = new MyBookingDto(
+                    Long.valueOf((Integer) result[0]),
+                    ((Timestamp) result[1]).toLocalDateTime(), //start date
+                    ((Timestamp) result[2]).toLocalDateTime(), //end date
+                    (String) result[3], // driverInfo
+                    ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
+                    ((BigDecimal) result[5]).doubleValue(), // total price
+                    Long.valueOf((Integer) result[6]), //userId
+                    (Integer) result[7], //bookingStatus
+                    (Integer) result[8], //paymentMethod
+                    result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
+                    ((BigDecimal) result[10]).doubleValue(), // basePrice
+                    ((BigDecimal) result[11]).doubleValue(), // deposit
+                    (BigDecimal) result[12], //carowner wallet
+                    Long.valueOf((Integer) result[13]),
+                    (String) result[14], //car name
+                    (Integer) result[15] //cariD
+            );
+            bookingDtos.add(bookingDto);
+        }
+        return bookingDtos;
     }
 
 

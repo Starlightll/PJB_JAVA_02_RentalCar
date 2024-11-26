@@ -38,8 +38,29 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Object[] findByBookingId(@Param("bookingId") Long bookingId);
 
 
-    @Query("SELECT b FROM Booking b WHERE b.endDate BETWEEN :startOfDay AND :endOfDay")
-    List<Booking> findByEndDateBetween(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+    @Query(value="SELECT b.[bookingId]\n" +
+            "      ,[startDate]\n" +
+            "      ,[endDate]\n" +
+            "      ,[driverInfo]\n" +
+            "      ,[actualEndDate]\n" +
+            "      ,[totalPrice]\n" +
+            "      ,b.[userId]\n" +
+            "      ,[bookingStatusId]\n" +
+            "      ,[paymentMethodId]\n" +
+            "      ,[driverId] \n" +
+            "\t  ,c.basePrice\n" +
+            "\t  ,c.deposit\n" +
+            "\t  ,u.wallet\n" +
+            "\t  ,c.userId\n" +
+            "\t  ,c.name\n" +
+            "\t  ,c.carId\n" +
+            "  FROM [RentalCar].[dbo].[Booking] b\n" +
+            "  JOIN [dbo].[BookingCar] bc ON bc.bookingId = b.bookingId\n" +
+            "  JOIN [dbo].[Car] c ON c.carId = bc.carId\n" +
+            "  JOIN [dbo].[Users] u ON u.userId = b.userId\n" +
+            "  WHERE b.endDate BETWEEN :startOfDay and :endOfDay",
+            nativeQuery = true)
+    List<Object[]> findByEndDateBetween(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
 
 }

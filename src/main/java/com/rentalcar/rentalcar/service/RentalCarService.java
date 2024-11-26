@@ -22,7 +22,7 @@ public interface RentalCarService {
     Map<String, String> checkPaymentCar(Long carId, HttpSession session);
     int confirmPaymentCar(Long carId, HttpSession session);
     boolean confirmCancelBookingCar(Long carId, HttpSession session);
-    List<Booking> getRentalsNearEndDate();
+    List<MyBookingDto> getRentalsNearEndDate();
 
 
 
