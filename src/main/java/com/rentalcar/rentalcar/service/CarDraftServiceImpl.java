@@ -191,6 +191,48 @@ public class CarDraftServiceImpl implements CarDraftService {
         }
     }
 
+    @Override
+    public CarDraft convertCarToCarDraft(Car car) {
+        try{
+            CarDraft carDraft = new CarDraft();
+            carDraft.setLicensePlate(car.getLicensePlate());
+            carDraft.setModel(car.getModel());
+            carDraft.setColor(car.getColor());
+            carDraft.setSeat(car.getSeat());
+            carDraft.setProductionYear(car.getProductionYear());
+            carDraft.setTransmission(car.getTransmission());
+            carDraft.setFuelType(car.getFuelType());
+            carDraft.setMileage(car.getMileage());
+            carDraft.setFuelConsumption(car.getFuelConsumption());
+            carDraft.setBasePrice(car.getBasePrice());
+            carDraft.setDeposit(car.getDeposit());
+            carDraft.setDescription(car.getDescription());
+            carDraft.setTerms(car.getTerms());
+            carDraft.setCarPrice(car.getCarPrice());
+            carDraft.setBrand(car.getBrand());
+            carDraft.setDescription(car.getDescription());
+            //Set carDraft additional Functions
+            carDraft.setAdditionalFunction(car.getAdditionalFunctions().toString());
+            //Set Address for carDraft
+            carDraft.setProvince(car.getAddress().getProvinceId() + "," + car.getAddress().getProvince());
+            carDraft.setDistrict(car.getAddress().getDistrictId() + "," + car.getAddress().getDistrict());
+            carDraft.setWard(car.getAddress().getWardId() + "," + car.getAddress().getWard());
+            carDraft.setHome(car.getAddress().getStreet());
+            //Set car files
+            carDraft.setFrontImage(car.getFrontImage());
+            carDraft.setBackImage(car.getBackImage());
+            carDraft.setLeftImage(car.getLeftImage());
+            carDraft.setRightImage(car.getRightImage());
+            carDraft.setRegistration(car.getRegistration());
+            carDraft.setCertificate(car.getCertificate());
+            carDraft.setInsurance(car.getInsurance());
+            return carDraft;
+        }catch (Exception e){
+            System.out.println("Something wrong when convert car to car draft in car owner service" + e.getMessage());
+            return null;
+        }
+    }
+
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();

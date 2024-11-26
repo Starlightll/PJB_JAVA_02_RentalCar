@@ -1135,19 +1135,11 @@
                     });
                 },
                 error: function (error) {
-                    console.log("Error edit basic information", error);
-                    let errorMessage;
-                    try {
-                        const errorResponse = JSON.parse(error.responseText);
-                        errorMessage = errorResponse.message || 'An error occurred.';
-                    } catch (e) {
-                        errorMessage = 'An unexpected error occurred.';
-                    }
-
+                    console.log("Error edit basic information", error.responseText);
                     Swal.fire({
-                        title: 'Error!',
-                        text: errorMessage,
-                        icon: 'error',
+                        title: 'Warning!',
+                        text: error.responseText,
+                        icon: 'warning',
                         confirmButtonText: 'OK'
                     });
                 }

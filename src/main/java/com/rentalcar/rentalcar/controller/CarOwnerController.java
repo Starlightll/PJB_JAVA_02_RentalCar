@@ -307,17 +307,18 @@ public class CarOwnerController {
         User user = (User) session.getAttribute("user");
         Car car = carRepository.getCarByCarId(carId);
         if (car == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Car not found");
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Car not found");
         }
         List<Integer> statusIds = List.of(1, 3);
         if (!Objects.equals(car.getUser().getId(), user.getId()) || !statusIds.contains(car.getCarStatus().getStatusId())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not allowed to update this car");
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
         if(licensePlate == null || model == null || color == null || productionYear == null || seatNo == null || transmissionType == null || fuelType == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data");
         }
 
-        CarDraft carDraft = new CarDraft();
+
+        CarDraft carDraft = carDraftService.convertCarToCarDraft(car);
         carDraft.setLicensePlate(licensePlate);
         carDraft.setModel(model);
         carDraft.setColor(color);
@@ -327,8 +328,11 @@ public class CarOwnerController {
         carDraft.setFuelType(fuelType);
 
         MultipartFile[] files = {registration, certificate, insurance};
-        carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId);
-        return ResponseEntity.ok("Request sent successfully");
+        //Create CarDraft and save here - I will do it tomorrow
+        if(carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId)){
+            return ResponseEntity.ok("Request sent successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Can't send request");
     }
 
 

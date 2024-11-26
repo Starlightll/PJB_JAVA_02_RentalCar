@@ -15,4 +15,6 @@ public interface CarDraftService {
     CarDraft createCarDraft(User user);
 
     Car convertCarDraftToCar(CarDraft carDraft);
+
+    CarDraft convertCarToCarDraft(Car car);
 }
