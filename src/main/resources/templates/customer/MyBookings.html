@@ -200,7 +200,14 @@
             <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span>MY BOOKINGS <i class="ion-ios-arrow-forward"></i></span></p>
+                        <th:block th:if="${!isCustomer}">
+                            <span><a>MY CARS' BOOKINGS <i class="ion-ios-arrow-forward"></i></a>
+                            </span>
+                        </th:block>
+                        <th:block th:if="${isCustomer}">
+                            <span>MY BOOKINGS <i class="ion-ios-arrow-forward"></i></span>
+                        </th:block>
+                    </p>
                     <h1 class="mb-3 bread">My Bookings!</h1>
                 </div>
             </div>

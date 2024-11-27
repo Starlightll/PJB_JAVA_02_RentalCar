@@ -5,10 +5,7 @@ import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.CarStatus;
 import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
-import com.rentalcar.rentalcar.repository.BrandRepository;
-import com.rentalcar.rentalcar.repository.CarRepository;
-import com.rentalcar.rentalcar.repository.CarStatusRepository;
+import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import com.rentalcar.rentalcar.service.RentalCarService;
@@ -55,6 +52,7 @@ public class CarOwnerController {
     private CarRepository carRepository;
     @Autowired
     private RentalCarService rentalCarService;
+    private CarDraftRepository carDraftRepository;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -182,10 +180,17 @@ public class CarOwnerController {
             model.addAttribute("registrationUrl", "/" + registrationPath);
             model.addAttribute("certificateUrl", "/" + certificatePath);
             model.addAttribute("insuranceUrl", "/" + insurancePath);
-            List<Integer> statusIds = List.of(1,2,3);
+            List<Integer> statusIds = List.of(1, 2, 3);
             List<CarStatus> carStatus = carStatusRepository.findCarStatusesByStatusIdIsIn(statusIds);
             model.addAttribute("carStatuses", carStatus);
 
+            //Check car has requestChangeBasicInformation
+            CarDraft carDraft = carDraftService.getDraftOfRequestChangeBasicInformation(car.getUser().getId(), carId, "Pending");
+            if (carDraft != null) {
+                model.addAttribute("carDraft", carDraft);
+            }
+
+            //Check if car has booking
             List<Integer> bookingStatus = carRepository.findBookingStatusIdByCarId(carId);
             if (bookingStatus.contains(1)) {
                 model.addAttribute("bookingStatus", 1);
@@ -288,6 +293,53 @@ public class CarOwnerController {
         carOwnerService.updateCar(carUpdate, files, user, carId, carStatus);
         return ResponseEntity.ok("Car updated successfully");
     }
+
+    @PostMapping("/request-change-basic-information")
+    public ResponseEntity<?> requestChangeBasicInformation(
+            @RequestParam(value = "carId") Integer carId,
+            @RequestParam(value = "licensePlate") String licensePlate,
+            @RequestParam(value = "model") String model,
+            @RequestParam(value = "color") String color,
+            @RequestParam(value = "productionYear") Integer productionYear,
+            @RequestParam(value = "seatNo") Integer seatNo,
+            @RequestParam(value = "transmissionType") String transmissionType,
+            @RequestParam(value = "fuelType") String fuelType,
+            @RequestParam(value = "registration", required = false) MultipartFile registration,
+            @RequestParam(value = "certificate", required = false) MultipartFile certificate,
+            @RequestParam(value = "insurance", required = false) MultipartFile insurance,
+            HttpSession session
+    ) throws IOException {
+        User user = (User) session.getAttribute("user");
+        Car car = carRepository.getCarByCarId(carId);
+        if (car == null) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Car not found");
+        }
+        List<Integer> statusIds = List.of(1, 3);
+        if (!Objects.equals(car.getUser().getId(), user.getId()) || !statusIds.contains(car.getCarStatus().getStatusId())) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+        if(licensePlate == null || model == null || color == null || productionYear == null || seatNo == null || transmissionType == null || fuelType == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data");
+        }
+
+
+        CarDraft carDraft = carDraftService.convertCarToCarDraft(car);
+        carDraft.setLicensePlate(licensePlate);
+        carDraft.setModel(model);
+        carDraft.setColor(color);
+        carDraft.setProductionYear(productionYear);
+        carDraft.setSeat(seatNo);
+        carDraft.setTransmission(transmissionType);
+        carDraft.setFuelType(fuelType);
+
+        MultipartFile[] files = {registration, certificate, insurance};
+        //Create CarDraft and save here - I will do it tomorrow
+        if(carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId)){
+            return ResponseEntity.ok("Request sent successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Can't send request");
+    }
+
 
 
     @GetMapping("/delete-car")
@@ -505,6 +557,8 @@ public class CarOwnerController {
             return generateResponse(response, "success1", "Booking has been successfully completed.");
         } else if(casePayment == -1) {
             return generateResponse(response, "success1", "Not enough money!");
+        } else if(casePayment == 2) {
+            return generateResponse(response, "success1", "Waiting customer payment!");
         }
 
         Car car = carRepository.getCarByCarId(carId.intValue());

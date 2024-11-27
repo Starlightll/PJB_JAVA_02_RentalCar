@@ -746,13 +746,17 @@ public class RentalCarServiceImpl implements RentalCarService {
         // Lấy thông tin carOwner và customer
         User carOwner = userRepository.getUserById(Long.valueOf(carDto.getUserId()));
         User customer = booking.getUser();
+        User driver = booking.getDriver();
 
         Double totalPrice = returnCarService.calculateTotalPriceForActualEnddateCarOwner(booking.getBookingId());
         Double deposit = car.getDeposit();
         double remainingAmount = Math.abs(deposit - totalPrice);
         BigDecimal remainingMoney = BigDecimal.valueOf(remainingAmount);
         LocalDateTime currentTime = LocalDateTime.now();
+
+
         if (totalPrice < carDto.getDeposit()) {
+
             // Cộng tiền vào customer
             BigDecimal updatedCustomerWallet = customer.getWallet().add(remainingMoney);
             customer.setWallet(updatedCustomerWallet);
@@ -817,6 +821,8 @@ public class RentalCarServiceImpl implements RentalCarService {
             BookingStatus completedStatus = completedStatusOptional.get();
             booking.setBookingStatus(completedStatus);
             booking.setLastModified(new Date());
+            booking.setActualEndDate(currentTime);
+            booking.setTotalPrice(totalPrice);
             bookingRepository.save(booking);
 
             emailService.sendPaymentConfirmation(

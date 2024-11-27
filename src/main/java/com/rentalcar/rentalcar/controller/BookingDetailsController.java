@@ -146,6 +146,7 @@ public class BookingDetailsController {
         model.addAttribute("timNow",timeNow);
         model.addAttribute("totalPrice",totalPrice);
         model.addAttribute("isCustomer", isCustomer);
+        model.addAttribute("haveDriver",booking.getDriverId());
         return "customer/EditBookingDetails";
     }
 
