@@ -5,10 +5,7 @@ import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.CarStatus;
 import com.rentalcar.rentalcar.entity.User;
-import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
-import com.rentalcar.rentalcar.repository.BrandRepository;
-import com.rentalcar.rentalcar.repository.CarRepository;
-import com.rentalcar.rentalcar.repository.CarStatusRepository;
+import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import com.rentalcar.rentalcar.service.RentalCarService;
@@ -55,6 +52,7 @@ public class CarOwnerController {
     private CarRepository carRepository;
     @Autowired
     private RentalCarService rentalCarService;
+    private CarDraftRepository carDraftRepository;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -186,6 +184,13 @@ public class CarOwnerController {
             List<CarStatus> carStatus = carStatusRepository.findCarStatusesByStatusIdIsIn(statusIds);
             model.addAttribute("carStatuses", carStatus);
 
+            //Check car has requestChangeBasicInformation
+            CarDraft carDraft = carDraftService.getDraftOfRequestChangeBasicInformation(car.getUser().getId(), carId, "Pending");
+            if (carDraft != null) {
+                model.addAttribute("carDraft", carDraft);
+            }
+
+            //Check if car has booking
             List<Integer> bookingStatus = carRepository.findBookingStatusIdByCarId(carId);
             if (bookingStatus.contains(1)) {
                 model.addAttribute("bookingStatus", 1);

@@ -59,6 +59,7 @@ public class CarDraft {
     private String certificate;
     private String insurance;
     private Integer carId;
+    private String verifyStatus;
 
     @ManyToOne
     @JoinColumn(name = "userId")
