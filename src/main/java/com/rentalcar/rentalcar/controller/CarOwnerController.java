@@ -557,6 +557,8 @@ public class CarOwnerController {
             return generateResponse(response, "success1", "Booking has been successfully completed.");
         } else if(casePayment == -1) {
             return generateResponse(response, "success1", "Not enough money!");
+        } else if(casePayment == 2) {
+            return generateResponse(response, "success1", "Waiting customer payment!");
         }
 
         Car car = carRepository.getCarByCarId(carId.intValue());

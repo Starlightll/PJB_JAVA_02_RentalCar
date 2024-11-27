@@ -665,10 +665,13 @@
 <!--                                                    &lt;!&ndash; Return Car button: visible only if status is In-Progress &ndash;&gt;-->
                                                     <a style="background: #707070 !important;"
                                                        th:if="${booking.bookingStatus == 'In-Progress'}"
-                                                       th:id="'return-booking-btn-' + ${iterStat.index}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                       th:onclick="'returnCar(' + ${booking.bookingId} + ')'">Request Return
-                                                        Car</a>
+                                                       th:onclick="'returnCarDetail(' + ${booking.bookingId} + ')'">Request Return Car</a>
+
+                                                    <a style="background: #707070 !important;"
+                                                       th:if="${booking.bookingStatus == 'Pending payment'}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                       th:onclick="'confirmPaymentDetail(' + ${booking.bookingId} + ')'">Confirm payment</a>
 
                                                 </div>
 
@@ -1542,15 +1545,15 @@
             }
         });
 
-
-        function returnCarDetail(bookingId) {
-            console.log("aaaa",bookingId);
+// confirm Payment
+        function confirmPaymentDetail(bookingId) {
+            console.log(bookingId);
             $.ajax({
-                url: '/return-car',
+                url: '/check-payment',
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Return car successfully", response);
+                    console.log("Return car !!!", response);
                     Swal.fire({
                         title: 'Return Car!',
                         text: response.message,
@@ -1563,8 +1566,7 @@
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Gọi tiếp xác nhận trả xe
-                            confirmReturnCarViewDetail(bookingId);
+                            confirmPaymentCarDetail(bookingId);
                         }
                     });
                 },
@@ -1580,15 +1582,14 @@
             });
         }
 
+        function confirmPaymentCarDetail(bookingId) {
 
-        function confirmReturnCarViewDetail(bookingId) {
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
             const userId = document.getElementById("userId").value;
-
             console.log(bookingId);
             $.ajax({
-                url: '/confirm-return-car',
+                url: '/confirm-payment-car',
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
@@ -1596,21 +1597,12 @@
 
                     if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Return Car Completed!',
+                            title: 'Booking Successfully Completed.',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-
-                            let url = '/customer/booking-detail?bookingId=' + bookingId +
-                                '&carId=' + carId +
-                                '&userId=' + userId +
-                                '&navigate=' + navigate;
-                                url += '&triggerPopup=true';
-
-                            window.location.href = url;
-                            // window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
-
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                         });
                     } else if (response.status === 'success2') {
                         Swal.fire({
@@ -1628,7 +1620,7 @@
                             icon: 'error',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                         });
                     }
                 },
@@ -1640,11 +1632,216 @@
                         icon: 'error',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
+                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                     });
                 }
             });
         }
+
+        // send Return Request
+
+        function returnCarDetail(bookingId) {
+            console.log(bookingId);
+            $.ajax({
+                url: '/return-car',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Return car !!!", response);
+                    Swal.fire({
+                        title: 'Return Car!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,  // Hiển thị nút "Cancel"
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Gọi tiếp xác nhận trả xe
+                            confirmReturnCarDetail(bookingId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error returning car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to return the car.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        function confirmReturnCarDetail(bookingId) {
+
+            const carId = document.getElementById("carId").value;
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            console.log(bookingId);
+            $.ajax({
+                url: '/confirm-return-car',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Confirm return car response", response);
+
+                    if (response.status === 'success1') {
+                        Swal.fire({
+                            title: 'Booking Successfully Completed.',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            let url = '/customer/booking-detail?bookingId=' + bookingId +
+                                '&carId=' + carId +
+                                '&userId=' + userId +
+                                '&navigate=' + navigate;
+                            url += '&triggerPopup=true';
+
+                            window.location.href = url;
+                        });
+                    } else if (response.status === 'success2') {
+                        Swal.fire({
+                            title: 'Request Payment Completed',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error confirming return car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+                    });
+                }
+            });
+        }
+
+// cũ
+//         function returnCarDetail(bookingId) {
+//             console.log("aaaa",bookingId);
+//             $.ajax({
+//                 url: '/return-car',
+//                 type: 'get',
+//                 data: {bookingId: bookingId},
+//                 success: function (response) {
+//                     console.log("Return car successfully", response);
+//                     Swal.fire({
+//                         title: 'Return Car!',
+//                         text: response.message,
+//                         icon: 'question',
+//                         showCancelButton: true,  // Hiển thị nút "Cancel"
+//                         confirmButtonText: 'Yes',
+//                         cancelButtonText: 'No',
+//                         customClass: {
+//                             confirmButton: 'my-custom-button'
+//                         }
+//                     }).then((result) => {
+//                         if (result.isConfirmed) {
+//                             // Gọi tiếp xác nhận trả xe
+//                             confirmReturnCarViewDetail(bookingId);
+//                         }
+//                     });
+//                 },
+//                 error: function (error) {
+//                     console.log("Error returning car", error);
+//                     Swal.fire({
+//                         title: 'Error!',
+//                         text: 'Failed to return the car.',
+//                         icon: 'error',
+//                         confirmButtonText: 'OK'
+//                     });
+//                 }
+//             });
+//         }
+//
+//
+//         function confirmReturnCarViewDetail(bookingId) {
+//             const carId = document.getElementById("carId").value;
+//             const navigate = document.getElementById("navigate").value;
+//             const userId = document.getElementById("userId").value;
+//
+//             console.log(bookingId);
+//             $.ajax({
+//                 url: '/confirm-return-car',
+//                 type: 'get',
+//                 data: {bookingId: bookingId},
+//                 success: function (response) {
+//                     console.log("Confirm return car response", response);
+//
+//                     if (response.status === 'success1') {
+//                         Swal.fire({
+//                             title: 'Return Car Completed!',
+//                             text: response.message,
+//                             icon: 'success',
+//                             confirmButtonText: 'OK'
+//                         }).then(() => {
+//
+//                             let url = '/customer/booking-detail?bookingId=' + bookingId +
+//                                 '&carId=' + carId +
+//                                 '&userId=' + userId +
+//                                 '&navigate=' + navigate;
+//                                 url += '&triggerPopup=true';
+//
+//                             window.location.href = url;
+//                             // window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+//
+//                         });
+//                     } else if (response.status === 'success2') {
+//                         Swal.fire({
+//                             title: 'Request Payment Completed',
+//                             text: response.message,
+//                             icon: 'success',
+//                             confirmButtonText: 'OK'
+//                         }).then(() => {
+//                             window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+//                         });
+//                     } else {
+//                         Swal.fire({
+//                             title: 'Error!',
+//                             text: response.message,
+//                             icon: 'error',
+//                             confirmButtonText: 'OK'
+//                         }).then(() => {
+//                             window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
+//                         });
+//                     }
+//                 },
+//                 error: function (error) {
+//                     console.log("Error confirming return car", error);
+//                     Swal.fire({
+//                         title: 'Error!',
+//                         text: 'An error occurred. Please try again.',
+//                         icon: 'error',
+//                         confirmButtonText: 'OK'
+//                     }).then(() => {
+//                         window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
+//                     });
+//                 }
+//             });
+//         }
 
 
 
