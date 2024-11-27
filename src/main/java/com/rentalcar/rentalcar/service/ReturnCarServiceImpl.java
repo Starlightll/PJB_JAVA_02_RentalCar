@@ -79,15 +79,17 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         long hours = Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
         double driverSalary;
         User driver = userRepository.getUserById(bookingDto.getDriverId());
-        if (currentTime.isBefore(bookingDto.getStartDate())) {
-            driverSalary = 0.0;
-        } else {
-            driverSalary = driver.getSalaryDriver() * hours;
-        }
-        BigDecimal driverSalaryBig = BigDecimal.valueOf(driverSalary);
-        NumberFormat currencyFormatter = NumberFormat.getInstance(Locale.US);
+
 
         if (bookingDto.getDriverId() != null) {
+
+            if (currentTime.isBefore(bookingDto.getStartDate())) {
+                driverSalary = 0.0;
+            } else {
+                driverSalary = driver.getSalaryDriver() * hours;
+            }
+            BigDecimal driverSalaryBig = BigDecimal.valueOf(driverSalary);
+            NumberFormat currencyFormatter = NumberFormat.getInstance(Locale.US);
             return String.format(
                     "Please confirm to send request return the car. \nDriver rental payment: %s VND",
                     currencyFormatter.format(driverSalaryBig)
@@ -138,16 +140,17 @@ public class ReturnCarServiceImpl implements ReturnCarService {
         long hours = Math.abs(calculateNumberOfDays(bookingDto.getStartDate(), currentTime));
         User driver = userRepository.getUserById(bookingDto.getDriverId());
 
-        if (currentTime.isBefore(bookingDto.getStartDate())) {
-            driverSalary = 0.0;
-        } else {
-            driverSalary = driver.getSalaryDriver() * hours;
-        }
-        BigDecimal driverSalaryBig = BigDecimal.valueOf(driverSalary);
+
 
 
         if (bookingDto.getDriverId() != null) {
             // check wallet user
+            if (currentTime.isBefore(bookingDto.getStartDate())) {
+                driverSalary = 0.0;
+            } else {
+                driverSalary = driver.getSalaryDriver() * hours;
+            }
+            BigDecimal driverSalaryBig = BigDecimal.valueOf(driverSalary);
             if (driverSalary > user.getWallet().doubleValue()) {
                 return -1;
             } else {

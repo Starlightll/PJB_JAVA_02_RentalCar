@@ -816,6 +816,8 @@ public class RentalCarServiceImpl implements RentalCarService {
             BookingStatus completedStatus = completedStatusOptional.get();
             booking.setBookingStatus(completedStatus);
             booking.setLastModified(new Date());
+            booking.setActualEndDate(currentTime);
+            booking.setTotalPrice(totalPrice);
             bookingRepository.save(booking);
 
             emailService.sendPaymentConfirmation(
