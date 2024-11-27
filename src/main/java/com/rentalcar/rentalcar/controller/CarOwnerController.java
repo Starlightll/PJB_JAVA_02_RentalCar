@@ -103,7 +103,7 @@ public class CarOwnerController {
             pageable = PageRequest.of(page - 1, size);
             carPage = carRepository.findAllByCarStatusAndUser(statusId, user.getId(), pageable);
         } else {
-            List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 8, 10, 11, 14, 15);
+            List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 8, 10, 11, 14, 15, 16);
             carPage = carRepository.findAllByCarStatus_StatusIdInAndUserId(statusIds, user.getId(), pageable);
         }
         List<Car> cars = carPage.getContent();
@@ -474,10 +474,10 @@ public class CarOwnerController {
 
     }
 
-    @GetMapping("/check-payment")
-    public ResponseEntity<?> confirmPayment(@RequestParam("carId") Long carId,
+    @GetMapping("/check-return")
+    public ResponseEntity<?> checkReturn(@RequestParam("carId") Long carId,
                                             HttpSession session) {
-        Map<String, String> response = rentalCarService.checkPaymentCar(carId, session);
+        Map<String, String> response = rentalCarService.checkReturnCar(carId, session);
 
         if ("success".equals(response.get("status"))) {
             return ResponseEntity.ok(response);
@@ -486,8 +486,8 @@ public class CarOwnerController {
         }
     }
 
-    @GetMapping("/confirm-payment-car")
-    public ResponseEntity<Map<String, Object>> confirmPaymentCar(@RequestParam("carId") Long carId,
+    @GetMapping("/confirm-return-car")
+    public ResponseEntity<Map<String, Object>> confirmReturnCar(@RequestParam("carId") Long carId,
                                                                  HttpSession session,
                                                                  Model model) {
         User user = (User) session.getAttribute("user");
@@ -498,11 +498,13 @@ public class CarOwnerController {
             return generateResponse(response, "error", "User not found in session.");
         }
 
-        int casePayment = rentalCarService.confirmPaymentCar(carId, session);
+        int casePayment = rentalCarService.confirmReturnCar(carId, session);
 
         // Handle response based on caseReturn value
         if (casePayment == 1) {
             return generateResponse(response, "success1", "Booking has been successfully completed.");
+        } else if(casePayment == -1) {
+            return generateResponse(response, "success1", "Not enough money!");
         }
 
         Car car = carRepository.getCarByCarId(carId.intValue());
@@ -547,6 +549,19 @@ public class CarOwnerController {
             }
         }
         return generateResponse(response, "error", "Error Return!");
+    }
+
+
+    @GetMapping("/check-payment")
+    public ResponseEntity<?> checkPayment(@RequestParam("carId") Long carId,
+                                         HttpSession session) {
+        Map<String, String> response = rentalCarService.checkReturnCar(carId, session);
+
+        if ("success".equals(response.get("status"))) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     private ResponseEntity<Map<String, Object>> generateResponse(Map<String, Object> response, String status, String message) {

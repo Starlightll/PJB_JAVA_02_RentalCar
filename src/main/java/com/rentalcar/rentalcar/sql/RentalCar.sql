@@ -280,6 +280,7 @@ INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
                                                  (13,'Cancelled'),
                                                  (14, 'Pending deposit'),
                                                  (15, 'Pending cancel')
+                                                 (16, 'Pending return')
 
 
 
@@ -291,12 +292,18 @@ INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (4, N'Pending pa
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (5, N'Completed')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (6, N'Cancelled')
 INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (7, N'Pending cancel')
+INSERT [dbo].[BookingStatus] ([BookingStatusId], [name]) VALUES (8, N'Pending return')
+
 
 
 -- Transaction table
 CREATE TABLE [dbo].[Transaction] (
                                      transactionId   INT IDENTITY (1,1) PRIMARY KEY,
-    transactionType VARCHAR(50) NOT NULL CHECK (transactionType IN ('Withdraw', 'Top-up', 'Pay deposit', 'Receive deposit', 'Refund deposit', 'Offset final payment', 'Pay final payment', 'Receive final payment','Receive remaining deposit', 'Return remaining deposit', 'Pay for driver rental')),
+    transactionType VARCHAR(50) NOT NULL CHECK (transactionType IN
+                                               ('Withdraw', 'Top-up', 'Pay deposit', 'Receive deposit',
+                                                'Refund deposit', 'Offset final payment', 'Pay final payment',
+                                                'Receive final payment','Receive remaining deposit',
+                                                'Return remaining deposit', 'Pay for driver rental', 'Receive salary')),
     amount          DECIMAL(18, 2) NOT NULL,
     transactionDate DATETIME DEFAULT GETDATE(),
     userId          INT NOT NULL,

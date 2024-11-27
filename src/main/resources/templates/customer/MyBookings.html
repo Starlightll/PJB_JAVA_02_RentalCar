@@ -363,7 +363,7 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Base price: </p>
-                                                            <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                            <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -440,7 +440,7 @@
                                                     <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
                                                     <a
                                                             style="background: #d5dcd5 !important; color: black !important;"
-                                                            th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                            th:if="${booking.bookingStatus != 'Pending return' and booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
                                                             th:id="'confirm-booking-btn-' + ${iterStat.index}"
                                                             class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
                                                         Pick-up</a>
@@ -459,8 +459,16 @@
                                                        th:if="${booking.bookingStatus == 'In-Progress'}"
                                                        th:id="'return-booking-btn-' + ${iterStat.index}"
                                                        class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                       th:onclick="'returnCar(' + ${booking.bookingId} + ')'">Return
+                                                       th:onclick="'returnCar(' + ${booking.bookingId} + ')'">Request Return
                                                         Car</a>
+
+
+                                                    <a th:href="'#'"
+                                                       th:if="${booking.bookingStatus == 'Pending payment'}"
+                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                       th:onclick="'confirmPayment(' + ${booking.bookingId} + ')'"
+                                                       style="background: #da1b1b !important;">
+                                                        Confirm Payment</a>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                                     <div th:each="booking, iterStat: ${bookingList}">
@@ -656,50 +664,96 @@
             });
         });
 
-        function avc() {// document.addEventListener('DOMContentLoaded', function () {
+        function confirmPayment(bookingId) {
+            console.log(bookingId);
+            $.ajax({
+                url: '/check-payment',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Return car !!!", response);
+                    Swal.fire({
+                        title: 'Return Car!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,  // Hiển thị nút "Cancel"
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Gọi tiếp xác nhận trả xe
+                            confirmPaymentCar(bookingId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error returning car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to return the car.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
 
-            // const returnCarBtns = document.querySelectorAll('[id^="return-booking-btn-"]');
-            //
-            // returnCarBtns.forEach(btn => {
-            //     btn.addEventListener('click', function (event) {
-            //         event.preventDefault();
-            //
-            //         const bookingRow = this.closest('.row');
-            //         const bookingId = bookingRow.querySelector("#bookingId").value;
-            //
-            //         // Get the dates from the HTML (Ensure correct format)
-            //         const fromDateText = bookingRow.querySelector('.from-date').textContent; // e.g., '18/10/2024 09:00'
-            //         const toDateText = bookingRow.querySelector('.to-date').textContent; // e.g., '19/10/2024 09:00'
-            //
-            //         // Manually parse the dates from the correct format (dd/MM/yyyy HH:mm)
-            //         const fromDateParts = fromDateText.split(' ')[0].split('/');
-            //         const fromTimeParts = fromDateText.split(' ')[1].split(':');
-            //         const fromDate = new Date(fromDateParts[2], fromDateParts[1] - 1, fromDateParts[0], fromTimeParts[0], fromTimeParts[1]);
-            //
-            //         const toDateParts = toDateText.split(' ')[0].split('/');
-            //         const toTimeParts = toDateText.split(' ')[1].split(':');
-            //         const toDate = new Date(toDateParts[2], toDateParts[1] - 1, toDateParts[0], toTimeParts[0], toTimeParts[1]);
-            //
-            //         const today = new Date();
-            //
-            //         // Get the other values
-            //         const basePrice = parseFloat(bookingRow.querySelector("#previewBasePrice").textContent.replace(/[^\d]/g, '')) * 1000;
-            //         const deposit = parseFloat(bookingRow.querySelector("#previewDeposit").textContent.replace(/[^\d]/g, '')) * 1000;
-            //
-            //         console.log('Base Price:', basePrice);
-            //         console.log('Deposit:', deposit);
-            //
-            //         let total = 0;
-            //         const daysOverdue = Math.ceil((today - fromDate) / (1000 * 60 * 60 * 24)); // Calculate days overdue
-            //         console.log('daysOverdue:', daysOverdue);
-            //
-            //         total = daysOverdue * basePrice;
-            //         console.log('Total due:', total);
-            //     });
-            // });
+        function confirmPaymentCar(bookingId) {
 
+            const sortBy = document.getElementById('sortBy').value;
+            const pageSize = document.getElementById('pageSize').value;
+            console.log(bookingId);
+            $.ajax({
+                url: '/confirm-payment-car',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Confirm return car response", response);
 
-            // });
+                    if (response.status === 'success1') {
+                        Swal.fire({
+                            title: 'Booking Successfully Completed.',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                        });
+                    } else if (response.status === 'success2') {
+                        Swal.fire({
+                            title: 'Request Payment Completed',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error confirming return car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+                    });
+                }
+            });
         }
 
 
@@ -710,7 +764,7 @@
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Return car successfully", response);
+                    console.log("Return car !!!", response);
                     Swal.fire({
                         title: 'Return Car!',
                         text: response.message,

@@ -494,6 +494,23 @@ public class RentalCarController {
 
     }
 
+    @GetMapping("/check-payment")
+    public ResponseEntity<?> checkPayment(@RequestParam("bookingId") Long bookingId,
+                                       HttpSession session,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "5") int size,
+                                       @RequestParam(defaultValue = "lastModified") String sortBy,
+                                       @RequestParam(defaultValue = "desc") String order) {
+        String responseMessage = returnCarService.checkPayment(bookingId, session);
+
+        // Trả về thông điệp JSON với trạng thái "success"
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", responseMessage);
+        return ResponseEntity.ok(response);
+
+    }
+
 
 
     @GetMapping("/confirm-return-car")
@@ -520,15 +537,90 @@ public class RentalCarController {
 
         // Handle response based on caseReturn value
         if (caseReturn == 1 ) {
-            return generateResponse(response, "success1", "Booking has been successfully completed.");
+            return generateResponse(response, "success1", "Car return request sent successfully!!");
         } else if (caseReturn == 2) {
             return generateResponse(response, "success2", "Car return request sent. Waiting for Car-Owner to confirm payment.");
 
         } else if (caseReturn == -1) {
-            return generateResponse(response, "error", "Your wallet doesn’t have enough balance. Please top-up your wallet and try again");
-        } else if (caseReturn == -2) {
-            boolean isUpdate = returnCarService.updateBookingPendingPayment(bookingId, session);
-            return generateResponse(response, "error", "Car-owner doesn’t have enough balance. Please try again later!");
+            return generateResponse(response, "error", "Your wallet does’t have enough balance to pay driver salary. Please top-up your wallet and try again");
+        }
+
+        boolean findByStatus = false;
+        switch (sortBy) {
+            case "newestToLatest":
+                sortBy = "lastModified";
+                order = "desc";
+                break;
+            case "latestToNewest":
+                sortBy = "lastModified";
+                order = "asc";
+                break;
+            case "priceLowToHigh":
+                sortBy = "basePrice";
+                order = "asc";
+                break;
+            case "priceHighToLow":
+                sortBy = "basePrice";
+                order = "desc";
+                break;
+
+            default:
+                break;
+        }
+        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        List<MyBookingDto> bookingList = bookingPages.getContent();
+        long onGoingBookings = bookingList.stream()
+                .filter(booking ->
+                        booking.getBookingStatus().equals("In-Progress") ||
+                                booking.getBookingStatus().equals("Pending payment") ||
+                                booking.getBookingStatus().equals("Pending deposit") ||
+                                booking.getBookingStatus().equals("Confirmed"))
+                .count();
+        model.addAttribute("onGoingBookings", onGoingBookings);
+
+        if (bookingList.isEmpty()) {
+            model.addAttribute("message", "You have no booking");
+        } else {
+            model.addAttribute("bookingList", bookingList);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", bookingPages.getTotalPages());
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("order", order);
+            model.addAttribute("size", size);
+            model.addAttribute("totalElement", bookingPages.getTotalElements());
+
+        }
+
+        return generateResponse(response, "error", "Error Return!");
+    }
+
+    @GetMapping("/confirm-payment-car")
+    public ResponseEntity<Map<String, Object>> confirmPaymentCar(@RequestParam("bookingId") Long bookingId,
+                                                                HttpSession session,
+                                                                @RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "5") int size,
+                                                                @RequestParam(defaultValue = "lastModified") String sortBy,
+                                                                @RequestParam(defaultValue = "desc") String order,
+                                                                Model model) {
+        // Retrieve user from session
+        User user = (User) session.getAttribute("user");
+
+        // Initialize response map
+        Map<String, Object> response = new HashMap<>();
+
+        // Check if the user is present in the session
+        if (user == null) {
+            return generateResponse(response, "error", "User not found in session.");
+        }
+
+        // Call confirmReturnCar to process the return logic
+        int caseReturn = returnCarService.confirmPayment(bookingId, session);
+
+        // Handle response based on caseReturn value
+        if (caseReturn == 1 ) {
+            return generateResponse(response, "success1", "Payment successfully!!");
+        }  else if (caseReturn == -1) {
+            return generateResponse(response, "error", "Your wallet does’t have enough balance to pay driver salary. Please top-up your wallet and try again");
         }
 
         boolean findByStatus = false;

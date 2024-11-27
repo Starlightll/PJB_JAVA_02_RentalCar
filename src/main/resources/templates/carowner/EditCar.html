@@ -250,17 +250,19 @@
                                                         </a>
                                                     </div>
                                                 </th:block>
-                                                <th:block th:if="${car.getCarStatus().getStatusId() == 11}">
-                                                <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
-                                                        <a th:if="${bookingStatus == 4}"
+
+
+                                                <th:block th:if="${car.getCarStatus().getStatusId() == 16}">
+                                                    <div class="col-lg-2 col-md-6 justify-content-center align-items-center">
+                                                        <a
                                                            th:id="'confirm-payment-btn-' + ${car.getCarId()}"
                                                            class="btn btn-primary"
                                                            style="padding-right: 6px; padding-left: 6px; background: #da1b1b !important;"
                                                            th:attr="data-car-id=${car.getCarId()}"
-                                                           th:onclick="'checkPayment(' + ${car.getCarId()} + ')'">
-                                                            Confirm Payment
+                                                           th:onclick="'confirmReturn(' + ${car.getCarId()} + ')'">
+                                                            Confirm Return
                                                         </a>
-                                                </div>
+                                                    </div>
                                                 </th:block>
                                             </div>
 
