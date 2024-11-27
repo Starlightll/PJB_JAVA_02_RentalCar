@@ -363,11 +363,14 @@
                                                                 <p>0</p>
                                                             </div>
                                                             <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
+                                                                 style="display: flex; align-items: center; white-space: nowrap;">
                                                                 <p class="col-lg-4 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Price: </p>
-                                                                <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
-                                                                   id="previewPrice">0k/Day</p>
+                                                                <div class="d-flex" style="max-width: 316px;">
+                                                                    <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'POINT', 0, 'POINT')}"
+                                                                       id="previewPrice" style="overflow: hidden;text-overflow: ellipsis;width: 100%;white-space: nowrap;">0</p>
+                                                                    <p style="padding-left: 5px">VND/day</p>
+                                                                </div>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">

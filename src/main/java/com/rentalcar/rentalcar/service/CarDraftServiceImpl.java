@@ -10,10 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
@@ -31,7 +28,12 @@ public class CarDraftServiceImpl implements CarDraftService {
 
     @Override
     public CarDraft getDraftByLastModified(Long userId) {
-        return carDraftRepository.findTopByUser_IdOrderByLastModifiedDesc(userId);
+        return carDraftRepository.findTopByUser_IdAndCarIdIsNullOrderByLastModifiedDesc(userId);
+    }
+
+    @Override
+    public CarDraft getDraftOfRequestChangeBasicInformation(Long userId, Integer carId, String verifyStatus) {
+        return carDraftRepository.findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(userId, carId, verifyStatus);
     }
 
     @Override
@@ -126,6 +128,72 @@ public class CarDraftServiceImpl implements CarDraftService {
             carDraft.setTerms(draft.getTerms().trim());
             carDraft.setCarPrice(draft.getCarPrice());
             carDraft.setBrand(draft.getBrand());
+            carDraft.setCarId(draft.getCarId());
+            carDraft.setVerifyStatus(draft.getVerifyStatus());
+            String carName = brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
+            carDraft.setCarName(carName);
+        } else {
+            carDraft = draft;
+            carDraft.setUser(user);
+        }
+        carDraftRepository.save(carDraft);
+    }
+
+    @Override
+    public void saveRequestChangeBasicInformation(CarDraft draft, MultipartFile[] files, User user) {
+        CarDraft carDraft = carDraftRepository.save(draft);
+        String draftId = carDraft != null ? carDraft.getDraftId().toString() : UUID.randomUUID().toString();
+
+        // Create folder path
+        String folderName = String.format("%s", draftId);
+        Path draftFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", folderName);
+
+        try {
+            // Store each file if it exists
+            //Registration
+            if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
+                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "registration."+getExtension(files[0].getOriginalFilename()));
+                carDraft.setRegistration(storedPath);
+            }
+            //Certificate
+            if (files[1] != null && !files[1].isEmpty() && files[1].getSize() > 0) {
+                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "certificate."+getExtension(files[1].getOriginalFilename()));
+                carDraft.setCertificate(storedPath);
+            }
+            //Insurance
+            if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
+                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "insurance."+getExtension(files[2].getOriginalFilename()));
+                carDraft.setInsurance(storedPath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(carDraft != null) {
+            carDraft.setStep(draft.getStep());
+            carDraft.setLicensePlate(draft.getLicensePlate().toUpperCase().trim());
+            carDraft.setLastModified(draft.getLastModified());
+            carDraft.setModel(draft.getModel().trim());
+            carDraft.setColor(draft.getColor().trim());
+            carDraft.setSeat(draft.getSeat());
+            carDraft.setProductionYear(draft.getProductionYear());
+            carDraft.setTransmission(draft.getTransmission().trim());
+            carDraft.setFuelType(draft.getFuelType().trim());
+            carDraft.setMileage(draft.getMileage());
+            carDraft.setDescription(draft.getDescription().trim());
+            carDraft.setFuelConsumption(draft.getFuelConsumption());
+            carDraft.setAdditionalFunction(draft.getAdditionalFunction().trim());
+            carDraft.setProvince(draft.getProvince().trim());
+            carDraft.setDistrict(draft.getDistrict().trim());
+            carDraft.setWard(draft.getWard().trim());
+            carDraft.setHome(draft.getHome().trim());
+            carDraft.setBasePrice(draft.getBasePrice());
+            carDraft.setDeposit(draft.getDeposit());
+            carDraft.setDescription(draft.getDescription().trim());
+            carDraft.setTerms(draft.getTerms().trim());
+            carDraft.setCarPrice(draft.getCarPrice());
+            carDraft.setBrand(draft.getBrand());
+            carDraft.setCarId(draft.getCarId());
+            carDraft.setVerifyStatus(draft.getVerifyStatus());
             String carName = brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
             carDraft.setCarName(carName);
         } else {
@@ -187,6 +255,53 @@ public class CarDraftServiceImpl implements CarDraftService {
             return car;
         }catch (Exception e){
             System.out.println("Something wrong when convert car draft to car in car owner service" + e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public CarDraft convertCarToCarDraft(Car car) {
+        try{
+            CarDraft carDraft = new CarDraft();
+            carDraft.setLicensePlate(car.getLicensePlate());
+            carDraft.setModel(car.getModel());
+            carDraft.setColor(car.getColor());
+            carDraft.setSeat(car.getSeat());
+            carDraft.setProductionYear(car.getProductionYear());
+            carDraft.setTransmission(car.getTransmission());
+            carDraft.setFuelType(car.getFuelType());
+            carDraft.setMileage(car.getMileage());
+            carDraft.setFuelConsumption(car.getFuelConsumption());
+            carDraft.setBasePrice(car.getBasePrice());
+            carDraft.setDeposit(car.getDeposit());
+            carDraft.setDescription(car.getDescription());
+            carDraft.setTerms(car.getTerms());
+            carDraft.setCarPrice(car.getCarPrice());
+            carDraft.setBrand(car.getBrand());
+            carDraft.setDescription(car.getDescription());
+            //Set carDraft additional Functions
+            StringBuilder additionalFunction = new StringBuilder();
+            for (AdditionalFunction function : car.getAdditionalFunctions()) {
+                additionalFunction.append(function.getFunctionId()).append(",");
+            }
+            carDraft.setAdditionalFunction(additionalFunction.toString());
+            //Set Address for carDraft
+            carDraft.setProvince(car.getAddress().getProvinceId() + "," + car.getAddress().getProvince());
+            carDraft.setDistrict(car.getAddress().getDistrictId() + "," + car.getAddress().getDistrict());
+            carDraft.setWard(car.getAddress().getWardId() + "," + car.getAddress().getWard());
+            carDraft.setHome(car.getAddress().getStreet());
+            //Set car files
+            carDraft.setFrontImage(car.getFrontImage());
+            carDraft.setBackImage(car.getBackImage());
+            carDraft.setLeftImage(car.getLeftImage());
+            carDraft.setRightImage(car.getRightImage());
+            carDraft.setRegistration(car.getRegistration());
+            carDraft.setCertificate(car.getCertificate());
+            carDraft.setInsurance(car.getInsurance());
+            carDraft.setUser(car.getUser());
+            return carDraft;
+        }catch (Exception e){
+            System.out.println("Something wrong when convert car to car draft in car owner service" + e.getMessage());
             return null;
         }
     }

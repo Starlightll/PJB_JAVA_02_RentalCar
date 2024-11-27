@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -44,14 +41,12 @@ public class CarAPI {
                         .body(Map.of("error", "License plate cannot be empty"));
             }
 
-            Long userOwnLicence = carRepository.findFirstUserByLicensePlate(licensePlate);
-            if(userOwnLicence != null) {
-                User user = (User) session.getAttribute("user");
-                if(!Objects.equals(userOwnLicence, user.getId())) {
-                    return ResponseEntity.ok(Map.of(
-                            "licensePlateOwnedByOther", true
-                    ));
-                }
+            User user = (User) session.getAttribute("user");
+            Set<String> licensePlatesNotOwnedByUser = carOwnerService.getAllLicensePlatesNotOwnedByUser(user.getId());
+            if (licensePlatesNotOwnedByUser.contains(licensePlate)) {
+                return ResponseEntity.ok(Map.of(
+                        "licensePlateOwnedByOther", true
+                ));
             }
             return ResponseEntity.ok(Map.of(
                     "licensePlateOwnedByOther", false
@@ -83,7 +78,7 @@ public class CarAPI {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "Car not found"));
             }
-            if(car.getCarStatus().getStatusId() != 8){
+            if (car.getCarStatus().getStatusId() != 8) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "Car status must be 'Verifying'"));
             }
