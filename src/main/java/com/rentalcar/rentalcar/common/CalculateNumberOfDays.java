@@ -63,7 +63,7 @@ public class CalculateNumberOfDays {
         if (days == 0 && hours > 0) {
             totalFee = hourlyRate * hours;
         } else if (days == 0 && hours == 0) {
-            totalFee = dailyRate;
+            totalFee = 0;
         }
 
         return totalFee;

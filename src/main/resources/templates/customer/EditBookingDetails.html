@@ -398,9 +398,15 @@
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
 
-                        <th:block th:if="${navigate == 'mybookings'}">
+                        <th:block th:if="${navigate == 'mybookings' and isCustomer}">
                             <span class="mr-2">
                                 <a href="/customer/my-bookings">MY BOOKINGS <i
+                                class="ion-ios-arrow-forward"></i></a>
+                            </span>
+                        </th:block>
+                        <th:block th:if="${navigate == 'mybookings' and !isCustomer}">
+                            <span class="mr-2">
+                                <a href="/car-owner/my-bookings">MY CARS' BOOKINGS <i
                                 class="ion-ios-arrow-forward"></i></a>
                             </span>
                         </th:block>
@@ -513,7 +519,7 @@
 <!--                                                        In ra actual khi đã hoàn thành và không tự tanăng theo thời gian thực-->
                                                         <div class="col-lg-12 row mt-2"
                                                              th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
-                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel' or booking.bookingStatus == 'Pending return'}">
+                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
@@ -522,8 +528,8 @@
                                                         </div>
 <!--                                                        Ngược lại-->
                                                         <div class="col-lg-12 row mt-2"
-                                                             th:if="${#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
-                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel')}">
+                                                             th:if="${#temporals.createNow().isAfter(booking.getEndDate()) or (booking.bookingStatus == 'In-Progress'
+                                                                    or booking.bookingStatus == 'Pending return')}">
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
@@ -606,6 +612,18 @@
                                                                id="returnDeposit"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center"
+                                                             th:if="${haveDriver != null}">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Salary Driver: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="salaryDriverDisplay"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getSalaryDriver(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -1701,8 +1719,6 @@
                                 '&carId=' + carId +
                                 '&userId=' + userId +
                                 '&navigate=' + navigate;
-                            url += '&triggerPopup=true';
-
                             window.location.href = url;
                         });
                     } else if (response.status === 'success2') {
@@ -1855,22 +1871,6 @@
         }
 
         function checkStep() {
-            // const pickupLocation = document.getElementById('pickupLocation').innerText;
-            // const pickupDate = document.getElementById('pickupDate').innerText;
-            // const returnDate = document.getElementById('returnDate').innerText;
-            //
-            // const pickupDateFormatted = formatToDatetimeDB(pickupDate);
-            // const returnDateFormatted = formatToDatetimeDB(returnDate);
-
-            // document.getElementById('editPickupLocation').value = pickupLocation;
-            // document.getElementById('editPickupDate').value = pickupDateFormatted;
-            // document.getElementById('editReturnDate').value = returnDateFormatted;
-
-            // console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
-            // console.log("editPickupDate:", document.getElementById("editPickupDate").value);
-            // console.log("editReturnDate:", document.getElementById("editReturnDate").value);
-
-
 
             //kiểm tra xem có driver nào đc chọn khi ấn tích không
             const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
@@ -1931,27 +1931,7 @@
 
         function updateBooking() {
 
-                // const pickupLocationTxt = document.getElementById('pickupLocation').innerText;
-                // const pickupDate = document.getElementById('pickupDate').innerText;
-                // const returnDate = document.getElementById('returnDate').innerText;
-                //
-                // const pickupDateFormatted = formatToDatetimeDB(pickupDate);
-                // const returnDateFormatted = formatToDatetimeDB(returnDate);
-                //
-                // document.getElementById('editPickupLocation').value = pickupLocationTxt;
-                // document.getElementById('editPickupDate').value = pickupDateFormatted;
-                // document.getElementById('editReturnDate').value = returnDateFormatted;
-                //
-                // console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
-                // console.log("editPickupDate:", document.getElementById("editPickupDate").value);
-                // console.log("editReturnDate:", document.getElementById("editReturnDate").value);
-                //==========================================================================
-
-                // const pickUpLocation = pickupDateFormatted; document.getElementById("editPickupLocation").value;
-                // const pickUpDateTime = pickupDateFormatted;
-                // const returnDateTime = returnDateFormatted;
-                // const depositValue = depositText.replace(/[^0-9]/g, '');
-                 const checked = document.getElementById("differentInfoCheckbox").checked;
+                const checked = document.getElementById("differentInfoCheckbox").checked;
                 const carId = document.getElementById("carId").value;
                 const bookingId = document.getElementById("bookingId").value;
                 const fullName = document.getElementById('fullName').value;

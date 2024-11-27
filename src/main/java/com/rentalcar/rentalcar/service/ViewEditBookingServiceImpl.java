@@ -63,18 +63,23 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         String bookingStatus = (String) result[11];
         double totalPrice = ((BigDecimal) result[6]).doubleValue(); // total pric
         double basprice = ((BigDecimal) result[9]).doubleValue();
+        Long driverId = result[17] != null ? Long.valueOf((Integer) result[17]) : null;
         double hourlyRate = basprice / 24;
         String lateTime = null; //muộn bao nhiêu ngày
         double fineLateTime = 0; //phí phạt
         double totalMoney = 0; //tiền phải thánh toán
         double returnDeposit = 0; //tiền phải hoàn trả
+        double salaryDriver = 0; // lương lái xe nếu có
         double fineLateTimePerDay = (basprice * FINE_COST) / 100; //tiền phạt trên ngày
         double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
 
         Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
         //Lấy dữ liệu trong db
         if(bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
-                bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
+           bookingStatus.equalsIgnoreCase("Pending cancel")) {
+            if(actualEndDate.isBefore(endDate)) { //kiểm tra xem actual date có nhỏ hơn enđate hay không
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+            }
             Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
         //  tính late date
             if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) { // Lấy từ db
@@ -83,7 +88,6 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
             }
         }
         else if(LocalDateTime.now().isAfter(endDate)) { //Lấy động dữ liệu theo thời gian thực khi bị phạt
-
             Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
             totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
             if(CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
@@ -91,12 +95,29 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
                 fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
             }
+        }else if( bookingStatus.equalsIgnoreCase("In-Progress") ||
+                bookingStatus.equalsIgnoreCase("Pending return")){//Lấy động dữ liệu theo thời gian thực khi đang trong quá trình dùng xe
+            map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
+            Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
+            totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
+
         } else {// còn lại
             totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
         }
         Map<String, Double> map_amount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
         totalMoney = map_amount.get("totalMoney");
         returnDeposit = map_amount.get("returnDeposit");
+        User driver = userRepository.getUserById(driverId);
+
+        if(driver != null) {
+            salaryDriver = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,driver.getSalaryDriver(),driver.getSalaryDriver() / 24);
+            if(endDate.isBefore(actualEndDate)) { // tính thêm số ngày trả muộn nếu có
+                double fineForDriver  = 0;
+                Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());
+                fineForDriver = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine,driver.getSalaryDriver(),driver.getSalaryDriver() / 24);
+                salaryDriver += fineForDriver;
+            }
+        }
 
         String str_numberOfDays = map_numberOfDays.get("days") + " days " + map_numberOfDays.get("hours") + " h ";
 
@@ -125,7 +146,8 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 lateTime,
                 fineLateTime,
                 returnDeposit,
-                totalMoney
+                totalMoney,
+                salaryDriver
         );
         return bookingDto;
     }
@@ -247,7 +269,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         result.put("totalMoney", 0D);
         result.put("returnDeposit", 0D);
 
-        if(LocalDateTime.now().isBefore(startDate)) {
+        if(LocalDateTime.now().isBefore(startDate) || LocalDateTime.now().isBefore(endDate)) {
             if(totalPrice > deposit) {
                 result.put("totalMoney", totalPrice - deposit);
                 return result;
@@ -256,14 +278,14 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
             return result;
         }
 
-        if(LocalDateTime.now().isBefore(endDate)) {
-            if(totalPrice > deposit) {
-                result.put("totalMoney", totalPrice - deposit);
-                return result;
-            }
-            result.put("returnDeposit",  deposit - totalPrice);
-            return result;
-        }
+//        if(LocalDateTime.now().isBefore(endDate)) {
+//            if(totalPrice > deposit) {
+//                result.put("totalMoney", totalPrice - deposit);
+//                return result;
+//            }
+//            result.put("returnDeposit",  deposit - totalPrice);
+//            return result;
+//        }
 
         if(LocalDateTime.now().isAfter(endDate)) {
             if(totalPrice > deposit) {

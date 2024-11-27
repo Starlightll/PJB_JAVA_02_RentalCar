@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -113,8 +114,8 @@ public class RentalCarServiceImpl implements RentalCarService {
 
             Map<String, Long> map_numberOfDays = new HashMap<>();
             if (bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
-                    bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
-                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+                bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
+                  map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
 //            tính late date
                 if (CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
@@ -445,7 +446,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                     driver.setStatus(UserStatus.RENTED);
                     userRepository.save(driver);
                     //MAIL TO DRIVER
-                    emailService.sendBookingNotificationToDriver(driver, booking, car.getCarId(), car.getCarName(), booking.getStartDate(), booking.getEndDate());
+                    emailService.sendBookingNotificationToDriver(driver, booking, car.getCarId(), car.getCarName(), booking.getStartDate(), booking.getEndDate(), customer);
                 }
             }
 
@@ -967,6 +968,44 @@ public class RentalCarServiceImpl implements RentalCarService {
 
         System.out.println("Car and Booking successfully updated for booking ID: " + bookingId);
         return true;
+    }
+
+    @Override
+    public List<MyBookingDto> getRentalsNearEndDate() {
+        LocalDate today = LocalDate.now();
+        LocalDate targetDate = today.plusDays(3); // Nhắc trước 3 ngày
+
+        LocalDateTime startOfDay = targetDate.atStartOfDay();
+        LocalDateTime endOfDay = targetDate.atTime(23, 59, 59);
+        List<MyBookingDto> bookingDtos = new ArrayList<>();
+        List<Object[]> results  = bookingRepository.findByEndDateBetween(startOfDay,endOfDay);
+        if(results  == null || results.isEmpty()){
+            throw new RuntimeException("No bookings found within the given date range.");
+        }
+
+        for (Object[] result : results) {
+
+            MyBookingDto bookingDto = new MyBookingDto(
+                    Long.valueOf((Integer) result[0]),
+                    ((Timestamp) result[1]).toLocalDateTime(), //start date
+                    ((Timestamp) result[2]).toLocalDateTime(), //end date
+                    (String) result[3], // driverInfo
+                    ((Timestamp) result[4]).toLocalDateTime(),//actualEndDate
+                    ((BigDecimal) result[5]).doubleValue(), // total price
+                    Long.valueOf((Integer) result[6]), //userId
+                    (Integer) result[7], //bookingStatus
+                    (Integer) result[8], //paymentMethod
+                    result[9] != null ? Long.valueOf((Integer) result[9]) : null, //driver
+                    ((BigDecimal) result[10]).doubleValue(), // basePrice
+                    ((BigDecimal) result[11]).doubleValue(), // deposit
+                    (BigDecimal) result[12], //carowner wallet
+                    Long.valueOf((Integer) result[13]),
+                    (String) result[14], //car name
+                    (Integer) result[15] //cariD
+            );
+            bookingDtos.add(bookingDto);
+        }
+        return bookingDtos;
     }
 
 

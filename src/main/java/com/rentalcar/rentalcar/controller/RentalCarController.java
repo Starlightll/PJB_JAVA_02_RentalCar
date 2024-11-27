@@ -13,6 +13,7 @@ import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.DriverDetail;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.PhoneNumberStandardService;
@@ -62,6 +63,9 @@ public class RentalCarController {
 
     @Autowired
     PhoneNumberStandardService phoneNumberStandardService;
+
+    @Autowired
+    EmailService emailService;
 
     @GetMapping({"/customer/my-bookings", "/car-owner/my-bookings"})
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -677,6 +681,5 @@ public class RentalCarController {
         response.put("message", message);
         return ResponseEntity.ok(response);
     }
-
 
 }

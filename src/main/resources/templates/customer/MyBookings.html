@@ -200,7 +200,14 @@
             <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span>MY BOOKINGS <i class="ion-ios-arrow-forward"></i></span></p>
+                        <th:block th:if="${!isCustomer}">
+                            <span><a>MY CARS' BOOKINGS <i class="ion-ios-arrow-forward"></i></a>
+                            </span>
+                        </th:block>
+                        <th:block th:if="${isCustomer}">
+                            <span>MY BOOKINGS <i class="ion-ios-arrow-forward"></i></span>
+                        </th:block>
+                    </p>
                     <h1 class="mb-3 bread">My Bookings!</h1>
                 </div>
             </div>
@@ -212,6 +219,7 @@
             <div class="container row d-flex m-auto justify-content-between">
                 <span>You have <span th:text="${onGoingBookings}">0</span> on-going bookings</span>
                 <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
+                    <th:block th:if="${isCustomer}">
                     <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
                         <option value="newestToLatest"
                                 th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to
@@ -229,6 +237,27 @@
                             High to Low
                         </option>
                     </select>
+                    </th:block>
+
+                    <th:block th:if="${!isCustomer}">
+                    <select class="custom-select" id="sortByCarOwner" name="sortBy" onchange="navigateToFilteredCarOwner()">
+                        <option value="newestToLatest"
+                                th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to
+                            Latest
+                        </option>
+                        <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
+                            Latest to Newest
+                        </option>
+                        <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
+                        <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
+                        <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price:
+                            Low to High
+                        </option>
+                        <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price:
+                            High to Low
+                        </option>
+                    </select>
+                    </th:block>
                 </div>
                 <!-- Modal -->
                 <div class="modal fade" id="hasDraftModal" tabindex="-1" role="dialog"
@@ -497,6 +526,7 @@
                             </div>
                         </div>
                     </div>
+                    <th:block th:if="${isCustomer}">
                     <nav th:if="${bookingList != null}"
                          class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
                          aria-label="Page navigation example" style="column-gap: 10px">
@@ -544,6 +574,57 @@
                             </select>
                         </div>
                     </nav>
+                    </th:block>
+
+                    <th:block th:if="${!isCustomer}">
+                    <nav th:if="${bookingList != null}"
+                         class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
+                         aria-label="Page navigation example" style="column-gap: 10px">
+                        <ul class="pagination m-0">
+                            <!-- Previous button - note currentPage is already 1-based -->
+                            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/car-owner/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:classappend="${currentPage <= 1} ? 'disabled'"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">Previous</span>
+                                </a>
+                            </li>
+
+                            <!-- Page numbers -->
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/car-owner/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:text="${i}"></a>
+                            </li>
+
+                            <!-- Next button -->
+                            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/car-owner/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                   th:classappend="${currentPage >= totalPages} ? 'disabled'"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="input-group input-group-sm" style="width: 100px">
+                            <div class="input-group-prepend" style="max-height: 31px">
+                                <label class="input-group-text"
+                                       for="pageSize">Size</label>
+                            </div>
+                            <select class="custom-select" id="pageSizeCar" name="size" onchange="navigateToFilteredCarOwner()">
+                                <option value="5" th:selected="${size == null || size == 5}">5</option>
+                                <option value="10" th:selected="${size == 10}">10</option>
+                                <option value="15" th:selected="${size == 15}">15</option>
+                                <option value="20" th:selected="${size == 20}">20</option>
+                                <option value="30" th:selected="${size == 30}">30</option>
+                            </select>
+                        </div>
+                    </nav>
+                    </th:block>
                 </div>
             </div>
         </form>
@@ -567,6 +648,13 @@
 
 
             window.location.href = '/customer/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
+        }
+        function navigateToFilteredCarOwner() {
+            const sortBy = document.getElementById('sortByCarOwner').value;
+            const pageSize = document.getElementById('pageSizeCar').value;
+
+
+            window.location.href = '/car-owner/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
         }
 
         window.addEventListener('DOMContentLoaded', function () {
