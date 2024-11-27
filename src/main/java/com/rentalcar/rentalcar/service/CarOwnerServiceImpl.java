@@ -204,6 +204,21 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         }
     }
 
+    @Override
+    public boolean requestChangeBasicInformation(CarDraft carDraft, MultipartFile[] files, User user, Integer carId) {
+        CarDraft carDraftPending = carDraftRepository.findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(user.getId(), carId, "Pending");
+        //Set other pending request to cancelled
+        if(carDraftPending != null){
+            carDraftPending.setVerifyStatus("Cancelled");
+            carDraftRepository.save(carDraftPending);
+        }
+        //Set new request
+        carDraft.setCarId(carId);
+        carDraft.setVerifyStatus("Pending");
+        carDraft.setLastModified(new Date());
+        carDraftService.saveRequestChangeBasicInformation(carDraft, files, user);
+        return true;
+    }
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();

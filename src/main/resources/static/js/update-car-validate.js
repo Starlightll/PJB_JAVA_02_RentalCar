@@ -36,68 +36,94 @@ const resourcePatterns = {
 
 
 
-// Hàm setup validation cho License Plate
 const setupLicensePlateValidation = (inputElement, msgElement) => {
-    // Thêm class ẩn cho message ban đầu
     msgElement.style.display = 'none';
 
-    const validateLicensePlate = (value) => {
-        // Xóa khoảng trắng và chuyển sang chữ hoa
+    const validateLicensePlate = async (value) => {
         const cleanValue = value.trim().toUpperCase();
 
-        // Kiểm tra với pattern
+        // Kiểm tra pattern trước khi gọi AJAX
         if (!licensePlatePatterns.civilian.test(cleanValue)) {
             return {
                 isValid: false,
                 message: 'Invalid license plate. Required format: XXG-XXXXX'
             };
+        } else {
+            // Kiểm tra license plate qua AJAX
+            try {
+                const exists = await checkLicensePlate(cleanValue);
+                if (exists) {
+                    return {
+                        isValid: false,
+                        message: 'License plate already owned by other'
+                    };
+                } else {
+                    return {
+                        isValid: true,
+                        value: cleanValue
+                    };
+                }
+            } catch (error) {
+                return {
+                    isValid: false,
+                    message: 'Error checking license plate'
+                };
+            }
         }
-
-        return {
-            isValid: true,
-            value: cleanValue
-        };
     };
 
-    // Hàm update UI
     const updateUI = (result) => {
         if (result.isValid) {
-            // Success state
             inputElement.classList.remove('is-invalid');
             inputElement.classList.add('is-valid');
             msgElement.style.display = 'none';
             msgElement.textContent = '';
         } else {
-            // Error state
             inputElement.classList.remove('is-valid');
             inputElement.classList.add('is-invalid');
             msgElement.style.display = 'block';
-            msgElement.style.color = '#dc3545';  // Bootstrap danger color
+            msgElement.style.color = '#dc3545';
             msgElement.style.fontSize = '80%';
             msgElement.style.marginTop = '0.25rem';
             msgElement.textContent = result.message;
         }
     };
 
-    // Validate on input
-    inputElement.addEventListener('input', (e) => {
-        const result = validateLicensePlate(e.target.value);
+    inputElement.addEventListener('input', async (e) => {
+        const result = await validateLicensePlate(e.target.value);
         updateUI(result);
     });
 
-    // Validate on blur
-    inputElement.addEventListener('blur', (e) => {
-        const result = validateLicensePlate(e.target.value);
+    inputElement.addEventListener('blur', async (e) => {
+        const result = await validateLicensePlate(e.target.value);
         updateUI(result);
     });
 
-    // Return validate function for external use (e.g., form submit)
-    return () => {
-        const result = validateLicensePlate(inputElement.value);
+    return async () => {
+        const result = await validateLicensePlate(inputElement.value);
         updateUI(result);
         return result.isValid;
     };
 };
+
+function checkLicensePlate(licensePlate) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/carAPI/api/car/check-license-plate',
+            type: 'GET',
+            data: {
+                licensePlate: licensePlate
+            },
+            success: function(response) {
+                resolve(!!response.licensePlateOwnedByOther);
+            },
+            error: function(error) {
+                console.error('Error checking license plate:', error);
+                reject(false);
+            }
+        });
+    });
+}
 
 // Hàm setup validation cho Money
 const setupMoneyValidation = (inputElement, msgElement) => {
@@ -289,68 +315,68 @@ const setupMaterialValidation = (inputElement, msgElement) => {
 };
 
 
-// //Validate for Model
-// const setupModelValidation = (inputElement, msgElement) => {
-//     // Thêm class ẩn cho message ban đầu
-//     msgElement.style.display = 'none';
-//
-//     const validateModel = (value) => {
-//         // Xóa khoảng trắng và chuyển sang chữ hoa
-//         const cleanValue = value.trim();
-//
-//         // Kiểm tra với pattern
-//         if (cleanValue === '') {
-//             return {
-//                 isValid: false,
-//                 message: 'Model cannot be empty'
-//             };
-//         }
-//
-//         return {
-//             isValid: true,
-//             value: cleanValue
-//         };
-//     };
-//
-//     // Hàm update UI
-//     const updateUI = (result) => {
-//         if (result.isValid) {
-//             // Success state
-//             inputElement.classList.remove('is-invalid');
-//             inputElement.classList.add('is-valid');
-//             msgElement.style.display = 'none';
-//             msgElement.textContent = '';
-//         } else {
-//             // Error state
-//             inputElement.classList.remove('is-valid');
-//             inputElement.classList.add('is-invalid');
-//             msgElement.style.display = 'block';
-//             msgElement.style.color = '#dc3545';  // Bootstrap danger color
-//             msgElement.style.fontSize = '80%';
-//             msgElement.style.marginTop = '0.25rem';
-//             msgElement.textContent = result.message;
-//         }
-//     };
-//
-//     // Validate on input
-//     inputElement.addEventListener('input', (e) => {
-//         const result = validateModel(e.target.value);
-//         updateUI(result);
-//     });
-//
-//     // Validate on blur
-//     inputElement.addEventListener('blur', (e) => {
-//         const result = validateModel(e.target.value);
-//         updateUI(result);
-//     });
-//
-//     // Return validate function for external use (e.g., form submit)
-//     return () => {
-//         const result = validateModel(inputElement.value);
-//         updateUI(result);
-//         return result.isValid;
-//     };
-// };
+//Validate for Model
+const setupModelValidation = (inputElement, msgElement) => {
+    // Thêm class ẩn cho message ban đầu
+    msgElement.style.display = 'none';
+
+    const validateModel = (value) => {
+        // Xóa khoảng trắng và chuyển sang chữ hoa
+        const cleanValue = value.trim();
+
+        // Kiểm tra với pattern
+        if (cleanValue === '') {
+            return {
+                isValid: false,
+                message: 'Model cannot be empty'
+            };
+        }
+
+        return {
+            isValid: true,
+            value: cleanValue
+        };
+    };
+
+    // Hàm update UI
+    const updateUI = (result) => {
+        if (result.isValid) {
+            // Success state
+            inputElement.classList.remove('is-invalid');
+            inputElement.classList.add('is-valid');
+            msgElement.style.display = 'none';
+            msgElement.textContent = '';
+        } else {
+            // Error state
+            inputElement.classList.remove('is-valid');
+            inputElement.classList.add('is-invalid');
+            msgElement.style.display = 'block';
+            msgElement.style.color = '#dc3545';  // Bootstrap danger color
+            msgElement.style.fontSize = '80%';
+            msgElement.style.marginTop = '0.25rem';
+            msgElement.textContent = result.message;
+        }
+    };
+
+    // Validate on input
+    inputElement.addEventListener('input', (e) => {
+        const result = validateModel(e.target.value);
+        updateUI(result);
+    });
+
+    // Validate on blur
+    inputElement.addEventListener('blur', (e) => {
+        const result = validateModel(e.target.value);
+        updateUI(result);
+    });
+
+    // Return validate function for external use (e.g., form submit)
+    return () => {
+        const result = validateModel(inputElement.value);
+        updateUI(result);
+        return result.isValid;
+    };
+};
 
 
 // Initialize validation when document is ready
@@ -382,7 +408,7 @@ const setupMaterialValidation = (inputElement, msgElement) => {
     // Setup validation for material
     const validateFuelConsumption = setupMaterialValidation(fuelConsumptionInput, fuelConsumptionValidateMsg);
     // Setup validation for model
-    // const validateModel = setupModelValidation(modelInput, modelValidateMsg);
+    const validateModel = setupModelValidation(modelInput, modelValidateMsg);
 
 
     // Optional: Validate on form submit

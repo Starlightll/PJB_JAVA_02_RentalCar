@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar;
 
+import com.rentalcar.rentalcar.entity.Car;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class Main {

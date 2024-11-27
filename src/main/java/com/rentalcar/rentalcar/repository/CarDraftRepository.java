@@ -9,12 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CarDraftRepository extends JpaRepository<CarDraft, Integer> {
 
-    CarDraft findTopByUser_IdOrderByLastModifiedDesc(Long userId);
+    CarDraft findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(Long user_id, Integer carId, String verifyStatus);
+    CarDraft findTopByUser_IdAndCarIdIsNullOrderByLastModifiedDesc(Long userId);
 
-    //Write me deleteDraftByUserId
+
     @Modifying
     @Transactional
-    @Query("DELETE FROM CarDraft cd WHERE cd.user.id = :userId")
+    @Query("DELETE FROM CarDraft cd WHERE cd.user.id = :userId AND cd.carId IS NULL")
     void deleteDraftByUserId(@Param("userId") Long userId);
 
 }
