@@ -151,7 +151,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                 driverSalary = driver.getSalaryDriver() * hours;
             }
             BigDecimal driverSalaryBig = BigDecimal.valueOf(driverSalary);
-            if (driverSalary > user.getWallet().doubleValue()) {
+            if (driverSalary > userdb.getWallet().doubleValue()) {
                 return -1;
             } else {
                 // Pay money for driver
