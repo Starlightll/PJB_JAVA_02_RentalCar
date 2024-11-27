@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface CarRepository extends JpaRepository<Car, Integer> {
     List<Car> getCarsByUser(User user);
@@ -51,4 +52,10 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     List<Car> findAllByCarStatus_StatusIdIsIn(Collection<Integer> carStatusStatusIds);
 
     Page<Car> findAllByCarStatus_StatusIdInAndUserId(Collection<Integer> carStatusStatusIds, Long userId, Pageable pageable);
+
+    @Query(value = "SELECT licensePlate FROM Car WHERE userId = :userId GROUP BY licensePlate", nativeQuery = true)
+    Set<String> findAllLicensePlateByUserId(@Param("userId") Long userId);
+
+    @Query(value = "SELECT licensePlate FROM Car WHERE userId != :userId GROUP BY licensePlate", nativeQuery = true)
+    Set<String> findAllLicensePlateNotOwnedByUserId(@Param("userId") Long userId);
 }

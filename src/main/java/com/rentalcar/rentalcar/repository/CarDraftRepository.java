@@ -7,11 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 public interface CarDraftRepository extends JpaRepository<CarDraft, Integer> {
 
     CarDraft findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(Long user_id, Integer carId, String verifyStatus);
     CarDraft findTopByUser_IdAndCarIdIsNullOrderByLastModifiedDesc(Long userId);
 
+    @Query(value = "SELECT licensePlate FROM CarDraft WHERE user.id = :userId AND verifyStatus = :verifyStatus")
+    Set<String> findAllLicensePlateByUser_IdAndVerifyStatus(@Param("userId") Long userId, @Param("verifyStatus") String verifyStatus);
+
+    @Query(value = "SELECT licensePlate FROM CarDraft WHERE user.id != :userId AND verifyStatus = :verifyStatus")
+    Set<String> findAllLicensePlateNotOwnedByUser_IdAndVerifyStatus(@Param("userId") Long userId, @Param("verifyStatus") String verifyStatus);
 
     @Modifying
     @Transactional

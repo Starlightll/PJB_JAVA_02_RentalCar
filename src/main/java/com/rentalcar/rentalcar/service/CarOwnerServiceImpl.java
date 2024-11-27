@@ -220,6 +220,22 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         return true;
     }
 
+    @Override
+    public Set<String> getAllLicensePlates(Long userId) {
+        Set<String> licensePlatesOfRequest = carDraftRepository.findAllLicensePlateByUser_IdAndVerifyStatus(userId, "Pending");
+        Set<String> licensePlatesOfCar = carRepository.findAllLicensePlateByUserId(userId);
+        licensePlatesOfRequest.addAll(licensePlatesOfCar);
+        return licensePlatesOfRequest;
+    }
+
+    @Override
+    public Set<String> getAllLicensePlatesNotOwnedByUser(Long userId) {
+        Set<String> licensePlatesOfRequest = carDraftRepository.findAllLicensePlateNotOwnedByUser_IdAndVerifyStatus(userId, "Pending");
+        Set<String> licensePlatesOfCar = carRepository.findAllLicensePlateNotOwnedByUserId(userId);
+        licensePlatesOfRequest.addAll(licensePlatesOfCar);
+        return licensePlatesOfRequest;
+    }
+
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
         carStatus.setStatusId(8);

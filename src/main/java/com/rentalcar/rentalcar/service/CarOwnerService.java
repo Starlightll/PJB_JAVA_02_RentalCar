@@ -18,4 +18,6 @@ public interface CarOwnerService {
     List<Car> getCarsByStatus(Integer statusId);
     void setCarStatus(Integer carId, Integer statusId);
     boolean requestChangeBasicInformation(CarDraft carDraft, MultipartFile[] files, User user, Integer carId);
+    Set<String> getAllLicensePlates(Long userId);
+    Set<String> getAllLicensePlatesNotOwnedByUser(Long userId);
 }
