@@ -70,15 +70,19 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         double totalMoney = 0; //tiền phải thánh toán
         double returnDeposit = 0; //tiền phải hoàn trả
         double salaryDriver = 0; // lương lái xe nếu có
-        double fineLateTimePerDay = (basprice * FINE_COST) / 100; //tiền phạt trên ngày
+        double fineLateTimePerDay = basprice +((basprice * FINE_COST) / 100); //tiền phạt trên ngày
         double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
 
         Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
         //Lấy dữ liệu trong db
         if(bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
-           bookingStatus.equalsIgnoreCase("Pending cancel")) {
+           bookingStatus.equalsIgnoreCase("Pending cancel") || bookingStatus.equalsIgnoreCase("Pending payment")) {
             if(actualEndDate.isBefore(endDate)) { //kiểm tra xem actual date có nhỏ hơn enđate hay không
                 map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+            }
+            if(actualEndDate.isAfter(endDate)) {
+                Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
             }
             Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
         //  tính late date
@@ -89,7 +93,7 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         }
         else if(LocalDateTime.now().isAfter(endDate)) { //Lấy động dữ liệu theo thời gian thực khi bị phạt
             Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
-            totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
+            totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
             if(CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
                 lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
                 Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
