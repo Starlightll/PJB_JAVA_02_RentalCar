@@ -112,7 +112,8 @@ public class RentalCarController {
                                 booking.getBookingStatus().equals("Confirmed"))
                 .count();
         model.addAttribute("onGoingBookings", onGoingBookings);
-
+        model.addAttribute("isCustomer", isCustomer);
+        model.addAttribute("user", user);
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");
         } else {
@@ -123,9 +124,6 @@ public class RentalCarController {
             model.addAttribute("order", order);
             model.addAttribute("size", size);
             model.addAttribute("totalElement", bookingPages.getTotalElements());
-            model.addAttribute("user", user);
-            model.addAttribute("isCustomer", isCustomer);
-
         }
         return "customer/MyBookings";
     }

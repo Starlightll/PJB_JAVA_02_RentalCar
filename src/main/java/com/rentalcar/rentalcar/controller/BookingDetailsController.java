@@ -36,28 +36,23 @@ import static com.rentalcar.rentalcar.common.Regex.EMAIL_REGEX;
 public class BookingDetailsController {
 
 
-    @Autowired
-    RentalCarService rentalCarService;
+    @Autowired RentalCarService rentalCarService;
 
-    @Autowired
-    UserRepo userRepo;
-    @Autowired
-    private CarRepository carRepository;
-    @Autowired
-    private BrandRepository brandRepository;
-    @Autowired
-    private AdditionalFunctionRepository additionalFunctionRepository;
-    @Autowired
-    private CarStatusRepository carStatusRepository;
+    @Autowired UserRepo userRepo;
 
-    @Autowired
-    private ViewEditBookingService viewEditBookingService;
+    @Autowired private CarRepository carRepository;
 
-    @Autowired
-    private DriverDetailRepository driverDetailRepository;
+    @Autowired private BrandRepository brandRepository;
 
-    @Autowired
-    RatingStarRepository ratingStarRepo;
+    @Autowired private AdditionalFunctionRepository additionalFunctionRepository;
+
+    @Autowired private CarStatusRepository carStatusRepository;
+
+    @Autowired private ViewEditBookingService viewEditBookingService;
+
+    @Autowired private DriverDetailRepository driverDetailRepository;
+
+    @Autowired RatingStarRepository ratingStarRepo;
 
 
     @GetMapping({"/customer/booking-detail", "/car-owner/booking-detail"})
@@ -247,8 +242,7 @@ public class BookingDetailsController {
         }
 
         return ResponseEntity.ok(response);
-
-
+        
     }
 
 
@@ -286,6 +280,7 @@ public class BookingDetailsController {
         List<UserDto> drivers = getAllDriverAvailable(id);
         return ResponseEntity.ok(drivers);
     }
+
 
     public List<UserDto> getAllDriverAvailable(Integer bookingId) {
         List<Object[]> results = userRepo.getAllDriver(bookingId);

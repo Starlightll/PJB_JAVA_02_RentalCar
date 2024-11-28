@@ -100,39 +100,56 @@ public class RentalCarServiceImpl implements RentalCarService {
             LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
             LocalDateTime endDate = ((Timestamp) result[3]).toLocalDateTime();
             String bookingStatus = (String) result[11];
+            double deposit = ((BigDecimal) result[10]).doubleValue();
             double totalPrice = ((BigDecimal) result[6]).doubleValue(); // total pric
-            double basprice = ((BigDecimal) result[9]).doubleValue();
-            String lateTime = null;
-            double fineLateTime = 0;
-            double returnDeposit = 0;
-            double fineLateTimePerDay = basprice * FINE_COST / 100;
-            double fineLateTimePerHour = fineLateTimePerDay / 24;
+            double baserice = ((BigDecimal) result[9]).doubleValue();
+            double hourlyRate = baserice / 24;
+            String lateTime = null; //muộn bao nhiêu ngày
+            double fineLateTime = 0; //phí phạt
+            double totalMoney = 0; //tiền phải thánh toán
+            double returnDeposit = 0; //tiền phải hoàn trả
+            double salaryDriver = 0; // lương lái xe nếu có
+            double fineLateTimePerDay =baserice +((baserice * FINE_COST) / 100); //tiền phạt trên ngày
+            double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
 
             if (LocalDateTime.now().isBefore(startDate)) {
-                returnDeposit = basprice;
+                returnDeposit = baserice;
             }
 
-            Map<String, Long> map_numberOfDays = new HashMap<>();
+            Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
             if (bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
                 bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
-                  map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+                if(actualEndDate.isBefore(endDate)) { //kiểm tra xem actual date có nhỏ hơn enđate hay không
+                    map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+                }
+
 //            tính late date
+                Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
                 if (CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
-                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, fineLateTimePerDay, fineLateTimePerHour);
+                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay, fineLateTimePerHour);
                 }
             } else if (LocalDateTime.now().isAfter(endDate)) {
-                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
-                double hourlyRate = basprice / 24;
-                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, basprice, hourlyRate);
+
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, baserice, hourlyRate);
                 if (CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
+                    Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
+                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
                 }
+            }else if( bookingStatus.equalsIgnoreCase("In-Progress") ||
+                    bookingStatus.equalsIgnoreCase("Pending return")){//Lấy động dữ liệu theo thời gian thực khi đang trong quá trình dùng xe
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
+                Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,baserice,  hourlyRate);
+
             } else {
-                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
-                double hourlyRate = basprice / 24;
-                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, basprice, hourlyRate);
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, baserice, hourlyRate);
             }
+
+            Map<String, Double> map_amount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
+            totalMoney = map_amount.get("totalMoney");
+            returnDeposit = map_amount.get("returnDeposit");
             String str_numberOfDays = map_numberOfDays.get("days") + " d " + map_numberOfDays.get("hours") + " h ";
 
             MyBookingDto bookingDto = new MyBookingDto(
@@ -142,7 +159,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                     ((Timestamp) result[3]).toLocalDateTime(), //end date
                     (String) result[4], // driverInfo
                     ((Timestamp) result[5]).toLocalDateTime(),//actualEndDate
-                    ((BigDecimal) result[6]).doubleValue(), // total price
+                    totalPrice, // total price
                     Long.valueOf((Integer) result[7]), //userId
                     str_numberOfDays, //numberOfDays
                     (Integer) result[8], //paymentMethod
@@ -156,7 +173,8 @@ public class RentalCarServiceImpl implements RentalCarService {
                     (Integer) result[16],
                     lateTime,
                     fineLateTime,
-                    returnDeposit
+                    returnDeposit,
+                    totalMoney
             );
             bookingDtos.add(bookingDto);
         }
@@ -1060,7 +1078,36 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     }
 
+    public Map<String, Double> calculateAmountToPay(LocalDateTime startDate, LocalDateTime endDate,  double totalPrice, double deposit, double fineLateTime) {
+        Map<String, Double> result = new HashMap<>();
+        result.put("totalMoney", 0D);
+        result.put("returnDeposit", 0D);
 
+        if(LocalDateTime.now().isBefore(startDate) || LocalDateTime.now().isBefore(endDate)) {
+            if(totalPrice > deposit) {
+                result.put("totalMoney", totalPrice - deposit);
+                return result;
+            }
+            result.put("returnDeposit",  deposit - totalPrice);
+            return result;
+        }
+        if(LocalDateTime.now().isAfter(endDate)) {
+            if(totalPrice > deposit) {
+                result.put("totalMoney", (totalPrice - deposit) + fineLateTime);
+                return result;
+            }
+
+            double total =  totalPrice + fineLateTime; // số tiền khi tiền phạt mà cộng với total
+            if(total > deposit) {
+                result.put("totalMoney", total - deposit);
+                return result;
+            }
+            result.put("returnDeposit",  deposit - total);
+            return result;
+        }
+
+        return result;
+    }
 }
 
 

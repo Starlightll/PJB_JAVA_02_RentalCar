@@ -329,6 +329,13 @@
             font-size: 0.875rem;
         }
 
+        .scroll-container {
+            max-height: 560px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+        }
 
     </style>
 </head>
@@ -494,7 +501,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
-                                                    <div class="row justify-content-center align-items-center align-content-center">
+                                                    <div class="scroll-container">
+                                                        <div class="row justify-content-center align-items-center align-content-center">
                                                         <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
                                                             th:text="${booking.getCarname() == null ? 'NULL' : booking.getCarname()}">
                                                             No Name</h4>
@@ -573,17 +581,6 @@
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Deposit: </p>
-                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="previewDeposit"
-                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
-                                                                No</p>
-                                                        </div>
-
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Fine LateTime: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                id="fineLateTime"
@@ -591,11 +588,23 @@
                                                                th:text="${#numbers.formatDecimal(booking.getFineLateTime(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
+
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Deposit: </p>
+                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                   id="previewDeposit"
+                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                   th:text="${#numbers.formatDecimal(booking.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                    No</p>
+                                                            </div>
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center"
                                                         th:if="${booking.getTotalMoney() > 0}">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Total Payment: </p>
+                                                                Addition payment: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                id="totalMoney"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
@@ -657,6 +666,7 @@
                                                         </div>
 
 
+                                                    </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
