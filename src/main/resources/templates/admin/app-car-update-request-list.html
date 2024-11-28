@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr"
+      data-theme="theme-default" data-assets-path="../../assets/" data-template="vertical-menu-template"
+      data-style="light" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/dashboardLayout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/typeahead-js/typeahead.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css">
+    <link rel="stylesheet" href="../../assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css">
+    <link rel="stylesheet" href="../../assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css">
+    <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/@form-validation/form-validation.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/bootstrap-select/bootstrap-select.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/sweetalert2/sweetalert2.css" />
+    <style>
+
+    </style>
+</head>
+<th:block layout:fragment="content">
+    <body>
+    <div class="layout-page">
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+            <!-- Content -->
+            <div class="container-xxl flex-grow-1 container-p-y">
+                <!-- Car request list-->
+                <!-- Fixed Header -->
+                <div class="card">
+                    <h5 class="card-header pb-0 text-md-start text-center">Fixed Header</h5>
+                    <div class="card-datatable table-responsive">
+                        <table class="dt-fixedheader table border-top">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>id</th>
+                                <th>Preview</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>License plate</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>id</th>
+                                <th>Preview</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>License plate</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!--/ Fixed Header -->
+            </div>
+            <!-- / Content -->
+            <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+    </div>
+
+    <!-- Vendors JS -->
+    <script defer src="/assets/vendor/libs/moment/moment.js"></script>
+    <script defer src="/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+    <script defer src="/assets/vendor/libs/select2/select2.js"></script>
+    <script defer src="/assets/vendor/libs/@form-validation/popular.js"></script>
+    <script defer src="/assets/vendor/libs/@form-validation/bootstrap5.js"></script>
+    <script defer src="/assets/vendor/libs/@form-validation/auto-focus.js"></script>
+    <script defer src="/assets/vendor/libs/cleavejs/cleave.js"></script>
+    <script defer src="/assets/vendor/libs/cleavejs/cleave-phone.js"></script>
+    <script defer src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js"></script>
+    <script defer src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+    <script defer src="/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+
+    <!-- Page JS -->
+    <script defer src="/assets/js/app-car-update-request-list.js"></script>
+
+    <script>
+        function validateAddForm() {
+            return true;
+        }
+    </script>
+    </body>
+</th:block>
+</html>

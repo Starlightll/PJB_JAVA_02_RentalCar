@@ -126,6 +126,54 @@ public class FileStorageServiceImpl implements FileStorageService{
     }
 
     @Override
+    public boolean moveFilesWithOutDelete(Path sourceFolder, Path destinationFolder) {
+        try {
+            if (!Files.exists(destinationFolder)) {
+                Files.createDirectories(destinationFolder);
+            }
+
+            DirectoryStream<Path> stream = Files.newDirectoryStream(sourceFolder);
+            for (Path file : stream) {
+                Path targetPath = destinationFolder.resolve(file.getFileName());
+                Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+            System.out.println("Files moved successfully.");
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error when moving files: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean copyFiles(Path sourceFolder, Path destinationFolder) {
+        try {
+            if (!Files.exists(destinationFolder)) {
+                Files.createDirectories(destinationFolder);
+            }
+
+            //Check if the source folder is Exist
+            if (Files.exists(sourceFolder)) {
+                DirectoryStream<Path> stream = Files.newDirectoryStream(sourceFolder);
+                for (Path file : stream) {
+                    Path targetPath = destinationFolder.resolve(file.getFileName());
+                    Files.copy(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+            System.out.println("Files copied successfully.");
+            return true;
+        } catch (IOException e) {
+            //Delete the created folder
+            try {
+                FileUtils.deleteDirectory(new File(destinationFolder.toString()));
+            } catch (IOException ex) {
+                throw new FileStorageException("Could not delete folder", ex);
+            }
+            System.err.println("Error when copying files: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     public void deleteFile(Path filePath) {
         try {
             //Check if the file exists
