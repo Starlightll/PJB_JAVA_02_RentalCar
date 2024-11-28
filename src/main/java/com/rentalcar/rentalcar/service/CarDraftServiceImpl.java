@@ -4,16 +4,14 @@ import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
+import com.rentalcar.rentalcar.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
@@ -28,10 +26,17 @@ public class CarDraftServiceImpl implements CarDraftService {
     private AdditionalFunctionRepository additionalFunctionRepository;
     @Autowired
     private BrandRepository brandRepository;
+    @Autowired
+    private CarRepository carRepository;
 
     @Override
     public CarDraft getDraftByLastModified(Long userId) {
-        return carDraftRepository.findTopByUser_IdOrderByLastModifiedDesc(userId);
+        return carDraftRepository.findTopByUser_IdAndCarIdIsNullOrderByLastModifiedDesc(userId);
+    }
+
+    @Override
+    public CarDraft getDraftOfRequestChangeBasicInformation(Long userId, Integer carId, String verifyStatus) {
+        return carDraftRepository.findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(userId, carId, verifyStatus);
     }
 
     @Override
@@ -61,42 +66,42 @@ public class CarDraftServiceImpl implements CarDraftService {
             //Front image
             if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
                 files[0].getSize();
-                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "frontImage."+getExtension(files[0].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "frontImage"+".png");
                 carDraft.setFrontImage(storedPath);
             }
             //Back image
             if (files[1] != null && !files[1].isEmpty() && files[1].getSize() > 0) {
                 files[1].getSize();
-                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "backImage."+getExtension(files[1].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "backImage"+".png");
                 carDraft.setBackImage(storedPath);
             }
             //Left image
             if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
                 files[2].getSize();
-                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "leftImage."+getExtension(files[2].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "leftImage"+".png");
                 carDraft.setLeftImage(storedPath);
             }
             //Right image
             if (files[3] != null && !files[3].isEmpty() && files[3].getSize() > 0) {
                 files[3].getSize();
-                String storedPath = fileStorageService.storeFile(files[3], draftFolderPath, "rightImage."+getExtension(files[3].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[3], draftFolderPath, "rightImage"+".png");
                 carDraft.setRightImage(storedPath);
             }
             //Registration
             if (files[4] != null && !files[4].isEmpty() && files[4].getSize() > 0) {
                 files[4].getSize();
-                String storedPath = fileStorageService.storeFile(files[4], draftFolderPath, "registration."+getExtension(files[4].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[4], draftFolderPath, "registration"+".png");
                 carDraft.setRegistration(storedPath);
             }
             //Certificate
             if (files[5] != null && !files[5].isEmpty() && files[5].getSize() > 0) {
                 files[5].getSize();
-                String storedPath = fileStorageService.storeFile(files[5], draftFolderPath, "certificate."+getExtension(files[5].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[5], draftFolderPath, "certificate"+".png");
                 carDraft.setCertificate(storedPath);
             }
             //Insurance
             if (files[6] != null && !files[6].isEmpty() && files[6].getSize() > 0) {
-                String storedPath = fileStorageService.storeFile(files[6], draftFolderPath, "insurance."+getExtension(files[6].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[6], draftFolderPath, "insurance"+".png");
                 carDraft.setInsurance(storedPath);
             }
         } catch (Exception e) {
@@ -126,6 +131,72 @@ public class CarDraftServiceImpl implements CarDraftService {
             carDraft.setTerms(draft.getTerms().trim());
             carDraft.setCarPrice(draft.getCarPrice());
             carDraft.setBrand(draft.getBrand());
+            carDraft.setCarId(draft.getCarId());
+            carDraft.setVerifyStatus(draft.getVerifyStatus());
+            String carName = brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
+            carDraft.setCarName(carName);
+        } else {
+            carDraft = draft;
+            carDraft.setUser(user);
+        }
+        carDraftRepository.save(carDraft);
+    }
+
+    @Override
+    public void saveRequestChangeBasicInformation(CarDraft draft, MultipartFile[] files, User user) {
+        CarDraft carDraft = carDraftRepository.save(draft);
+        String draftId = carDraft != null ? carDraft.getDraftId().toString() : UUID.randomUUID().toString();
+
+        // Create folder path
+        String folderName = String.format("%s", draftId);
+        Path draftFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", folderName);
+
+        try {
+            // Store each file if it exists
+            //Registration
+            if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
+                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "registration"+".png");
+                carDraft.setRegistration(storedPath);
+            }
+            //Certificate
+            if (files[1] != null && !files[1].isEmpty() && files[1].getSize() > 0) {
+                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "certificate"+".png");
+                carDraft.setCertificate(storedPath);
+            }
+            //Insurance
+            if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
+                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "insurance"+".png");
+                carDraft.setInsurance(storedPath);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error when store files for request change basic information");
+        }
+        if(carDraft != null) {
+            carDraft.setStep(draft.getStep());
+            carDraft.setLicensePlate(draft.getLicensePlate().toUpperCase().trim());
+            carDraft.setLastModified(draft.getLastModified());
+            carDraft.setModel(draft.getModel().trim());
+            carDraft.setColor(draft.getColor().trim());
+            carDraft.setSeat(draft.getSeat());
+            carDraft.setProductionYear(draft.getProductionYear());
+            carDraft.setTransmission(draft.getTransmission().trim());
+            carDraft.setFuelType(draft.getFuelType().trim());
+            carDraft.setMileage(draft.getMileage());
+            carDraft.setDescription(draft.getDescription().trim());
+            carDraft.setFuelConsumption(draft.getFuelConsumption());
+            carDraft.setAdditionalFunction(draft.getAdditionalFunction().trim());
+            carDraft.setProvince(draft.getProvince().trim());
+            carDraft.setDistrict(draft.getDistrict().trim());
+            carDraft.setWard(draft.getWard().trim());
+            carDraft.setHome(draft.getHome().trim());
+            carDraft.setBasePrice(draft.getBasePrice());
+            carDraft.setDeposit(draft.getDeposit());
+            carDraft.setDescription(draft.getDescription().trim());
+            carDraft.setTerms(draft.getTerms().trim());
+            carDraft.setCarPrice(draft.getCarPrice());
+            carDraft.setBrand(draft.getBrand());
+            carDraft.setCarId(draft.getCarId());
+            carDraft.setVerifyStatus(draft.getVerifyStatus());
             String carName = brandRepository.findByBrandId(carDraft.getBrand().getBrandId()).getBrandName() + " " + carDraft.getModel() + " " + carDraft.getProductionYear();
             carDraft.setCarName(carName);
         } else {
@@ -191,6 +262,112 @@ public class CarDraftServiceImpl implements CarDraftService {
         }
     }
 
+    @Override
+    public CarDraft convertCarToCarDraft(Car car) {
+        try{
+            CarDraft carDraft = new CarDraft();
+            carDraft.setLicensePlate(car.getLicensePlate());
+            carDraft.setModel(car.getModel());
+            carDraft.setColor(car.getColor());
+            carDraft.setSeat(car.getSeat());
+            carDraft.setProductionYear(car.getProductionYear());
+            carDraft.setTransmission(car.getTransmission());
+            carDraft.setFuelType(car.getFuelType());
+            carDraft.setMileage(car.getMileage());
+            carDraft.setFuelConsumption(car.getFuelConsumption());
+            carDraft.setBasePrice(car.getBasePrice());
+            carDraft.setDeposit(car.getDeposit());
+            carDraft.setDescription(car.getDescription());
+            carDraft.setTerms(car.getTerms());
+            carDraft.setCarPrice(car.getCarPrice());
+            carDraft.setBrand(car.getBrand());
+            carDraft.setDescription(car.getDescription());
+            //Set carDraft additional Functions
+            StringBuilder additionalFunction = new StringBuilder();
+            for (AdditionalFunction function : car.getAdditionalFunctions()) {
+                additionalFunction.append(function.getFunctionId()).append(",");
+            }
+            carDraft.setAdditionalFunction(additionalFunction.toString());
+            //Set Address for carDraft
+            carDraft.setProvince(car.getAddress().getProvinceId() + "," + car.getAddress().getProvince());
+            carDraft.setDistrict(car.getAddress().getDistrictId() + "," + car.getAddress().getDistrict());
+            carDraft.setWard(car.getAddress().getWardId() + "," + car.getAddress().getWard());
+            carDraft.setHome(car.getAddress().getStreet());
+            //Set car files
+            carDraft.setFrontImage(car.getFrontImage());
+            carDraft.setBackImage(car.getBackImage());
+            carDraft.setLeftImage(car.getLeftImage());
+            carDraft.setRightImage(car.getRightImage());
+            carDraft.setRegistration(car.getRegistration());
+            carDraft.setCertificate(car.getCertificate());
+            carDraft.setInsurance(car.getInsurance());
+            carDraft.setUser(car.getUser());
+            return carDraft;
+        }catch (Exception e){
+            System.out.println("Something wrong when convert car to car draft in car owner service" + e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean approveCarUpdateRequest(Integer draftId, User user) {
+        try {
+            CarDraft carDraft = carDraftRepository.findCarDraftsByDraftIdAndVerifyStatus(draftId, "Pending");
+            if (carDraft == null) {
+                return false;
+            }
+            carDraft.setVerifyStatus("Verified");
+            Car car = carRepository.getCarByCarId(carDraft.getCarId());
+            car.setLicensePlate(carDraft.getLicensePlate());
+            car.setColor(carDraft.getColor());
+            car.setBrand(carDraft.getBrand());
+            car.setModel(carDraft.getModel());
+            car.setProductionYear(carDraft.getProductionYear());
+            car.setSeat(carDraft.getSeat());
+            car.setTransmission(carDraft.getTransmission());
+            car.setFuelType(carDraft.getFuelType());
+            setCarDocumentFiles(car, carDraft, user);
+            carDraftRepository.save(carDraft);
+            carRepository.save(car);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Something wrong when approve car update request in car owner service" + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean rejectCarUpdateRequest(Integer draftId, User user) {
+        try {
+            CarDraft carDraft = carDraftRepository.findCarDraftsByDraftIdAndVerifyStatus(draftId, "Pending");
+            if (carDraft == null) {
+                return false;
+            }
+            carDraft.setVerifyStatus("Rejected");
+            carDraftRepository.save(carDraft);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Something wrong when reject car update request in car owner service" + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean cancelCarUpdateRequest(Integer draftId, User user) {
+        try {
+            CarDraft carDraft = carDraftRepository.findCarDraftsByDraftIdAndVerifyStatus(draftId, "Pending");
+            if (carDraft == null) {
+                return false;
+            }
+            carDraft.setVerifyStatus("Cancelled");
+            carDraftRepository.save(carDraft);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Something wrong when cancel car update request in car owner service" + e.getMessage());
+            return false;
+        }
+    }
+
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
@@ -245,7 +422,19 @@ public class CarDraftServiceImpl implements CarDraftService {
         }
     }
 
-
+    private void setCarDocumentFiles(Car car, CarDraft carDraft, User user){
+        //Car files
+        Path sourceFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
+        Path targetFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", car.getCarId()+"");
+        if(fileStorageService.copyFiles(sourceFolder, targetFolder)){
+            car.setRegistration(carDraft.getRegistration().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setCertificate(carDraft.getCertificate().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setInsurance(carDraft.getInsurance().replace(sourceFolder.toString(), targetFolder.toString()));
+        }else{
+            System.out.println("Error when copy files from draft to car");
+            throw new RuntimeException("Error when copy files from draft to car");
+        }
+    }
 
 
 }

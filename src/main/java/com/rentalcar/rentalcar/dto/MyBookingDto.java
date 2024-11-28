@@ -29,6 +29,7 @@ public class MyBookingDto {
     private Double totalPrice;
     private Long userId;
     private Integer numberOfDays;
+    private String str_numberOfDays;
     private Integer paymentMethod;
     private Double basePrice;
     private Double deposit;
@@ -72,12 +73,18 @@ public class MyBookingDto {
     private Integer bookingStatusId;
     private BigDecimal carOwnerWallet;
     private Long carOwnerId;
+    private String lateTime;
+    private double fineLateTime;
+    private double returnDeposit;
+    private double totalMoney;
+    private double salaryDriver;
 
 
 
     //Update Booking
-    public MyBookingDto(Long id, String carname, LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId, int numberOfDays, Integer paymentMethod, double basePrice,
-                        double deposit, String bookingStatus, String frontImage, String backImage, String leftImage, String rightImage, Integer carId, Long  driverId) {
+    public MyBookingDto(Long id, String carname, LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId, String numberOfDays, Integer paymentMethod, double basePrice,
+                        double deposit, String bookingStatus, String frontImage, String backImage, String leftImage, String rightImage, Integer carId, Long  driverId, String lateTime, double fineLateTime , double returnDeposit, double totalMoney,
+                        double salaryDriver) {
         this.bookingId = id;
         this.carname = carname;
         this.startDate = startDate;
@@ -86,7 +93,7 @@ public class MyBookingDto {
         this.actualEndDate = actualEndDate;
         this.totalPrice = totalPrice;
         this.userId = userId;
-        this.numberOfDays = numberOfDays;
+        this.str_numberOfDays = numberOfDays;
         this.paymentMethod = paymentMethod;
         this.basePrice = basePrice;
         this.deposit = deposit;
@@ -97,12 +104,18 @@ public class MyBookingDto {
         this.rightImage = rightImage;
         this.carId = carId;
         this.driverId = driverId;
+        this.lateTime = lateTime;
+        this.fineLateTime = fineLateTime;
+        this.returnDeposit = returnDeposit;
+        this.totalMoney = totalMoney;
+        this.salaryDriver = salaryDriver;
     }
 
 
     //MyBookings
-    public MyBookingDto(Long id, String carname, LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId, int numberOfDays, Integer paymentMethod, double basePrice,
-                        double deposit, String bookingStatus, String frontImage, String backImage, String leftImage, String rightImage, Integer carId) {
+    public MyBookingDto(Long id, String carname, LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId, String numberOfDays, Integer paymentMethod, double basePrice,
+                        double deposit, String bookingStatus, String frontImage, String backImage, String leftImage, String rightImage, Integer carId,
+                        String lateTime, double fineLateTime , double returnDeposit, double totalMoney) {
         this.bookingId = id;
         this.carname = carname;
         this.startDate = startDate;
@@ -111,7 +124,7 @@ public class MyBookingDto {
         this.actualEndDate = actualEndDate;
         this.totalPrice = totalPrice;
         this.userId = userId;
-        this.numberOfDays = numberOfDays;
+        this.str_numberOfDays = numberOfDays;
         this.paymentMethod = paymentMethod;
         this.basePrice = basePrice;
         this.deposit = deposit;
@@ -121,7 +134,10 @@ public class MyBookingDto {
         this.leftImage = leftImage;
         this.rightImage = rightImage;
         this.carId = carId;
-
+        this.lateTime = lateTime;
+        this.fineLateTime = fineLateTime;
+        this.returnDeposit = returnDeposit;
+        this.totalMoney = totalMoney;
     }
 
     public MyBookingDto(Long id,  LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId,Integer bookingStatusId,

@@ -6,15 +6,22 @@
 <head>
     <title>Book Car</title>
     <meta name="_csrf" th:content="${_csrf.token}">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/customer/book-car.css">
     <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.10.0/dist/css/bootstrap-datepicker3.min.css">
-    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/webjars/select2/4.1.0-rc.0/dist/css/select2.css">
+    <link rel="stylesheet" href="/webjars/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="/webjars/izitoast/1.4.0/dist/css/iziToast.min.css">
+
+    <!-- JS -->
+    <!-- Nạp jQuery -->
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
 
-
-    <!-- iziToast CSS -->
-    <link rel="stylesheet" href="/webjars/izitoast/1.4.0/dist/css/iziToast.min.css">
-    <!-- iziToast JavaScript -->
+    <!-- Nạp các thư viện JavaScript -->
+    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
+    <script src="/webjars/select2/4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/webjars/izitoast/1.4.0/dist/js/iziToast.min.js"></script>
 
     <style>
@@ -73,44 +80,123 @@
         }
 
         #previewContainer {
-            width: 100%;
+            width: auto;
             aspect-ratio: 2 / 1;
-            border: 1px solid #ddd;
+            /*border: 1px solid #ddd;*/
             overflow: hidden;
-            background-color: #f5f5f5;
+            /*background-color: #f5f5f5;*/
         }
 
         #previewImage {
-            width: 100%;
+            width: auto;
             height: 100%;
             object-fit: cover;
+        }
+
+
+        /* Tùy chỉnh kích thước popup */
+
+
+
+
+
+
+        .select2{
+            flex: 1
+        }
+
+        .select2-selection__rendered{
+            font-size: 0.875rem;
+            overflow: unset;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option{
+            padding: .30rem .30rem;
+            font-size: 0.875rem;
         }
 
     </style>
 </head>
 <th:block layout:fragment="content">
     <body>
-    <!-- Modal -->
-<!--    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">-->
-<!--        <div class="modal-dialog modal-dialog-centered" role="document">-->
-<!--            <div class="modal-content">-->
-<!--                <div class="modal-header">-->
-<!--                    <h5 class="modal-title" id="ModalTitle">No Title</h5>-->
+
+    <!-- Popup HTML -->
+    <div id="rulesPopup" data-backdrop="static" data-keyboard="false" class="modal fade popup-rules" tabindex="-1" role="dialog" aria-labelledby="rulesPopupLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rulesPopupLabel">Booking Rules</h5>
 <!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
 <!--                        <span aria-hidden="true">&times;</span>-->
 <!--                    </button>-->
-<!--                </div>-->
-<!--                <div class="modal-body" id="ModalBody">-->
-<!--                    ...-->
-<!--                </div>-->
-<!--                <div class="modal-footer">-->
-<!--                    <button type="button" class="btn btn-warning" data-dismiss="modal" id="close1">Close</button>-->
-<!--                    <button type="button" class="btn btn-primary" id="confirm">Yes</button>-->
-<!--                    <button type="button" class="btn btn-danger" id="notConfirm">No</button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+                </div>
+                <div class="modal-body" id="rulesContent">
+                    <div id="scrollableContent" style="max-height: 400px; overflow-y: scroll;">
+                        <h2>1. Introduction</h2>
+                        <p>Welcome to [Company Name]! These Terms of Service outline the rules and regulations for renting a vehicle from our company. By renting a vehicle from us, you agree to these terms. Please read them carefully.</p>
+
+                        <h2>2. Eligibility</h2>
+                        <p>To rent a car, you must:</p>
+                        <ul>
+                            <li>Be at least <span class="highlight">18</span> years old (or as specified in the rental agreement).</li>
+                            <li>Hold a valid driver's license for a minimum of <span class="highlight">2 years</span>.</li>
+                            <li>Provide a valid ID or passport and a credit card for security purposes.</li>
+                        </ul>
+
+                        <h2>3. Rental Period</h2>
+                        <p>The rental period begins at the time and date specified in the rental agreement and ends when the vehicle is returned to the designated location. Late returns may incur additional charges as specified in the rental agreement.</p>
+                        <ul>
+                            <li><span class="highlight">Early returns</span>: If you return the car before the rental start date, a penalty of 10% of the deposit will be charged as a travel fee for the car owner.</li>
+                            <li><span class="highlight">Early terminations</span>: If you return the car earlier than the agreed rental period, the remaining balance will be refunded to you.</li>
+                            <li><span class="highlight">Late returns</span>: If you exceed the agreed rental period, you will be charged an additional 20% of the daily rental price for each extra day.</li>
+                        </ul>
+
+                        <h2>4. Vehicle Condition and Responsibility</h2>
+                        <p>The vehicle is provided in good condition, and it is your responsibility to maintain it during the rental period. You agree to:</p>
+                        <ul>
+                            <li>Inspect the vehicle for any pre-existing damage and report it before departure.</li>
+                            <li>Return the vehicle in the same condition it was rented.</li>
+                            <li>Pay for any damages incurred during the rental period, including accidents, wear, tear, or misuse.</li>
+                        </ul>
+
+                        <h2>5. Prohibited Uses</h2>
+                        <p>You agree not to:</p>
+                        <ul>
+                            <li>Use the vehicle for illegal purposes or in an unauthorized or dangerous manner.</li>
+                            <li>Allow unapproved drivers to operate the vehicle.</li>
+                            <li>Use the vehicle outside the specified geographical area (if applicable).</li>
+                            <li>Engage in reckless driving, racing, or towing.</li>
+                        </ul>
+
+                        <h2>6. Insurance and Liability</h2>
+                        <p>[5 Coder Handsome] provides basic insurance coverage as outlined in your rental agreement. Additional insurance options may be available. You are liable for any damages exceeding the insurance coverage or not covered by the policy.</p>
+
+                        <h2>7. Payment and Fees</h2>
+                        <p>All rental charges, including daily rates, insurance, fuel, and other fees, must be paid in full at the time of rental. Additional fees may apply, including:</p>
+                        <ul>
+                            <li><span class="highlight">Late fees</span>: Charged for returns past the agreed rental period.</li>
+                            <li><span class="highlight">Cleaning fees</span>: If the vehicle is returned in an excessively dirty condition.</li>
+                            <li><span class="highlight">Early return penalty</span>: If applicable, as described above.</li>
+                        </ul>
+
+                        <h2>8. Termination</h2>
+                        <p>We reserve the right to terminate the rental agreement if these terms are violated. In case of termination, you must return the vehicle immediately, and additional fees may apply.</p>
+
+                        <h2>9. Changes to Terms</h2>
+                        <p>[5 Coder Handsome] reserves the right to modify these Terms of Service at any time. Any changes will be posted on our website and will apply to rentals made after the effective date of the changes.</p>
+
+                        <p>By renting a vehicle from [5 Coder Handsome], you agree to these Terms of Service. For any questions, please contact us at <span class="highlight">[contact information]</span>.</p>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="acceptRulesBtn" class="btn btn-primary" disabled>I've read and understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -185,6 +271,7 @@
                 </div>
 
                 <input type="hidden" id="carId" th:value="${car.getCarId()}"/>
+                <input type="hidden" id="userId" th:value="${user.getId()}"/>
 
                 <div class="col-11 col-sm-10 col-md-10 col-lg-11 text-center p-0 mt-3 mb-2 mt-lg-5">
 
@@ -522,33 +609,173 @@
                                                                         </label>
                                                             </div>
                                                             <div id="driverInfoTable" style="display: none; width: 100%">
-                                                                <div>
-                                                                    <table class="table table-dark table-hover">
-                                                                        <thead>
-                                                                        <tr>
-<!--                                                                            <th scope="col">-->
-<!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
-<!--                                                                            </th>-->
-                                                                            <th></th>
+                                                                <div class="row">
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" >
+                                                                                <span class="input-group-text ">Full name</span>
+                                                                            </div>
+                                                                            <select class="custom-select"  onchange="fetchDriverDetailsAjax()"   id="fullNameDriver">
+                                                                                <option value="">Select</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <span id="fullNameErrorDriver" class="text-danger"></span>
 
-                                                                            <th scope="col">Name</th>
-                                                                            <th scope="col">Date</th>
-                                                                            <th scope="col">Base Price</th>
-                                                                        </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                        <tr th:each="user : ${users}">
-                                                                            <th scope="row">
-                                                                                <input type="checkbox" th:attr="value=${user.userId}"   name="selectRow" onclick="selectOnlyOne(this)" />
-                                                                            </th>
-                                                                            <td th:text="${user.getFullName()}"></td>
-                                                                            <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
-                                                                            <td th:text="${#numbers.formatDecimal(499000, 0, 'COMMA', 0, 'POINT')} + ' /DAY'">></td>
-                                                                        </tr>
+                                                                    </div>
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" >
+                                                                                <span class="input-group-text ">Date of birth</span>
+                                                                            </div>
+                                                                            <input type="date" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                   disabled id="book_pick_dateDriver">
+                                                                        </div>
+                                                                        <div id="dateErrorDriver" style="color: red"></div>
 
-                                                                        <!-- Các hàng khác... -->
-                                                                        </tbody>
-                                                                    </table>
+                                                                    </div>
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" >
+                                                                                <span class="input-group-text ">Phone</span>
+                                                                            </div>
+                                                                            <input disabled type="text" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                    id="phoneDriver">
+                                                                        </div>
+                                                                        <div id="phoneErrorDriver" style="color: red"></div>
+                                                                    </div>
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" >
+                                                                                <span class="input-group-text ">email</span>
+                                                                            </div>
+                                                                            <input disabled type="email" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                   id="emailDriver">
+                                                                        </div>
+                                                                        <div id="emailErrorDriver" style="color: red"></div>
+
+                                                                    </div>
+
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend">
+                                                                                <label class="input-group-text" for="province">Province</label>
+                                                                            </div>
+                                                                            <select disabled class="custom-select" id="provinceDriver">
+                                                                                <option value="">Select</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <a class="validate-msg">Invalid</a>
+                                                                    </div>
+
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" >
+                                                                                <span class="input-group-text ">National ID</span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                   disabled id="nationalIdDriver">
+                                                                        </div>
+                                                                        <div id="nationalIdErrorDriver" style="color: red"></div>
+                                                                        <a class="validate-msg" id="nationalIdValidateDriver">Invalid</a>
+                                                                    </div>
+
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend">
+                                                                                <label class="input-group-text" for="district">District</label>
+                                                                            </div>
+                                                                            <select disabled class="custom-select" id="districtDriver">
+                                                                                <option value="">Select</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <a class="validate-msg">Invalid</a>
+                                                                    </div>
+
+
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" >
+                                                                                <span class="input-group-text ">Salary Driver</span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                   disabled id="salaryDriver">
+                                                                        </div>
+                                                                        <div id="salaryErrorDriver" style="color: red"></div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend">
+                                                                                <label class="input-group-text"
+                                                                                       for="ward">Ward</label>
+                                                                            </div>
+                                                                            <select class="custom-select" disabled  id="wardDriver">
+                                                                                <option value="">Select</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <a class="validate-msg">Invalid</a>
+                                                                    </div>
+
+
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" style="max-height: 33.5px;">
+                                                                                <span class="input-group-text" id="inputGroupFileAddonDriver" >Driving license</span>
+                                                                            </div>
+                                                                            <div class="custom-file">
+                                                                                <!-- Input file -->
+                                                                                <input disabled type="file" accept="image/*" class="custom-file-input" id="inputGroupFileDriver"
+                                                                                       aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
+
+                                                                                <!-- Label hiển thị tên file -->
+                                                                                <label class="custom-file-label" id="fileNameDriver" style="font-size: small !important;">
+                                                                                    <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
+                                                                                    <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: '"></span>
+                                                                                    <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
+                                                                                </label>
+                                                                            </div>
+
+                                                                        </div>
+<!--                                                                        &lt;!&ndash; Khung hiển thị ảnh &ndash;&gt;-->
+<!--                                                                        <div id="previewContainerDriver" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">-->
+<!--                                                                            <img id="previewImageDriver" th:src="'/'+${user.getDrivingLicense()}"-->
+<!--                                                                                 alt="Image preview"-->
+<!--                                                                                 style="width: 100%; height: 100%; object-fit: cover;">-->
+<!--                                                                        </div>-->
+
+                                                                        <input type="hidden" id="currentDrivingLicenseDriver" th:value="${user.getDrivingLicense()}">
+                                                                        <div id="drivingLicenseErrorDriver" style="color: red"></div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-6 mb-3">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text">Home</span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                   disabled id="streetDriver">
+                                                                        </div>
+                                                                        <a class="validate-msg">Invalid</a>
+                                                                    </div>
+
+                                                                    <!-- Khung hiển thị ảnh -->
+                                                                    <div class="col-lg-6 mb-3" id="previewContainerDriver">
+                                                                        <img id="previewImageDriver" th:src="'/'+${user.getDrivingLicense()}"
+                                                                             alt="Image preview"
+                                                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    </div>
                                                                 </div>
                                                             </div>
 
@@ -644,18 +871,58 @@
         </div>
     </section>
 
-<!--    <script>-->
-<!--        function chooseFile(fileInput) {-->
-<!--            if (fileInput.files && fileInput.files[0]) {-->
-<!--                var reader = new FileReader();-->
+    <script>
 
-<!--                reader.onload = function (e) {-->
-<!--                    $('#image').attr('src', e.target.result);-->
-<!--                };-->
-<!--                reader.readAsDataURL(fileInput.files[0]);-->
-<!--            }-->
-<!--        }-->
-<!--    </script>-->
+        $('#fullNameDriver').select2({
+            placeholder: "Select a driver",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Kiểm tra nếu người dùng đã hiểu quy tắc (dựa vào localStorage)
+            if (!localStorage.getItem('rulesAccepted')) {
+                // Mở popup khi lần đầu vào trang
+                $('#rulesPopup').modal('show');
+            }
+
+            // Đảm bảo nút "I've read and understood" chỉ được bật khi người dùng cuộn hết nội dung
+            const scrollableContent = document.getElementById('scrollableContent');
+            const acceptButton = document.getElementById('acceptRulesBtn');
+
+            scrollableContent.addEventListener('scroll', function () {
+                // Kiểm tra nếu người dùng cuộn đến cuối
+                if (scrollableContent.scrollTop + scrollableContent.clientHeight >= scrollableContent.scrollHeight) {
+                    acceptButton.disabled = false;
+                    acceptButton.classList.add('btn-success');
+                    acceptButton.classList.remove('btn-primary');
+                }
+            });
+
+            // Khi người dùng nhấn nút "I've read and understood"
+            acceptButton.addEventListener('click', function () {
+                // Lưu trạng thái vào localStorage để không hiển thị lại popup
+                localStorage.setItem('rulesAccepted', 'true');
+                // Đóng popup
+                $('#rulesPopup').modal('hide');
+            });
+        });
+
+        // Sửa lỗi aria-hidden và focus
+        $('#rulesPopup').on('shown.bs.modal', function () {
+            // Khi modal được mở, xóa aria-hidden và thay bằng inert
+            document.body.setAttribute('aria-hidden', 'true'); // Ẩn toàn bộ body khi modal mở
+        });
+
+        $('#rulesPopup').on('hidden.bs.modal', function () {
+            // Khi modal đóng, phục hồi lại aria-hidden cho body
+            document.body.removeAttribute('aria-hidden');
+        });
+
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -706,14 +973,12 @@
             //kiểm tra xem có driver nào đc chọn khi ấn tích không
             const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
             // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
-            let selectedUserId = null;
-            const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
+            // let selectedUserId = null;
+            const selectedDriverId = document.getElementById("fullNameDriver").value;
+            // const selectedId = $('#fullNameDriver').val();
 
-            if (selectedCheckbox) {
-                selectedUserId = selectedCheckbox.value;
-            }
-
-            if(checked && selectedUserId == null) {
+            console.log("selectedUserId = " ,selectedDriverId)
+            if(checked && !selectedDriverId) {
                 alert(`Please fill all required fields`);
                 return false;
             }
@@ -817,16 +1082,14 @@
                 const district =  document.getElementById('district').value;
                 const ward =  document.getElementById('ward').value;
                 const street = document.getElementById('street').value;
+                const selectedDriverId = document.getElementById("fullNameDriver").value;
+                const userId = document.getElementById("userId").value;
 
-                // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
-                let selectedUserId = null;
-                const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
+                // const selectedId = $('#fullNameDriver').val();
 
-                if (selectedCheckbox) {
-                    selectedUserId = selectedCheckbox.value;
-                }
 
-                console.log("Selected User IDs:", selectedUserId);
+
+                console.log("Selected User IDs:", selectedDriverId);
 
 
                 // Tạo thông tin booking
@@ -856,7 +1119,7 @@
                     rentWard: ward,
                     rentStreet: street,
                     selectedPaymentMethod : selectedPaymentMethod,
-                    selectedUserId: selectedUserId,
+                    selectedUserId: selectedDriverId,
                 };
 
                 console.log(bookingInfor)
@@ -909,7 +1172,7 @@
                                 const formattedBookingNumber = bookingInfo.id;
                                 // Gán lại giá trị href của thẻ <a> với bookingId mới
                                 const viewBookingLink = document.querySelector('a.btn-secondary.btn');
-                                viewBookingLink.href = `/customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&navigate=home`;
+                                viewBookingLink.href = `/customer/booking-detail?bookingId=${formattedBookingNumber}&carId=${carId}&userId=${userId}&navigate=home`;
                                 console.log("Updated booking link:", viewBookingLink.href);
 
                                 // Cập nhật từng phần tử cụ thể
@@ -1080,8 +1343,8 @@
                 return;
             }
 
-            // Tính số ngày
-            const days = calculateNumberOfDays(newPickupDate, newReturnDate);
+            // Tính số ngày và giờ
+            const { days, hours } = calculateNumberOfDays(newPickupDate, newReturnDate);
 
             // Cập nhật lại nội dung của các `span`
             document.getElementById('pickupLocation').innerText = newPickupLocation;
@@ -1089,15 +1352,25 @@
             document.getElementById('returnDate').innerText = formatToDisplay(newReturnDate);
             document.getElementById('editPickupDate').value = newPickupDate;
             document.getElementById('editReturnDate').value = newReturnDate;
-            document.getElementById('numberOfDays').innerText = days;
-            console.log("Số ngày: " + days);
-            const totalPrice = days * car.basePrice;
-            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString() + ' VND';
+            document.getElementById('numberOfDays').innerText = `${days} days ${hours} hours`;
+
+            // Tính tiền theo ngày và giờ
+            const pricePerHour = car.basePrice / 24;
+            const totalPrice = (days * car.basePrice) + (hours * pricePerHour);
+
+            // Định dạng số để không có phần thập phân
+            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }) + ' VND';
+
             console.log("Tổng tiền: " + totalPrice);
 
             // Đóng modal
             $('#confirmModal').modal('hide');
         }
+
+
 
         function LoadSaveChanges(newPickupDatee, newReturnDatee) {
 
@@ -1161,18 +1434,26 @@
                 return;
             }
 
-            // Tính số ngày
-            const days = calculateNumberOfDays(newPickupDatee, newReturnDatee);
+
+            // Tính số ngày và giờ
+            const { days, hours } = calculateNumberOfDays(newPickupDatee, newReturnDatee);
 
             // Cập nhật lại nội dung của các `span`
             document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDatee);
             document.getElementById('returnDate').innerText = formatToDisplay(newReturnDatee);
-            document.getElementById('numberOfDays').innerText = days;
+            document.getElementById('numberOfDays').innerText = `${days} days ${hours} hours`;
             document.getElementById('editPickupDate').value = newPickupDatee;
             document.getElementById('editReturnDate').value = newReturnDatee;
-            console.log("Số ngày: " + days);
-            const totalPrice = days * car.basePrice;
-            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString() + ' VND';
+
+            // Tính tiền theo ngày và giờ
+            const pricePerHour = car.basePrice / 24;
+            const totalPrice = (days * car.basePrice) + (hours * pricePerHour);
+
+            // Định dạng số để không có phần thập phân
+            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }) + ' VND';
             console.log("Tổng tiền: " + totalPrice);
 
             // Đóng modal
@@ -1231,12 +1512,25 @@
         }
 
         // Hàm để tính số ngày giữa 2 ngày
+        // Hàm tính số ngày và giờ
         function calculateNumberOfDays(startDate, endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
-            const timeDiff = end - start;
-            return Math.ceil(timeDiff / (1000 * 3600 * 24));  // Chuyển đổi ms thành số ngày
+
+            // Lấy sự khác biệt thời gian (millisecond)
+            const diffTime = end - start;
+
+            if (diffTime <= 0) {
+                return { days: 0, hours: 0 }; // Nếu thời gian không hợp lệ
+            }
+
+            // Tính số ngày và giờ từ sự khác biệt
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Số ngày
+            const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Số giờ lẻ
+
+            return { days: diffDays, hours: diffHours };
         }
+
 
 
         // Load provinces on page load with default values
@@ -1409,9 +1703,14 @@
             table.style.display = checkbox.checked ? 'block' : 'none';
         }
 
+        // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
+        document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
+        window.addEventListener('pageshow', toggleDriverInfoFields);
+
     </script>
     <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/customer/book-car.js"></script>
+    <script src="/js/customer/driver_Information.js"></script>
     </body>
 </th:block>
 </html>

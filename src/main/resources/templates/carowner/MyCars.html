@@ -363,11 +363,14 @@
                                                                 <p>0</p>
                                                             </div>
                                                             <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
+                                                                 style="display: flex; align-items: center; white-space: nowrap;">
                                                                 <p class="col-lg-4 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Price: </p>
-                                                                <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
-                                                                   id="previewPrice">0k/Day</p>
+                                                                <div class="d-flex" style="max-width: 316px;">
+                                                                    <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'POINT', 0, 'POINT')}"
+                                                                       id="previewPrice" style="overflow: hidden;text-overflow: ellipsis;width: 100%;white-space: nowrap;">0</p>
+                                                                    <p style="padding-left: 5px">VND/day</p>
+                                                                </div>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -392,6 +395,7 @@
                                                                 <p  th:if="${car.getCarStatus().getStatusId() == 11}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
                                                                 <p  th:if="${car.getCarStatus().getStatusId() == 14}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
                                                                 <p  th:if="${car.getCarStatus().getStatusId() == 15}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff4d00;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCarStatus().getStatusId() == 16}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #d86837;max-width: fit-content;background-color: #eac791;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
 
                                                             </div>
                                                         </div>
@@ -407,12 +411,7 @@
                                                            th:attr="data-car-id=${car.getCarId()}"
                                                            style="background: #da1b1b !important;">
                                                             Confirm Deposit</a>
-                                                        <a th:href="'#'"
-                                                           th:if="${car.getCarStatus().getStatusId() == 11}"
-                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                           th:onclick="'checkPayment(' + ${car.getCarId()} + ')'"
-                                                           style="background: #da1b1b !important;">
-                                                            Confirm Payment</a>
+
                                                         <a th:href="'#'"
                                                            th:if="${car.getCarStatus().getStatusId() == 15}"
                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
@@ -420,6 +419,12 @@
                                                            th:attr="data-car-id=${car.getCarId()}"
                                                            style="background: #000000 !important;">
                                                             Confirm Cancel</a>
+                                                        <a th:href="'#'"
+                                                           th:if="${car.getCarStatus().getStatusId() == 16}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'confirmReturn(' + ${car.getCarId()} + ')'"
+                                                           style="background: #da1b1b !important;">
+                                                            Confirm Return</a>
                                                     </div>
                                                 </div>
                                             </th:block>
@@ -571,12 +576,12 @@
             });
         });
 
-        // confirm payment btn
-        function checkPayment(carId) {
-            console.log("checkPayment called with carId:", carId); // Kiểm tra xem hàm có được gọi không
+        // confirm return btn
+        function confirmReturn(carId) {
+            console.log("confirmReturn called with carId:", carId); // Kiểm tra xem hàm có được gọi không
 
             $.ajax({
-                url: '/car-owner/check-payment',
+                url: '/car-owner/check-return',
                 type: 'get',
                 data: {carId: carId},
                 success: function (response) {
@@ -625,7 +630,7 @@
             const pageSize = document.getElementById('pageSize').value;
             console.log(carId);
             $.ajax({
-                    url: '/car-owner/confirm-payment-car',
+                    url: '/car-owner/confirm-return-car',
                     type: 'get',
                     data: {carId: carId},
                     success: function (response) {

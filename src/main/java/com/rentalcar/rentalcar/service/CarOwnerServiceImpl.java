@@ -67,7 +67,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getFrontImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[0].getSize();
-                String storedPath = fileStorageService.storeFile(files[0], carFolderPath, "frontImage."+getExtension(files[0].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[0], carFolderPath, "frontImage"+".png");
                 car.setFrontImage(storedPath);
             }
             //Back image
@@ -75,7 +75,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getBackImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[1].getSize();
-                String storedPath = fileStorageService.storeFile(files[1], carFolderPath, "backImage."+getExtension(files[1].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[1], carFolderPath, "backImage"+".png");
                 car.setBackImage(storedPath);
             }
             //Left image
@@ -83,7 +83,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getLeftImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[2].getSize();
-                String storedPath = fileStorageService.storeFile(files[2], carFolderPath, "leftImage."+getExtension(files[2].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[2], carFolderPath, "leftImage"+".png");
                 car.setLeftImage(storedPath);
             }
             //Right image
@@ -91,7 +91,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getRightImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[3].getSize();
-                String storedPath = fileStorageService.storeFile(files[3], carFolderPath, "rightImage."+getExtension(files[3].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[3], carFolderPath, "rightImage"+".png");
                 car.setRightImage(storedPath);
             }
             //Details Information
@@ -204,6 +204,44 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         }
     }
 
+    @Override
+    public boolean requestChangeBasicInformation(CarDraft carDraft, MultipartFile[] files, User user, Integer carId) {
+//        CarDraft carDraftPending = carDraftRepository.findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(user.getId(), carId, "Pending");
+        List<CarDraft> carDraftPendings = carDraftRepository.findCarDraftsByUser_IdAndCarIdAndVerifyStatus(user.getId(), carId, "Pending");
+        //Set other pending request to cancelled
+//        if(carDraftPending != null){
+//            carDraftPending.setVerifyStatus("Cancelled");
+//            carDraftRepository.save(carDraftPending);
+//        }
+        if(!carDraftPendings.isEmpty()){
+            for(CarDraft carDraftPending : carDraftPendings){
+                carDraftPending.setVerifyStatus("Cancelled");
+                carDraftRepository.save(carDraftPending);
+            }
+        }
+        //Set new request
+        carDraft.setCarId(carId);
+        carDraft.setVerifyStatus("Pending");
+        carDraft.setLastModified(new Date());
+        carDraftService.saveRequestChangeBasicInformation(carDraft, files, user);
+        return true;
+    }
+
+    @Override
+    public Set<String> getAllLicensePlates(Long userId) {
+        Set<String> licensePlatesOfRequest = carDraftRepository.findAllLicensePlateByUser_IdAndVerifyStatus(userId, "Pending");
+        Set<String> licensePlatesOfCar = carRepository.findAllLicensePlateByUserId(userId);
+        licensePlatesOfRequest.addAll(licensePlatesOfCar);
+        return licensePlatesOfRequest;
+    }
+
+    @Override
+    public Set<String> getAllLicensePlatesNotOwnedByUser(Long userId) {
+        Set<String> licensePlatesOfRequest = carDraftRepository.findAllLicensePlateNotOwnedByUser_IdAndVerifyStatus(userId, "Pending");
+        Set<String> licensePlatesOfCar = carRepository.findAllLicensePlateNotOwnedByUserId(userId);
+        licensePlatesOfRequest.addAll(licensePlatesOfCar);
+        return licensePlatesOfRequest;
+    }
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();

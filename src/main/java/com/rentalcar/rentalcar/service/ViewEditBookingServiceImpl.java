@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.common.CalculateNumberOfDays;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.dto.BookingDto;
@@ -21,10 +22,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
+import static com.rentalcar.rentalcar.common.Constants.FINE_COST;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 @Service
@@ -44,13 +44,13 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
 
     @Override
-    public MyBookingDto getBookingDetail(Integer bookingId, Integer carId, HttpSession session) {
+    public MyBookingDto getBookingDetail(Integer bookingId, Integer carId, HttpSession session, Integer userId) {
 
         User user = (User) session.getAttribute("user");
         if (user == null) {
             throw new RuntimeException("user not found");
         }
-        Object[] obj = rentalCarRepository.findBookingDetail(user.getId(),carId,bookingId);
+        Object[] obj = rentalCarRepository.findBookingDetail(Long.valueOf(userId),carId,bookingId);
         if(obj == null || obj.length == 0){
             throw new RuntimeException("booking detail not found");
         }
@@ -58,9 +58,74 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
         LocalDateTime startDate = ((Timestamp) result[2]).toLocalDateTime();
         LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
+        LocalDateTime endDate = ((Timestamp) result[3]).toLocalDateTime();
+        double deposit = ((BigDecimal) result[10]).doubleValue();
+        String bookingStatus = (String) result[11];
+        double totalPrice = ((BigDecimal) result[6]).doubleValue(); // total pric
+        double basprice = ((BigDecimal) result[9]).doubleValue();
+        Long driverId = result[17] != null ? Long.valueOf((Integer) result[17]) : null;
+        double hourlyRate = basprice / 24;
+        String lateTime = null; //muộn bao nhiêu ngày
+        double fineLateTime = 0; //phí phạt
+        double totalMoney = 0; //tiền phải thánh toán
+        double returnDeposit = 0; //tiền phải hoàn trả
+        double salaryDriver = 0; // lương lái xe nếu có
+        double fineLateTimePerDay = basprice +((basprice * FINE_COST) / 100); //tiền phạt trên ngày
+        double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
 
-        // Tính toán số ngày giữa startDate và actualEndDate
-        int numberOfDays = calculateNumberOfDays(startDate, actualEndDate);
+        Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+        //Lấy dữ liệu trong db
+        if(bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
+           bookingStatus.equalsIgnoreCase("Pending cancel") || bookingStatus.equalsIgnoreCase("Pending payment")) {
+            if(actualEndDate.isBefore(endDate)) { //kiểm tra xem actual date có nhỏ hơn enđate hay không
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+            }
+            if(actualEndDate.isAfter(endDate)) {
+                Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
+            }
+            Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
+        //  tính late date
+            if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) { // Lấy từ db
+                lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
+                fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);
+            }
+        }
+        else if(LocalDateTime.now().isAfter(endDate)) { //Lấy động dữ liệu theo thời gian thực khi bị phạt
+            Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
+            totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
+            if(CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
+                lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
+                Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
+                fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
+            }
+        }else if( bookingStatus.equalsIgnoreCase("In-Progress") ||
+                bookingStatus.equalsIgnoreCase("Pending return")){//Lấy động dữ liệu theo thời gian thực khi đang trong quá trình dùng xe
+            map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
+            Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
+            totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basprice,  hourlyRate);
+
+        } else {// còn lại
+            totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,basprice,  hourlyRate);
+        }
+        Map<String, Double> map_amount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
+        totalMoney = map_amount.get("totalMoney");
+        returnDeposit = map_amount.get("returnDeposit");
+        User driver = userRepository.getUserById(driverId);
+
+        if(driver != null) {
+            salaryDriver = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,driver.getSalaryDriver(),driver.getSalaryDriver() / 24);
+            if(endDate.isBefore(actualEndDate)) { // tính thêm số ngày trả muộn nếu có
+                double fineForDriver  = 0;
+                Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());
+                fineForDriver = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine,driver.getSalaryDriver(),driver.getSalaryDriver() / 24);
+                salaryDriver += fineForDriver;
+            }
+        }
+
+        String str_numberOfDays = map_numberOfDays.get("days") + " days " + map_numberOfDays.get("hours") + " h ";
+
+
 
         MyBookingDto bookingDto = new MyBookingDto(
                 Long.valueOf((Integer) result[0]),
@@ -69,9 +134,9 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 ((Timestamp) result[3]).toLocalDateTime(), //end date
                 (String) result[4], // driverInfo
                 ((Timestamp) result[5]).toLocalDateTime(),//actualEndDate
-                ((BigDecimal) result[6]).doubleValue(), // total price
+                totalPrice, // total price
                 Long.valueOf((Integer) result[7]), //userId
-                numberOfDays, //numberOfDays
+                str_numberOfDays, //numberOfDays
                 (Integer) result[8], //paymentMethod
                 ((BigDecimal) result[9]).doubleValue(), // basePrice
                 ((BigDecimal) result[10]).doubleValue(), // deposit
@@ -81,7 +146,12 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
                 (String) result[14],
                 (String) result[15],
                 (Integer) result[16],
-                result[17] != null ? Long.valueOf((Integer) result[17]) : null
+                result[17] != null ? Long.valueOf((Integer) result[17]) : null,
+                lateTime,
+                fineLateTime,
+                returnDeposit,
+                totalMoney,
+                salaryDriver
         );
         return bookingDto;
     }
@@ -168,17 +238,17 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
 
     }
-    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
-        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        // Tính chênh lệch thời gian (mili-giây)
-        long timeDiff = endMillis - startMillis;
-
-        // Chia để tính số ngày và làm tròn lên
-        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
-    }
+//    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+//        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
+//        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        long endMillis = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//
+//        // Tính chênh lệch thời gian (mili-giây)
+//        long timeDiff = endMillis - startMillis;
+//
+//        // Chia để tính số ngày và làm tròn lên
+//        return (int) Math.ceil(timeDiff / (1000.0 * 3600 * 24));
+//    }
 
     public String normalizeFullName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
@@ -195,6 +265,48 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
         }
 
         return normalized.toString().trim();
+    }
+
+
+    public Map<String, Double> calculateAmountToPay(LocalDateTime startDate, LocalDateTime endDate,  double totalPrice, double deposit, double fineLateTime) {
+        Map<String, Double> result = new HashMap<>();
+        result.put("totalMoney", 0D);
+        result.put("returnDeposit", 0D);
+
+        if(LocalDateTime.now().isBefore(startDate) || LocalDateTime.now().isBefore(endDate)) {
+            if(totalPrice > deposit) {
+                result.put("totalMoney", totalPrice - deposit);
+                return result;
+            }
+            result.put("returnDeposit",  deposit - totalPrice);
+            return result;
+        }
+
+//        if(LocalDateTime.now().isBefore(endDate)) {
+//            if(totalPrice > deposit) {
+//                result.put("totalMoney", totalPrice - deposit);
+//                return result;
+//            }
+//            result.put("returnDeposit",  deposit - totalPrice);
+//            return result;
+//        }
+
+        if(LocalDateTime.now().isAfter(endDate)) {
+            if(totalPrice > deposit) {
+                result.put("totalMoney", (totalPrice - deposit) + fineLateTime);
+                return result;
+            }
+
+            double total =  totalPrice + fineLateTime; // số tiền khi tiền phạt mà cộng với total
+            if(total > deposit) {
+                result.put("totalMoney", total - deposit);
+                return result;
+            }
+            result.put("returnDeposit",  deposit - total);
+            return result;
+        }
+
+        return result;
     }
 
 }

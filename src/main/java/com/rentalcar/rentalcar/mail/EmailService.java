@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.mail;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.TimeFormatter;
 import com.rentalcar.rentalcar.dto.BookingDto;
+import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
@@ -342,7 +343,7 @@ public class EmailService {
         String recipientAddress = user.getEmail();
         Long bookingNumber = booking.getBookingId();
         Integer carId = car.getCarId();
-        String urlToBooking = "http://localhost:8080/customer/booking-detail?bookingId=" + bookingNumber + "&carId=" + carId + "&navigate=mybookings";
+        String urlToBooking = "http://localhost:8080/customer/booking-detail?bookingId=" + bookingNumber + "&carId=" + carId +"&userId="+user.getId()  + "&navigate=mybookings";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
         String startDate = booking.getStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
@@ -380,7 +381,7 @@ public class EmailService {
         String recipientAddress = user.getEmail();
         Long bookingNumber = booking.getBookingId();
         Integer carId = car.getCarId();
-        String urlToBooking = "http://localhost:8080/customer/booking-detail?bookingId=" + bookingNumber + "&carId=" + carId + "&navigate=mybookings";
+        String urlToBooking = "http://localhost:8080/customer/booking-detail?bookingId=" + bookingNumber + "&carId=" + carId +"&userId="+user.getId() + "&navigate=mybookings";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
         String startDate = booking.getStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
@@ -417,9 +418,9 @@ public class EmailService {
 
 
     @Async
-    public void sendBookingNotificationToDriver(User driver, Booking booking, Integer carId, String carName, LocalDateTime startDate, LocalDateTime endDate) {
+    public void sendBookingNotificationToDriver(User driver, Booking booking, Integer carId, String carName, LocalDateTime startDate, LocalDateTime endDate, User user) {
         String recipientAddress = driver.getEmail();
-        String urlToBookingDetails = "http://localhost:8080/customer/booking-detail?bookingId="+booking.getBookingId() +"&carId=" + carId + "&navigate=mybookings";
+        String urlToBookingDetails = "http://localhost:8080/customer/booking-detail?bookingId="+booking.getBookingId() +"&carId=" + carId + "&userId="+user.getId() + "&navigate=mybookings";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String formattedStartDate = startDate.format(dateTimeFormatter);
         String formattedEndDate = endDate.format(dateTimeFormatter);
@@ -459,6 +460,128 @@ public class EmailService {
         }
     }
 
+    @Async
+    public void sendRequestReturnCar(User carOwner, Booking booking, Integer carId, String carName) {
+        String recipientAddress = carOwner.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        String baseUrl = "http://localhost:8080/car-owner/edit-car/";
+        String urlToEditCar = baseUrl + carId;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String requestDate = LocalDateTime.now().format(dateTimeFormatter);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // Updated HTML message content
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Return Request Received!</h2>" +
+                    "<p style='font-size: 16px;'>Dear Car Owner,</p>" +
+                    "<p style='font-size: 16px;'>The renter of your car <strong style='color: #FF5722;'>" + carName + "</strong> (Car ID: <strong>" + carId + "</strong>) has sent a request to return the car.</p>" +
+                    "<p style='font-size: 16px;'>Booking ID: <strong style='color: #2196F3;'>#" + bookingNumber + "</strong></p>" +
+                    "<p style='font-size: 16px;'>Please check and confirm the car's receipt when it is returned.</p>" +
+                    "<a href='" + urlToEditCar + "' style='display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>View Booking Details</a>" +
+                    "<p style='font-size: 16px;'>Thank you for your cooperation and support!</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you have any concerns or did not expect this email, please contact our support team immediately.</p>" +
+                    "<p style='font-size: 12px; color: #555;'>Visit here: <a href='" + urlToEditCar + "'>" + urlToEditCar + "</a></p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Renter Requested to Return Your Car - Booking #" + bookingNumber);
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Async
+    public void sendPaymentDriverSalary(User driver, Booking booking, double driverSalary) {
+        String recipientAddress = driver.getEmail();
+        Long bookingNumber = booking.getBookingId();
+        String urlToWallet = "http://localhost:8080/wallet/my-wallet";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String bookingDate = LocalDateTime.now().format(dateTimeFormatter);
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String formattedSalary = currencyFormatter.format(driverSalary);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // Updated HTML message content
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #4CAF50;'>Payment Successfully Processed!</h2>" +
+                    "<p style='font-size: 16px;'>Dear Driver,</p>" +
+                    "<p style='font-size: 16px;'>The salary for booking <strong style='color: #FF5722;'>#" + bookingNumber + "</strong> has been successfully processed and credited to your wallet.</p>" +
+                    "<p style='font-size: 16px;'>Amount: <strong style='color: #FF5722;'>" + formattedSalary + "</strong></p>" +
+                    "<a href='" + urlToWallet + "' style='display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>View My Wallet</a>" +
+                    "<p style='font-size: 16px;'>Please check your wallet through the link above. Thank you for your cooperation!</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you have any issues or did not expect this email, please contact our support team immediately.</p>" +
+                    "<p style='font-size: 12px; color: #555;'>" + urlToWallet + "</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Payment for Booking #" + bookingNumber + " Has Been Successfully Processed");
+            helper.setText(htmlMessage, true); // 'true' indicates that this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    @Async
+    public void sendReminderEmail(User user, MyBookingDto booking, Integer carId, String carName, LocalDateTime endDate, double remainingMoney) {
+        String recipientAddress = user.getEmail();
+        String baseUrl = "http://localhost:8080/customer/booking-detail?bookingId=" + booking.getBookingId() + "&carId=" + carId + "&userId=" + user.getId() + "&navigate=mybookings";
+        String urlToEditCar = baseUrl + carId;
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedDueDate = endDate.format(dateFormatter);
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
+        String remainingMoneyString = currencyFormatter.format(remainingMoney);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // Updated HTML email content
+            String htmlMessage = "<html>" +
+                    "<body style='font-family: Arial, sans-serif;'>" +
+                    "<h2 style='color: #FF5722;'>Reminder: Your car rental is about to expire!</h2>" +
+                    "<p style='font-size: 16px;'>Dear <strong style='color: #2196F3;'>" + user.getFullName() + "</strong>,</p>" +
+                    "<p style='font-size: 16px;'>The car you rented, <strong style='color: #FF5722;'>" + carName + "</strong>, is due to be returned on <strong style='color: #2196F3;'>" + formattedDueDate + "</strong>.</p>" +
+                    "<p style='font-size: 16px;'>The remaining balance you need to settle is <strong style='color: #FF5722;'>" + remainingMoneyString + " USD</strong>.</p>" +
+                    "<a href='" + urlToEditCar + "' style='display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>View Details</a>" +
+                    "<p style='font-size: 16px;'>Please return the car on time to avoid additional penalty fees.</p>" +
+                    "<p style='color: #757575;'>Best regards,<br><strong style='color: #4CAF50;'>The Support Team</strong></p>" +
+                    "<hr>" +
+                    "<p style='font-size: 12px; color: #555;'>If you have already returned the car or have any questions, please contact us immediately.</p>" +
+                    "</body>" +
+                    "</html>";
+
+            helper.setTo(recipientAddress);
+            helper.setSubject("Reminder: Car rental return due - Car ID " + carId);
+            helper.setText(htmlMessage, true); // 'true' indicates this is an HTML email
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 

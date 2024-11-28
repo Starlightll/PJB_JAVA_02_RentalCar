@@ -7,14 +7,19 @@
     <title>Edit Booking Details</title>
     <meta name="_csrf" th:content="${_csrf.token}">
     <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.10.0/dist/css/bootstrap-datepicker3.min.css">
-    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
-    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
-    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/webjars/select2/4.1.0-rc.0/dist/css/select2.css">
+    <link rel="stylesheet" href="/webjars/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css">
     <link rel="stylesheet" href="/css/carowner/edit-car.css">
+    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
     <!-- iziToast CSS -->
     <link rel="stylesheet" href="/webjars/izitoast/1.4.0/dist/css/iziToast.min.css">
+
+
+
+    <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/webjars/select2/4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
     <!-- iziToast JavaScript -->
     <script src="/webjars/izitoast/1.4.0/dist/js/iziToast.min.js"></script>
 
@@ -310,7 +315,27 @@
             height: 100%;
             object-fit: cover;
         }
+        .select2{
+            flex: 1
+        }
 
+        .select2-selection__rendered{
+            font-size: 0.875rem;
+            overflow: unset;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option{
+            padding: .30rem .30rem;
+            font-size: 0.875rem;
+        }
+
+        .scroll-container {
+            max-height: 560px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+        }
 
     </style>
 </head>
@@ -380,9 +405,15 @@
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
 
-                        <th:block th:if="${navigate == 'mybookings'}">
+                        <th:block th:if="${navigate == 'mybookings' and isCustomer}">
                             <span class="mr-2">
                                 <a href="/customer/my-bookings">MY BOOKINGS <i
+                                class="ion-ios-arrow-forward"></i></a>
+                            </span>
+                        </th:block>
+                        <th:block th:if="${navigate == 'mybookings' and !isCustomer}">
+                            <span class="mr-2">
+                                <a href="/car-owner/my-bookings">MY CARS' BOOKINGS <i
                                 class="ion-ios-arrow-forward"></i></a>
                             </span>
                         </th:block>
@@ -470,10 +501,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
-                                                    <div class="row justify-content-center align-items-center align-content-center">
-                                                        <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
-                                                            th:text="${booking.getCarname() == null ? 'NULL' : booking.getCarname()}">
-                                                            No Name</h4>
+                                                    <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
+                                                        th:text="${booking.getCarname() == null ? 'NULL' : booking.getCarname()}">
+                                                        No Name</h4>
+                                                    <div class="scroll-container">
+                                                        <div class="row justify-content-center align-items-center align-content-center">
 
                                                         <div>
                                                             <span></span>
@@ -483,22 +515,35 @@
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>From Date:</label>
                                                             </div>
-                                                            <p th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="pickupDate" th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
                                                         <div class="col-lg-12 row mt-2">
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>To Date:</label>
                                                             </div>
-                                                            <p th:text="${#temporals.format(booking.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="returnDate" th:text="${#temporals.format(booking.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
+<!--                                                        In ra actual khi đã hoàn thành và không tự tanăng theo thời gian thực-->
                                                         <div class="col-lg-12 row mt-2"
-                                                             th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'}">
+                                                             th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
+                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
                                                             </div>
-                                                            <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="actualDateDb" th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                        </div>
+<!--                                                        Ngược lại-->
+                                                        <div class="col-lg-12 row mt-2"
+                                                             th:if="${(#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
+                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'))  or (booking.bookingStatus == 'In-Progress'
+                                                                    or booking.bookingStatus == 'Pending return')}">
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label>Actual End Date:</label>
+                                                            </div>
+                                                            <p id="actualDate" th:text="${#temporals.format(timNow, 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
                                                         <input type="hidden" id="bookingId"
@@ -507,14 +552,20 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Number of days: </p>
-                                                            <p th:text="${booking.getNumberOfDays() > 0 ? booking.getNumberOfDays() : 0}"></p>
-
+                                                            <p th:text="${booking.getStr_numberOfDays() != null ? booking.getStr_numberOfDays() : 0}"></p>
+                                                            <!-- Kiểm tra nếu trễ hạn -->
+                                                            <p th:if="${booking.getLateTime() != null}"
+                                                               style="color: red; font-style: italic;">
+                                                                (
+                                                                <span th:text="${booking.getLateTime()}"></span>
+                                                                )
+                                                            </p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Base price: </p>
-                                                            <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                            <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + ' VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -527,14 +578,62 @@
                                                                th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Deposit: </p>
+                                                                Fine LateTime: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="previewDeposit"
+                                                               id="fineLateTime"
+                                                               th:style="${booking.getFineLateTime() > 0} ? 'color: red;' : 'color: inherit;'"
+                                                               th:text="${#numbers.formatDecimal(booking.getFineLateTime(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
+
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Deposit: </p>
+                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                   id="previewDeposit"
+                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                   th:text="${#numbers.formatDecimal(booking.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                    No</p>
+                                                            </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center"
+                                                        th:if="${booking.getTotalMoney() > 0}">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Addition payment: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="totalMoney"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                               th:text="${#numbers.formatDecimal(booking.getTotalMoney(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center"
+                                                             th:if="${booking.getReturnDeposit() > 0}">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Return Deposit: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="returnDeposit"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center"
+                                                             th:if="${haveDriver != null}">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Salary Driver: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="salaryDriverDisplay"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getSalaryDriver(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -569,34 +668,69 @@
 
 
                                                     </div>
+                                                    </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+
                                                     <!-- View Details button: always visible -->
                                                     <a th:href="'/carDetail/' + ${car.carId}"
                                                        class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                         Details</a>
 
-                                                    <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
-                                                    <a th:href="'#'" id="confirm-booking-detail-btn"
-                                                       style="background: #d5dcd5 !important; color: black !important;"
-                                                       th:if="${booking.bookingStatus != 'In-Progress' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
-                                                        Pick-up</a>
+<!--                                                    btn for customer-->
+                                                    <th:block th:if="${isCustomer}">
 
-<!--                                                     Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses-->
-                                                    <a th:href="'#'" style="background: #e82b46 !important;" id="cancel-booking-btn"
-                                                       th:if="${( booking.getBookingStatus() == 'Confirmed' or  booking.getBookingStatus() == 'Pending deposit' or  booking.getBookingStatus() == 'Stopped')
+
+                                                        <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
+                                                        <a th:href="'#'" id="confirm-booking-detail-btn"
+                                                           style="background: #d5dcd5 !important; color: black !important;"
+                                                           th:if="${booking.bookingStatus != 'Pending return' and booking.bookingStatus != 'In-Progress' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
+                                                            Pick-up</a>
+
+                                                        <!-- Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses-->
+                                                        <a th:href="'#'" style="background: #e82b46 !important;" id="cancel-booking-btn"
+                                                           th:if="${( booking.getBookingStatus() == 'Confirmed' or  booking.getBookingStatus() == 'Pending deposit' or  booking.getBookingStatus() == 'Stopped')
                                                         and  booking.getBookingStatus() != 'Pending payment' and booking.bookingStatus !='Pending cancel' and  booking.getBookingStatus() != 'Cancelled' and  booking.getBookingStatus() != 'Completed' and booking.getBookingStatus() != 'In-Progress'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center" >Cancel
-                                                        Booking</a>
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center" >Cancel Booking</a>
+                                                        <!-- Return Car button: visible only if status is In-Progress &ndash;&gt;-->
+                                                        <a style="background: #707070 !important;"
+                                                           th:if="${booking.bookingStatus == 'In-Progress'}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'returnCarDetail(' + ${booking.bookingId} + ')'">Request Return Car</a>
+
+                                                        <a style="background: #707070 !important;"
+                                                           th:if="${booking.bookingStatus == 'Pending payment'}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'confirmPaymentDetail(' + ${booking.bookingId} + ')'">Confirm payment</a>
+                                                    </th:block>
+
+<!--                                                    btn for car-owner -->
+
+                                                    <th:block th:if="${!isCustomer}">
 
 
-<!--                                                    &lt;!&ndash; Return Car button: visible only if status is In-Progress &ndash;&gt;-->
-                                                    <a th:href="'#'" style="background: #707070 !important;"
-                                                       th:if="${booking.bookingStatus == 'In-Progress'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                       th:onclick="'returnCarDetail(' + ${booking.getBookingId()} + ')'"
-                                                    >Return Car</a>
+                                                        <a th:href="'#'" style="background: #e82b46 !important;"
+                                                           th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
+                                                           th:if="${car.getCarStatus().getStatusId() == 14}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center" >Confirm
+                                                            Deposit</a>
+
+                                                        <a th:href="'#'"
+                                                           th:if="${car.getCarStatus().getStatusId() == 15}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:id="'confirm-cancel-btn-' + ${car.getCarId()}"
+                                                           th:attr="data-car-id=${car.getCarId()}"
+                                                           style="background: #000000 !important;">
+                                                            Confirm Cancel</a>
+                                                        <a th:href="'#'"
+                                                           th:if="${car.getCarStatus().getStatusId() == 16}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'confirmReturn(' + ${car.getCarId()} + ')'"
+                                                           style="background: #da1b1b !important;">
+                                                            Confirm Return</a>
+                                                    </th:block>
+
                                                 </div>
 
 
@@ -638,7 +772,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="fullName" oninput="validateFullName()"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                th:value="${rentUser.getFullName()}" name="fullName">
                                                     </div>
                                                     <span id="fullNameError" class="text-danger"></span>
@@ -655,7 +789,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                th:value="${rentUser.getDob()}"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                oninput="validateDate()" id="book_pick_date1">
 
 <!--                                                        <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>-->
@@ -674,7 +808,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="phone" name="phoneNumber"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                oninput="validatePhone()">
                                                     </div>
                                                     <div id="phoneError" style="color: red"></div>
@@ -706,7 +840,7 @@
                                                                aria-label="Sizing example input"
                                                                aria-describedby="inputGroup-sizing-default"
                                                                id="nationalId" name="nationalIDNo"
-                                                               th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                               th:attr="readonly=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                oninput="validateNationalId()">
                                                     </div>
                                                     <div id="nationalIdError" style="color: red"></div>
@@ -720,7 +854,7 @@
                                                         <div class="custom-file">
                                                             <!-- Input file -->
                                                             <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile011"
-                                                                   th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                   th:disabled="${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                    aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
 
                                                             <!-- Label hiển thị tên file -->
@@ -757,7 +891,7 @@
                                                                            for="province">Province</label>
                                                                 </div>
                                                                 <select class="custom-select" id="province" th:value="${rentUser.getCity()}" th:data-default="${rentUser.getCity()}"
-                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
+                                                                    th:attr="disabled=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -771,7 +905,7 @@
                                                                            for="district">District</label>
                                                                 </div>
                                                                 <select class="custom-select" id="district" th:value="${rentUser.getDistrict()}" th:data-default="${rentUser.getDistrict()}"
-                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}">
+                                                                    th:attr="disabled=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -785,7 +919,7 @@
                                                                            for="ward">Ward</label>
                                                                 </div>
                                                                 <select class="custom-select" id="ward" th:value="${rentUser.getWard()}" th:data-default="${rentUser.getWard()}"
-                                                                    th:attr="disabled=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}" >
+                                                                    th:attr="disabled=${!isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}" >
                                                                     <option value="">Select</option>
                                                                 </select>
                                                             </div>
@@ -801,7 +935,7 @@
                                                                        aria-label="Sizing example input"
                                                                        aria-describedby="inputGroup-sizing-default"
                                                                        id="street"
-                                                                       th:attr="readonly=${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
+                                                                       th:attr="readonly=${ !isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}"
                                                                        th:value="${rentUser.getStreet()}">
                                                             </div>
                                                             <a class="validate-msg">Invalid</a>
@@ -834,37 +968,207 @@
                                                     </label>
                                                 </div>
                                                 <div id="driverInfoTable" style="display: none; width: 100%">
-                                                    <div>
-                                                        <table class="table table-dark table-hover">
-                                                            <thead>
-                                                            <tr>
-                                                                <!--                                                                            <th scope="col">-->
-                                                                <!--                                                                                <input type="checkbox" onclick="toggleSelectAll(this)" /> &lt;!&ndash; Ô checkbox để chọn tất cả &ndash;&gt;-->
-                                                                <!--                                                                            </th>-->
-                                                                <th></th>
 
-                                                                <th scope="col">Name</th>
-                                                                <th scope="col">Date</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr th:each="user : ${users}">
-                                                                <th scope="row">
-                                                                    <input type="checkbox" th:attr="value=${user.getUserId()}"   name="selectRow"
-                                                                           th:disabled="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
-                                                                           th:checked="${user.getUserId() == booking.getDriverId()}" onclick="selectOnlyOne(this)" />
-                                                                </th>
-                                                                <td th:text="${user.getFullName()}"></td>
-                                                                <td th:text="${#temporals.format(user.getDob(), 'dd/MM/yyyy')}"></td>
-                                                            </tr>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Full Name</span>
+                                                                </div>
+                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver"
+                                                                        th:attr="disabled=${ !isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
+                                                                    <option value="">Select</option>
+                                                                </select>
+                                                                <input type="hidden" th:value="${booking.getDriverId()}" id="driverId">
+                                                            </div>
+                                                            <span id="fullNameErrorDriver" class="text-danger"></span>
 
-                                                            <!-- Các hàng khác... -->
-                                                            </tbody>
-                                                        </table>
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3">
+
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Date Of Birth</span>
+                                                                </div>
+                                                                <input readonly type="date" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="book_pick_dateDriver">
+
+                                                                <!--                                                        <a class="validate-msg" id="dateOfBirthValidate">Invalid</a>-->
+
+                                                            </div>
+                                                            <div id="dateErrorDriver" style="color: red"></div>
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Phone Number</span>
+                                                                </div>
+                                                                <input readonly type="text"  class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="phoneDriver" name="phoneNumber"
+                                                                       >
+                                                            </div>
+                                                            <div id="phoneErrorDriver" style="color: red"></div>
+
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Email Address</span>
+                                                                </div>
+                                                                <input  type="text" readonly  class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="emailDriver" name="emailAddress"
+                                                                       >
+                                                            </div>
+                                                            <div id="emailErrorDriver" style="color: red"></div>
+
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >National ID No:</span>
+                                                                </div>
+                                                                <input readonly type="text" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="nationalIdDriver" name="nationalIDNo"
+                                                                      >
+                                                            </div>
+                                                            <div id="nationalIdErrorDriver" style="color: red"></div>
+                                                        </div>
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend" style="max-height: 33.5px;">
+                                                                    <span class="input-group-text" id="inputGroupFileAddonDriver" >Driving license</span>
+                                                                </div>
+                                                                <div class="custom-file">
+                                                                    <!-- Input file -->
+                                                                    <input disabled type="file" accept="image/*" class="custom-file-input" id="inputGroupFileDriver">
+
+                                                                    <!-- Label hiển thị tên file -->
+                                                                    <label class="custom-file-label" id="fileNameDriver" style="font-size: small !important;">
+                                                                        <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
+                                                                        <span th:if="${rentUser.getDrivingLicense() != null}" th:text="'Current file: '"></span>
+                                                                        <span th:if="${rentUser.getDrivingLicense() == null}">Choose file</span>
+                                                                    </label>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <!--                                                    &lt;!&ndash; Khung hiển thị ảnh &ndash;&gt;-->
+                                                            <!--                                                    <div id="previewContainer" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">-->
+                                                            <!--                                                        <img id="previewImage" th:src="'/'+${rentUser.getDrivingLicense()}"-->
+                                                            <!--                                                             alt="Image preview"-->
+                                                            <!--                                                             style="width: 100%; height: 100%; object-fit: cover;">-->
+                                                            <!--                                                    </div>-->
+
+                                                            <input type="hidden" id="currentDrivingLicenseDriver" th:value="${rentUser.getDrivingLicense()}">
+                                                            <div id="drivingLicenseErrorDriver" style="color: red"></div>
+
+                                                        </div>
+
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        >Salary Driver:</span>
+                                                                </div>
+                                                                <input readonly type="text" class="form-control"
+                                                                       aria-label="Sizing example input"
+                                                                       aria-describedby="inputGroup-sizing-default"
+                                                                       id="salaryDriver" name="salary"
+                                                                >
+                                                            </div>
+                                                            <div  style="width: 100%;  margin-top: 20px; overflow: auto">
+                                                                <h6 >Address</h6>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="province">Province</label>
+                                                                        </div>
+                                                                        <select disabled class="custom-select" id="provinceDriver" >
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="district">District</label>
+                                                                        </div>
+                                                                        <select disabled class="custom-select" id="districtDriver">
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                   for="ward">Ward</label>
+                                                                        </div>
+                                                                        <select disabled class="custom-select" id="wardDriver" >
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">Home</span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"
+                                                                               aria-label="Sizing example input"
+                                                                               aria-describedby="inputGroup-sizing-default"
+                                                                               id="streetDriver"
+                                                                               readonly>
+                                                                    </div>
+                                                                    <a class="validate-msg">Invalid</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Khung hiển thị ảnh -->
+                                                        <div  class="col-lg-6 mb-3 " id="previewContainerDriver">
+                                                            <img id="previewImageDriver" th:src="'/'+${rentUser.getDrivingLicense()}"
+                                                                 alt="Image preview"
+                                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                                        </div>
+                                                        <!--                                                <div class="row" style="width: 100%; overflow: auto">-->
+
+
                                                     </div>
+
+
+
+
+
+
                                                 </div>
 
                                             </div>
+
+                                            <th:block th:if="${isCustomer}">
                                             <div id="button">
                                                 <button class="btn-primary btn" style="width: 100px; margin: 10px 10px 10px 10px"
                                                         onclick="window.history.back()">Discard
@@ -875,6 +1179,8 @@
                                                     Save
                                                 </button>
                                             </div>
+                                            </th:block>
+
                                             <div th:if="${booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit'}"
                                                  style="color: red; margin-top: 10px;">
                                                 This booking cannot be edited as its status is <span th:text="${booking.getBookingStatus()}"></span>.
@@ -1163,7 +1469,7 @@
                                                             </div>
                                                             <input readonly type="text" class="form-control"
                                                                    aria-label="Text input with checkbox" id="currentBalance"
-                                                                   th:value="${#numbers.formatDecimal(user.getWallet(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                   th:value="${#numbers.formatDecimal(rentUser.getWallet(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                         </div>
                                                     </div>
                                                     <span>Please make sure to have sufficient balance the car.</span>
@@ -1194,13 +1500,198 @@
                     stroke="#F96D00"/>
         </svg>
     </div>
-    <input type="hidden" id="triggerPopup" name="rating" th:value="${isRating}">
+
+    <th:block th:if="${isCustomer}">
+        <input type="hidden" id="triggerPopup" name="rating" th:value="${isRating}">
+    </th:block>
+    <input type="hidden" id="userId" name="rating" th:value="${rentUser.getId()}">
+
+
+    <script>
+
+        $('#fullNameDriver').select2({
+            placeholder: "Select a driver",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+
+    </script>
 
 
     <script>
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
+        //confirm deposit btn
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+            const carId = document.getElementById("carId").value;
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            const bookingId = document.getElementById('bookingId').value;
+
+            const confirmDepositBtns = document.querySelectorAll('[id^="confirm-deposit-btn-"]');
+            confirmDepositBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: 'Please confirm that you have received the deposit for this booking.',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the deposit for car with ID:', carId);
+                            window.location.href = '/confirm-deposit-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
+
+        //confirm cancel btn
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+            const carId = document.getElementById("carId").value;
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            const bookingId = document.getElementById('bookingId').value;
+
+            const confirmCancelBtns = document.querySelectorAll('[id^="confirm-cancel-btn-"]');
+            confirmCancelBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: 'Confirm cancel booking and refund deposit to customer!',
+                        icon: 'question',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the cancel for car with ID:', carId);
+                            window.location.href = '/confirm-cancel-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
+
+        // confirm return btn
+        function confirmReturn(carId) {
+            console.log("confirmReturn called with carId:", carId); // Kiểm tra xem hàm có được gọi không
+
+            $.ajax({
+                url: '/car-owner/check-return',
+                type: 'get',
+                data: {carId: carId},
+                success: function (response) {
+                    console.log("Check payment successfully", response);
+
+                    Swal.fire({
+                        title: 'Confirm Payment!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        console.log("Swal result:", result);
+                        if (result.isConfirmed) {
+                            confirmReturnCar(carId);
+                            console.log("Calling confirmReturnCar with carId:", carId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error confirm payment", error);
+                    let errorMessage;
+                    try {
+                        const errorResponse = JSON.parse(error.responseText);
+                        errorMessage = errorResponse.message || 'An error occurred.';
+                    } catch (e) {
+                        errorMessage = 'An unexpected error occurred.';
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        function confirmReturnCar(carId) {
+            console.log("DOM fully loaded and parsed");
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            const bookingId = document.getElementById('bookingId').value;
+            console.log(carId);
+            $.ajax({
+                    url: '/car-owner/confirm-return-car',
+                    type: 'get',
+                    data: {carId: carId},
+                    success: function (response) {
+                        console.log("Confirm payment car response", response);
+
+                        if (response.status === 'success1') {
+                            Swal.fire({
+                                title: 'Booking Successfully Completed.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            });
+                        }
+                    },
+                    error:
+
+                        function (error) {
+                            console.log("Error confirming return payment", error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            });
+                        }
+                }
+            )
+            ;
+        }
 
 
         //cancel button
@@ -1211,6 +1702,7 @@
             const cancelBookingBtn = document.getElementById('cancel-booking-btn'); // ID của nút Cancel
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
 
             if (cancelBookingBtn) {
                 cancelBookingBtn.addEventListener('click', function (event) {
@@ -1235,7 +1727,7 @@
                             console.log('User chose to cancel the booking with ID:', bookingId);
 
                             // Gửi yêu cầu xóa (bạn có thể dùng fetch hoặc window.location)
-                            window.location.href = '/cancel-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&navigate=' + navigate;
+                            window.location.href = '/cancel-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                         } else {
                             console.log('User canceled the booking action');
                         }
@@ -1252,6 +1744,7 @@
             const cancelBookingBtn = document.getElementById('confirm-booking-detail-btn'); // ID của nút Confirm
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
 
             if (cancelBookingBtn) {
                 cancelBookingBtn.addEventListener('click', function (event) {
@@ -1275,22 +1768,22 @@
                         if (result.isConfirmed) {
                             console.log('User chose to confirm the pick-up with ID:', bookingId);
                             // Gửi yêu cầu xóa (bạn có thể dùng fetch hoặc window.location)
-                            window.location.href = '/confirm-pickup-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&navigate=' + navigate;
+                            window.location.href = '/confirm-pickup-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId + '&navigate=' + navigate;
                       }
                     });
                 });
             }
         });
 
-
-        function returnCarDetail(bookingId) {
-            console.log("aaaa",bookingId);
+// confirm Payment
+        function confirmPaymentDetail(bookingId) {
+            console.log(bookingId);
             $.ajax({
-                url: '/return-car',
+                url: '/check-payment',
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Return car successfully", response);
+                    console.log("Return car !!!", response);
                     Swal.fire({
                         title: 'Return Car!',
                         text: response.message,
@@ -1303,8 +1796,7 @@
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Gọi tiếp xác nhận trả xe
-                            confirmReturnCarViewDetail(bookingId);
+                            confirmPaymentCarDetail(bookingId);
                         }
                     });
                 },
@@ -1320,13 +1812,14 @@
             });
         }
 
+        function confirmPaymentCarDetail(bookingId) {
 
-        function confirmReturnCarViewDetail(bookingId) {
             const carId = document.getElementById("carId").value;
             const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
             console.log(bookingId);
             $.ajax({
-                url: '/confirm-return-car',
+                url: '/confirm-payment-car',
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
@@ -1334,20 +1827,12 @@
 
                     if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Return Car Completed!',
+                            title: 'Booking Successfully Completed.',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-
-                            let url = '/customer/booking-detail?bookingId=' + bookingId +
-                                '&carId=' + carId +
-                                '&navigate=' + navigate;
-                                url += '&triggerPopup=true';
-
-                            window.location.href = url;
-                            // window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
-
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                         });
                     } else if (response.status === 'success2') {
                         Swal.fire({
@@ -1356,7 +1841,7 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                         });
                     } else {
                         Swal.fire({
@@ -1365,7 +1850,7 @@
                             icon: 'error',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                         });
                     }
                 },
@@ -1377,11 +1862,214 @@
                         icon: 'error',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
                     });
                 }
             });
         }
+
+        // send Return Request
+
+        function returnCarDetail(bookingId) {
+            console.log(bookingId);
+            $.ajax({
+                url: '/return-car',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Return car !!!", response);
+                    Swal.fire({
+                        title: 'Return Car!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,  // Hiển thị nút "Cancel"
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Gọi tiếp xác nhận trả xe
+                            confirmReturnCarDetail(bookingId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error returning car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to return the car.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        function confirmReturnCarDetail(bookingId) {
+
+            const carId = document.getElementById("carId").value;
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            console.log(bookingId);
+            $.ajax({
+                url: '/confirm-return-car',
+                type: 'get',
+                data: {bookingId: bookingId},
+                success: function (response) {
+                    console.log("Confirm return car response", response);
+
+                    if (response.status === 'success1') {
+                        Swal.fire({
+                            title: 'Booking Successfully Completed.',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            let url = '/customer/booking-detail?bookingId=' + bookingId +
+                                '&carId=' + carId +
+                                '&userId=' + userId +
+                                '&navigate=' + navigate;
+                            window.location.href = url;
+                        });
+                    } else if (response.status === 'success2') {
+                        Swal.fire({
+                            title: 'Request Payment Completed',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error confirming return car", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+                    });
+                }
+            });
+        }
+
+// cũ
+//         function returnCarDetail(bookingId) {
+//             console.log("aaaa",bookingId);
+//             $.ajax({
+//                 url: '/return-car',
+//                 type: 'get',
+//                 data: {bookingId: bookingId},
+//                 success: function (response) {
+//                     console.log("Return car successfully", response);
+//                     Swal.fire({
+//                         title: 'Return Car!',
+//                         text: response.message,
+//                         icon: 'question',
+//                         showCancelButton: true,  // Hiển thị nút "Cancel"
+//                         confirmButtonText: 'Yes',
+//                         cancelButtonText: 'No',
+//                         customClass: {
+//                             confirmButton: 'my-custom-button'
+//                         }
+//                     }).then((result) => {
+//                         if (result.isConfirmed) {
+//                             // Gọi tiếp xác nhận trả xe
+//                             confirmReturnCarViewDetail(bookingId);
+//                         }
+//                     });
+//                 },
+//                 error: function (error) {
+//                     console.log("Error returning car", error);
+//                     Swal.fire({
+//                         title: 'Error!',
+//                         text: 'Failed to return the car.',
+//                         icon: 'error',
+//                         confirmButtonText: 'OK'
+//                     });
+//                 }
+//             });
+//         }
+//
+//
+//         function confirmReturnCarViewDetail(bookingId) {
+//             const carId = document.getElementById("carId").value;
+//             const navigate = document.getElementById("navigate").value;
+//             const userId = document.getElementById("userId").value;
+//
+//             console.log(bookingId);
+//             $.ajax({
+//                 url: '/confirm-return-car',
+//                 type: 'get',
+//                 data: {bookingId: bookingId},
+//                 success: function (response) {
+//                     console.log("Confirm return car response", response);
+//
+//                     if (response.status === 'success1') {
+//                         Swal.fire({
+//                             title: 'Return Car Completed!',
+//                             text: response.message,
+//                             icon: 'success',
+//                             confirmButtonText: 'OK'
+//                         }).then(() => {
+//
+//                             let url = '/customer/booking-detail?bookingId=' + bookingId +
+//                                 '&carId=' + carId +
+//                                 '&userId=' + userId +
+//                                 '&navigate=' + navigate;
+//                                 url += '&triggerPopup=true';
+//
+//                             window.location.href = url;
+//                             // window.location.href = '/homepage-customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId +'&navigate='+ navigate;
+//
+//                         });
+//                     } else if (response.status === 'success2') {
+//                         Swal.fire({
+//                             title: 'Request Payment Completed',
+//                             text: response.message,
+//                             icon: 'success',
+//                             confirmButtonText: 'OK'
+//                         }).then(() => {
+//                             window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId +'&navigate='+ navigate;
+//                         });
+//                     } else {
+//                         Swal.fire({
+//                             title: 'Error!',
+//                             text: response.message,
+//                             icon: 'error',
+//                             confirmButtonText: 'OK'
+//                         }).then(() => {
+//                             window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
+//                         });
+//                     }
+//                 },
+//                 error: function (error) {
+//                     console.log("Error confirming return car", error);
+//                     Swal.fire({
+//                         title: 'Error!',
+//                         text: 'An error occurred. Please try again.',
+//                         icon: 'error',
+//                         confirmButtonText: 'OK'
+//                     }).then(() => {
+//                         window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
+//                     });
+//                 }
+//             });
+//         }
 
 
 
@@ -1395,20 +2083,19 @@
         }
 
         function checkStep() {
-            // const pickupLocation = document.getElementById('pickupLocation').innerText;
-            // const pickupDate = document.getElementById('pickupDate').innerText;
-            // const returnDate = document.getElementById('returnDate').innerText;
-            //
-            // const pickupDateFormatted = formatToDatetimeDB(pickupDate);
-            // const returnDateFormatted = formatToDatetimeDB(returnDate);
 
-            // document.getElementById('editPickupLocation').value = pickupLocation;
-            // document.getElementById('editPickupDate').value = pickupDateFormatted;
-            // document.getElementById('editReturnDate').value = returnDateFormatted;
+            //kiểm tra xem có driver nào đc chọn khi ấn tích không
+            const checked = document.getElementById("differentInfoCheckbox")?.checked || false;
+            // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
+            // let selectedUserId = null;
+            const selectedDriverId = document.getElementById("fullNameDriver").value;
+            // const selectedId = $('#fullNameDriver').val();
 
-            // console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
-            // console.log("editPickupDate:", document.getElementById("editPickupDate").value);
-            // console.log("editReturnDate:", document.getElementById("editReturnDate").value);
+            console.log("selectedUserId = " ,selectedDriverId)
+            if(checked && !selectedDriverId) {
+                alert(`Please fill all required fields`);
+                return false;
+            }
 
             const currentDrivingLicense = document.getElementById("currentDrivingLicense").value // Dữ liệu từ DB
             let drivingLicense = document.getElementById("inputGroupFile011").value;
@@ -1456,27 +2143,7 @@
 
         function updateBooking() {
 
-                // const pickupLocationTxt = document.getElementById('pickupLocation').innerText;
-                // const pickupDate = document.getElementById('pickupDate').innerText;
-                // const returnDate = document.getElementById('returnDate').innerText;
-                //
-                // const pickupDateFormatted = formatToDatetimeDB(pickupDate);
-                // const returnDateFormatted = formatToDatetimeDB(returnDate);
-                //
-                // document.getElementById('editPickupLocation').value = pickupLocationTxt;
-                // document.getElementById('editPickupDate').value = pickupDateFormatted;
-                // document.getElementById('editReturnDate').value = returnDateFormatted;
-                //
-                // console.log("editPickupLocation:", document.getElementById("editPickupLocation").value);
-                // console.log("editPickupDate:", document.getElementById("editPickupDate").value);
-                // console.log("editReturnDate:", document.getElementById("editReturnDate").value);
-                //==========================================================================
-
-                // const pickUpLocation = pickupDateFormatted; document.getElementById("editPickupLocation").value;
-                // const pickUpDateTime = pickupDateFormatted;
-                // const returnDateTime = returnDateFormatted;
-                // const depositValue = depositText.replace(/[^0-9]/g, '');
-                 const checked = document.getElementById("differentInfoCheckbox").checked;
+                const checked = document.getElementById("differentInfoCheckbox").checked;
                 const carId = document.getElementById("carId").value;
                 const bookingId = document.getElementById("bookingId").value;
                 const fullName = document.getElementById('fullName').value;
@@ -1489,16 +2156,9 @@
                 const district =  document.getElementById('district').value;
                 const ward =  document.getElementById('ward').value;
                 const street = document.getElementById('street').value;
-
-                // Lấy id của người dùng được chọn (nếu chỉ cho phép chọn một)
-                let selectedUserId = null;
-                const selectedCheckbox = document.querySelector('input[name="selectRow"]:checked');
-
-                if (selectedCheckbox) {
-                    selectedUserId = selectedCheckbox.value;
-                }
-
-                console.log("Selected User IDs:", selectedUserId);
+                const selectedDriverId = document.getElementById("fullNameDriver").value;
+                const navigate = document.getElementById("navigate").value;
+                const userId = document.getElementById("userId").value;
 
 
 
@@ -1522,7 +2182,7 @@
                     rentDistrict: district,
                     rentWard: ward,
                     rentStreet: street,
-                    selectedUserId: selectedUserId,
+                    selectedUserId: selectedDriverId,
                 };
 
                 console.log(bookingInfor)
@@ -1567,6 +2227,8 @@
                                 customClass: {
                                     confirmButton: 'custom-confirm-btn'
                                 }
+                            }).then(() => {
+                                window.location.href = '/customer/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId=' + userId + '&navigate='+ navigate;
                             });
                         }
 
@@ -1782,7 +2444,9 @@
             // Hiển thị bảng nếu checkbox được chọn
             table.style.display = checkbox.checked ? 'block' : 'none';
         }
-
+        // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
+        document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
+        window.addEventListener('pageshow', toggleDriverInfoFields);
 
 
 
@@ -2054,8 +2718,10 @@
         });
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/update-car-validate.js"></script>
+    <script src="/js/customer/driver_Information.js"></script>
+    <script src="/js/customer/calculate-time.js"></script>
     </body>
 </th:block>
 </body>

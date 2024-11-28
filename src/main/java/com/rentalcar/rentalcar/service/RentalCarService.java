@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 public interface RentalCarService {
@@ -18,9 +19,12 @@ public interface RentalCarService {
     CarDto getCarDetails(Integer carId);
     Booking saveBooking(BookingDto BookingDto, MultipartFile[] files, HttpSession session);
     boolean confirmDepositCar(Long carId, HttpSession session);
-    Map<String, String> checkPaymentCar(Long carId, HttpSession session);
-    int confirmPaymentCar(Long carId, HttpSession session);
+    Map<String, String> checkReturnCar(Long carId, HttpSession session);
+    int confirmReturnCar(Long carId, HttpSession session);
     boolean confirmCancelBookingCar(Long carId, HttpSession session);
+    List<MyBookingDto> getRentalsNearEndDate();
+
+
 
 
 }

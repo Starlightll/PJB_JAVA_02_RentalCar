@@ -19,6 +19,10 @@ public interface FileStorageService {
 
     boolean moveFiles(Path sourceFolder, Path destinationFolder);
 
+    boolean copyFiles(Path sourceFolder, Path destinationFolder);
+
+    boolean moveFilesWithOutDelete(Path sourceFolder, Path destinationFolder);
+
     void deleteFile(Path filePath);
 
 }
