@@ -385,8 +385,14 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Number of days: </p>
-                                                            <p th:text="${booking.numberOfDays > 0 ? booking.numberOfDays : 0}"></p>
-
+                                                            <p th:text="${booking.getStr_numberOfDays() != null ? booking.getStr_numberOfDays() : 0}"></p>
+                                                            <!-- Kiểm tra nếu trễ hạn -->
+                                                            <p th:if="${booking.getLateTime() != null}"
+                                                               style="color: red; font-style: italic;">
+                                                                (
+                                                                <span th:text="${booking.getLateTime()}"></span>
+                                                                )
+                                                            </p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
@@ -402,7 +408,7 @@
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                id="previewTotal"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}  + ' VND'">
+                                                               th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')}  + ' VND'">
                                                                 No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -413,6 +419,29 @@
                                                                id="previewDeposit"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                th:text="${#numbers.formatDecimal(booking.deposit, 0, 'COMMA', 0, 'POINT')}  + ' VND'">
+                                                                No</p>
+                                                        </div>
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center"
+                                                             th:if="${booking.getTotalMoney() > 0}">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Addition payment: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="totalMoney"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getTotalMoney(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center"
+                                                             th:if="${booking.getReturnDeposit() > 0}">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Return Deposit: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="returnDeposit"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"

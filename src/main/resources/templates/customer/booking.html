@@ -1703,6 +1703,10 @@
             table.style.display = checkbox.checked ? 'block' : 'none';
         }
 
+        // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
+        document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
+        window.addEventListener('pageshow', toggleDriverInfoFields);
+
     </script>
     <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/customer/book-car.js"></script>
