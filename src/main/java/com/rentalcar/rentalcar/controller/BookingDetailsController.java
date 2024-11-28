@@ -13,6 +13,9 @@ import com.rentalcar.rentalcar.service.ViewEditBookingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -144,9 +147,6 @@ public class BookingDetailsController {
         model.addAttribute("haveDriver",booking.getDriverId());
         return "customer/EditBookingDetails";
     }
-
-
-
 
 
     @PostMapping("/update-booking-car")
@@ -300,5 +300,38 @@ public class BookingDetailsController {
         }
 
         return userDtos;
+    }
+
+    @GetMapping("/confirm-deposit-booking-detail")
+    public String confirmDepositBookingDetail(@RequestParam Integer bookingId,
+                                      @RequestParam Integer carId,
+                                      @RequestParam Integer userId ,
+                                      @RequestParam String navigate,
+                                      Model model,
+                                      HttpSession session) {
+        boolean isConfirmDeposit = rentalCarService.confirmDepositCar(Long.valueOf(carId), session);
+        if (isConfirmDeposit) {
+            model.addAttribute("message_" + carId, "The Car deposit has been confirmed.");
+        } else {
+            model.addAttribute("error", "Unable to confirm deposit the booking. Please try again!!");
+        }
+        return bookingDetail(bookingId.intValue(), carId, userId, navigate, model, session);
+
+    }
+
+    @GetMapping("/confirm-cancel-booking-detail")
+    public String confirmCancelBookingDetail(@RequestParam Integer bookingId,
+                                      @RequestParam Integer carId,
+                                      @RequestParam Integer userId ,
+                                      @RequestParam String navigate,
+                                      Model model,
+                                      HttpSession session) {
+        boolean isConfirmDeposit = rentalCarService.confirmCancelBookingCar(Long.valueOf(carId), session);
+        if (isConfirmDeposit) {
+            model.addAttribute("message_" + carId, "The Car deposit has been confirmed.");
+        } else {
+            model.addAttribute("error", "Unable to confirm deposit the booking. Please try again!!");
+        }
+        return bookingDetail(bookingId.intValue(), carId, userId, navigate, model, session);
     }
 }

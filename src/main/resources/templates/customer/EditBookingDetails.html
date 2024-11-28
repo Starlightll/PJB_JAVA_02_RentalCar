@@ -501,11 +501,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                    <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
+                                                        th:text="${booking.getCarname() == null ? 'NULL' : booking.getCarname()}">
+                                                        No Name</h4>
                                                     <div class="scroll-container">
                                                         <div class="row justify-content-center align-items-center align-content-center">
-                                                        <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
-                                                            th:text="${booking.getCarname() == null ? 'NULL' : booking.getCarname()}">
-                                                            No Name</h4>
 
                                                         <div>
                                                             <span></span>
@@ -536,7 +536,8 @@
                                                         </div>
 <!--                                                        Ngược lại-->
                                                         <div class="col-lg-12 row mt-2"
-                                                             th:if="${#temporals.createNow().isAfter(booking.getEndDate()) or (booking.bookingStatus == 'In-Progress'
+                                                             th:if="${(#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
+                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'))  or (booking.bookingStatus == 'In-Progress'
                                                                     or booking.bookingStatus == 'Pending return')}">
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
@@ -670,36 +671,65 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+
                                                     <!-- View Details button: always visible -->
                                                     <a th:href="'/carDetail/' + ${car.carId}"
                                                        class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                         Details</a>
 
-                                                    <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
-                                                    <a th:href="'#'" id="confirm-booking-detail-btn"
-                                                       style="background: #d5dcd5 !important; color: black !important;"
-                                                       th:if="${booking.bookingStatus != 'Pending return' and booking.bookingStatus != 'In-Progress' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
-                                                        Pick-up</a>
+<!--                                                    btn for customer-->
+                                                    <th:block th:if="${isCustomer}">
 
-<!--                                                     Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses-->
-                                                    <a th:href="'#'" style="background: #e82b46 !important;" id="cancel-booking-btn"
-                                                       th:if="${( booking.getBookingStatus() == 'Confirmed' or  booking.getBookingStatus() == 'Pending deposit' or  booking.getBookingStatus() == 'Stopped')
+
+                                                        <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
+                                                        <a th:href="'#'" id="confirm-booking-detail-btn"
+                                                           style="background: #d5dcd5 !important; color: black !important;"
+                                                           th:if="${booking.bookingStatus != 'Pending return' and booking.bookingStatus != 'In-Progress' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Confirm
+                                                            Pick-up</a>
+
+                                                        <!-- Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses-->
+                                                        <a th:href="'#'" style="background: #e82b46 !important;" id="cancel-booking-btn"
+                                                           th:if="${( booking.getBookingStatus() == 'Confirmed' or  booking.getBookingStatus() == 'Pending deposit' or  booking.getBookingStatus() == 'Stopped')
                                                         and  booking.getBookingStatus() != 'Pending payment' and booking.bookingStatus !='Pending cancel' and  booking.getBookingStatus() != 'Cancelled' and  booking.getBookingStatus() != 'Completed' and booking.getBookingStatus() != 'In-Progress'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center" >Cancel
-                                                        Booking</a>
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center" >Cancel Booking</a>
+                                                        <!-- Return Car button: visible only if status is In-Progress &ndash;&gt;-->
+                                                        <a style="background: #707070 !important;"
+                                                           th:if="${booking.bookingStatus == 'In-Progress'}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'returnCarDetail(' + ${booking.bookingId} + ')'">Request Return Car</a>
+
+                                                        <a style="background: #707070 !important;"
+                                                           th:if="${booking.bookingStatus == 'Pending payment'}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'confirmPaymentDetail(' + ${booking.bookingId} + ')'">Confirm payment</a>
+                                                    </th:block>
+
+<!--                                                    btn for car-owner -->
+
+                                                    <th:block th:if="${!isCustomer}">
 
 
-<!--                                                    &lt;!&ndash; Return Car button: visible only if status is In-Progress &ndash;&gt;-->
-                                                    <a style="background: #707070 !important;"
-                                                       th:if="${booking.bookingStatus == 'In-Progress'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                       th:onclick="'returnCarDetail(' + ${booking.bookingId} + ')'">Request Return Car</a>
+                                                        <a th:href="'#'" style="background: #e82b46 !important;"
+                                                           th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
+                                                           th:if="${car.getCarStatus().getStatusId() == 14}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center" >Confirm
+                                                            Deposit</a>
 
-                                                    <a style="background: #707070 !important;"
-                                                       th:if="${booking.bookingStatus == 'Pending payment'}"
-                                                       class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                       th:onclick="'confirmPaymentDetail(' + ${booking.bookingId} + ')'">Confirm payment</a>
+                                                        <a th:href="'#'"
+                                                           th:if="${car.getCarStatus().getStatusId() == 15}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:id="'confirm-cancel-btn-' + ${car.getCarId()}"
+                                                           th:attr="data-car-id=${car.getCarId()}"
+                                                           style="background: #000000 !important;">
+                                                            Confirm Cancel</a>
+                                                        <a th:href="'#'"
+                                                           th:if="${car.getCarStatus().getStatusId() == 16}"
+                                                           class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
+                                                           th:onclick="'confirmReturn(' + ${car.getCarId()} + ')'"
+                                                           style="background: #da1b1b !important;">
+                                                            Confirm Return</a>
+                                                    </th:block>
 
                                                 </div>
 
@@ -1470,7 +1500,10 @@
                     stroke="#F96D00"/>
         </svg>
     </div>
-    <input type="hidden" id="triggerPopup" name="rating" th:value="${isRating}">
+
+    <th:block th:if="${isCustomer}">
+        <input type="hidden" id="triggerPopup" name="rating" th:value="${isRating}">
+    </th:block>
     <input type="hidden" id="userId" name="rating" th:value="${rentUser.getId()}">
 
 
@@ -1490,6 +1523,175 @@
         const csrfToken = $('meta[name="_csrf"]').attr('content');
 
 
+        //confirm deposit btn
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+            const carId = document.getElementById("carId").value;
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            const bookingId = document.getElementById('bookingId').value;
+
+            const confirmDepositBtns = document.querySelectorAll('[id^="confirm-deposit-btn-"]');
+            confirmDepositBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: 'Please confirm that you have received the deposit for this booking.',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the deposit for car with ID:', carId);
+                            window.location.href = '/confirm-deposit-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
+
+        //confirm cancel btn
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
+            const carId = document.getElementById("carId").value;
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            const bookingId = document.getElementById('bookingId').value;
+
+            const confirmCancelBtns = document.querySelectorAll('[id^="confirm-cancel-btn-"]');
+            confirmCancelBtns.forEach(btn => {
+                btn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: 'Confirm cancel booking and refund deposit to customer!',
+                        icon: 'question',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        showCancelButton: true,
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn',
+                            cancelButton: 'custom-cancel-btn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User confirmed the cancel for car with ID:', carId);
+                            window.location.href = '/confirm-cancel-booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                        } else {
+                            console.log('User canceled the action');
+                        }
+                    });
+                });
+            });
+        });
+
+        // confirm return btn
+        function confirmReturn(carId) {
+            console.log("confirmReturn called with carId:", carId); // Kiểm tra xem hàm có được gọi không
+
+            $.ajax({
+                url: '/car-owner/check-return',
+                type: 'get',
+                data: {carId: carId},
+                success: function (response) {
+                    console.log("Check payment successfully", response);
+
+                    Swal.fire({
+                        title: 'Confirm Payment!',
+                        text: response.message,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        customClass: {
+                            confirmButton: 'my-custom-button'
+                        }
+                    }).then((result) => {
+                        console.log("Swal result:", result);
+                        if (result.isConfirmed) {
+                            confirmReturnCar(carId);
+                            console.log("Calling confirmReturnCar with carId:", carId);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error confirm payment", error);
+                    let errorMessage;
+                    try {
+                        const errorResponse = JSON.parse(error.responseText);
+                        errorMessage = errorResponse.message || 'An error occurred.';
+                    } catch (e) {
+                        errorMessage = 'An unexpected error occurred.';
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        function confirmReturnCar(carId) {
+            console.log("DOM fully loaded and parsed");
+            const navigate = document.getElementById("navigate").value;
+            const userId = document.getElementById("userId").value;
+            const bookingId = document.getElementById('bookingId').value;
+            console.log(carId);
+            $.ajax({
+                    url: '/car-owner/confirm-return-car',
+                    type: 'get',
+                    data: {carId: carId},
+                    success: function (response) {
+                        console.log("Confirm payment car response", response);
+
+                        if (response.status === 'success1') {
+                            Swal.fire({
+                                title: 'Booking Successfully Completed.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            });
+                        }
+                    },
+                    error:
+
+                        function (error) {
+                            console.log("Error confirming return payment", error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            });
+                        }
+                }
+            )
+            ;
+        }
 
 
         //cancel button

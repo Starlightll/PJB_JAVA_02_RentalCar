@@ -495,7 +495,7 @@
 
 
 
-                                                    <!-- Confirm Deposit button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
+                                                    <!-- Confirm Pickup button: visible only if status is not In-Progress, Pending Payment, Cancelled, or Completed -->
                                                     <a
                                                             style="background: #d5dcd5 !important; color: black !important;"
                                                             th:if="${booking.bookingStatus != 'Pending return' and booking.bookingStatus != 'In-Progress' and booking.bookingStatus != 'Pending payment' and booking.bookingStatus !='Pending deposit' and booking.bookingStatus !='Pending cancel' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed'}"
@@ -512,7 +512,7 @@
                                                         Booking</a>
 
 
-                                                    <!-- Return Car button: visible only if status is In-Progress -->
+                                                    <!-- Request Return Car button: visible only if status is In-Progress -->
                                                     <a style="background: #707070 !important;"
                                                        th:if="${booking.bookingStatus == 'In-Progress'}"
                                                        th:id="'return-booking-btn-' + ${iterStat.index}"
@@ -527,6 +527,8 @@
                                                        th:onclick="'confirmPayment(' + ${booking.bookingId} + ')'"
                                                        style="background: #da1b1b !important;">
                                                         Confirm Payment</a>
+
+
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                                     <div th:each="booking, iterStat: ${bookingList}">
