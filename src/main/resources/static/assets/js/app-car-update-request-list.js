@@ -19,6 +19,7 @@ $(function () {
             {
                 data: "licensePlate",
             },
+            {data: "user.username"},
             {data: "verifyStatus"},
             {data: null},
         ],
@@ -71,6 +72,14 @@ $(function () {
             render: function (e, a, t, s) {
                 return '<span class="badge bg-light text-dark">' + t.licensePlate + "</span>"
             }
+        },{
+            responsivePriority: 2,
+            targets: 7,
+            render: function (e, a, t, s) {
+                var r = t.user.username
+                    , d = t.user.email;
+                return '<div class="d-flex justify-content-start align-items-center"></div><div class="d-flex flex-column"><span class="emp_name text-truncate">' + r + '</span><small class="emp_post text-truncate text-muted">' + d + "</small></div></div>"
+            },
         }, {
             targets: -2,
             render: function (e, a, t, s) {
@@ -166,7 +175,8 @@ function approveRequest(draftId) {
                         customClass: {confirmButton: "btn btn-primary"},
                         buttonsStyling: !1
                     }),
-                        $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
+                        $(".dt-fixedheader").DataTable().ajax.reload(null, !1),
+                        hideResponsiveModal()
                 },
                 error: function (e, a, t) {
                     console.error("Error confirming request: ", e);
@@ -249,4 +259,8 @@ function rejectRequest(draftId) {
             })
         }
     })
+}
+
+function hideResponsiveModal() {
+    $(".modal.show").modal("hide")
 }
