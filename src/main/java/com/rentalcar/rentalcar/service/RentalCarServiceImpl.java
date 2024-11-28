@@ -209,7 +209,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                             booking.getBookingStatus().getName().equals("Pending deposit") ||
                             booking.getBookingStatus().getName().equals("Stopped"))) {
 
-                // Fetch the "Cancelled" BookingStatus from the database
+                // Fetch the "Pending cancels" BookingStatus from the database
                 Optional<BookingStatus> cancelledStatusOptional = bookingStatusRepository.findById(7L);
                 double totalPriceCanceled = calculateTotalCancel(booking.getStartDate(), booking.getEndDate(), booking.getTotalPrice());
                 if (cancelledStatusOptional.isPresent()) {

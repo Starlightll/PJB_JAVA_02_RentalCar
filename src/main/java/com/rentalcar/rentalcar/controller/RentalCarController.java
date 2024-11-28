@@ -111,7 +111,7 @@ public class RentalCarController {
                                 booking.getBookingStatus().equals("Pending deposit") ||
                                 booking.getBookingStatus().equals("Confirmed"))
                 .count();
-        model.addAttribute("onGoingBookings", onGoingBookings);
+        model.addAttribute("`onGoingBookings`", onGoingBookings);
 
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");
@@ -361,58 +361,16 @@ public class RentalCarController {
                                 @RequestParam(defaultValue = "desc") String order,
                                 Model model) {
         boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
+        User user = (User) session.getAttribute("user");
+
         if (isCancelled) {
             model.addAttribute("message_" + bookingId, "Waiting CarOwner confirm cancel this booking!");
         } else {
             model.addAttribute("error", "Unable to cancel the booking. Please try again.");
         }
 
-        boolean findByStatus = false;
-        switch (sortBy) {
-            case "newestToLatest":
-                sortBy = "lastModified";
-                order = "desc";
-                break;
-            case "latestToNewest":
-                sortBy = "lastModified";
-                order = "asc";
-                break;
-            case "priceLowToHigh":
-                sortBy = "basePrice";
-                order = "asc";
-                break;
-            case "priceHighToLow":
-                sortBy = "basePrice";
-                order = "desc";
-                break;
+        return myBooking(page, size, sortBy, order, model, session);
 
-            default:
-                break;
-        }
-        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
-        List<MyBookingDto> bookingList = bookingPages.getContent();
-        long onGoingBookings = bookingList.stream()
-                .filter(booking ->
-                        booking.getBookingStatus().equals("In-Progress") ||
-                                booking.getBookingStatus().equals("Pending payment") ||
-                                booking.getBookingStatus().equals("Pending deposit") ||
-                                booking.getBookingStatus().equals("Confirmed"))
-                .count();
-        model.addAttribute("onGoingBookings", onGoingBookings);
-
-        if (bookingList.isEmpty()) {
-            model.addAttribute("message", "You have no booking");
-        } else {
-            model.addAttribute("bookingList", bookingList);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", bookingPages.getTotalPages());
-            model.addAttribute("sortBy", sortBy);
-            model.addAttribute("order", order);
-            model.addAttribute("size", size);
-            model.addAttribute("totalElement", bookingPages.getTotalElements());
-
-        }
-        return "customer/MyBookings";
 
     }
 
@@ -426,6 +384,8 @@ public class RentalCarController {
                                        @RequestParam(defaultValue = "desc") String order,
                                        Model model) {
         boolean isConfirm = rentalCarService.confirmPickupBooking(bookingId, session);
+        User user = (User) session.getAttribute("user");
+
 
         if (isConfirm) {
             model.addAttribute("message", "Booking has been successfully confirm pick-up.");
@@ -433,52 +393,7 @@ public class RentalCarController {
             model.addAttribute("error", "Unable to confirm the booking. Please try again.");
         }
 
-        boolean findByStatus = false;
-        switch (sortBy) {
-            case "newestToLatest":
-                sortBy = "lastModified";
-                order = "desc";
-                break;
-            case "latestToNewest":
-                sortBy = "lastModified";
-                order = "asc";
-                break;
-            case "priceLowToHigh":
-                sortBy = "basePrice";
-                order = "asc";
-                break;
-            case "priceHighToLow":
-                sortBy = "basePrice";
-                order = "desc";
-                break;
-
-            default:
-                break;
-        }
-        Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
-        List<MyBookingDto> bookingList = bookingPages.getContent();
-        long onGoingBookings = bookingList.stream()
-                .filter(booking ->
-                        booking.getBookingStatus().equals("In-Progress") ||
-                                booking.getBookingStatus().equals("Pending payment") ||
-                                booking.getBookingStatus().equals("Pending deposit") ||
-                                booking.getBookingStatus().equals("Confirmed"))
-                .count();
-        model.addAttribute("onGoingBookings", onGoingBookings);
-
-        if (bookingList.isEmpty()) {
-            model.addAttribute("message", "You have no booking");
-        } else {
-            model.addAttribute("bookingList", bookingList);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", bookingPages.getTotalPages());
-            model.addAttribute("sortBy", sortBy);
-            model.addAttribute("order", order);
-            model.addAttribute("size", size);
-            model.addAttribute("totalElement", bookingPages.getTotalElements());
-
-        }
-        return "customer/MyBookings";
+        return myBooking(page, size, sortBy, order, model, session);
     }
 
     @GetMapping("/return-car")
