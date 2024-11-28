@@ -4,7 +4,9 @@ package com.rentalcar.rentalcar.controller;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.mail.EmailService;
+import com.rentalcar.rentalcar.mappers.CarDraftMapper;
 import com.rentalcar.rentalcar.mappers.CarMapper;
+import com.rentalcar.rentalcar.repository.CarDraftRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +33,10 @@ public class CarAPI {
     private CarOwnerService carOwnerService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private CarDraftRepository carDraftRepository;
+    @Autowired
+    private CarDraftMapper carDraftMapper;
 
 
     @GetMapping("/api/car/check-license-plate")
@@ -95,6 +101,13 @@ public class CarAPI {
                     .body(Map.of("error", "Error updating car status"));
         }
     }
+
+    @GetMapping("/get-list-car-request-update")
+    public ResponseEntity<?> getListCarRequestUpdate() {
+        return ResponseEntity.ok(carDraftRepository.findCarDraftsByVerifyStatus("Pending")
+                .stream().map(carDraftMapper::toDto).collect(Collectors.toList()));
+    }
+
 
     private static Map<String, Object> getStringObjectMap() {
         Map<String, Object> variables = new HashMap<>();

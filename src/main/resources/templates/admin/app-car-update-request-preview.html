@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"
+      class="light-style layout-navbar-fixed layout-menu-fixed layout-compact "
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="../../assets/"
+      data-template="vertical-menu-template"
+      data-style="light"
+      xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/dashboardLayout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/typeahead-js/typeahead.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/swiper/swiper.css" />
+
+    <!-- Page CSS -->
+
+    <link rel="stylesheet" href="../../assets/vendor/css/pages/app-car-update-request-preview.css"/>
+
+</head>
+<th:block layout:fragment="content">
+    <body>
+    <!-- Layout container -->
+    <div class="layout-page">
+
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+
+
+                <div class="row request-preview" th:if="${carDraft != null}">
+                    <!-- Request -->
+                    <div class="col-xl-9 col-md-8 col-12 mb-md-0 mb-6">
+                        <div class="card request-preview-card p-sm-12 p-6">
+                            <div class="card-body request-preview-header rounded">
+                                <div class="d-flex justify-content-between flex-xl-row flex-md-column flex-sm-row flex-column align-items-xl-center align-items-md-start align-items-sm-center align-items-start">
+                                    <div class="mb-xl-0 mb-6 text-heading col-12 col-xl-6">
+                                        <div class="swiper" id="swiper-with-progress" style="height: 250px">
+                                            <div class="swiper-wrapper">
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getFrontImage().replaceAll('\\', '/')+')'}">Front</div>
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getBackImage().replaceAll('\\', '/')+')'}">Back</div>
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getLeftImage().replaceAll('\\', '/')+')'}">Left</div>
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getRightImage().replaceAll('\\', '/')+')'}">Right</div>
+                                            </div>
+                                            <div class="swiper-pagination"></div>
+                                            <div class="swiper-button-next swiper-button-white custom-icon"></div>
+                                            <div class="swiper-button-prev swiper-button-white custom-icon"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ms-md-5">
+                                        <h5 class="mb-6 fs-3" th:text="${carDraft.getCarName()}"></h5>
+                                        <div class="text-heading">
+                                            <span>License Plate:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getLicensePlate()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Color:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getColor()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Brand:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getBrand().getBrandName()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Model:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getModel()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Year:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getProductionYear()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>No of Seat:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getSeat()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Transmission:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getTransmission()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Fuel:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getFuelType()}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body px-0">
+                                <div class="row">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Request -->
+
+                    <!-- Request Actions -->
+                    <div class="col-xl-3 col-md-4 col-12 request-actions">
+                        <div class="card">
+                            <div class="card-body">
+                                <button class="btn btn-label-success d-grid w-100 mb-4">Approve</button>
+                                <button class="btn btn-label-warning d-grid w-100 mb-4">Cancel</button>
+                                <button class="btn btn-label-danger d-grid w-100 mb-4">Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Request Actions -->
+                </div>
+
+            </div>
+            <!-- / Content -->
+
+
+            <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+
+    <!-- Vendors JS -->
+    <script src="/assets/vendor/libs/moment/moment.js"></script>
+    <script src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+    <script src="/assets/vendor/libs/cleavejs/cleave.js"></script>
+    <script src="/assets/vendor/libs/cleavejs/cleave-phone.js"></script>
+    <script src="/assets/vendor/libs/swiper/swiper.js"></script>
+
+    <!-- Page JS -->
+
+    <script>
+
+        var swiperWithProgress = new Swiper('#swiper-with-progress', {
+            slidesPerView: "auto",
+            pagination: {
+                type: "progressbar",
+                el: ".swiper-pagination"
+            },
+            navigation: {
+                prevEl: ".swiper-button-prev",
+                nextEl: ".swiper-button-next"
+            },
+        });
+    </script>
+    </body>
+</th:block>
+
+</html>

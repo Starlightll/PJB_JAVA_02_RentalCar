@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 public interface CarDraftRepository extends JpaRepository<CarDraft, Integer> {
@@ -25,4 +26,9 @@ public interface CarDraftRepository extends JpaRepository<CarDraft, Integer> {
     @Query("DELETE FROM CarDraft cd WHERE cd.user.id = :userId AND cd.carId IS NULL")
     void deleteDraftByUserId(@Param("userId") Long userId);
 
+    List<CarDraft> findCarDraftsByVerifyStatus(String verifyStatus);
+
+    CarDraft findCarDraftsByDraftId(Integer draftId);
+
+    CarDraft findCarDraftsByDraftIdAndVerifyStatus(Integer draftId, String verifyStatus);
 }
