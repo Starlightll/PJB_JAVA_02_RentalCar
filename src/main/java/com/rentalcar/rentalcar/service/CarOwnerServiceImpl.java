@@ -206,11 +206,18 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     @Override
     public boolean requestChangeBasicInformation(CarDraft carDraft, MultipartFile[] files, User user, Integer carId) {
-        CarDraft carDraftPending = carDraftRepository.findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(user.getId(), carId, "Pending");
+//        CarDraft carDraftPending = carDraftRepository.findTopByUser_IdAndCarIdAndVerifyStatusOrderByLastModifiedDesc(user.getId(), carId, "Pending");
+        List<CarDraft> carDraftPendings = carDraftRepository.findCarDraftsByUser_IdAndCarIdAndVerifyStatus(user.getId(), carId, "Pending");
         //Set other pending request to cancelled
-        if(carDraftPending != null){
-            carDraftPending.setVerifyStatus("Cancelled");
-            carDraftRepository.save(carDraftPending);
+//        if(carDraftPending != null){
+//            carDraftPending.setVerifyStatus("Cancelled");
+//            carDraftRepository.save(carDraftPending);
+//        }
+        if(!carDraftPendings.isEmpty()){
+            for(CarDraft carDraftPending : carDraftPendings){
+                carDraftPending.setVerifyStatus("Cancelled");
+                carDraftRepository.save(carDraftPending);
+            }
         }
         //Set new request
         carDraft.setCarId(carId);

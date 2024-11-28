@@ -28,6 +28,8 @@ public interface CarDraftRepository extends JpaRepository<CarDraft, Integer> {
 
     List<CarDraft> findCarDraftsByVerifyStatus(String verifyStatus);
 
+    List<CarDraft> findCarDraftsByUser_IdAndCarIdAndVerifyStatus(Long userId, Integer carId, String verifyStatus);
+
     CarDraft findCarDraftsByDraftId(Integer draftId);
 
     CarDraft findCarDraftsByDraftIdAndVerifyStatus(Integer draftId, String verifyStatus);

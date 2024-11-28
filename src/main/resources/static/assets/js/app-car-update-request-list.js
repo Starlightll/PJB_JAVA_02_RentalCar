@@ -90,14 +90,14 @@ $(function () {
             orderable: !1,
             render: function (e, a, t, s) {
                 return '<div class="d-inline-block">' +
-                    '<a onclick="verifyCar('+ t.carId +')" class="btn btn-icon item-check"><i class="bx bx-check bx-md" style="color: #7aff45"></i></a>' +
+                    '<a onclick="approveRequest('+ t.draftId +')" class="btn btn-icon item-check"><i class="bx bx-check bx-md" style="color: #7aff45"></i></a>' +
                     '<a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">' +
                     '<i class="bx bx-dots-vertical-rounded bx-md"></i>' +
                     '</a>' +
                     '<div class="dropdown-menu dropdown-menu-end m-0">' +
                     '<a href="/admin/car-update-request-preview?requestId='+ t.draftId+ '" class="dropdown-item">Details</a>' +
                     '<div class="dropdown-divider"></div>' +
-                    '<a href="javascript:;" class="dropdown-item text-danger delete-record">Reject</a>' +
+                    '<a onclick="rejectRequest('+ t.draftId +')" class="dropdown-item text-danger delete-record cursor-pointer">Reject</a>' +
                     '</div>' +
                     '</div>'
             }
@@ -139,7 +139,7 @@ $(function () {
             , 200)
 });
 
-function verifyCar(carId) {
+function approveRequest(draftId) {
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -154,13 +154,13 @@ function verifyCar(carId) {
     }).then(function (e) {
         if (e.value) {
             $.ajax({
-                url: `/carAPI/approve-car?carId=${carId}`,
+                url: `/carAPI/approve-car-update?draftId=${draftId}`,
                 method: "GET",
                 contentType: "application/json",
                 success: function (response) {
                     Swal.fire({
                         icon: "success",
-                        title: "Car approved successfully!",
+                        title: "Request Approved!",
                         showConfirmButton: !1,
                         timer: 1500,
                         customClass: {confirmButton: "btn btn-primary"},
@@ -169,7 +169,7 @@ function verifyCar(carId) {
                         $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
                 },
                 error: function (e, a, t) {
-                    console.error("Error confirming car: ", e);
+                    console.error("Error confirming request: ", e);
 
                     let errorMessage = "An unknown error occurred";
                     if (e.responseJSON && e.responseJSON.error) {
@@ -180,7 +180,64 @@ function verifyCar(carId) {
 
                     Swal.fire({
                         icon: "question",
-                        title: "Failed to approve the car",
+                        title: "Failed to approve the request",
+                        text: errorMessage,
+                        showConfirmButton: !1,
+                        timer: 1500,
+                        customClass: { confirmButton: "btn btn-primary" },
+                        buttonsStyling: !1
+                    });
+                    $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
+                }
+            })
+        }
+    })
+}
+
+function rejectRequest(draftId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: !0,
+        confirmButtonText: "Yes, reject it!",
+        customClass: {
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-label-secondary"
+        },
+        buttonsStyling: !1
+    }).then(function (e) {
+        if (e.value) {
+            $.ajax({
+                url: `/carAPI/reject-car-update?draftId=${draftId}`,
+                method: "GET",
+                contentType: "application/json",
+                success: function (response) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Request Rejected!",
+                        showConfirmButton: !1,
+                        timer: 1500,
+                        customClass: {
+                            confirmButton: "btn btn-primary",
+                        },
+                        buttonsStyling: !1,
+                    }),
+                        $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
+                },
+                error: function (e, a, t) {
+                    console.error("Error confirming request: ", e);
+
+                    let errorMessage = "An unknown error occurred";
+                    if (e.responseJSON && e.responseJSON.error) {
+                        errorMessage = e.responseJSON.error;
+                    } else if (e.responseText) {
+                        errorMessage = e.responseText;
+                    }
+
+                    Swal.fire({
+                        icon: "question",
+                        title: "Failed to reject the request",
                         text: errorMessage,
                         showConfirmButton: !1,
                         timer: 1500,

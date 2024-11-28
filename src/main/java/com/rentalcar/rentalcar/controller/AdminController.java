@@ -1,20 +1,28 @@
 package com.rentalcar.rentalcar.controller;
 
 
+import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
+import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
+import com.rentalcar.rentalcar.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.DecimalFormat;
+
 @Controller
 public class AdminController {
 
     @Autowired
     CarDraftRepository carDraftRepository;
+    @Autowired
+    CarRepository carRepository;
 
     @GetMapping({"/admin/dashboard", "/admin"})
     public String adminDashboard() {
@@ -34,11 +42,13 @@ public class AdminController {
     }
 
     @GetMapping("/admin/account-settings")
-    public String accountSettings() {
+    public String accountSettings(
+            Model model
+    ) {
         return "/admin/pages-account-settings-account";
     }
 
-    @GetMapping("/admin/car-verify")
+    @GetMapping("/admin/car/car-verify")
     public String carVerify(Model model) {
         return "/admin/app-car-verify";
     }
@@ -48,8 +58,10 @@ public class AdminController {
         return "/emailtemplate/car-approved";
     }
 
-    @GetMapping("/admin/car-update-request-list")
-    public String carUpdateRequestList() {
+    @GetMapping("/admin/car/car-update-request-list")
+    public String carUpdateRequestList(
+            Model model
+    ) {
         return "/admin/app-car-update-request-list";
     }
 
@@ -62,6 +74,8 @@ public class AdminController {
         if(carDraft == null) {
            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND);
         }
+        Car car = carRepository.getCarByCarId(carDraft.getCarId());
+        model.addAttribute("car", car);
         model.addAttribute("carDraft", carDraft);
         return "/admin/app-car-update-request-preview";
     }

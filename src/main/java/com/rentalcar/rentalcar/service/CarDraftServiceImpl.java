@@ -4,6 +4,7 @@ import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarDraftRepository;
+import com.rentalcar.rentalcar.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,8 @@ public class CarDraftServiceImpl implements CarDraftService {
     private AdditionalFunctionRepository additionalFunctionRepository;
     @Autowired
     private BrandRepository brandRepository;
+    @Autowired
+    private CarRepository carRepository;
 
     @Override
     public CarDraft getDraftByLastModified(Long userId) {
@@ -306,6 +309,65 @@ public class CarDraftServiceImpl implements CarDraftService {
         }
     }
 
+    @Override
+    public Boolean approveCarUpdateRequest(Integer draftId, User user) {
+        try {
+            CarDraft carDraft = carDraftRepository.findCarDraftsByDraftIdAndVerifyStatus(draftId, "Pending");
+            if (carDraft == null) {
+                return false;
+            }
+            carDraft.setVerifyStatus("Verified");
+            Car car = carRepository.getCarByCarId(carDraft.getCarId());
+            car.setLicensePlate(carDraft.getLicensePlate());
+            car.setColor(carDraft.getColor());
+            car.setBrand(carDraft.getBrand());
+            car.setModel(carDraft.getModel());
+            car.setProductionYear(carDraft.getProductionYear());
+            car.setSeat(carDraft.getSeat());
+            car.setTransmission(carDraft.getTransmission());
+            car.setFuelType(carDraft.getFuelType());
+            setCarDocumentFiles(car, carDraft, user);
+            carDraftRepository.save(carDraft);
+            carRepository.save(car);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Something wrong when approve car update request in car owner service" + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean rejectCarUpdateRequest(Integer draftId, User user) {
+        try {
+            CarDraft carDraft = carDraftRepository.findCarDraftsByDraftIdAndVerifyStatus(draftId, "Pending");
+            if (carDraft == null) {
+                return false;
+            }
+            carDraft.setVerifyStatus("Rejected");
+            carDraftRepository.save(carDraft);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Something wrong when reject car update request in car owner service" + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean cancelCarUpdateRequest(Integer draftId, User user) {
+        try {
+            CarDraft carDraft = carDraftRepository.findCarDraftsByDraftIdAndVerifyStatus(draftId, "Pending");
+            if (carDraft == null) {
+                return false;
+            }
+            carDraft.setVerifyStatus("Cancelled");
+            carDraftRepository.save(carDraft);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Something wrong when cancel car update request in car owner service" + e.getMessage());
+            return false;
+        }
+    }
+
 
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
@@ -360,7 +422,19 @@ public class CarDraftServiceImpl implements CarDraftService {
         }
     }
 
-
+    private void setCarDocumentFiles(Car car, CarDraft carDraft, User user){
+        //Car files
+        Path sourceFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
+        Path targetFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", car.getCarId()+"");
+        if(fileStorageService.copyFiles(sourceFolder, targetFolder)){
+            car.setRegistration(carDraft.getRegistration().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setCertificate(carDraft.getCertificate().replace(sourceFolder.toString(), targetFolder.toString()));
+            car.setInsurance(carDraft.getInsurance().replace(sourceFolder.toString(), targetFolder.toString()));
+        }else{
+            System.out.println("Error when copy files from draft to car");
+            throw new RuntimeException("Error when copy files from draft to car");
+        }
+    }
 
 
 }
