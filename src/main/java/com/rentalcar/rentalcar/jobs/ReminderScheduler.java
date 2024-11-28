@@ -23,7 +23,7 @@ public class ReminderScheduler {
     @Autowired
     UserRepo userRepo;
 
-    @Scheduled(cron = "0 0 9 * * ?") // Chạy hàng ngày lúc 9h sáng
+    @Scheduled(cron = "0 56 21 * * ?") // Chạy hàng ngày lúc 9h sáng
     public void sendReminderEmails() {
         List<MyBookingDto> bookings = rentalCarService.getRentalsNearEndDate();
 
