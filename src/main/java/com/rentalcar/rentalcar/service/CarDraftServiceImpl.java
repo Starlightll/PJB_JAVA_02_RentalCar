@@ -66,42 +66,42 @@ public class CarDraftServiceImpl implements CarDraftService {
             //Front image
             if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
                 files[0].getSize();
-                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "frontImage."+getExtension(files[0].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "frontImage"+".png");
                 carDraft.setFrontImage(storedPath);
             }
             //Back image
             if (files[1] != null && !files[1].isEmpty() && files[1].getSize() > 0) {
                 files[1].getSize();
-                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "backImage."+getExtension(files[1].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "backImage"+".png");
                 carDraft.setBackImage(storedPath);
             }
             //Left image
             if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
                 files[2].getSize();
-                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "leftImage."+getExtension(files[2].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "leftImage"+".png");
                 carDraft.setLeftImage(storedPath);
             }
             //Right image
             if (files[3] != null && !files[3].isEmpty() && files[3].getSize() > 0) {
                 files[3].getSize();
-                String storedPath = fileStorageService.storeFile(files[3], draftFolderPath, "rightImage."+getExtension(files[3].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[3], draftFolderPath, "rightImage"+".png");
                 carDraft.setRightImage(storedPath);
             }
             //Registration
             if (files[4] != null && !files[4].isEmpty() && files[4].getSize() > 0) {
                 files[4].getSize();
-                String storedPath = fileStorageService.storeFile(files[4], draftFolderPath, "registration."+getExtension(files[4].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[4], draftFolderPath, "registration"+".png");
                 carDraft.setRegistration(storedPath);
             }
             //Certificate
             if (files[5] != null && !files[5].isEmpty() && files[5].getSize() > 0) {
                 files[5].getSize();
-                String storedPath = fileStorageService.storeFile(files[5], draftFolderPath, "certificate."+getExtension(files[5].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[5], draftFolderPath, "certificate"+".png");
                 carDraft.setCertificate(storedPath);
             }
             //Insurance
             if (files[6] != null && !files[6].isEmpty() && files[6].getSize() > 0) {
-                String storedPath = fileStorageService.storeFile(files[6], draftFolderPath, "insurance."+getExtension(files[6].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[6], draftFolderPath, "insurance"+".png");
                 carDraft.setInsurance(storedPath);
             }
         } catch (Exception e) {
@@ -155,21 +155,21 @@ public class CarDraftServiceImpl implements CarDraftService {
             // Store each file if it exists
             //Registration
             if (files[0] != null && !files[0].isEmpty() && files[0].getSize() > 0) {
-                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "registration."+getExtension(files[0].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[0], draftFolderPath, "registration"+".png");
                 carDraft.setRegistration(storedPath);
             }
             //Certificate
             if (files[1] != null && !files[1].isEmpty() && files[1].getSize() > 0) {
-                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "certificate."+getExtension(files[1].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[1], draftFolderPath, "certificate"+".png");
                 carDraft.setCertificate(storedPath);
             }
             //Insurance
             if (files[2] != null && !files[2].isEmpty() && files[2].getSize() > 0) {
-                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "insurance."+getExtension(files[2].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[2], draftFolderPath, "insurance"+".png");
                 carDraft.setInsurance(storedPath);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error when store files for request change basic information");
         }
         if(carDraft != null) {
             carDraft.setStep(draft.getStep());

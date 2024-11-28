@@ -67,7 +67,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getFrontImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[0].getSize();
-                String storedPath = fileStorageService.storeFile(files[0], carFolderPath, "frontImage."+getExtension(files[0].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[0], carFolderPath, "frontImage"+".png");
                 car.setFrontImage(storedPath);
             }
             //Back image
@@ -75,7 +75,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getBackImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[1].getSize();
-                String storedPath = fileStorageService.storeFile(files[1], carFolderPath, "backImage."+getExtension(files[1].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[1], carFolderPath, "backImage"+".png");
                 car.setBackImage(storedPath);
             }
             //Left image
@@ -83,7 +83,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getLeftImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[2].getSize();
-                String storedPath = fileStorageService.storeFile(files[2], carFolderPath, "leftImage."+getExtension(files[2].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[2], carFolderPath, "leftImage"+".png");
                 car.setLeftImage(storedPath);
             }
             //Right image
@@ -91,7 +91,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
                 imageFilePath = Paths.get(car.getRightImage());
                 fileStorageService.deleteFile(imageFilePath);
                 files[3].getSize();
-                String storedPath = fileStorageService.storeFile(files[3], carFolderPath, "rightImage."+getExtension(files[3].getOriginalFilename()));
+                String storedPath = fileStorageService.storeFile(files[3], carFolderPath, "rightImage"+".png");
                 car.setRightImage(storedPath);
             }
             //Details Information

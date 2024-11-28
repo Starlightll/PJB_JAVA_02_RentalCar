@@ -151,10 +151,13 @@ public class FileStorageServiceImpl implements FileStorageService{
                 Files.createDirectories(destinationFolder);
             }
 
-            DirectoryStream<Path> stream = Files.newDirectoryStream(sourceFolder);
-            for (Path file : stream) {
-                Path targetPath = destinationFolder.resolve(file.getFileName());
-                Files.copy(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            //Check if the source folder is Exist
+            if (Files.exists(sourceFolder)) {
+                DirectoryStream<Path> stream = Files.newDirectoryStream(sourceFolder);
+                for (Path file : stream) {
+                    Path targetPath = destinationFolder.resolve(file.getFileName());
+                    Files.copy(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                }
             }
             System.out.println("Files copied successfully.");
             return true;
