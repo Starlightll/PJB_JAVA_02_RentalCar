@@ -1662,7 +1662,7 @@
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                             })
                         } else {
                             Swal.fire({
@@ -1671,7 +1671,7 @@
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                             });
                         }
                     },
@@ -1685,7 +1685,7 @@
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                             });
                         }
                 }
