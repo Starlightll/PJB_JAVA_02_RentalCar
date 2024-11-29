@@ -5,8 +5,8 @@
 
 </head>
 
-<body>
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" th:fragment="sidebar">
+<body th:fragment="sidebar">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
 
 
     <div class="app-brand demo ">
@@ -290,8 +290,8 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <li class="menu-item" >
+            <a class="menu-link menu-toggle">
                 <i class='menu-icon tf-icons bx bx-car'></i>
                 <div class="text-truncate" data-i18n="Car">Car</div>
             </a>
@@ -389,9 +389,38 @@
             </a>
         </li>
     </ul>
-
-
 </aside>
+
+<script>
+    function setActiveMenu() {
+        const currentPath = window.location.pathname;
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.classList.remove('active', 'open');
+        });
+        const activeLink = document.querySelector(`.menu-link[href="${currentPath}"]`);
+
+        if (activeLink) {
+            const menuItem = activeLink.closest('.menu-item');
+            menuItem.classList.add('active');
+            let parent = menuItem.parentElement;
+            while (parent) {
+                if (parent.classList.contains('menu-sub')) {
+                    const parentMenuItem = parent.closest('.menu-item');
+                    if (parentMenuItem) {
+                        parentMenuItem.classList.add('active', 'open');
+                    }
+                }
+                parent = parent.parentElement;
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', setActiveMenu);
+
+    window.addEventListener('popstate', setActiveMenu);
+</script>
 </body>
+
 </html>
 
