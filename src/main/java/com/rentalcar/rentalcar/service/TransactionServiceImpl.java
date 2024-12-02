@@ -4,6 +4,8 @@ import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Transaction;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.TransactionRepository;
+import com.rentalcar.rentalcar.repository.UserRepo;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private HttpSession httpSession;
 
     @Override
     public List<Transaction> getTransactionsByDateRange(Long userId, LocalDate fromDate, LocalDate toDate) {
@@ -37,5 +43,12 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setBooking(booking);
         }
         transactionRepository.save(transaction);
+        //Update user's wallet to session after a transaction
+        if(user.getId() == ((User) httpSession.getAttribute("user")).getId()) {
+            User updateUser =  userRepo.getUserById(user.getId());
+            BigDecimal updateWallet = updateUser.getWallet();
+            user.setWallet(updateWallet);
+            httpSession.setAttribute("user", user);
+        }
     }
 }
