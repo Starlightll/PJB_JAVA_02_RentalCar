@@ -8,4 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ViewEditBookingService {
     MyBookingDto getBookingDetail( Integer bookingId, Integer carId, HttpSession session, Integer userId);
     void updateBooking(BookingDto bookingInfor, MultipartFile[] files,HttpSession session);
+    MyBookingDto viewBookingDetailContract( Integer bookingId, Integer carId, HttpSession session, Integer userId);
+    MyBookingDto viewBookingDetailActual( Integer bookingId, Integer carId, HttpSession session, Integer userId);
 }

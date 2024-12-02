@@ -134,7 +134,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                 }
             } else if (LocalDateTime.now().isAfter(endDate)) {
                 totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, baseprice, hourlyRate);
-                if (CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
+                if (CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
                     Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
                     fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt

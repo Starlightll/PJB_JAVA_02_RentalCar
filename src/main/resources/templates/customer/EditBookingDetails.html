@@ -673,7 +673,7 @@
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
 
                                                     <!-- View Details button: always visible -->
-                                                    <a th:href="'/carDetail/' + ${car.carId}"
+                                                    <a th:href="${'/view-booking-detail?bookingId=' + booking.getBookingId() + '&carId=' + booking.getCarId() + '&userId=' + booking.getUserId()}"
                                                        class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                         Details</a>
 
