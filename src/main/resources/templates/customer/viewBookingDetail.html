@@ -4,7 +4,7 @@
       layout:decorate="~{layouts/layout}"
 >
 <head>
-    <title>Edit Booking Details</title>
+    <title>View Booking Details</title>
     <meta name="_csrf" th:content="${_csrf.token}">
     <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.10.0/dist/css/bootstrap-datepicker3.min.css">
     <link rel="stylesheet" href="/webjars/select2/4.1.0-rc.0/dist/css/select2.css">
@@ -13,8 +13,6 @@
     <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
     <!-- iziToast CSS -->
     <link rel="stylesheet" href="/webjars/izitoast/1.4.0/dist/css/iziToast.min.css">
-
-
 
     <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
@@ -312,19 +310,18 @@
                 <div class="col-md-9 ftco-animate">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
 
-                        <th:block th:if="${navigate == 'mybookings' and isCustomer}">
+                        <th:block th:if="${isCustomer}">
                             <span class="mr-2">
                                 <a href="/customer/my-bookings">MY BOOKINGS <i
                                         class="ion-ios-arrow-forward"></i></a>
                             </span>
                         </th:block>
-                        <th:block th:if="${navigate == 'mybookings' and !isCustomer}">
+                        <th:block th:if="${!isCustomer}">
                             <span class="mr-2">
                                 <a href="/car-owner/my-bookings">MY CARS' BOOKINGS <i
                                         class="ion-ios-arrow-forward"></i></a>
                             </span>
                         </th:block>
-                        <input type="hidden" th:value="${navigate}" id="navigate">
                         <span>BOOKING DETAILS <i
                                 class="ion-ios-arrow-forward"></i>
                         </span>
@@ -701,7 +698,7 @@
                                         </div>
                                         <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                             <!-- Nút xuất file Excel -->
-                                            <a th:href="${'/bills/export-pdf?bookingId='+ actual.getBookingId() + '&carId=' +actual.getCarId()+'&userId='+actual.getUserId()}" class="btn btn-success">Export to Excel</a>
+                                            <a th:href="${'/bills/export-pdf?bookingId='+ actual.getBookingId() + '&carId=' +actual.getCarId()+'&userId='+actual.getUserId()}" class="btn btn-success">Export to Pdf</a>
                                         </div>
                                     </div>
 

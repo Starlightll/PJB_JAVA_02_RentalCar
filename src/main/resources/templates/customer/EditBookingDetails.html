@@ -960,7 +960,9 @@
                                                 <div class="row">
                                                     <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
                                                         <input type="checkbox" id="differentInfoCheckbox"
-                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()"
+                                                               th:checked="${booking.getDriverId() != null}"
+                                                               th:disabled="${booking.getDriverId() != null}">
                                                         <svg viewBox="0 0 21 21">
                                                             <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                                         </svg>
@@ -1662,7 +1664,7 @@
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                             })
                         } else {
                             Swal.fire({
@@ -1671,7 +1673,7 @@
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                             });
                         }
                     },
@@ -1685,7 +1687,7 @@
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = '/car-owner/my-bookings?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
                             });
                         }
                 }
@@ -2441,8 +2443,8 @@
             const checkbox = document.getElementById('differentInfoCheckbox');
             const table = document.getElementById('driverInfoTable');
 
-            // Hiển thị bảng nếu checkbox được chọn
-            table.style.display = checkbox.checked ? 'block' : 'none';
+            // Hiển thị bảng nếu checkbox được chọn hoặc bị vô hiệu hóa (driver đã tồn tại)
+            table.style.display = checkbox.checked || checkbox.disabled ? 'block' : 'none';
         }
         // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);

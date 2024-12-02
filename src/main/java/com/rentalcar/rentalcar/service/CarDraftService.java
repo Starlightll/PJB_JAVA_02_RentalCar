@@ -21,4 +21,10 @@ public interface CarDraftService {
     Car convertCarDraftToCar(CarDraft carDraft);
 
     CarDraft convertCarToCarDraft(Car car);
+
+    Boolean approveCarUpdateRequest(Integer draftId, User user);
+
+    Boolean rejectCarUpdateRequest(Integer draftId, User user);
+
+    Boolean cancelCarUpdateRequest(Integer draftId, User user);
 }

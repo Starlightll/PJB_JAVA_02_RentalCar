@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.rentalcar.rentalcar.dto.MyBookingDto;
+import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.helper.FileExporter;
 import com.rentalcar.rentalcar.service.ViewEditBookingService;
 import jakarta.servlet.http.HttpSession;
@@ -26,14 +27,17 @@ public class ExportFileController {
                            @RequestParam(required = false) Integer userId,
                            Model model) {
         // Dummy data
+        User user = (User) session.getAttribute("user");
         LocalDateTime timeNow = LocalDateTime.now();
         MyBookingDto contract = viewEditBookingService.viewBookingDetailContract(bookingId, carId, session, userId);
         MyBookingDto actual = viewEditBookingService.viewBookingDetailActual(bookingId, carId, session, userId);
-
+        boolean isCustomer = user.getRoles().stream()
+                .anyMatch(role -> "Customer".equals(role.getRoleName()));
         // Nếu cần, có thể lọc danh sách hóa đơn theo startDate và endDate
         model.addAttribute("contract", contract);
         model.addAttribute("actual", actual);
         model.addAttribute("timeNow", timeNow);
+        model.addAttribute("isCustomer", isCustomer);
 
         return "customer/viewBookingDetail";
     }

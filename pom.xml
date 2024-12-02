@@ -260,6 +260,12 @@
 
 
 
+        <dependency>
+            <groupId>org.webjars.bowergithub.timmywil</groupId>
+            <artifactId>panzoom</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+
     </dependencies>
 
 

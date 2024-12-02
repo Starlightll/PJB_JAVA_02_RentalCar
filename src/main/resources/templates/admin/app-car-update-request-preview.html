@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en"
+      class="light-style layout-navbar-fixed layout-menu-fixed layout-compact "
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="../../assets/"
+      data-template="vertical-menu-template"
+      data-style="light"
+      xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/dashboardLayout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/typeahead-js/typeahead.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/swiper/swiper.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/sweetalert2/sweetalert2.css" />
+
+    <!-- Page CSS -->
+
+    <link rel="stylesheet" href="../../assets/vendor/css/pages/app-car-update-request-preview.css"/>
+
+    <style>
+        @media (min-width: 576px) {
+            .modal-dialog {
+                max-width: 50rem !important;
+                margin-right: auto;
+                margin-left: auto;
+            }
+        }
+
+    </style>
+</head>
+<th:block layout:fragment="content">
+    <body>
+<!-- Modal Documents view -->
+<div class="modal fade" id="documentViewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body" style="background-color: rgb(0, 0, 0 ,0)">
+                <img id="modalImage" src="" alt="Full Image" style="width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /Modal Documents view -->
+    <!-- Layout container -->
+    <div class="layout-page">
+
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+
+
+                <div class="row request-preview" id="request-preview" th:if="${carDraft != null}">
+                    <!-- Request -->
+                    <div class="col-xl-9 col-md-8 col-12 mb-md-0 mb-6">
+                        <div class="card request-preview-card p-sm-12 p-6">
+                            <div class="card-body request-preview-header rounded">
+                                <div class="row d-flex justify-content-between flex-xl-row flex-md-row flex-column align-items-xl-center align-items-md-start align-items-sm-center align-items-start">
+                                    <div class="mb-xl-0 mb-6 text-heading col-12 col-md-6">
+                                        <div class="swiper" id="swiper-with-progress" style="height: 250px">
+                                            <div class="swiper-wrapper">
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getFrontImage().replaceAll('\\', '/')+')'}">Front</div>
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getBackImage().replaceAll('\\', '/')+')'}">Back</div>
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getLeftImage().replaceAll('\\', '/')+')'}">Left</div>
+                                                <div class="swiper-slide" th:style="${'background-image:url('+ '/' +carDraft.getRightImage().replaceAll('\\', '/')+')'}">Right</div>
+                                            </div>
+                                            <div class="swiper-pagination"></div>
+                                            <div class="swiper-button-next swiper-button-white custom-icon"></div>
+                                            <div class="swiper-button-prev swiper-button-white custom-icon"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <h5 class="mb-4" th:text="${carDraft.getCarName()}"></h5>
+                                        <div class="text-heading">
+                                            <span>License Plate:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getLicensePlate()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Color:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getColor()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Brand:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getBrand().getBrandName()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Model:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getModel()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Year:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getProductionYear()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>No of Seat:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getSeat()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Transmission:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getTransmission()}"></span>
+                                        </div>
+                                        <div class="text-heading">
+                                            <span>Fuel:</span>
+                                            <span class="fw-medium" th:text="${carDraft.getFuelType()}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body px-0">
+                                <div class="row mb-5">
+                                    <h5>Documents</h5>
+                                    <div class="col-lg-4">
+                                        <h6>Registration</h6>
+                                        <a><img th:src="'\\' + ${carDraft.getRegistration()}" alt="" class="image-thumbnail" style="width: 100%;height: 150px;object-fit: cover;"></a>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <h6>Certification</h6>
+                                        <a><img th:src="'\\' + ${carDraft.getCertificate()}" alt="" class="image-thumbnail" style="width: 100%;height: 150px;object-fit: cover;"></a>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <h6>Insurance</h6>
+                                        <a><img th:src="'\\' + ${carDraft.getInsurance()}" alt="" class="image-thumbnail" style="width: 100%;height: 150px;object-fit: cover;"></a>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-5">
+                                    <h5>Details</h5>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Mileage</span>
+                                            <input type="text" class="form-control" th:value="${car.getMileage()}" aria-label="Username" aria-describedby="basic-addon1" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Fuel consumption</span>
+                                            <input type="text" class="form-control" th:value="${car.getFuelConsumption()}" aria-label="Amount (to the nearest dollar)" readonly>
+                                            <span class="input-group-text">liter/100km</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Province</span>
+                                            <input type="text" class="form-control" th:value="${car.getAddress().getProvince()}" aria-label="Username" aria-describedby="basic-addon1" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">District</span>
+                                            <input type="text" class="form-control" th:value="${car.getAddress().getDistrict()}" aria-label="Username" aria-describedby="basic-addon1" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Ward</span>
+                                            <input type="text" class="form-control" th:value="${car.getAddress().getWard()}" aria-label="Username" aria-describedby="basic-addon1" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Home</span>
+                                            <input type="text" class="form-control" th:value="${car.getAddress().getStreet()}" aria-label="Username" aria-describedby="basic-addon1" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Description</span>
+                                            <textarea class="form-control" th:text="${car.getDescription()}" aria-label="With textarea" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-5">
+                                    <h5>Additional Functions</h5>
+                                    <th:block th:each="function, iterStat : ${car.getAdditionalFunctions()}">
+                                        <div class="col-12 col-md-3">
+                                            <p><span th:text="${iterStat.index+1}+'. '">No.</span><span th:text="${function.getFunctionName()}">Function</span></p>
+                                        </div>
+                                    </th:block>
+                                </div>
+                                <div class="row mb-5">
+                                    <h5>Pricing</h5>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Base price</span>
+                                            <input type="text" class="form-control" th:value="${#numbers.formatDecimal(car.getBasePrice(), 0, 'POINT', 0, 'POINT')}" aria-describedby="basic-addon1" readonly>
+                                            <span class="input-group-text">VND</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Car price</span>
+                                            <input type="text" class="form-control" th:value="${#numbers.formatDecimal(car.getCarPrice(), 0, 'POINT', 0, 'POINT')}" readonly>
+                                            <span class="input-group-text">VND</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Deposit</span>
+                                            <input type="text" class="form-control" th:value="${#numbers.formatDecimal(car.getDeposit(), 0, 'POINT', 0, 'POINT')}" aria-describedby="basic-addon1" readonly>
+                                            <span class="input-group-text">VND</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-5">
+                                    <h5>Term of use</h5>
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Term of use</span>
+                                            <textarea class="form-control" th:text="${car.getTerms()}" aria-label="With textarea" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Request -->
+
+                    <!-- Request Actions -->
+                    <div class="col-xl-3 col-md-4 col-12 request-actions">
+                        <div class="card" style="position: sticky;top: 102px;">
+                            <div class="card-body">
+                                <button class="btn btn-label-success d-grid w-100 mb-4" th:draftId="${carDraft.getDraftId()}" th:onclick="approveRequest(this.getAttribute('draftId'))">Approve</button>
+                                <button class="btn btn-label-warning d-grid w-100 mb-4" th:draftId="${carDraft.getDraftId()}" th:onclick="cancelRequest(this.getAttribute('draftId'))">Cancel</button>
+                                <button class="btn btn-label-danger d-grid w-100 mb-4" th:draftId="${carDraft.getDraftId()}" th:onclick="rejectRequest(this.getAttribute('draftId'))">Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Request Actions -->
+                </div>
+
+            </div>
+            <!-- / Content -->
+
+
+            <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+
+    <!-- Vendors JS -->
+    <script src="/assets/vendor/libs/moment/moment.js"></script>
+    <script src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+    <script src="/assets/vendor/libs/cleavejs/cleave.js"></script>
+    <script src="/assets/vendor/libs/cleavejs/cleave-phone.js"></script>
+    <script src="/assets/vendor/libs/swiper/swiper.js"></script>
+    <script src="/webjars/jquery.panzoom/dist/panzoom.min.js"></script>
+<script defer src="/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+
+    <!-- Page JS -->
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const thumbnails = document.querySelectorAll('.image-thumbnail');
+            const panzoomContainer = document.querySelector('.modal-body');
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function () {
+                    $('#documentViewModal').modal('show');
+                    $('#modalImage').attr('src', this.src);
+                    //Initialize panzoom
+                    // Initialize Panzoom
+                    panzoomInstance = Panzoom(panzoomContainer, {
+                        maxScale: 5,
+                        contain: 'outside',
+                        panOnlyWhenZoomed: true
+                    });
+                    // Allow mouse wheel zoom
+                    panzoomContainer.parentElement.addEventListener('wheel', panzoomInstance.zoomWithWheel);
+
+                });
+            });
+        });
+
+
+        function openDocumentViewModal(imageUrl) {
+            $('#documentViewModal').modal('show');
+            $('#modalImage').attr('src', imageUrl);
+        }
+
+        var swiperWithProgress = new Swiper('#swiper-with-progress', {
+            slidesPerView: "auto",
+            pagination: {
+                type: "progressbar",
+                el: ".swiper-pagination"
+            },
+            navigation: {
+                prevEl: ".swiper-button-prev",
+                nextEl: ".swiper-button-next"
+            },
+        });
+    </script>
+    <script>
+        function approveRequest(draftId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Yes, approved it!",
+                customClass: {
+                    confirmButton: "btn btn-primary me-3",
+                    cancelButton: "btn btn-label-secondary"
+                },
+                buttonsStyling: !1
+            }).then(function (e) {
+                if (e.value) {
+                    $.ajax({
+                        url: `/carAPI/approve-car-update?draftId=${draftId}`,
+                        method: "GET",
+                        contentType: "application/json",
+                        success: function (response) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Request Approved!",
+                                showConfirmButton: 1,
+                                // timer: 1500,
+                                customClass: {
+                                    confirmButton: "btn btn-primary",
+                                },
+                                buttonsStyling: !1,
+                            }).then(function () {
+                                window.location.href = "/admin/car/car-update-request-list";
+                            });
+                        },
+                        error: function (e, a, t) {
+                            console.error("Error confirming request: ", e);
+
+                            let errorMessage = "An unknown error occurred";
+                            if (e.responseJSON && e.responseJSON.error) {
+                                errorMessage = e.responseJSON.error;
+                            } else if (e.responseText) {
+                                errorMessage = e.responseText;
+                            }
+
+                            Swal.fire({
+                                icon: "question",
+                                title: "Failed to approve the request",
+                                text: errorMessage,
+                                showConfirmButton: !1,
+                                timer: 1500,
+                                customClass: { confirmButton: "btn btn-primary" },
+                                buttonsStyling: !1
+                            });
+                            // $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
+                        }
+                    })
+                }
+            })
+        }
+
+        function rejectRequest(draftId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Yes, reject it!",
+                customClass: {
+                    confirmButton: "btn btn-primary me-3",
+                    cancelButton: "btn btn-label-secondary"
+                },
+                buttonsStyling: !1
+            }).then(function (e) {
+                if (e.value) {
+                    $.ajax({
+                        url: `/carAPI/reject-car-update?draftId=${draftId}`,
+                        method: "GET",
+                        contentType: "application/json",
+                        success: function (response) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Request Rejected!",
+                                showConfirmButton: 1,
+                                // timer: 1500,
+                                customClass: {
+                                    confirmButton: "btn btn-primary",
+                                },
+                                buttonsStyling: !1,
+                            }).then(function () {
+                                window.location.href = "/admin/car/car-update-request-list";
+                            });
+                        },
+                        error: function (e, a, t) {
+                            console.error("Error confirming request: ", e);
+
+                            let errorMessage = "An unknown error occurred";
+                            if (e.responseJSON && e.responseJSON.error) {
+                                errorMessage = e.responseJSON.error;
+                            } else if (e.responseText) {
+                                errorMessage = e.responseText;
+                            }
+
+                            Swal.fire({
+                                icon: "question",
+                                title: "Failed to reject the request",
+                                text: errorMessage,
+                                showConfirmButton: !1,
+                                timer: 1500,
+                                customClass: { confirmButton: "btn btn-primary" },
+                                buttonsStyling: !1
+                            });
+                            // $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
+                        }
+                    })
+                }
+            })
+        }
+
+        function cancelRequest(draftId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Yes, cancel it!",
+                customClass: {
+                    confirmButton: "btn btn-primary me-3",
+                    cancelButton: "btn btn-label-secondary"
+                },
+                buttonsStyling: !1
+            }).then(function (e) {
+                if (e.value) {
+                    $.ajax({
+                        url: `/carAPI/cancel-car-update?draftId=${draftId}`,
+                        method: "GET",
+                        contentType: "application/json",
+                        success: function (response) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Request Cancelled!",
+                                showConfirmButton: 1,
+                                // timer: 1500,
+                                customClass: {
+                                    confirmButton: "btn btn-primary",
+                                },
+                                buttonsStyling: !1,
+                            }).then(function () {
+                                window.location.href = "/admin/car/car-update-request-list";
+                            });
+                        },
+                        error: function (e, a, t) {
+                            console.error("Error confirming request: ", e);
+
+                            let errorMessage = "An unknown error occurred";
+                            if (e.responseJSON && e.responseJSON.error) {
+                                errorMessage = e.responseJSON.error;
+                            } else if (e.responseText) {
+                                errorMessage = e.responseText;
+                            }
+
+                            Swal.fire({
+                                icon: "question",
+                                title: "Failed to cancel the request",
+                                text: errorMessage,
+                                showConfirmButton: !1,
+                                timer: 1500,
+                                customClass: { confirmButton: "btn btn-primary" },
+                                buttonsStyling: !1
+                            });
+                            // $(".dt-fixedheader").DataTable().ajax.reload(null, !1)
+                        }
+                    })
+                }
+            })
+        }
+    </script>
+    </body>
+</th:block>
+
+</html>
