@@ -238,6 +238,184 @@ public class ViewEditBookingServiceImpl implements ViewEditBookingService{
 
 
     }
+
+    @Override
+    public MyBookingDto viewBookingDetailContract(Integer bookingId, Integer carId, HttpSession session, Integer userId) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        Object[] obj = rentalCarRepository.findBookingDetail(Long.valueOf(userId), carId, bookingId);
+        if (obj == null || obj.length == 0) {
+            throw new RuntimeException("Booking detail not found");
+        }
+        Object[] result = (Object[]) obj[0];
+
+        // Extract common data
+        LocalDateTime startDate = ((Timestamp) result[2]).toLocalDateTime();
+        LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
+        LocalDateTime endDate = ((Timestamp) result[3]).toLocalDateTime();
+        double deposit = ((BigDecimal) result[10]).doubleValue();
+        double basePrice = ((BigDecimal) result[9]).doubleValue();
+        String bookingStatus = (String) result[11];
+        Long driverId = result[17] != null ? Long.valueOf((Integer) result[17]) : null;
+        String lateTime = null;
+        double fineLateTime = 0;
+        double totalPrice = ((BigDecimal) result[6]).doubleValue();
+        double hourlyRate = basePrice / 24;
+        Map<String, Long> mapNumberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+        totalPrice = CalculateNumberOfDays.calculateRentalFee(mapNumberOfDays, basePrice,  hourlyRate);
+        // Calculate amounts
+        Map<String, Double> mapAmount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
+        double totalMoney = mapAmount.get("totalMoney");
+        double returnDeposit = mapAmount.get("returnDeposit");
+
+        // Calculate driver salary
+        double salaryDriver = calculateDriverSalary(driverId, endDate, actualEndDate, mapNumberOfDays);
+
+        String strNumberOfDays = formatDuration(mapNumberOfDays);
+
+        return buildBookingDto(result, startDate, endDate, actualEndDate, totalPrice, strNumberOfDays, deposit, bookingStatus, lateTime, fineLateTime, returnDeposit, totalMoney, salaryDriver);
+    }
+
+
+    @Override
+    public MyBookingDto viewBookingDetailActual(Integer bookingId, Integer carId, HttpSession session, Integer userId) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        Object[] obj = rentalCarRepository.findBookingDetail(Long.valueOf(userId), carId, bookingId);
+        if (obj == null || obj.length == 0) {
+            throw new RuntimeException("Booking detail not found");
+        }
+        Object[] result = (Object[]) obj[0];
+
+        // Extract common data
+        LocalDateTime startDate = ((Timestamp) result[2]).toLocalDateTime();
+        LocalDateTime actualEndDate = ((Timestamp) result[5]).toLocalDateTime();
+        LocalDateTime endDate = ((Timestamp) result[3]).toLocalDateTime();
+        double deposit = ((BigDecimal) result[10]).doubleValue();
+        String bookingStatus = (String) result[11];
+        double basePrice = ((BigDecimal) result[9]).doubleValue();
+        Long driverId = result[17] != null ? Long.valueOf((Integer) result[17]) : null;
+
+        double hourlyRate = basePrice / 24;
+        String lateTime = null;
+        double fineLateTime = 0;
+        double totalPrice = ((BigDecimal) result[6]).doubleValue();
+        double fineLateTimePerDay = basePrice + ((basePrice * FINE_COST) / 100);
+        double fineLateTimePerHour = fineLateTimePerDay / 24;
+
+        Map<String, Long> mapNumberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+
+        // Handle booking states
+        if (isCompletedOrCancelled(bookingStatus)) {
+            if(actualEndDate.isBefore(endDate)) { //kiểm tra xem actual date có nhỏ hơn enđate hay không
+                mapNumberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
+            }
+            if(actualEndDate.isAfter(endDate)) {
+                Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basePrice,  hourlyRate);
+            }
+            Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
+            //  tính late date
+            if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) { // Lấy từ db
+                lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
+                fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);
+            }
+        } else if (isOverdue(endDate)) {
+            totalPrice = CalculateNumberOfDays.calculateRentalFee(mapNumberOfDays, basePrice,  hourlyRate);
+            if(CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
+                lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
+                Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
+                fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
+            }
+        } else {
+            mapNumberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
+            Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
+            totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,basePrice,  hourlyRate);
+        }
+
+        // Calculate amounts
+        Map<String, Double> mapAmount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
+        double totalMoney = mapAmount.get("totalMoney");
+        double returnDeposit = mapAmount.get("returnDeposit");
+
+        // Calculate driver salary
+        double salaryDriver = calculateDriverSalary(driverId, endDate, actualEndDate, mapNumberOfDays);
+
+        String strNumberOfDays = formatDuration(mapNumberOfDays);
+
+        return buildBookingDto(result, startDate, endDate, actualEndDate, totalPrice, strNumberOfDays, deposit, bookingStatus, lateTime, fineLateTime, returnDeposit, totalMoney, salaryDriver);
+    }
+
+
+    private boolean isCompletedOrCancelled(String bookingStatus) {
+        return bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
+                bookingStatus.equalsIgnoreCase("Pending cancel") || bookingStatus.equalsIgnoreCase("Pending payment");
+    }
+
+    private boolean isOverdue(LocalDateTime endDate) {
+        return LocalDateTime.now().isAfter(endDate);
+    }
+
+    private boolean isInProgress(String bookingStatus) {
+        return bookingStatus.equalsIgnoreCase("In-Progress") || bookingStatus.equalsIgnoreCase("Pending return");
+    }
+
+
+    private double calculateDriverSalary(Long driverId, LocalDateTime endDate, LocalDateTime actualEndDate, Map<String, Long> mapNumberOfDays) {
+        if (driverId == null) {
+            return 0;
+        }
+        User driver = userRepository.getUserById(driverId);
+        double salaryDriver = CalculateNumberOfDays.calculateRentalFee(mapNumberOfDays, driver.getSalaryDriver(), driver.getSalaryDriver() / 24);
+
+        if (endDate.isBefore(actualEndDate)) {
+            Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());
+            salaryDriver += CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, driver.getSalaryDriver(), driver.getSalaryDriver() / 24);
+        }
+        return salaryDriver;
+    }
+
+    private String formatDuration(Map<String, Long> mapNumberOfDays) {
+        return mapNumberOfDays.get("days") + " days " + mapNumberOfDays.get("hours") + " h ";
+    }
+
+    private MyBookingDto buildBookingDto(Object[] result, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime actualEndDate,
+                                         double totalPrice, String strNumberOfDays, double deposit, String bookingStatus,
+                                         String lateTime, double fineLateTime, double returnDeposit, double totalMoney, double salaryDriver) {
+        return new MyBookingDto(
+                Long.valueOf((Integer) result[0]),
+                (String) result[1],
+                startDate,
+                endDate,
+                (String) result[4],
+                actualEndDate,
+                totalPrice,
+                Long.valueOf((Integer) result[7]),
+                strNumberOfDays,
+                (Integer) result[8],
+                ((BigDecimal) result[9]).doubleValue(),//base price
+                deposit,
+                bookingStatus,
+                (String) result[12],
+                (String) result[13],
+                (String) result[14],
+                (String) result[15],
+                (Integer) result[16],
+                result[17] != null ? Long.valueOf((Integer) result[17]) : null,
+                lateTime,
+                fineLateTime,
+                returnDeposit,
+                totalMoney,
+                salaryDriver
+        );
+    }
+
 //    public int calculateNumberOfDays(LocalDateTime startDateTime, LocalDateTime endDateTime) {
 //        // Chuyển đổi LocalDateTime sang mili-giây (epoch milli)
 //        long startMillis = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();

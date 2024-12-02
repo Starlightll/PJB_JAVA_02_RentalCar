@@ -673,7 +673,7 @@
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
 
                                                     <!-- View Details button: always visible -->
-                                                    <a th:href="'/carDetail/' + ${car.carId}"
+                                                    <a th:href="${'/view-booking-detail?bookingId=' + booking.getBookingId() + '&carId=' + booking.getCarId() + '&userId=' + booking.getUserId()}"
                                                        class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                         Details</a>
 
@@ -960,7 +960,9 @@
                                                 <div class="row">
                                                     <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
                                                         <input type="checkbox" id="differentInfoCheckbox"
-                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()"
+                                                               th:checked="${booking.getDriverId() != null}"
+                                                               th:disabled="${booking.getDriverId() != null}">
                                                         <svg viewBox="0 0 21 21">
                                                             <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                                         </svg>
@@ -2441,8 +2443,8 @@
             const checkbox = document.getElementById('differentInfoCheckbox');
             const table = document.getElementById('driverInfoTable');
 
-            // Hiển thị bảng nếu checkbox được chọn
-            table.style.display = checkbox.checked ? 'block' : 'none';
+            // Hiển thị bảng nếu checkbox được chọn hoặc bị vô hiệu hóa (driver đã tồn tại)
+            table.style.display = checkbox.checked || checkbox.disabled ? 'block' : 'none';
         }
         // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);

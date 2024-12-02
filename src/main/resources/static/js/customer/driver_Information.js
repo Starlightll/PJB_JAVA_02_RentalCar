@@ -158,13 +158,14 @@ function loadUpdateDriverList() {
                 driverDropdown.append(
                     `<option value="${driver.userId}" ${isSelected}>${driver.fullName}</option>`
                 );
+                console.log(driver.userId);
+                console.log("isSelected = ", isSelected);
             });
 
             if (hasSelectedDriver) {
                 fetchDriverDetailsAjax();
             }
-            console.log(driver.userId);
-            console.log("isSelected = ", isSelected);
+
         },
         error: function (xhr, status, error) {
             console.error('Error loading driver list:', error);

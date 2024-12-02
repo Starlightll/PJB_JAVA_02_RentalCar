@@ -3,6 +3,7 @@ package com.rentalcar.rentalcar.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.rentalcar.rentalcar.common.CalculateNumberOfDays;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.Regex;
 import com.rentalcar.rentalcar.dto.BookingDto;
@@ -100,6 +101,7 @@ public class RentalCarController {
 
 
         Page<MyBookingDto> bookingPages = rentalCarService.getBookings(page, size, sortBy, order, session);
+        LocalDateTime timeNow = LocalDateTime.now();
         boolean isCustomer = user.getRoles().stream()
                 .anyMatch(role -> "Customer".equals(role.getRoleName()));
         List<MyBookingDto> bookingList = bookingPages.getContent();
@@ -114,6 +116,7 @@ public class RentalCarController {
         model.addAttribute("onGoingBookings", onGoingBookings);
         model.addAttribute("isCustomer", isCustomer);
         model.addAttribute("user", user);
+        model.addAttribute("timeNow", timeNow);
         if (bookingList.isEmpty()) {
             model.addAttribute("message", "You have no booking");
         } else {
