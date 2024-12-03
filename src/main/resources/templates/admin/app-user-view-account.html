@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="../../assets/vendor/libs/sweetalert2/sweetalert2.css"/>
     <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css"/>
     <link rel="stylesheet" href="../../assets/vendor/libs/%40form-validation/form-validation.css"/>
-    <link rel="stylesheet" href="../../assets/vendor/libs/dropzone/dropzone.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/dropzone/dropzone.css"/>
 
     <!-- Page CSS -->
 
@@ -66,7 +66,7 @@
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Admin'}"
                                                           class="badge bg-label-danger">Admin</span>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Customer'}"
-                                                            class="badge bg-label-success">Customer</span>
+                                                          class="badge bg-label-success">Customer</span>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Car Owner'}"
                                                           class="badge bg-label-warning">Car Owner</span>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Driver'}"
@@ -75,28 +75,28 @@
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-around flex-wrap my-6 gap-0 gap-md-3 gap-lg-4">
-<!--                                            <div class="d-flex align-items-center me-5 gap-4">-->
-<!--                                                <div class="avatar">-->
-<!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
-<!--                                                        <i class='bx bx-check bx-lg'></i>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                                <div>-->
-<!--                                                    <h5 class="mb-0">1.23k</h5>-->
-<!--                                                    <span>Task Done</span>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="d-flex align-items-center gap-4">-->
-<!--                                                <div class="avatar">-->
-<!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
-<!--                                                        <i class='bx bx-customize bx-lg'></i>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                                <div>-->
-<!--                                                    <h5 class="mb-0">568</h5>-->
-<!--                                                    <span>Project Done</span>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
+                                            <!--                                            <div class="d-flex align-items-center me-5 gap-4">-->
+                                            <!--                                                <div class="avatar">-->
+                                            <!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
+                                            <!--                                                        <i class='bx bx-check bx-lg'></i>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                                <div>-->
+                                            <!--                                                    <h5 class="mb-0">1.23k</h5>-->
+                                            <!--                                                    <span>Task Done</span>-->
+                                            <!--                                                </div>-->
+                                            <!--                                            </div>-->
+                                            <!--                                            <div class="d-flex align-items-center gap-4">-->
+                                            <!--                                                <div class="avatar">-->
+                                            <!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
+                                            <!--                                                        <i class='bx bx-customize bx-lg'></i>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                                <div>-->
+                                            <!--                                                    <h5 class="mb-0">568</h5>-->
+                                            <!--                                                    <span>Project Done</span>-->
+                                            <!--                                                </div>-->
+                                            <!--                                            </div>-->
                                         </div>
                                         <h5 class="pb-4 border-bottom mb-4">Details</h5>
                                         <div class="info-container">
@@ -253,7 +253,8 @@
                                             <h4 class="mb-2">Edit User Information</h4>
                                             <p>Updating user details will receive a privacy audit.</p>
                                         </div>
-                                        <form class="row g-6" th:action="@{/admin/user-management/edit}" th:object="${user}" th:type="post" onsubmit="false">
+                                        <form class="row g-6" th:action="@{/admin/user-management/edit}"
+                                              th:object="${user}" th:type="post" onsubmit="false">
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserName">Username</label>
                                                 <input type="text" id="modalEditUserName" th:field="*{username}"
@@ -268,7 +269,9 @@
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserStatus">Status</label>
-                                                <select id="modalEditUserStatus" name="status" class="form-select select" data-allow-clear="true" th:field="*{status}">
+                                                <select id="modalEditUserStatus" name="status"
+                                                        class="form-select select" data-allow-clear="true"
+                                                        th:field="*{status}">
                                                     <option value="" disabled>Select a status</option>
                                                     <option value="PENDING">Pending</option>
                                                     <option value="ACTIVATED">Activated</option>
@@ -280,20 +283,35 @@
                                                 <label class="form-label" for="modalEditUserPhone">Phone Number</label>
                                                 <div class="input-group">
                                                     <span class="input-group-text">VN (+84)</span>
-                                                    <input type="text" id="modalEditUserPhone" name="modalEditUserPhone" th:field="*{phone}"
+                                                    <input type="text" id="modalEditUserPhone" name="modalEditUserPhone"
+                                                           th:field="*{phone}"
                                                            class="form-control phone-number-mask"
                                                            placeholder="1234 567890" value=""/>
                                                 </div>
                                             </div>
-                                            <div class="col-12 col-md-12">
-                                                <label class="form-label" for="modalEditUserNationalID">National ID</label>
+                                            <div class="col-6 col-md-6">
+                                                <label class="form-label" for="modalEditUserNationalID">National
+                                                    ID</label>
                                                 <input type="text" id="modalEditUserNationalID" th:field="*{nationalId}"
                                                        name="modalEditUserNationalID" class="form-control"
                                                        placeholder="Your national ID" value=""/>
                                             </div>
+                                            <div class="col-6 col-md-6">
+                                                <label class="form-label" for="formValidationDob">DOB</label>
+                                                <input type="date" class="form-control flatpickr-validation"
+                                                       th:field="*{dob}"
+                                                       name="formValidationDob" id="formValidationDob" required/>
+                                            </div>
+                                            <div class="col-12 col-md-12">
+                                                <label class="form-label" for="modalEditEmail">Email</label>
+                                                <input type="text" id="modalEditEmail" th:field="*{email}"
+                                                       name="modalEditEmail" class="form-control"
+                                                       placeholder="Your email" value=""/>
+                                            </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserProvince">Province</label>
-                                                <select id="modalEditUserProvince" name="modalEditUserProvince" th:field="*{city}" th:value="*{city}"
+                                                <select id="modalEditUserProvince" name="modalEditUserProvince"
+                                                        th:field="*{city}" th:value="*{city}"
                                                         th:data-default="*{city}"
                                                         class="select2 form-select" aria-label="Default select example">
                                                     <option disabled value="">Select</option>
@@ -301,7 +319,8 @@
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserDistrict">District</label>
-                                                <select id="modalEditUserDistrict" name="modalEditUserDistrict" th:field="*{district}" th:value="*{district}"
+                                                <select id="modalEditUserDistrict" name="modalEditUserDistrict"
+                                                        th:field="*{district}" th:value="*{district}"
                                                         th:data-default="*{district}"
                                                         class="select2 form-select" aria-label="Default select example">
                                                     <option disabled value="">Select</option>
@@ -309,7 +328,8 @@
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserWard">Ward</label>
-                                                <select id="modalEditUserWard" name="modalEditUserStatus" th:field="*{ward}" th:value="*{ward}"
+                                                <select id="modalEditUserWard" name="modalEditUserStatus"
+                                                        th:field="*{ward}" th:value="*{ward}"
                                                         th:data-default="*{ward}"
                                                         class="select2 form-select" aria-label="Default select example">
                                                     <option disabled value="">Select</option>
@@ -318,7 +338,8 @@
                                             <div class="col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserStreet">Street</label>
                                                 <input type="text" id="modalEditUserStreet" name="modalEditUserStreet"
-                                                       class="form-control" placeholder="Your street" th:field="*{street}"
+                                                       class="form-control" placeholder="Your street"
+                                                       th:field="*{street}"
                                                        value=""/>
                                             </div>
 
@@ -327,19 +348,87 @@
                                                 <div class="card mb-6">
                                                     <h5 class="card-header">Driving License</h5>
                                                     <div class="card-body">
-                                                        <div action="/upload" class="dropzone needsclick" id="dropzone-basic">
+                                                        <div action="/upload" class="dropzone needsclick"
+                                                             id="dropzone-basic">
                                                             <div class="dz-message needsclick">
                                                                 Drop files here or click to upload
-                                                                <span class="note needsclick">(File types <span class="fw-medium">allow:</span>.jpeg, .png, .jpg, .docx, .pdf  .)</span>
+                                                                <span class="note needsclick">(File types <span
+                                                                        class="fw-medium">allow:</span>.jpeg, .png, .jpg, .docx, .pdf  .)</span>
                                                             </div>
                                                             <div class="fallback">
-                                                                <input name="file" type="file" />
+                                                                <input name="file" type="file"/>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <!-- /Basic  -->
+                                            <div class="mb-6">
+                                                <h6 class="mt-2">Choose Role</h6>
+                                                <hr class="mt-0"/>
+                                            </div>
+                                            <div class="row gy-3 mt-0 mb-6">
+                                                <div class="">
+                                                    <div class="form-check custom-option custom-option-icon">
+                                                        <label class="form-check-label custom-option-content"
+                                                               for="formRole1">
+                                              <span class="custom-option-body">
+                                                <i class="bx bx-rocket"></i>
+                                                <span class="custom-option-title"> Customer </span>
+                                                <small> Customer who rent car. </small>
+                                              </span>
+                                                            <input name="formRole" class="form-check-input" type="radio"
+                                                                   value="3" id="formRole1"
+                                                                   th:checked="${user.roles.getFirst().getId() == 3 ? true:false}"/>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    <div class="form-check custom-option custom-option-icon">
+                                                        <label class="form-check-label custom-option-content"
+                                                               for="formRole2">
+                                              <span class="custom-option-body">
+                                                <i class="bx bx-user"></i>
+                                                <span class="custom-option-title"> Car Owner </span>
+                                                <small> Car owner who renting their car. </small>
+                                              </span>
+                                                            <input name="formRole" class="form-check-input" type="radio"
+                                                                   value="2" id="formRole2"
+                                                                   th:checked="${user.roles.getFirst().getId() == 2 ? true:false}"/>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    <div class="form-check custom-option custom-option-icon">
+                                                        <label class="form-check-label custom-option-content"
+                                                               for="formRole3">
+                                              <span class="custom-option-body">
+                                                <i class="bx bx-car"></i>
+                                                <span class="custom-option-title"> Driver </span>
+                                                <small> Driver who drive the car for customer. </small>
+                                              </span>
+                                                            <input name="formRole" class="form-check-input" type="radio"
+                                                                   value="4" id="formRole3"
+                                                                   th:checked="${user.roles.getFirst().getId() == 4 ? true:false}"/>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    <div class="form-check custom-option custom-option-icon">
+                                                        <label class="form-check-label custom-option-content"
+                                                               for="formRole4">
+                                              <span class="custom-option-body">
+                                                <i class="bx bx-crown"></i>
+                                                <span class="custom-option-title"> Admin </span>
+                                                <small> Admin who management the website. </small>
+                                              </span>
+                                                            <input name="formRole" class="form-check-input" type="radio"
+                                                                   value="1" id="formRole4"
+                                                                   th:checked="${user.roles.getFirst().getId() == 1 ? true:false}"/>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div class="col-12 text-center">
                                                 <button type="submit" class="btn btn-primary me-3">Submit</button>
