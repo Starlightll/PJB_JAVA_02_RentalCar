@@ -57,11 +57,10 @@ $(function () {
             render: function (e, t, a, n) {
                 a = a.role;
                 return "<span class='text-truncate d-flex align-items-center text-heading'>" + {
-                    'Driver': '<i class="bx bx-card text-primary me-2"></i>',
+                    'Driver': '<i class="bx bx-user-pin text-info me-2"></i>',
                     'Car Owner': '<i class="bx bx-car text-warning me-2"></i>',
                     'Customer': '<i class="bx bx-user text-success me-2"></i>',
-                    'THE FUCK, WHERE IS MY ROLE ?': '<i class="bx bx-error text-danger me-2"></i>',
-                    Admin: '<i class="bx bx-desktop text-danger me-2"></i>'
+                    'Admin': '<i class="bx bx-desktop text-danger me-2"></i>'
                 }[a] + a + "</span>"
             }
         }, {
@@ -226,11 +225,13 @@ $(function () {
         }
     }),
         $(".dt-buttons > .btn-group > button").removeClass("btn-secondary")), $(".datatables-users tbody").on("click", ".delete-record", function () {
-        e.row($(this).parents("tr")).remove().draw()}),
+        e.row($(this).parents("tr")).remove().draw()
+    }),
 
         setTimeout(() => {
-        $(".dataTables_filter .form-control").removeClass("form-control-sm"), $(".dataTables_length .form-select").removeClass("form-select-sm")
-    }, 300)}),
+            $(".dataTables_filter .form-control").removeClass("form-control-sm"), $(".dataTables_length .form-select").removeClass("form-select-sm")
+        }, 300)
+}),
 
     function () {
         // Track email validation state
@@ -238,144 +239,144 @@ $(function () {
         let emailCheckTimeout = null;
 
 
-    var e = document.querySelectorAll(".phone-mask"), t = document.getElementById("addNewUserForm");
-    e && e.forEach(function (e) {
-        new Cleave(e, {phone: !0, phoneRegionCode: "VN"})
-    }),
-        i = FormValidation.formValidation(t, {
-        fields: {
-            username: {
-                validators:
-                    {
-                        notEmpty: {
-                                message: "Please enter username "
-                        },
-                        stringLength: {
-                            min: 6,
-                            max: 30,
-                            message: "The name must be more than 6 and less than 30 characters long"
-                        },
-                        regexp: {
-                            regexp: /^[a-zA-Z0-9 ]+$/,
-                            message: "The name can only consist of alphabetical, number and space"
-                        }
-                    }
-            },
-            email: {
-                validators: {
-                    notEmpty: {
-                        message: "Please enter your email"
-                    },
-                    emailAddress: {
-                        message: "The value is not a valid email address"
-                    },
-                    // remote: {
-                    //     url: "/api/users/check-email",
-                    //     message: "The email is already taken",
-                    //     method: "GET",
-                    //     data: function () {
-                    //         return {
-                    //             email: t.querySelector('[name="email"]').value
-                    //         }
-                    //     },
-                    // }
-                    callback: {
-                        callback: function (input) {
-                            if (isEmailBlurred) {
-                                return validateEmail(input.value);
+        var e = document.querySelectorAll(".phone-mask"), t = document.getElementById("addNewUserForm");
+        e && e.forEach(function (e) {
+            new Cleave(e, {phone: !0, phoneRegionCode: "VN"})
+        }),
+            i = FormValidation.formValidation(t, {
+                fields: {
+                    username: {
+                        validators:
+                            {
+                                notEmpty: {
+                                    message: "Please enter username "
+                                },
+                                stringLength: {
+                                    min: 6,
+                                    max: 30,
+                                    message: "The name must be more than 6 and less than 30 characters long"
+                                },
+                                regexp: {
+                                    regexp: /^[a-zA-Z0-9 ]+$/,
+                                    message: "The name can only consist of alphabetical, number and space"
+                                }
                             }
-                            return true;
-                        }
-                    }
-                }
-            },
-            password: {
-                validators: {
-                    notEmpty: {
-                        message: "Please enter your password"
                     },
-                    stringLength: {
-                        min: 6,
-                        message: "Password must have at least 6 characters"
-                    },
-                    regexp: {
-                        regexp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,}$/,
-                        message: "The password must contain at least one number, one lowercase and one uppercase letter, one special character"
-                    },
-                }
-            },
-            formConfirmPassword: {
-                validators: {
-                        notEmpty: {
-                            message: "Please confirm password"
-                        },
-                        identical: {
-                            compare: function () {
-                                return t.querySelector('[name="formPassword"]').value
+                    email: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please enter your email"
                             },
-                            message: "The password and its confirm are not the same"
+                            emailAddress: {
+                                message: "The value is not a valid email address"
+                            },
+                            // remote: {
+                            //     url: "/api/users/check-email",
+                            //     message: "The email is already taken",
+                            //     method: "GET",
+                            //     data: function () {
+                            //         return {
+                            //             email: t.querySelector('[name="email"]').value
+                            //         }
+                            //     },
+                            // }
+                            callback: {
+                                callback: function (input) {
+                                    if (isEmailBlurred) {
+                                        return validateEmail(input.value);
+                                    }
+                                    return true;
+                                }
+                            }
                         }
-                }
-            },
-            dob: {
-                validators: {
-                    notEmpty: {
-                        message: "Please select your DOB"
                     },
-                    date: {
-                        format: "YYYY-MM-DD",
-                        message: "The value is not a valid date"
-                    },
-                    callback: {
-                        message: "You must be at least 18 years old",
-                        callback: function (input) {
-                            const dob = input.value;
-                            const [day, month, year] = dob.split('-');
-                            const dobDate = new Date(year, month - 1, day);
-                            const today = new Date();
-                            const age = today.getFullYear() - dobDate.getFullYear();
-                            const monthDiff = today.getMonth() - dobDate.getMonth();
-                            const dayDiff = today.getDate() - dobDate.getDate();
-                            return age > 18 || (age === 18 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)));
+                    password: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please enter your password"
+                            },
+                            stringLength: {
+                                min: 6,
+                                message: "Password must have at least 6 characters"
+                            },
+                            regexp: {
+                                regexp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,}$/,
+                                message: "The password must contain at least one number, one lowercase and one uppercase letter, one special character"
+                            },
                         }
-                    }
+                    },
+                    formConfirmPassword: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please confirm password"
+                            },
+                            identical: {
+                                compare: function () {
+                                    return t.querySelector('[name="formPassword"]').value
+                                },
+                                message: "The password and its confirm are not the same"
+                            }
+                        }
+                    },
+                    dob: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select your DOB"
+                            },
+                            date: {
+                                format: "YYYY-MM-DD",
+                                message: "The value is not a valid date"
+                            },
+                            callback: {
+                                message: "You must be at least 18 years old",
+                                callback: function (input) {
+                                    const dob = input.value;
+                                    const [day, month, year] = dob.split('-');
+                                    const dobDate = new Date(year, month - 1, day);
+                                    const today = new Date();
+                                    const age = today.getFullYear() - dobDate.getFullYear();
+                                    const monthDiff = today.getMonth() - dobDate.getMonth();
+                                    const dayDiff = today.getDate() - dobDate.getDate();
+                                    return age > 18 || (age === 18 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)));
+                                }
+                            }
 
-                }
-            },
-            formRole: {
-                validators: {
-                    notEmpty: {
-                        message: "Please select role"
-                    }
-                }
-            },
-            status: {
-                validators: {
-                    notEmpty: {
-                        message: "Please select status"
-                    }
-                }
-            },
-        },
-        plugins: {
-            trigger: new FormValidation.plugins.Trigger,
-            bootstrap5: new FormValidation.plugins.Bootstrap5({
-                eleValidClass: "", rowSelector: function (e, t) {
-                    return ".mb-6"
-                }
-            }),
-            submitButton: new FormValidation.plugins.SubmitButton,
-            defaultSubmit: new FormValidation.plugins.DefaultSubmit,
-            autoFocus: new FormValidation.plugins.AutoFocus
-        },
+                        }
+                    },
+                    formRole: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select role"
+                            }
+                        }
+                    },
+                    status: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select status"
+                            }
+                        }
+                    },
+                },
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger,
+                    bootstrap5: new FormValidation.plugins.Bootstrap5({
+                        eleValidClass: "", rowSelector: function (e, t) {
+                            return ".mb-6"
+                        }
+                    }),
+                    submitButton: new FormValidation.plugins.SubmitButton,
+                    defaultSubmit: new FormValidation.plugins.DefaultSubmit,
+                    autoFocus: new FormValidation.plugins.AutoFocus
+                },
 
-    })
+            })
 
-    t.addEventListener("submit", function(e) {
-        t.checkValidity() ? alert("Submitted!!!") : (e.preventDefault(),
-            e.stopPropagation()),
-            t.classList.add("was-validated")
-    }, !1);
+        t.addEventListener("submit", function (e) {
+            t.checkValidity() ? alert("Submitted!!!") : (e.preventDefault(),
+                e.stopPropagation()),
+                t.classList.add("was-validated")
+        }, !1);
 
 
         // Handle email field blur/focus events
@@ -393,13 +394,12 @@ $(function () {
 
         const validateEmail = async function (email) {
             const check = await checkEmailAvailability(email);
-            if(check){
+            if (check) {
                 return {
                     valid: true,
                     message: 'Email is available',
                 }
-            }
-            else{
+            } else {
                 return {
                     valid: false,
                     message: 'Email is already taken',
@@ -412,20 +412,21 @@ $(function () {
             return await response.json();
 
         }
-}();
+    }();
 
-    window.Helpers.initCustomOptionCheck();
-    var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
-        , e = (e && e.forEach(e => {
-            e.flatpickr({
-                enableTime: !1,
-                dateFormat: "Y-m-d",
-                onChange: function() {
-                    i.revalidateField("dob")
-                }
-            })
-        }
-    ));
+window.Helpers.initCustomOptionCheck();
+var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
+    , e = (e && e.forEach(e => {
+        e.flatpickr({
+            enableTime: !1,
+            dateFormat: "Y-m-d",
+            onChange: function () {
+                i.revalidateField("dob")
+            },
+            static: !0
+        })
+    }
+));
 
 
 
