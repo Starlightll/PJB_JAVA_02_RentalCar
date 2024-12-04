@@ -26,6 +26,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    private String avatar;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
     @Column(unique = true)
