@@ -31,4 +31,10 @@ public class UserAPI {
         boolean exists = userService.checkEmail(email);
         return ResponseEntity.ok(!exists);
     }
+
+    @GetMapping("/check-phone")
+    public ResponseEntity<?> checkPhone(String phone) {
+        boolean exists = userService.checkPhone(phone);
+        return ResponseEntity.ok(!exists);
+    }
 }

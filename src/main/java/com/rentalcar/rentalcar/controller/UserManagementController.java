@@ -5,10 +5,14 @@ import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -44,21 +48,28 @@ public class UserManagementController {
     }
 
     @PostMapping("/user-management/add-user")
-    public String addUser(
+    public ResponseEntity<Map<String, Object>> addUser(
             @ModelAttribute("user") User user,
             @RequestParam(value = "formRole", required = true) String role,
             BindingResult result
     ) {
+        Map<String, Object> response = new HashMap<>();
         if (result.hasErrors()) {
-            return "redirect:/admin/user-list";
+            response.put("errors", result.getAllErrors());
+            return ResponseEntity.badRequest().body(response);
         }
         try{
+            if (Integer.parseInt(role) == 4) {
+                user.setSalaryDriver(499000.00);
+            }
             User newUser = userService.addUser(user);
             userService.setUserRole(newUser, Integer.parseInt(role));
         }catch (Exception e){
-            e.printStackTrace();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
-        return "redirect:/admin/user-list";
+        response.put("message", "User added successfully");
+        return ResponseEntity.ok(response);
     }
 
 

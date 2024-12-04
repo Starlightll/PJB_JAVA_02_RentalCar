@@ -5,8 +5,8 @@ $(function () {
     var e, s = $(".datatables-users"), o = $(".select2"), i = "/admin/user-management/user-detail", r = {
         'PENDING': {title: "Pending", class: "bg-label-warning"},
         'ACTIVATED': {title: "Active", class: "bg-label-success"},
-        'LOCKED': {title: "Locked", class: "bg-label-secondary"},
-        'DELETED': {title: "Deleted", class: "bg-label-error"}
+        'LOCKED': {title: "Locked", class: "bg-label-danger"},
+        'DELETED': {title: "Deleted", class: "bg-label-secondary"}
     };
     o.length && (o = o).wrap('<div class="position-relative"></div>').select2({
         placeholder: "Select Country",
@@ -57,11 +57,10 @@ $(function () {
             render: function (e, t, a, n) {
                 a = a.role;
                 return "<span class='text-truncate d-flex align-items-center text-heading'>" + {
-                    'Driver': '<i class="bx bx-card text-primary me-2"></i>',
+                    'Driver': '<i class="bx bx-user-pin text-info me-2"></i>',
                     'Car Owner': '<i class="bx bx-car text-warning me-2"></i>',
                     'Customer': '<i class="bx bx-user text-success me-2"></i>',
-                    'THE FUCK, WHERE IS MY ROLE ?': '<i class="bx bx-error text-danger me-2"></i>',
-                    Admin: '<i class="bx bx-desktop text-danger me-2"></i>'
+                    'Admin': '<i class="bx bx-desktop text-danger me-2"></i>'
                 }[a] + a + "</span>"
             }
         }, {
@@ -226,156 +225,289 @@ $(function () {
         }
     }),
         $(".dt-buttons > .btn-group > button").removeClass("btn-secondary")), $(".datatables-users tbody").on("click", ".delete-record", function () {
-        e.row($(this).parents("tr")).remove().draw()}),
+        e.row($(this).parents("tr")).remove().draw()
+    }),
 
         setTimeout(() => {
-        $(".dataTables_filter .form-control").removeClass("form-control-sm"), $(".dataTables_length .form-select").removeClass("form-select-sm")
-    }, 300)}),
+            $(".dataTables_filter .form-control").removeClass("form-control-sm"), $(".dataTables_length .form-select").removeClass("form-select-sm")
+        }, 300)
+}),
 
     function () {
         // Track email validation state
         let isEmailBlurred = false;
-        let emailCheckTimeout = null;
+        // Track phone validation state
+        let isPhoneBlurred = false;
 
-
-    var e = document.querySelectorAll(".phone-mask"), t = document.getElementById("addNewUserForm");
-    e && e.forEach(function (e) {
-        new Cleave(e, {phone: !0, phoneRegionCode: "VN"})
-    }),
-        i = FormValidation.formValidation(t, {
-        fields: {
-            username: {
-                validators:
-                    {
-                        notEmpty: {
-                                message: "Please enter username "
-                        },
-                        stringLength: {
-                            min: 6,
-                            max: 30,
-                            message: "The name must be more than 6 and less than 30 characters long"
-                        },
-                        regexp: {
-                            regexp: /^[a-zA-Z0-9 ]+$/,
-                            message: "The name can only consist of alphabetical, number and space"
-                        }
-                    }
-            },
-            email: {
-                validators: {
-                    notEmpty: {
-                        message: "Please enter your email"
-                    },
-                    emailAddress: {
-                        message: "The value is not a valid email address"
-                    },
-                    // remote: {
-                    //     url: "/api/users/check-email",
-                    //     message: "The email is already taken",
-                    //     method: "GET",
-                    //     data: function () {
-                    //         return {
-                    //             email: t.querySelector('[name="email"]').value
-                    //         }
-                    //     },
-                    // }
-                    callback: {
-                        callback: function (input) {
-                            if (isEmailBlurred) {
-                                return validateEmail(input.value);
+        var e = document.querySelectorAll(".phone-mask"),
+            t = document.getElementById("addNewUserForm");
+        e && e.forEach(function (e) {
+            new Cleave(e, {phone: !0, phoneRegionCode: "VN"})
+        }),
+            i = FormValidation.formValidation(t, {
+                fields: {
+                    username: {
+                        validators:
+                            {
+                                notEmpty: {
+                                    message: "Please enter username "
+                                },
+                                // stringLength: {
+                                //     min: 6,
+                                //     max: 30,
+                                //     message: "The name must be more than 6 and less than 30 characters long"
+                                // },
+                                // regexp: {
+                                //     regexp: /^[a-zA-Z0-9 ]+$/,
+                                //     message: "The name can only consist of alphabetical, number and space"
+                                // }
                             }
-                            return true;
+                    },
+                    email: {
+                        validators: {
+                            // notEmpty: {
+                            //     message: "Please enter your email"
+                            // },
+                            // emailAddress: {
+                            //     message: "The value is not a valid email address"
+                            // },
+                            callback: {
+                                callback: function (input) {
+                                    //Regex for email
+                                    //The email must start with a letter
+                                    //The email must have exactly one @ symbol
+                                    //The email must have at least one dot
+                                    //The email must have at least 2 characters after the last dot
+                                    const emailRegex = /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                                    if (input.value.trim() === '') {
+                                        return {
+                                            valid: false,
+                                            message: "The email is required"
+                                        };
+                                    } else {
+                                        if (isEmailBlurred) {
+                                            if (!emailRegex.test(input.value)) {
+                                                return {
+                                                    valid: false,
+                                                    message: "The email is not valid"
+                                                };
+                                            }
+                                            return validateEmail(input.value);
+                                        }
+                                        return true;
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
-            },
-            password: {
-                validators: {
-                    notEmpty: {
-                        message: "Please enter your password"
                     },
-                    stringLength: {
-                        min: 6,
-                        message: "Password must have at least 6 characters"
+                    password: {
+                        validators: {
+                            callback: {
+                                callback: function (input) {
+                                    const password = input.value;
+                                    if (password.trim() === '') {
+                                        return {
+                                            valid: false,
+                                            message: "The password is required"
+                                        };
+                                    } else {
+                                        const hasNumber = /\d/.test(password);
+                                        const hasUpperCase = /[A-Z]/.test(password);
+                                        const hasLowerCase = /[a-z]/.test(password);
+                                        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                                        let errors = [];
+
+                                        if (password.length < 8) {
+                                            errors.push("Password must be at least 8 characters long");
+                                        }
+                                        if (password.length > 30) {
+                                            errors.push("Password must be less than 30 characters long");
+                                        }
+                                        if (!hasNumber) {
+                                            errors.push("Password must contain at least one number");
+                                        }
+                                        if (!hasUpperCase) {
+                                            errors.push("Password must contain at least one uppercase letter");
+                                        }
+                                        if (!hasLowerCase) {
+                                            errors.push("Password must contain at least one lowercase letter");
+                                        }
+                                        if (!hasSpecialChar) {
+                                            errors.push("Password must contain at least one special character");
+                                        }
+
+                                        if (errors.length > 0) {
+                                            return {
+                                                valid: false,
+                                                message: errors.join('<br>')
+                                            }
+                                        }
+                                        return true;
+                                    }
+                                },
+                            }
+                        }
                     },
-                    regexp: {
-                        regexp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,}$/,
-                        message: "The password must contain at least one number, one lowercase and one uppercase letter, one special character"
-                    },
-                }
-            },
-            formConfirmPassword: {
-                validators: {
-                        notEmpty: {
-                            message: "Please confirm password"
-                        },
-                        identical: {
-                            compare: function () {
-                                return t.querySelector('[name="formPassword"]').value
+                    formConfirmPassword: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please confirm password"
                             },
-                            message: "The password and its confirm are not the same"
+                            identical: {
+                                compare: function () {
+                                    return t.querySelector('[name="password"]').value;
+                                },
+                                message: "The password and its confirm are not the same"
+                            }
                         }
-                }
-            },
-            dob: {
-                validators: {
-                    notEmpty: {
-                        message: "Please select your DOB"
                     },
-                    date: {
-                        format: "YYYY-MM-DD",
-                        message: "The value is not a valid date"
+                    dob: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select your DOB"
+                            },
+                            date: {
+                                format: "YYYY-MM-DD",
+                                message: "The value is not a valid date"
+                            },
+                            callback: {
+
+                                callback: function (input) {
+                                    const dob = input.value;
+                                    const [year, month, day] = dob.split('-');
+                                    const dobDate = new Date(year, month - 1, day);
+                                    const today = new Date();
+                                    const age = today.getFullYear() - dobDate.getFullYear();
+                                    const monthDiff = today.getMonth() - dobDate.getMonth();
+                                    const dayDiff = today.getDate() - dobDate.getDate();
+                                    //Age must be greater than 18
+                                    if (age < 18 || (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff <= 0)))) {
+                                        return {
+                                            valid: false,
+                                            message: "You must be at least 18 years old"
+                                        }
+                                    }
+                                    //Age must be less than 100
+                                    if (age > 100) {
+                                        return {
+                                            valid: false,
+                                            message: "You must be less than 100 years old"
+                                        }
+                                    }
+                                    return true;
+                                }
+                            }
+
+                        }
                     },
-                    callback: {
-                        message: "You must be at least 18 years old",
-                        callback: function (input) {
-                            const dob = input.value;
-                            const [day, month, year] = dob.split('-');
-                            const dobDate = new Date(year, month - 1, day);
-                            const today = new Date();
-                            const age = today.getFullYear() - dobDate.getFullYear();
-                            const monthDiff = today.getMonth() - dobDate.getMonth();
-                            const dayDiff = today.getDate() - dobDate.getDate();
-                            return age > 18 || (age === 18 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)));
+                    formRole: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select role"
+                            }
+                        }
+                    },
+                    status: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select status"
+                            }
+                        }
+                    },
+                    phone: {
+                        validators: {
+                            // notEmpty: {
+                            //     message: "Please enter your phone"
+                            // },
+                            callback: {
+                                callback: function (input) {
+                                    //Regex for phone vietnamese phone number
+                                    //Remove all spaces, dashes, dots, and parentheses
+                                    //The phone number must start with 03, 05, 07, 08, or 09
+                                    //The phone number must have exactly 10 digits
+                                    if (input.value.trim() === '') {
+                                        return {
+                                            valid: false,
+                                            message: "The phone number is required"
+                                        };
+                                    } else {
+                                        if (isPhoneBlurred) {
+                                            const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
+                                            const formattedPhone = input.value.trim().replace(/[\s\\.\-\\(\\)]/g, '');
+                                            const isValidFormat = phoneRegex.test(formattedPhone);
+                                            if (!isValidFormat) {
+                                                return {
+                                                    valid: false,
+                                                    message: "The phone number is not valid"
+                                                };
+                                            }
+                                            return validatePhone(input.value);
+                                        }
+                                        return true;
+                                    }
+                                }
+                            },
                         }
                     }
+                },
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger,
+                    bootstrap5: new FormValidation.plugins.Bootstrap5({
+                        eleValidClass: "", rowSelector: function (e, t) {
+                            return ".mb-6"
+                        }
+                    }),
+                    // submitButton: new FormValidation.plugins.SubmitButton,
+                    // defaultSubmit: new FormValidation.plugins.DefaultSubmit,
+                    autoFocus: new FormValidation.plugins.AutoFocus,
+                },
+            })
 
+        t.addEventListener("submit", function (e) {
+            e.preventDefault();
+            i.validate().then(function (e) {
+                if ("Valid" === e) {
+                    console.log("Submitted!!!");
+                    const data = new FormData(t);
+                    fetch('/admin/user-management/add-user', {
+                        method: 'POST',
+                        //     headers: {
+                        //         'Accept': 'application/json',
+                        //         'Content-Type': 'application/json',
+                        //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        // },
+                        body: data
+                    }).then(response => {
+                        if (response.ok) {
+                            response.json().then(data => {
+                                console.log(data);
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: data.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                $('#offcanvasAddUser').offcanvas('hide');
+                                $('#addNewUserForm').trigger('reload');
+                                $('.datatables-users').DataTable().ajax.reload(null, !1)
+                            });
+                        } else {
+                            response.json().then(data => {
+                                console.log(data);
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Warning',
+                                    text: "Add user failed",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            });
+                        }
+                    });
                 }
-            },
-            formRole: {
-                validators: {
-                    notEmpty: {
-                        message: "Please select role"
-                    }
-                }
-            },
-            status: {
-                validators: {
-                    notEmpty: {
-                        message: "Please select status"
-                    }
-                }
-            },
-        },
-        plugins: {
-            trigger: new FormValidation.plugins.Trigger,
-            bootstrap5: new FormValidation.plugins.Bootstrap5({
-                eleValidClass: "", rowSelector: function (e, t) {
-                    return ".mb-6"
-                }
-            }),
-            submitButton: new FormValidation.plugins.SubmitButton,
-            defaultSubmit: new FormValidation.plugins.DefaultSubmit,
-            autoFocus: new FormValidation.plugins.AutoFocus
-        },
-
-    })
-
-    t.addEventListener("submit", function(e) {
-        t.checkValidity() ? alert("Submitted!!!") : (e.preventDefault(),
-            e.stopPropagation()),
-            t.classList.add("was-validated")
-    }, !1);
+            })
+        });
 
 
         // Handle email field blur/focus events
@@ -387,19 +519,18 @@ $(function () {
 
         emailField.addEventListener('focus', () => {
             isEmailBlurred = false;
-            i.revalidateField('email');
+            // i.revalidateField('email');
         });
 
 
         const validateEmail = async function (email) {
             const check = await checkEmailAvailability(email);
-            if(check){
+            if (check) {
                 return {
                     valid: true,
                     message: 'Email is available',
                 }
-            }
-            else{
+            } else {
                 return {
                     valid: false,
                     message: 'Email is already taken',
@@ -412,20 +543,60 @@ $(function () {
             return await response.json();
 
         }
-}();
 
-    window.Helpers.initCustomOptionCheck();
-    var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
-        , e = (e && e.forEach(e => {
-            e.flatpickr({
-                enableTime: !1,
-                dateFormat: "Y-m-d",
-                onChange: function() {
-                    i.revalidateField("dob")
+
+        // Handle phone field blur/focus events
+        const phoneField = t.querySelector('[name="phone"]');
+        phoneField.addEventListener('blur', () => {
+            isPhoneBlurred = true;
+            i.revalidateField('phone');
+        });
+
+        phoneField.addEventListener('focus', () => {
+            isPhoneBlurred = false;
+            // i.revalidateField('phone');
+        });
+
+        const validatePhone = async function (phone) {
+            const check = await checkPhoneAvailability(phone);
+            if (check) {
+                console.log("Phone is available");
+                return {
+                    valid: true,
+                    message: 'Phone is available',
                 }
-            })
+            } else {
+                console.log("Phone is already taken");
+                return {
+                    valid: false,
+                    message: 'Phone is already taken',
+                }
+            }
         }
-    ));
+
+        async function checkPhoneAvailability(phone) {
+            const response = await fetch(`/api/users/check-phone?phone=${phone}`);
+            return await response.json();
+
+        }
+
+
+    }();
+
+window.Helpers.initCustomOptionCheck();
+var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
+    , e = (e && e.forEach(e => {
+        e.flatpickr({
+            enableTime: !1,
+            dateFormat: "Y-m-d",
+            maxDate: "today",
+            onChange: function () {
+                i.revalidateField("dob")
+            },
+            static: !0
+        })
+    }
+));
 
 
 
