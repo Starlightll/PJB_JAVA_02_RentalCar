@@ -225,34 +225,6 @@ $(function () {
                                 }
                             }
                     },
-                    email: {
-                        validators: {
-                            notEmpty: {
-                                message: "Please enter your email"
-                            },
-                            emailAddress: {
-                                message: "The value is not a valid email address"
-                            },
-                            // remote: {
-                            //     url: "/api/users/check-email",
-                            //     message: "The email is already taken",
-                            //     method: "GET",
-                            //     data: function () {
-                            //         return {
-                            //             email: t.querySelector('[name="email"]').value
-                            //         }
-                            //     },
-                            // }
-                            callback: {
-                                callback: function (input) {
-                                    if (isEmailBlurred) {
-                                        return validateEmail(input.value);
-                                    }
-                                    return true;
-                                }
-                            }
-                        }
-                    },
                     password: {
                         validators: {
                             notEmpty: {
@@ -340,41 +312,6 @@ $(function () {
                 e.stopPropagation()),
                 t.classList.add("was-validated")
         }, !1);
-
-
-        // Handle email field blur/focus events
-        const emailField = t.querySelector('[name="email"]');
-        emailField.addEventListener('blur', () => {
-            isEmailBlurred = true;
-            i.revalidateField('email');
-        });
-
-        emailField.addEventListener('focus', () => {
-            isEmailBlurred = false;
-            i.revalidateField('email');
-        });
-
-
-        const validateEmail = async function (email) {
-            const check = await checkEmailAvailability(email);
-            if (check) {
-                return {
-                    valid: true,
-                    message: 'Email is available',
-                }
-            } else {
-                return {
-                    valid: false,
-                    message: 'Email is already taken',
-                }
-            }
-        }
-
-        async function checkEmailAvailability(email) {
-            const response = await fetch(`/api/users/check-email?email=${email}`);
-            return await response.json();
-
-        }
     }();
 
 window.Helpers.initCustomOptionCheck();
@@ -383,6 +320,7 @@ var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
         e.flatpickr({
             enableTime: !1,
             dateFormat: "Y-m-d",
+            maxDate: "today",
             onChange: function () {
                 i.revalidateField("dob")
             },
