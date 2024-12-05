@@ -81,7 +81,7 @@ public class CalculateNumberOfDays {
 
             long lateHours = duration.toHours() % 24;
 
-            return "Late " + lateDays + " days " + lateHours + " h";
+            return "Late " + lateDays + " d " + lateHours + " h";
         }
 
         return null;

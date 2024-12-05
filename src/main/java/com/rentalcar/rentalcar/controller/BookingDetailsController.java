@@ -83,7 +83,8 @@ public class BookingDetailsController {
 
 //        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingId));
 //        DriverDetail driverDetail = optionalDriverDetail.orElse(null);
-
+        MyBookingDto contract = viewEditBookingService.viewBookingDetailContract(bookingId, carId, session, userId);
+        MyBookingDto actual = viewEditBookingService.viewBookingDetailActual(bookingId, carId, session, userId);
         Optional<Feedback> opFeedback = ratingStarRepo.findByBookingId(Long.valueOf(bookingId));
         Feedback feedback = opFeedback.orElse(null);
         boolean isRating = feedback == null && booking.getBookingStatus().equalsIgnoreCase("Completed");
@@ -93,6 +94,8 @@ public class BookingDetailsController {
         if(CalculateNumberOfDays.calculateLateTime(booking.getEndDate(), timeNow) != null) {
             lateTime = CalculateNumberOfDays.calculateLateTime(booking.getEndDate(), timeNow);
         }
+
+
 
 
         Map<String, Long> map = CalculateNumberOfDays.calculateNumberOfDays(booking.getStartDate(), timeNow);
@@ -145,6 +148,8 @@ public class BookingDetailsController {
         model.addAttribute("totalPrice",totalPrice);
         model.addAttribute("isCustomer", isCustomer);
         model.addAttribute("haveDriver",booking.getDriverId());
+        model.addAttribute("contract", contract);
+        model.addAttribute("actual", actual);
         return "customer/EditBookingDetails";
     }
 
@@ -294,8 +299,8 @@ public class BookingDetailsController {
                 java.sql.Date sqlDate = (java.sql.Date) result[2];
                 dob = sqlDate.toLocalDate();
             }
-
-            UserDto userDto = new UserDto(userId, fullName, null, null, dob, null, null, null, null);
+            String phone = (String) result[3];
+            UserDto userDto = new UserDto(userId, fullName,null,null, dob, null, phone, null, null);
             userDtos.add(userDto);
         }
 

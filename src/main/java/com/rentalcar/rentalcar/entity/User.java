@@ -46,6 +46,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
     private Double salaryDriver;
+    private String descriptionDriver;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
