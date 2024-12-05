@@ -8,8 +8,8 @@ GO
 CREATE TABLE [dbo].[Users]
 (
     userId         INT IDENTITY (1,1) NOT NULL,
-    avatar         NVARCHAR(MAX),
     username       NVARCHAR(50),
+    avatar         NVARCHAR(MAX),
     dob            DATE,
     email          NVARCHAR(100)      NOT NULL,
     nationalId     NVARCHAR(20),
