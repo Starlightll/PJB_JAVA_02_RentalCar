@@ -18,7 +18,7 @@ function loadDriverList() {
             // Duyệt qua danh sách drivers và thêm từng option
             $.each(drivers, function (index, driver) {
                 driverDropdown.append(
-                    `<option value="${driver.userId}">${driver.fullName}</option>`
+                    `<option value="${driver.userId}">${driver.fullName + ' - ' + driver.phone}</option>`
                 );
                 console.log(driver.userId);
             });
@@ -49,6 +49,7 @@ function fetchDriverDetailsAjax() {
         $('#districtDriver').empty();
         $('#wardDriver').empty();
         $('#salaryDriver').empty();
+        $('#descriptionDriver').empty();
         return;
     }
 
@@ -65,8 +66,9 @@ function fetchDriverDetailsAjax() {
             $('#nationalIdDriver').val(driver.nationalId);
             $('#streetDriver').val(driver.street);
             $('#salaryDriver').val(driver.salaryDriver);
+            $('#descriptionDriver').val(driver.descriptionDriver);
             // Hiển thị ảnh bằng cách thay đổi src
-            $('#previewImageDriver').attr('src', driver.drivingLicense);
+             $('#previewImageDriver').attr('src', driver.avatar);
             // Gọi hàm để hiển thị tên địa điểm
             await displayLocationNames(driver.city, driver.district, driver.ward);
         },
@@ -136,33 +138,46 @@ async function displayLocationNames(provinceId, districtId, wardId) {
 function loadUpdateDriverList() {
 
     const bookingId = $('#bookingId').val(); // Lấy ID tài xế từ option
-    console.log("selectedId = ", bookingId);
     const driverId = $('#driverId').val(); // Lấy ID tài xế từ option
-    console.log("selectedId = ", driverId);
 
+    console.log("Booking ID:", bookingId);
+    console.log("Driver ID before AJAX call:", driverId);
     $.ajax({
-        url: `/api/update-drivers/${bookingId}`, // Endpoint lấy danh sách tài xế
+        url: `/api/update-drivers/${bookingId}`,
         type: 'GET',
         dataType: 'json',
         success: function (drivers) {
             const driverDropdown = $('#fullNameDriver');
             driverDropdown.empty(); // Xóa các option cũ
             driverDropdown.append('<option value="">Select a driver</option>'); // Thêm option mặc định
-            let hasSelectedDriver = false;
+
             // Duyệt qua danh sách drivers và thêm từng option
             $.each(drivers, function (index, driver) {
-                const isSelected = String(driver.userId) === String(driverId) ? 'selected' : '';
-                if (isSelected) {
-                    hasSelectedDriver = true;
+                const option = $('<option>', {
+                    value: driver.userId,
+                    text: `${driver.fullName} - ${driver.phone}`,
+                });
+
+                // Gắn thuộc tính `selected` nếu ID khớp
+                if (String(driver.userId) === String(driverId)) {
+                    option.prop('selected', true);
                 }
-                driverDropdown.append(
-                    `<option value="${driver.userId}" ${isSelected}>${driver.fullName}</option>`
-                );
-                console.log(driver.userId);
-                console.log("isSelected = ", isSelected);
+
+                driverDropdown.append(option);
             });
 
-            if (hasSelectedDriver) {
+            // Làm mới Select2
+            driverDropdown.trigger('change'); // Cập nhật Select2
+            console.log("Dropdown options after update:", driverDropdown.html());
+            console.log("Selected value:", driverDropdown.val());
+
+
+            // Đặt giá trị để đảm bảo giao diện hiển thị đúng
+            driverDropdown.val(driverId);
+
+
+            // Nếu có driver được chọn, gọi hàm fetch chi tiết tài xế
+            if (driverDropdown.val() === driverId) {
                 fetchDriverDetailsAjax();
             }
 

@@ -212,8 +212,8 @@ public class RentalCarController {
                 java.sql.Date sqlDate = (java.sql.Date) result[2];
                 dob = sqlDate.toLocalDate();
             }
-
-            UserDto userDto = new UserDto(userId, fullName, null, dob, null, null, null, null);
+            String phone = (String) result[3];
+            UserDto userDto = new UserDto(userId, fullName, null, dob, null, phone, null, null);
             userDtos.add(userDto);
         }
 
