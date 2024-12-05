@@ -80,7 +80,7 @@ $(function () {
             searchable: !1,
             orderable: !1,
             render: function (e, t, a, n) {
-                return '<div class="d-flex align-items-center"><a href="javascript:;" class="btn btn-icon delete-record"><i class="bx bx-trash bx-md"></i></a><a href="' + i + '?userId=' + a.userId + '" class="btn btn-icon"><i class="bx bx-show bx-md"></i></a><a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded bx-md"></i></a><div class="dropdown-menu dropdown-menu-end m-0"><a href="javascript:;" class="dropdown-item">Edit</a><a href="javascript:;" class="dropdown-item">Suspend</a></div></div>'
+                return '<div class="d-flex align-items-center"><a onclick="deleteUser('+a.userId+')" class="btn btn-icon"><i class="bx bx-trash bx-md" style="color: #ff5555"></i></a><a href="' + i + '?userId=' + a.userId + '" class="btn btn-icon"><i class="bx bx-show bx-md"></i></a><a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded bx-md"></i></a><div class="dropdown-menu dropdown-menu-end m-0"><a href="javascript:;" class="dropdown-item">Edit</a><a onclick="suspendUser('+a.userId+')" class="dropdown-item" style="color: #ff4d4d">Suspend</a></div></div>'
             }
         }],
         order: [[2, "desc"]],
@@ -598,5 +598,104 @@ var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
     }
 ));
 
+function deleteUser(userId){
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: !0,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true,
+        customClass: {
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-label-secondary"
+        },
+        buttonsStyling: !1
+
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/user-management/delete-user?userId=${userId}`, {
+                method: 'GET',
+            }).then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        console.log(data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $('.datatables-users').DataTable().ajax.reload(null, !1)
+                    });
+                } else {
+                    response.json().then(data => {
+                        console.log(data);
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Warning',
+                            text: "Deletion failed: "+data.error,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                        $('.datatables-users').DataTable().ajax.reload(null, !1)
+                    });
+                }
+            });
+        }
+    })
+}
+
+function suspendUser(userId){
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: !0,
+        confirmButtonText: 'Yes, suspend it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true,
+        customClass: {
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-label-secondary"
+        },
+        buttonsStyling: !1
+
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/user-management/suspend-user?userId=${userId}`, {
+                method: 'GET',
+            }).then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        console.log(data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $('.datatables-users').DataTable().ajax.reload(null, !1)
+                    });
+                } else {
+                    response.json().then(data => {
+                        console.log(data);
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Warning',
+                            text: "Suspension failed: "+data.error,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                        $('.datatables-users').DataTable().ajax.reload(null, !1)
+                    });
+                }
+            });
+        }
+    })
+}
 
 

@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.controller;
 
 
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.UserService;
@@ -69,6 +70,70 @@ public class UserManagementController {
             return ResponseEntity.badRequest().body(response);
         }
         response.put("message", "User added successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user-management/delete-user")
+    public ResponseEntity<Map<String, Object>> deleteUser(
+            @RequestParam(value = "userId", required = true) Long userId
+    ) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = userRepo.findById(userId).orElse(null);
+            if (user == null) {
+                response.put("error", "User not found");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if(user.getStatus() == UserStatus.DELETED){
+                response.put("error", "User already deleted");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if(user.getStatus() == UserStatus.LOCKED){
+                response.put("error", "User is locked");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if(user.getRoles().get(0).getId() == 1){
+                response.put("error", "Cannot delete admin user");
+                return ResponseEntity.badRequest().body(response);
+            }
+            userService.setUserStatus(user, UserStatus.DELETED);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("message", "User deleted successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user-management/suspend-user")
+    public ResponseEntity<Map<String, Object>> suspendUser(
+            @RequestParam(value = "userId", required = true) Long userId
+    ) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = userRepo.findById(userId).orElse(null);
+            if (user == null) {
+                response.put("error", "User not found");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if(user.getStatus() == UserStatus.DELETED){
+                response.put("error", "User already deleted");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if(user.getStatus() == UserStatus.LOCKED){
+                response.put("error", "User is locked");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if(user.getRoles().get(0).getId() == 1){
+                response.put("error", "Cannot suspend admin user");
+                return ResponseEntity.badRequest().body(response);
+            }
+            userService.setUserStatus(user, UserStatus.LOCKED);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("message", "User locked successfully");
         return ResponseEntity.ok(response);
     }
 

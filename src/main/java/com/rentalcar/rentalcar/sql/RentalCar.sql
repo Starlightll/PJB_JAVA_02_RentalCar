@@ -8,6 +8,7 @@ GO
 CREATE TABLE [dbo].[Users]
 (
     userId         INT IDENTITY (1,1) NOT NULL,
+    avatar         NVARCHAR(MAX),
     username       NVARCHAR(50),
     dob            DATE,
     email          NVARCHAR(100)      NOT NULL,
@@ -282,7 +283,7 @@ INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
                                                  (12, 'Completed'),
                                                  (13,'Cancelled'),
                                                  (14, 'Pending deposit'),
-                                                 (15, 'Pending cancel')
+                                                 (15, 'Pending cancel'),
                                                  (16, 'Pending return')
 
 

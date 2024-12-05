@@ -213,7 +213,7 @@ public class RentalCarController {
                 dob = sqlDate.toLocalDate();
             }
 
-            UserDto userDto = new UserDto(userId, fullName, null, dob, null, null, null, null);
+            UserDto userDto = new UserDto(userId, fullName, null, null, dob, null, null, null, null);
             userDtos.add(userDto);
         }
 
