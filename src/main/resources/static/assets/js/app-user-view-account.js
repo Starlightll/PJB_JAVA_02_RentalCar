@@ -109,7 +109,7 @@ $(function () {
         }],
         order: [[1, "desc"]],
         dom:
-        `<"row mx-6"
+            `<"row mx-6"
         <"col-sm-6 col-12 d-flex align-items-center justify-content-center justify-content-sm-start mt-6 mt-sm-0"
             f
         >
@@ -194,7 +194,6 @@ $(function () {
     }, 300)
 
 
-
 }),
     function () {
         // Track email validation state
@@ -215,49 +214,13 @@ $(function () {
                                     message: "Please enter username "
                                 },
                                 stringLength: {
-                                    min: 6,
                                     max: 30,
                                     message: "The name must be more than 6 and less than 30 characters long"
                                 },
-                                regexp: {
-                                    regexp: /^[a-zA-Z0-9 ]+$/,
-                                    message: "The name can only consist of alphabetical, number and space"
-                                }
                             }
-                    },
-                    password: {
-                        validators: {
-                            notEmpty: {
-                                message: "Please enter your password"
-                            },
-                            stringLength: {
-                                min: 6,
-                                message: "Password must have at least 6 characters"
-                            },
-                            regexp: {
-                                regexp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,}$/,
-                                message: "The password must contain at least one number, one lowercase and one uppercase letter, one special character"
-                            },
-                        }
-                    },
-                    formConfirmPassword: {
-                        validators: {
-                            notEmpty: {
-                                message: "Please confirm password"
-                            },
-                            identical: {
-                                compare: function () {
-                                    return t.querySelector('[name="formPassword"]').value
-                                },
-                                message: "The password and its confirm are not the same"
-                            }
-                        }
                     },
                     dob: {
                         validators: {
-                            notEmpty: {
-                                message: "Please select your DOB"
-                            },
                             date: {
                                 format: "YYYY-MM-DD",
                                 message: "The value is not a valid date"
@@ -265,24 +228,40 @@ $(function () {
                             callback: {
                                 message: "You must be at least 18 years old",
                                 callback: function (input) {
-                                    const dob = input.value;
-                                    const [day, month, year] = dob.split('-');
-                                    const dobDate = new Date(year, month - 1, day);
-                                    const today = new Date();
-                                    const age = today.getFullYear() - dobDate.getFullYear();
-                                    const monthDiff = today.getMonth() - dobDate.getMonth();
-                                    const dayDiff = today.getDate() - dobDate.getDate();
-                                    return age > 18 || (age === 18 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)));
+                                    if (input.value !== "") {
+                                        //Check the format of the date
+                                        if (!/^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
+                                            return {
+                                                valid: false,
+                                                message: "The date of birth is not a valid date"
+                                            }
+                                        }
+                                        const dob = input.value;
+                                        const [year, month, day] = dob.split('-');
+                                        const dobDate = new Date(year, month - 1, day);
+                                        const today = new Date();
+                                        const age = today.getFullYear() - dobDate.getFullYear();
+                                        const monthDiff = today.getMonth() - dobDate.getMonth();
+                                        const dayDiff = today.getDate() - dobDate.getDate();
+                                        //Age must be greater than 18
+                                        if (age < 18 || (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff <= 0)))) {
+                                            return {
+                                                valid: false,
+                                                message: "You must be at least 18 years old"
+                                            }
+                                        }
+                                        //Age must be less than 100
+                                        if (age > 100) {
+                                            return {
+                                                valid: false,
+                                                message: "You must be less than 100 years old"
+                                            }
+                                        }
+                                        return true;
+                                    }
+                                    return true;
                                 }
-                            }
-
-                        }
-                    },
-                    formRole: {
-                        validators: {
-                            notEmpty: {
-                                message: "Please select role"
-                            }
+                            },
                         }
                     },
                     status: {
@@ -300,18 +279,75 @@ $(function () {
                             return ".input"
                         }
                     }),
-                    submitButton: new FormValidation.plugins.SubmitButton,
-                    defaultSubmit: new FormValidation.plugins.DefaultSubmit,
+                    // submitButton: new FormValidation.plugins.SubmitButton,
+                    // defaultSubmit: new FormValidation.plugins.DefaultSubmit,
                     autoFocus: new FormValidation.plugins.AutoFocus
                 },
 
             })
 
         t.addEventListener("submit", function (e) {
-            t.checkValidity() ? alert("Submitted!!!") : (e.preventDefault(),
-                e.stopPropagation()),
-                t.classList.add("was-validated")
-        }, !1);
+            e.preventDefault();
+            i.validate().then(function (e) {
+                if ("Valid" === e) {
+                    const data = new FormData(t);
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: !0,
+                        confirmButtonText: 'Yes!',
+                        cancelButtonText: 'No, cancel!',
+                        reverseButtons: true,
+                        customClass: {
+                            confirmButton: "btn btn-primary me-3",
+                            cancelButton: "btn btn-label-secondary"
+                        },
+                        buttonsStyling: !1
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/admin/user-management/update-user`, {
+                                method: 'POST',
+                                //     headers: {
+                                //         'Accept': 'application/json',
+                                //         'Content-Type': 'application/json',
+                                //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                // },
+                                body: data
+                            }).then(response => {
+                                if (response.ok) {
+                                    response.json().then(data => {
+                                        console.log("Submitted!!!");
+                                        console.log(data);
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: data.message,
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                        $('#offcanvasAddUser').offcanvas('hide');
+                                        $('#addNewUserForm').trigger('reload');
+                                        $('.datatables-users').DataTable().ajax.reload(null, !1)
+                                    });
+                                } else {
+                                    response.json().then(data => {
+                                        console.log(data);
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Warning',
+                                            text: "Add user failed",
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            })
+        });
     }();
 
 window.Helpers.initCustomOptionCheck();
