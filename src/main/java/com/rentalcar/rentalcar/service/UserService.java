@@ -149,6 +149,10 @@ public class UserService implements IUserService {
     @Override
     public void updateUser(User user) {
 //        userRepo.save(user);
+//        String phone = user.getPhone().replaceAll("[^0-9]", "");
+        String phoneNormalized = phoneNumberStandardService.normalizePhoneNumber(user.getPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+        user.setPhone(phoneNormalized);
+
     }
 
     public boolean checkEmail(String email) {

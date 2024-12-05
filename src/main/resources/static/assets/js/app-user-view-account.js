@@ -288,6 +288,7 @@ $(function () {
 
         t.addEventListener("submit", function (e) {
             e.preventDefault();
+            e.stopPropagation();
             i.validate().then(function (e) {
                 if ("Valid" === e) {
                     const data = new FormData(t);
@@ -301,11 +302,17 @@ $(function () {
                         reverseButtons: true,
                         customClass: {
                             confirmButton: "btn btn-primary me-3",
-                            cancelButton: "btn btn-label-secondary"
+                            cancelButton: "btn btn-label-secondary",
                         },
                         buttonsStyling: !1
                     }).then((result) => {
                         if (result.isConfirmed) {
+
+                            // Check if files exist before adding to FormData
+                            const fileInput = document.getElementById("input-file"); // ID của input file
+                            if (fileInput && fileInput.files.length > 0) {
+                                data.append("drivingLicenseFile", fileInput.files[0]);
+                            }
                             fetch(`/admin/user-management/update-user`, {
                                 method: 'POST',
                                 //     headers: {
@@ -313,7 +320,11 @@ $(function () {
                                 //         'Content-Type': 'application/json',
                                 //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                 // },
-                                body: data
+                                headers: {
+                                    // Include CSRF token if your app requires it
+                                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                                },
+                                body: data,
                             }).then(response => {
                                 if (response.ok) {
                                     response.json().then(data => {
@@ -364,4 +375,32 @@ var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
         })
     }
 ));
+
+!function () {
+    var e = `<div class="dz-preview dz-file-preview">
+<div class="dz-details">
+  <div class="dz-thumbnail">
+    <img data-dz-thumbnail>
+    <span class="dz-nopreview">No preview</span>
+    <div class="dz-success-mark"></div>
+    <div class="dz-error-mark"></div>
+    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+    <div class="progress">
+      <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>
+    </div>
+  </div>
+  <div class="dz-filename" data-dz-name></div>
+  <div class="dz-size" data-dz-size></div>
+</div>
+</div>`, a = document.querySelector("#dropzone-basic"), a = (a && new Dropzone(a, {
+        url: '/admin/user-management/update-user',
+        method: 'POST',
+        previewTemplate: e,
+        parallelUploads: 1,
+        maxFilesize: 5,
+        addRemoveLinks: !0,
+        maxFiles: 1,
+        acceptedFiles: ".jpeg,.jpg,.png"
+    }))
+}();
 
