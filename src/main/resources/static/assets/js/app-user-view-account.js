@@ -192,4 +192,140 @@ $(function () {
     }), setTimeout(() => {
         $(".dataTables_filter .form-control").removeClass("form-control-sm"), $(".dataTables_length .form-select").removeClass("form-select-sm")
     }, 300)
-});
+
+
+
+}),
+    function () {
+        // Track email validation state
+        let isEmailBlurred = false;
+        let emailCheckTimeout = null;
+
+
+        var e = document.querySelectorAll(".phone-number-mask"), t = document.getElementById("editUserForm");
+        e && e.forEach(function (e) {
+            new Cleave(e, {phone: !0, phoneRegionCode: "VN"})
+        }),
+            i = FormValidation.formValidation(t, {
+                fields: {
+                    username: {
+                        validators:
+                            {
+                                notEmpty: {
+                                    message: "Please enter username "
+                                },
+                                stringLength: {
+                                    min: 6,
+                                    max: 30,
+                                    message: "The name must be more than 6 and less than 30 characters long"
+                                },
+                                regexp: {
+                                    regexp: /^[a-zA-Z0-9 ]+$/,
+                                    message: "The name can only consist of alphabetical, number and space"
+                                }
+                            }
+                    },
+                    password: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please enter your password"
+                            },
+                            stringLength: {
+                                min: 6,
+                                message: "Password must have at least 6 characters"
+                            },
+                            regexp: {
+                                regexp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,}$/,
+                                message: "The password must contain at least one number, one lowercase and one uppercase letter, one special character"
+                            },
+                        }
+                    },
+                    formConfirmPassword: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please confirm password"
+                            },
+                            identical: {
+                                compare: function () {
+                                    return t.querySelector('[name="formPassword"]').value
+                                },
+                                message: "The password and its confirm are not the same"
+                            }
+                        }
+                    },
+                    dob: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select your DOB"
+                            },
+                            date: {
+                                format: "YYYY-MM-DD",
+                                message: "The value is not a valid date"
+                            },
+                            callback: {
+                                message: "You must be at least 18 years old",
+                                callback: function (input) {
+                                    const dob = input.value;
+                                    const [day, month, year] = dob.split('-');
+                                    const dobDate = new Date(year, month - 1, day);
+                                    const today = new Date();
+                                    const age = today.getFullYear() - dobDate.getFullYear();
+                                    const monthDiff = today.getMonth() - dobDate.getMonth();
+                                    const dayDiff = today.getDate() - dobDate.getDate();
+                                    return age > 18 || (age === 18 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)));
+                                }
+                            }
+
+                        }
+                    },
+                    formRole: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select role"
+                            }
+                        }
+                    },
+                    status: {
+                        validators: {
+                            notEmpty: {
+                                message: "Please select status"
+                            }
+                        }
+                    },
+                },
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger,
+                    bootstrap5: new FormValidation.plugins.Bootstrap5({
+                        eleValidClass: "", rowSelector: function (e, t) {
+                            return ".input"
+                        }
+                    }),
+                    submitButton: new FormValidation.plugins.SubmitButton,
+                    defaultSubmit: new FormValidation.plugins.DefaultSubmit,
+                    autoFocus: new FormValidation.plugins.AutoFocus
+                },
+
+            })
+
+        t.addEventListener("submit", function (e) {
+            t.checkValidity() ? alert("Submitted!!!") : (e.preventDefault(),
+                e.stopPropagation()),
+                t.classList.add("was-validated")
+        }, !1);
+    }();
+
+window.Helpers.initCustomOptionCheck();
+var e = [].slice.call(document.querySelectorAll(".flatpickr-validation"))
+    , e = (e && e.forEach(e => {
+        e.flatpickr({
+            enableTime: !1,
+            dateFormat: "Y-m-d",
+            maxDate: "today",
+            onChange: function () {
+                i.revalidateField("dob")
+            },
+            static: !0
+        })
+    }
+));
+

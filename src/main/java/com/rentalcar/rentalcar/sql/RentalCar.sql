@@ -8,6 +8,7 @@ GO
 CREATE TABLE [dbo].[Users]
 (
     userId         INT IDENTITY (1,1) NOT NULL,
+    avatar         NVARCHAR(MAX),
     username       NVARCHAR(50),
     dob            DATE,
     email          NVARCHAR(100)      NOT NULL,
@@ -24,7 +25,6 @@ CREATE TABLE [dbo].[Users]
     agreeTerms     int                not null,
     status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED', 'RENTED')),
     salaryDriver   DECIMAL(18, 2),
-    avatar         NVARCHAR(200),
     descriptionDriver    NVARCHAR(max),
     PRIMARY KEY (userId)
     );

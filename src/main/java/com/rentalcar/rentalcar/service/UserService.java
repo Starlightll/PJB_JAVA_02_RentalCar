@@ -121,6 +121,7 @@ public class UserService implements IUserService {
                 .userId(user.getId())
                 .fullName(user.getFullName())
                 .username(user.getUsername())
+                .avatar(user.getAvatar())
                 .dob(user.getDob())
                 .phone(user.getPhone())
                 .email(user.getEmail())

@@ -300,7 +300,7 @@ public class BookingDetailsController {
                 dob = sqlDate.toLocalDate();
             }
             String phone = (String) result[3];
-            UserDto userDto = new UserDto(userId, fullName,null, dob, null, phone, null, null);
+            UserDto userDto = new UserDto(userId, fullName,null,null, dob, null, phone, null, null);
             userDtos.add(userDto);
         }
 
