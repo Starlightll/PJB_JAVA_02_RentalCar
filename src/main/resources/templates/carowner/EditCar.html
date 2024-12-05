@@ -1425,18 +1425,18 @@
         }
 
 
-        function checkPayment(carId) {
+        function confirmReturn(carId) {
             console.log("checkPayment called with carId:", carId); // Kiểm tra xem hàm có được gọi không
 
             $.ajax({
-                url: '/car-owner/check-payment',
+                url: '/car-owner/check-return',
                 type: 'get',
                 data: {carId: carId},
                 success: function (response) {
-                    console.log("Check payment successfully", response);
+                    console.log("Check return successfully", response);
 
                     Swal.fire({
-                        title: 'Confirm Payment!',
+                        title: 'Confirm Return?',
                         text: response.message,
                         icon: 'question',
                         showCancelButton: true,
@@ -1477,7 +1477,7 @@
 
             console.log(carId);
             $.ajax({
-                    url: '/car-owner/confirm-payment-car',
+                    url: '/car-owner/confirm-return-car',
                     type: 'get',
                     data: {carId: carId},
                     success: function (response) {
@@ -1486,6 +1486,24 @@
                         if (response.status === 'success1') {
                             Swal.fire({
                                 title: 'Booking Successfully Completed.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId;
+                            })
+                        }else if (response.status === 'success2') {
+                            Swal.fire({
+                                title: 'Your Wallet Not Enough Money.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId;
+                            })
+                        } else if (response.status === 'success3') {
+                            Swal.fire({
+                                title: 'Confirm Return Car Successfully.',
                                 text: response.message,
                                 icon: 'success',
                                 confirmButtonText: 'OK'
