@@ -214,8 +214,9 @@
                                             <h4 class="mb-2">Edit User Information</h4>
                                             <p>Updating user details will receive a privacy audit.</p>
                                         </div>
-                                        <form class="row g-6" th:action="@{/admin/user-management/edit}"
-                                              th:object="${user}" th:type="post" onsubmit="false" th:id="editUserForm">
+                                        <form class="row g-6" th:object="${user}" th:id="editUserForm">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                            <input type="hidden" th:field="*{id}"/>
                                             <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserName">Username</label>
                                                 <input type="text" id="modalEditUserName" th:field="*{username}"
@@ -266,28 +267,28 @@
                                             <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserProvince">Province</label>
                                                 <select id="modalEditUserProvince" name="modalEditUserProvince"
-                                                        th:field="*{city}" th:value="*{city}"
-                                                        th:data-default="${user.city != null and user.city.contains(',') ? user.city.split(',')[0] : ''}"
+                                                        th:field="*{city}" th:value="${user.city}"
+                                                        th:data-default="${user.city}" data-placeholder="Select Province"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option disabled value="">Select</option>
+                                                    <option value="">Select Province</option>
                                                 </select>
                                             </div>
                                             <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserDistrict">District</label>
                                                 <select id="modalEditUserDistrict" name="modalEditUserDistrict"
                                                         th:field="*{district}" th:value="*{district}"
-                                                        th:data-default="*{district}"
+                                                        th:data-default="*{district}" data-placeholder="Select district"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option disabled value="">Select</option>
+                                                    <option value="">Select</option>
                                                 </select>
                                             </div>
                                             <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserWard">Ward</label>
                                                 <select id="modalEditUserWard" name="modalEditUserStatus"
                                                         th:field="*{ward}" th:value="*{ward}"
-                                                        th:data-default="*{ward}"
+                                                        th:data-default="*{ward}" data-placeholder="Select ward"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option disabled value="">Select</option>
+                                                    <option value="">Select</option>
                                                 </select>
                                             </div>
                                             <div class="input col-12 col-md-6">
@@ -318,72 +319,72 @@
                                                 </div>
                                             </div>
                                             <!-- /Basic  -->
-                                            <div class="mb-6">
-                                                <h6 class="mt-2">Choose Role</h6>
-                                                <hr class="mt-0"/>
-                                            </div>
-                                            <div class="input row gy-3 mt-0 mb-6">
-                                                <div class="">
-                                                    <div class="form-check custom-option custom-option-icon">
-                                                        <label class="form-check-label custom-option-content"
-                                                               for="formRole1">
-                                              <span class="custom-option-body">
-                                                <i class="bx bx-rocket"></i>
-                                                <span class="custom-option-title"> Customer </span>
-                                                <small> Customer who rent car. </small>
-                                              </span>
-                                                            <input name="formRole" class="form-check-input" type="radio"
-                                                                   value="3" id="formRole1"
-                                                                   th:checked="${user.roles.getFirst().getId() == 3 ? true:false}"/>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="">
-                                                    <div class="form-check custom-option custom-option-icon">
-                                                        <label class="form-check-label custom-option-content"
-                                                               for="formRole2">
-                                              <span class="custom-option-body">
-                                                <i class="bx bx-user"></i>
-                                                <span class="custom-option-title"> Car Owner </span>
-                                                <small> Car owner who renting their car. </small>
-                                              </span>
-                                                            <input name="formRole" class="form-check-input" type="radio"
-                                                                   value="2" id="formRole2"
-                                                                   th:checked="${user.roles.getFirst().getId() == 2 ? true:false}"/>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="">
-                                                    <div class="form-check custom-option custom-option-icon">
-                                                        <label class="form-check-label custom-option-content"
-                                                               for="formRole3">
-                                              <span class="custom-option-body">
-                                                <i class="bx bx-car"></i>
-                                                <span class="custom-option-title"> Driver </span>
-                                                <small> Driver who drive the car for customer. </small>
-                                              </span>
-                                                            <input name="formRole" class="form-check-input" type="radio"
-                                                                   value="4" id="formRole3"
-                                                                   th:checked="${user.roles.getFirst().getId() == 4 ? true:false}"/>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="">
-                                                    <div class="form-check custom-option custom-option-icon">
-                                                        <label class="form-check-label custom-option-content"
-                                                               for="formRole4">
-                                              <span class="custom-option-body">
-                                                <i class="bx bx-crown"></i>
-                                                <span class="custom-option-title"> Admin </span>
-                                                <small> Admin who management the website. </small>
-                                              </span>
-                                                            <input name="formRole" class="form-check-input" type="radio"
-                                                                   value="1" id="formRole4"
-                                                                   th:checked="${user.roles.getFirst().getId() == 1 ? true:false}"/>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
+<!--                                            <div class="mb-6">-->
+<!--                                                <h6 class="mt-2">Choose Role</h6>-->
+<!--                                                <hr class="mt-0"/>-->
+<!--                                            </div>-->
+<!--                                            <div class="input row gy-3 mt-0 mb-6">-->
+<!--                                                <div class="">-->
+<!--                                                    <div class="form-check custom-option custom-option-icon">-->
+<!--                                                        <label class="form-check-label custom-option-content"-->
+<!--                                                               for="formRole1">-->
+<!--                                              <span class="custom-option-body">-->
+<!--                                                <i class="bx bx-rocket"></i>-->
+<!--                                                <span class="custom-option-title"> Customer </span>-->
+<!--                                                <small> Customer who rent car. </small>-->
+<!--                                              </span>-->
+<!--                                                            <input name="formRole" class="form-check-input" type="radio"-->
+<!--                                                                   value="3" id="formRole1"-->
+<!--                                                                   th:checked="${user.roles.getFirst().getId() == 3 ? true:false}"/>-->
+<!--                                                        </label>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                                <div class="">-->
+<!--                                                    <div class="form-check custom-option custom-option-icon">-->
+<!--                                                        <label class="form-check-label custom-option-content"-->
+<!--                                                               for="formRole2">-->
+<!--                                              <span class="custom-option-body">-->
+<!--                                                <i class="bx bx-user"></i>-->
+<!--                                                <span class="custom-option-title"> Car Owner </span>-->
+<!--                                                <small> Car owner who renting their car. </small>-->
+<!--                                              </span>-->
+<!--                                                            <input name="formRole" class="form-check-input" type="radio"-->
+<!--                                                                   value="2" id="formRole2"-->
+<!--                                                                   th:checked="${user.roles.getFirst().getId() == 2 ? true:false}"/>-->
+<!--                                                        </label>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                                <div class="">-->
+<!--                                                    <div class="form-check custom-option custom-option-icon">-->
+<!--                                                        <label class="form-check-label custom-option-content"-->
+<!--                                                               for="formRole3">-->
+<!--                                              <span class="custom-option-body">-->
+<!--                                                <i class="bx bx-car"></i>-->
+<!--                                                <span class="custom-option-title"> Driver </span>-->
+<!--                                                <small> Driver who drive the car for customer. </small>-->
+<!--                                              </span>-->
+<!--                                                            <input name="formRole" class="form-check-input" type="radio"-->
+<!--                                                                   value="4" id="formRole3"-->
+<!--                                                                   th:checked="${user.roles.getFirst().getId() == 4 ? true:false}"/>-->
+<!--                                                        </label>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                                <div class="">-->
+<!--                                                    <div class="form-check custom-option custom-option-icon">-->
+<!--                                                        <label class="form-check-label custom-option-content"-->
+<!--                                                               for="formRole4">-->
+<!--                                              <span class="custom-option-body">-->
+<!--                                                <i class="bx bx-crown"></i>-->
+<!--                                                <span class="custom-option-title"> Admin </span>-->
+<!--                                                <small> Admin who management the website. </small>-->
+<!--                                              </span>-->
+<!--                                                            <input name="formRole" class="form-check-input" type="radio"-->
+<!--                                                                   value="1" id="formRole4"-->
+<!--                                                                   th:checked="${user.roles.getFirst().getId() == 1 ? true:false}"/>-->
+<!--                                                        </label>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
 
                                             <div class="col-12 text-center">
                                                 <button type="submit" class="btn btn-primary me-3">Submit</button>
@@ -426,6 +427,7 @@
     <script defer src="/assets/vendor/libs/%40form-validation/bootstrap5.js"></script>
     <script defer src="/assets/vendor/libs/%40form-validation/auto-focus.js"></script>
     <script defer src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+    <script src="/webjars/select2/dist/js/select2.min.js"></script>
 
 
     <!-- Page JS -->
@@ -440,6 +442,7 @@
             const provinces = await response.json();
             const citySelect = document.getElementById('modalEditUserProvince');
 
+            citySelect.innerHTML = '<option value="">Select Province</option>';
             provinces.forEach(province => {
                 const option = document.createElement('option');
                 option.value = province.code;
@@ -461,7 +464,6 @@
             const provinceData = await response.json();
             const districtSelect = document.getElementById('modalEditUserDistrict');
 
-            districtSelect.innerHTML = '<option value="">Select District</option>';
             provinceData.districts.forEach(district => {
                 const option = document.createElement('option');
                 option.value = district.code;
@@ -494,6 +496,7 @@
                 wardSelect.appendChild(option);
             });
         }
+
 
         // Select 2 library
         $('#modalEditUserProvince').on('select2:select', function (e) {

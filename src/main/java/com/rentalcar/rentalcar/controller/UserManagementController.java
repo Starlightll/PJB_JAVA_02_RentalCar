@@ -3,7 +3,9 @@ package com.rentalcar.rentalcar.controller;
 
 import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.service.FileStorageService;
 import com.rentalcar.rentalcar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +30,9 @@ public class UserManagementController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @GetMapping("/user-management/user-detail")
     public String userDetail(
@@ -63,13 +71,32 @@ public class UserManagementController {
             if (Integer.parseInt(role) == 4) {
                 user.setSalaryDriver(499000.00);
             }
-            User newUser = userService.addUser(user);
-            userService.setUserRole(newUser, Integer.parseInt(role));
+            userService.addUser(user, Integer.parseInt(role));
         }catch (Exception e){
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
         response.put("message", "User added successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/user-management/update-user")
+    public ResponseEntity<Map<String, Object>> updateUser(
+            @ModelAttribute("user") User user,
+            BindingResult result
+    ) {
+        Map<String, Object> response = new HashMap<>();
+        if (result.hasErrors()) {
+            response.put("errors", result.getAllErrors());
+            return ResponseEntity.badRequest().body(response);
+        }
+        try{
+            userService.updateUser(user);
+        }catch (Exception e){
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("message", "User updated successfully");
         return ResponseEntity.ok(response);
     }
 
