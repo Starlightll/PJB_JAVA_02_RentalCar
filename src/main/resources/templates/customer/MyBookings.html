@@ -809,9 +809,9 @@
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Return car !!!", response);
+                    console.log("Confirm payment booking !!!", response);
                     Swal.fire({
-                        title: 'Return Car!',
+                        title: 'Confirm Payment?',
                         text: response.message,
                         icon: 'question',
                         showCancelButton: true,  // Hiển thị nút "Cancel"
@@ -849,11 +849,11 @@
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Confirm return car response", response);
+                    console.log("Confirm payment car response", response);
 
                     if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Booking Successfully Completed.',
+                            title: 'Payment Successfully Completed.',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
@@ -946,7 +946,7 @@
 
                     if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Booking Successfully Completed.',
+                            title: 'Request Return Successfully!',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
@@ -955,7 +955,7 @@
                         });
                     } else if (response.status === 'success2') {
                         Swal.fire({
-                            title: 'Request Payment Completed',
+                            title: 'Request Send Successfully Completed.',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
