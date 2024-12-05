@@ -13,7 +13,9 @@ public interface IUserService {
     void saveUser(UserInfoDto user, HttpSession session);
     boolean checkPhone(String phone);
     List<UserDto> getAllUsers();
-    User addUser(User user);
+    User addUser(User user, Integer roleId);
     void setUserRole(User user, Integer roleId);
     void setUserStatus(User user, UserStatus statusId);
+    void setUserDefaultAvatar(User user);
+    void updateUser(User user);
 }

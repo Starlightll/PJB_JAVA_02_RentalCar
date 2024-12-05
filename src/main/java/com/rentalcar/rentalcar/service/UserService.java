@@ -6,6 +6,7 @@ import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.entity.UserRole;
+import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.repository.UserRoleRepo;
 import jakarta.servlet.http.HttpSession;
@@ -13,8 +14,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +35,10 @@ public class UserService implements IUserService {
 
     @Autowired
     PhoneNumberStandardService phoneNumberStandardService;
+
+    @Autowired
+    private FileStorageService fileStorageService;
+
 
     @Override
     public void saveUser(UserInfoDto user, HttpSession session ) {
@@ -88,11 +95,35 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User addUser(User user) {
+    @Transactional
+    public User addUser(User user, Integer role) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        return userRepo.save(user);
+
+        //Normalize phone number
+        String phone = user.getPhone().replaceAll("[^0-9]", "");
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+        user.setPhone(normalizedPhone);
+
+        userRepo.save(user);
+        //Set default role
+        setUserRole(user, role);
+        //Set default avatar
+        String folderName = String.format("%s", user.getId() + "_" + user.getUsername());
+        Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+        try {
+            //Random default avatar
+            int random = (int) (Math.random() * 7 + 1);
+            //Get default avatar src file
+            File file = new File("src/main/resources/static/images/default-avatar"+random+".jpg");
+            String storagePath = fileStorageService.storeFile(file, userFolderPath, "avatar.png");
+            user.setAvatar(storagePath);
+        } catch (Exception e) {
+            user.setAvatar(null);
+        }
+        userRepo.save(user);
+        return user;
     }
 
     @Override
@@ -108,6 +139,16 @@ public class UserService implements IUserService {
     public void setUserStatus(User user, UserStatus status) {
         user.setStatus(status);
         userRepo.save(user);
+    }
+
+    @Override
+    public void setUserDefaultAvatar(User user) {
+
+    }
+
+    @Override
+    public void updateUser(User user) {
+//        userRepo.save(user);
     }
 
     public boolean checkEmail(String email) {
@@ -129,6 +170,8 @@ public class UserService implements IUserService {
                 .status(user.getStatus().getStatus())
                 .build();
     }
+
+
 
 
 

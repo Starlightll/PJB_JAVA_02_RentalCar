@@ -50,7 +50,7 @@ $(function () {
             responsivePriority: 4,
             render: function (e, t, a, n) {
                 var s = a.username, o = a.email, r = a.avatar == null ? null : a.avatar;
-                return '<div class="d-flex justify-content-start align-items-center user-name"><div class="avatar-wrapper"><div class="avatar avatar-sm me-4">' + (r ? '<img src="' + assetsPath + "img/avatars/" + r + '" alt="Avatar" class="rounded-circle">' : '<span class="avatar-initial rounded-circle bg-label-' + ["success", "danger", "warning", "info", "dark", "primary", "secondary"][Math.floor(6 * Math.random())] + '">' + (r = (((r = (s = a.username).match(/\b\w/g) || []).shift() || "") + (r.pop() || "")).toUpperCase()) + "</span>") + '</div></div><div class="d-flex flex-column"><a href="' + i + '?userId=' + a.userId + '" class="text-heading text-truncate"><span class="fw-medium">' + s + "</span></a><small>" + o + "</small></div></div>"
+                return '<div class="d-flex justify-content-start align-items-center user-name"><div class="avatar-wrapper"><div class="avatar avatar-sm me-4">' + (r ? '<img src="' + "\\" + r + '" alt="Avatar" class="rounded-circle">' : '<span class="avatar-initial rounded-circle bg-label-' + ["success", "danger", "warning", "info", "dark", "primary", "secondary"][Math.floor(6 * Math.random())] + '">' + (r = (((r = (s = a.username).match(/\b\w/g) || []).shift() || "") + (r.pop() || "")).toUpperCase()) + "</span>") + '</div></div><div class="d-flex flex-column"><a href="' + i + '?userId=' + a.userId + '" class="text-heading text-truncate"><span class="fw-medium">' + s + "</span></a><small>" + o + "</small></div></div>"
             }
         }, {
             targets: 3,
@@ -252,11 +252,10 @@ $(function () {
                                 notEmpty: {
                                     message: "Please enter username "
                                 },
-                                // stringLength: {
-                                //     min: 6,
-                                //     max: 30,
-                                //     message: "The name must be more than 6 and less than 30 characters long"
-                                // },
+                                stringLength: {
+                                    max: 30,
+                                    message: "The name must be more than 6 and less than 30 characters long"
+                                },
                                 // regexp: {
                                 //     regexp: /^[a-zA-Z0-9 ]+$/,
                                 //     message: "The name can only consist of alphabetical, number and space"
