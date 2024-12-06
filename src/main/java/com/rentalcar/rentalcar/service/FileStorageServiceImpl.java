@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -16,7 +17,7 @@ import java.net.MalformedURLException;
 import java.nio.file.*;
 
 @Service
-public class FileStorageServiceImpl implements FileStorageService{
+public class FileStorageServiceImpl implements FileStorageService {
     private final Path fileStorageLocation;
 
 
@@ -36,7 +37,7 @@ public class FileStorageServiceImpl implements FileStorageService{
     public String storeFile(MultipartFile file, Path customPath, String fileName) {
         try {
             // Create the custom directory if it doesn't exist
-            if(!Files.exists(customPath)){
+            if (!Files.exists(customPath)) {
                 Files.createDirectories(customPath);
             }
 
@@ -58,6 +59,36 @@ public class FileStorageServiceImpl implements FileStorageService{
     }
 
     @Override
+    public String storeFile(File file, Path customPath, String fileName) {
+        try {
+            // Create the custom directory if it doesn't exist
+            if (!Files.exists(customPath)) {
+                Files.createDirectories(customPath);
+            }
+
+            if (fileName.contains("..")) {
+                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            // Create the complete path including the file
+            Path targetLocation = customPath.resolve(fileName);
+
+            // Copy file to the target location
+            Files.copy(file.toPath(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            return targetLocation.toString();
+        } catch (IOException ex) {
+            //Delete the created folder
+            try {
+                FileUtils.deleteDirectory(new File(customPath.toString()));
+            } catch (IOException e) {
+                throw new FileStorageException("Could not delete folder", e);
+            }
+            throw new FileStorageException("Could not store file. Please try again!", ex);
+        }
+    }
+
+    @Override
     public Path load(String filename) {
         return fileStorageLocation.resolve(filename);
     }
@@ -69,14 +100,12 @@ public class FileStorageServiceImpl implements FileStorageService{
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new FileStorageException(
                         "Could not read file: " + filename);
 
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new FileStorageException("Could not read file: " + filename, e);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -185,4 +214,5 @@ public class FileStorageServiceImpl implements FileStorageService{
             throw new FileStorageException("Could not delete file", e);
         }
     }
+
 }

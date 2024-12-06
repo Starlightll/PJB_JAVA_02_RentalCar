@@ -13,8 +13,13 @@ import com.rentalcar.rentalcar.repository.UserRoleRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -32,10 +37,14 @@ public class RegisterUserServiceImpl implements RegisterUserService {
     @Autowired
     private UserRoleRepo userRoleRepo;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
     @Autowired PhoneNumberStandardService phoneNumberStandardService;
 
 
     @Override
+    @Transactional
     public void registerUser(RegisterDto userDto) throws IllegalArgumentException {
         if(userRepository.getUserByEmail(userDto.getEmail()) != null) {
             throw new UserException("Email already exists");
@@ -74,9 +83,20 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         userRole.setRoleId(userDto.getRole());
         userRoleRepo.save(userRole);
 
-
-
-
+        //Set avatar
+        String folderName = String.format("%s", user.getId() + "_" + user.getUsername());
+        Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+        try {
+            //Random default avatar
+            int random = (int) (Math.random() * 7 + 1);
+            //Get default avatar src file
+            File file = new File("src/main/resources/static/images/default-avatar"+random+".jpg");
+            String storagePath = fileStorageService.storeFile(file, userFolderPath, "avatar.png");
+            user.setAvatar(storagePath);
+        } catch (Exception e) {
+            user.setAvatar(null);
+        }
+        userRepository.save(user);
         // Create verification token
         String token = UUID.randomUUID().toString();
         tokenService.createVerificationToken(user, token);

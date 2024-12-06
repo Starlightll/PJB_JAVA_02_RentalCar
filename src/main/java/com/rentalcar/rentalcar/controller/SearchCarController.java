@@ -1,8 +1,6 @@
 package com.rentalcar.rentalcar.controller;
 
-import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarStatus;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -77,7 +76,43 @@ public class SearchCarController {
 //            model.addAttribute("sendLocation", "Please enter location");
 //
 //        } else
-            if (pickDate == null) {
+        List<Long> listRide = new ArrayList<>();
+        for (Car car : list.getContent()) {
+            listRide.add(searchCarService.countBookingsByCarId((long)car.getCarId()));
+        }
+        List<String> rate = new ArrayList<>();
+
+// Iterate over each Car
+        for (Car car : list.getContent()) {
+            // Get all BookingCar entries for the current Car
+            List<BookingCar> bookingCars = searchCarService.getBookingCarByCarId((long) car.getCarId());
+
+            double totalRating = 0.0;
+            int totalCount = 0;
+
+            // For each BookingCar, get the feedback and calculate total rating
+            for (BookingCar bookingCar : bookingCars) {
+                List<Feedback> feedbackList = searchCarService.getFeedbackByBookingId((long) bookingCar.getBookingId());
+
+                // Calculate the sum of ratings for this BookingCar
+                if (!feedbackList.isEmpty()) {
+                    for (Feedback feedback : feedbackList) {
+                        totalRating += feedback.getRating();
+                        totalCount++;
+                    }
+                }
+            }
+
+            // Calculate the average rating for this car
+            if (totalCount > 0) {
+                double average = totalRating / totalCount;
+                rate.add(String.format("%.1f/5.0", average)); // Add the average to the list
+            } else {
+                rate.add("No ratings"); // No ratings for this Car
+            }
+        }
+        
+        if (pickDate == null) {
             model.addAttribute("sendPickDate", "Please enter pick date");
         } else if (pickTime == null ) {
             model.addAttribute("sendPickTime", "Please enter pick time");
@@ -103,6 +138,9 @@ public class SearchCarController {
                 model.addAttribute("pickTime",pickTime);
                 model.addAttribute("sortBy", sortBy);
                 model.addAttribute("size", list.getTotalElements());
+                model.addAttribute("listRide", listRide);
+                model.addAttribute("rate", rate);
+
             }
         } else if (pickDate.isBefore(today)) {
             model.addAttribute("sendCondition", "Pick-up date must not be in the past");
@@ -121,6 +159,9 @@ public class SearchCarController {
             model.addAttribute("pickTime",pickTime);
             model.addAttribute("sortBy", sortBy);
             model.addAttribute("size", list.getTotalElements());
+            model.addAttribute("listRide", listRide);
+            model.addAttribute("rate", rate);
+
         }
 
         return "products/Search_Car";

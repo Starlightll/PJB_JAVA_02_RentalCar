@@ -171,8 +171,8 @@
                                                 th:src="'/'+${list.getFrontImage()} "
                                                 style="background: #1a1a1a; width: 100%; height: 100%" alt=""></div>
                                     </td>
-                                    <td style="color: #0b0b0b">No ratings</td>
-                                    <td style="color: #0b0b0b">0</td>
+                                    <td style="color: #0b0b0b" th:text="${rate[count.index]}">No ratings</td>
+                                    <td style="color: #0b0b0b" th:text="${listRide[count.index]}"></td>
                                     <td style="color: #0b0b0b" th:text="${list.getBasePrice() + ' VND/Day'}"></td>
                                     <td style="color: black"
                                         th:utext="${list.getAddress().province +','+ '<br>' + list.getAddress().district }"></td>
