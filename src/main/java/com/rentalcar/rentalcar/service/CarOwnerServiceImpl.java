@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
@@ -241,6 +242,16 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         Set<String> licensePlatesOfCar = carRepository.findAllLicensePlateNotOwnedByUserId(userId);
         licensePlatesOfRequest.addAll(licensePlatesOfCar);
         return licensePlatesOfRequest;
+    }
+
+    @Override
+    public CarDto getRatingByCarId(Long carId) {
+        Object[] outerArr = carRepository.getRatingByCarId(carId);
+        Object[] avgRating = (Object[]) outerArr[0];
+        Long car_id = avgRating[0] instanceof Integer ? Long.valueOf((Integer) avgRating[0]) : null;
+        double averageRating = avgRating[1] != null ? (Double) avgRating[1] : 0;
+
+        return new CarDto(car_id, averageRating);
     }
 
     private void setCarStatus(Car car){

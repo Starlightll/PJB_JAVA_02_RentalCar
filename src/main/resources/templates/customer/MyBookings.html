@@ -416,16 +416,7 @@
                                                             <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Total: </p>
-                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="previewTotal"
-                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')}  + ' VND'">
-                                                                No</p>
-                                                        </div>
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -459,6 +450,18 @@
                                                                th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Total: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewTotal"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getTotalPayment(), 0, 'COMMA', 0, 'POINT')}  + ' VND'">
+                                                                No</p>
+                                                        </div>
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">

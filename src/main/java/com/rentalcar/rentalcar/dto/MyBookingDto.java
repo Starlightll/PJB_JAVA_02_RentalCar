@@ -116,8 +116,8 @@ public class MyBookingDto {
 
     //MyBookings
     public MyBookingDto(Long id, String carname, LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId, String numberOfDays, Integer paymentMethod, double basePrice,
-                        double deposit, String bookingStatus, String frontImage, String backImage, String leftImage, String rightImage, Integer carId,
-                        String lateTime, double fineLateTime , double returnDeposit, double totalMoney) {
+                        double deposit, String bookingStatus, String frontImage, String backImage, String leftImage, String rightImage, Integer carId,Long  driverId,
+                        String lateTime, double fineLateTime , double returnDeposit, double totalMoney, double totalPayment) {
         this.bookingId = id;
         this.carname = carname;
         this.startDate = startDate;
@@ -136,10 +136,13 @@ public class MyBookingDto {
         this.leftImage = leftImage;
         this.rightImage = rightImage;
         this.carId = carId;
+        this.driverId = driverId;
         this.lateTime = lateTime;
         this.fineLateTime = fineLateTime;
         this.returnDeposit = returnDeposit;
         this.totalMoney = totalMoney;
+        this.totalPayment = totalPayment;
+
     }
 
     public MyBookingDto(Long id,  LocalDateTime startDate, LocalDateTime endDate, String driverInfo, LocalDateTime actualEndDate, double totalPrice, Long userId,Integer bookingStatusId,

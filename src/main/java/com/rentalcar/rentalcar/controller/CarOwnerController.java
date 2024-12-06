@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.CarStatus;
@@ -24,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,10 +103,17 @@ public class CarOwnerController {
             carPage = carRepository.findAllByCarStatus_StatusIdInAndUserId(statusIds, user.getId(), pageable);
         }
         List<Car> cars = carPage.getContent();
+        List<CarDto> carDTOs = new ArrayList<>();
+        for (Car car : cars) {
+            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
+            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
+        }
+
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
             model.addAttribute("carList", cars);
+            model.addAttribute("carDTOList", carDTOs);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", carPage.getTotalPages());
             model.addAttribute("sortBy", sortBy);
@@ -151,6 +156,7 @@ public class CarOwnerController {
     @GetMapping("edit-car/{carId}")
     public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
+        CarDto carRating = carOwnerService.getRatingByCarId(Long.valueOf(carId));
         // Check if car is not found or car is deleted
         if (car == null || car.getCarStatus().getStatusId() == 4) {
             return "redirect:/car-owner/my-cars";
@@ -159,6 +165,7 @@ public class CarOwnerController {
             if (!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())) {
                 throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
+            model.addAttribute("carRating", carRating.getAverageRating());
             model.addAttribute("brands", brandRepository.findAll());
             model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
             model.addAttribute("carStatus", carStatusRepository.findAll());
@@ -442,6 +449,12 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
+        List<CarDto> carDTOs = new ArrayList<>();
+        for (Car car : cars) {
+            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
+            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
+        }
+        model.addAttribute("carDTOList", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
@@ -512,6 +525,12 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
+        List<CarDto> carDTOs = new ArrayList<>();
+        for (Car car : cars) {
+            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
+            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
+        }
+        model.addAttribute("carDTOList", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {

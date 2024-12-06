@@ -271,9 +271,9 @@
                                         <div th:if="${message}">
                                             <p th:text="${message}"></p>
                                         </div>
-                                        <div class="row d-flex justify-content-center" th:if="${carList != null}">
+                                        <div class="row d-flex justify-content-center" th:if="${carDTOList != null}">
 
-                                            <th:block th:each="car, iterStat: ${carList}">
+                                            <th:block th:each="car, iterStat: ${carDTOList}">
                                                 <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e"
                                                      data-aos="fade-up">
                                                     <div class="col-lg-6 col-md-6 d-flex align-items-center">
@@ -287,19 +287,19 @@
                                                             <input type="radio" th:name="'slide-'+ ${iterStat.index}"
                                                                    th:id="'four-' + ${iterStat.index}">
                                                             <div class="img img-1">
-                                                                <img th:src="'/'+${car.getFrontImage()}"
+                                                                <img th:src="'/'+${car.getCar().getFrontImage()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-2">
-                                                                <img th:src="'/'+${car.getBackImage()}"
+                                                                <img th:src="'/'+${car.getCar().getBackImage()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-3">
-                                                                <img th:src="'/'+${car.getLeftImage()}"
+                                                                <img th:src="'/'+${car.getCar().getLeftImage()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="img img-4">
-                                                                <img th:src="'/'+${car.getRightImage()}"
+                                                                <img th:src="'/'+${car.getCar().getRightImage()}"
                                                                      style="background: #1a1a1a" alt="">
                                                             </div>
                                                             <div class="sliders">
@@ -322,7 +322,7 @@
                                                         <div class="row justify-content-center align-items-center align-content-center">
                                                             <h4 class="col-lg-12 col-md-12 col-sm-12 text-center"
                                                                 style=""
-                                                                th:text="${car.getCarName() == null ? 'NULL' :car.getCarName()}"
+                                                                th:text="${car.getCar().getCarName() == null ? 'NULL' :car.getCar().getCarName()}"
                                                                 data-aos="zoom-out-up">No Name</h4>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -330,7 +330,7 @@
                                                                     Ratings: </p>
                                                                 <div class="rating">
                                                                     <div class="star"
-                                                                         th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
+                                                                         th:style="'width:' + (${car.getAverageRating()} * 20) + '%'">
                                                                         <i class="fa fa-star" data-aos="zoom-in"
                                                                            data-aos-delay="100"></i>
                                                                         <i class="fa fa-star" data-aos="zoom-in"
@@ -367,7 +367,7 @@
                                                                 <p class="col-lg-4 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Price: </p>
                                                                 <div class="d-flex" style="max-width: 316px;">
-                                                                    <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'POINT', 0, 'POINT')}"
+                                                                    <p th:text="${#numbers.formatDecimal(car.getCar().getBasePrice(), 0, 'POINT', 0, 'POINT')}"
                                                                        id="previewPrice" style="overflow: hidden;text-overflow: ellipsis;width: 100%;white-space: nowrap;">0</p>
                                                                     <p style="padding-left: 5px">VND/day</p>
                                                                 </div>
@@ -379,50 +379,50 @@
                                                                 <p class="col-lg-4 col-md-7 col-sm-7 col-8 p-0"
                                                                    id="previewLocation"
                                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${car.getAddress().getProvince()}">No</p>
+                                                                   th:text="${car.getCar().getAddress().getProvince()}">No</p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-4 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                     Status: </p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 1}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #28bf00;max-width: fit-content;background-color: #d9ffd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 2}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #5900ff;max-width: fit-content;background-color: #d8d1ff;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 3}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff0000;max-width: fit-content;background-color: #ffd1d1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 5}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #5f5f5f;max-width: fit-content;background-color: #d9d9d9;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 6}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 8}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 10}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #00a6ff;max-width: fit-content;background-color: #d1ecff;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 11}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 14}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 15}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff4d00;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
-                                                                <p  th:if="${car.getCarStatus().getStatusId() == 16}" th:text="${car.getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #d86837;max-width: fit-content;background-color: #eac791;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 1}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #28bf00;max-width: fit-content;background-color: #d9ffd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 2}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #5900ff;max-width: fit-content;background-color: #d8d1ff;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 3}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff0000;max-width: fit-content;background-color: #ffd1d1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 5}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #5f5f5f;max-width: fit-content;background-color: #d9d9d9;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 6}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 8}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 10}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #00a6ff;max-width: fit-content;background-color: #d1ecff;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 11}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 14}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff9100;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 15}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #ff4d00;max-width: fit-content;background-color: #ffedd1;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
+                                                                <p  th:if="${car.getCar().getCarStatus().getStatusId() == 16}" th:text="${car.getCar().getCarStatus().getName()}" class="col-lg-9 col-md-7 col-sm-7 col-8 p-0" style="color: #d86837;max-width: fit-content;background-color: #eac791;padding: 5px 10px !important;border-radius: 10px;">Undefined</p>
 
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
-                                                        <a th:href="'/car-owner/edit-car/' + ${car.getCarId()}"
+                                                        <a th:href="'/car-owner/edit-car/' + ${car.getCar().getCarId()}"
                                                            class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
                                                             Details</a>
                                                         <a th:href="'#'"
-                                                           th:if="${car.getCarStatus().getStatusId() == 14}"
+                                                           th:if="${car.getCar().getCarStatus().getStatusId() == 14}"
                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                           th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
-                                                           th:attr="data-car-id=${car.getCarId()}"
+                                                           th:id="'confirm-deposit-btn-' + ${car.getCar().getCarId()}"
+                                                           th:attr="data-car-id=${car.getCar().getCarId()}"
                                                            style="background: #da1b1b !important;">
                                                             Confirm Deposit</a>
 
                                                         <a th:href="'#'"
-                                                           th:if="${car.getCarStatus().getStatusId() == 15}"
+                                                           th:if="${car.getCar().getCarStatus().getStatusId() == 15}"
                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                           th:id="'confirm-cancel-btn-' + ${car.getCarId()}"
-                                                           th:attr="data-car-id=${car.getCarId()}"
+                                                           th:id="'confirm-cancel-btn-' + ${car.getCar().getCarId()}"
+                                                           th:attr="data-car-id=${car.getCar().getCarId()}"
                                                            style="background: #000000 !important;">
                                                             Confirm Cancel</a>
                                                         <a th:href="'#'"
-                                                           th:if="${car.getCarStatus().getStatusId() == 16}"
+                                                           th:if="${car.getCar().getCarStatus().getStatusId() == 16}"
                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                           th:onclick="'confirmReturn(' + ${car.getCarId()} + ')'"
+                                                           th:onclick="'confirmReturn(' + ${car.getCar().getCarId()} + ')'"
                                                            style="background: #da1b1b !important;">
                                                             Confirm Return</a>
                                                     </div>
