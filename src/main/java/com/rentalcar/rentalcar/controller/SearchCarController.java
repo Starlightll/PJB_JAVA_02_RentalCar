@@ -111,18 +111,7 @@ public class SearchCarController {
                 rate.add("No ratings"); // No ratings for this Car
             }
         }
-
-// Now, the `rate` list contains the average rating (or "No ratings") for each car in the `list`.
-        model.addAttribute("rate", rate);  // Pass the rate list to the model
-
-
-
-
-
-
-
-
-
+        
         if (pickDate == null) {
             model.addAttribute("sendPickDate", "Please enter pick date");
         } else if (pickTime == null ) {
