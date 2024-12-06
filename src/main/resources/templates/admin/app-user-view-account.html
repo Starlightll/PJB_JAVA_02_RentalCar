@@ -71,6 +71,12 @@
                                             <div class=" d-flex align-items-center flex-column">
                                                 <img class="img-fluid rounded mb-4" th:src="'\\' + ${user.getAvatar()}" onerror="LoadDefaultAvatar()"
                                                      height="120" width="120" alt="User avatar" id="userAvatar"/>
+                                                <label for="upload" class="btn btn-secondary mb-3" tabindex="0">
+                                                    <span class="d-none d-sm-block">Change avatar</span>
+                                                    <i class="bx bx-upload d-block d-sm-none"></i>
+                                                    <input type="file" id="upload" class="account-file-input" hidden
+                                                           accept="image/png, image/jpeg"/>
+                                                </label>
                                                 <div class="user-info text-center">
                                                     <h5 th:text="${user.getUsername()}">Violet Mendoza</h5>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Admin'}"
@@ -328,12 +334,9 @@
                                             </div>
                                             <!-- /Basic  -->
                                             <div class="col-12 text-center">
-                                                <button type="submit" class="btn btn-primary me-3">Submit</button>
+                                                <button type="submit" class="btn btn-primary me-3">Save</button>
                                                 <button type="reset" class="btn btn-label-secondary"
                                                         data-bs-dismiss="modal" aria-label="Close">Cancel
-                                                </button>
-                                                <button type="button" class="btn btn-label-secondary"
-                                                        data-bs-popper="modal" onclick="showSwalFire()">Test
                                                 </button>
                                             </div>
 
@@ -599,6 +602,114 @@
     <script defer src="/assets/js/app-user-view.js"></script>
     <script defer src="/assets/js/app-user-view-account.js"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function(e) {
+            let a = document.getElementById("userAvatar")
+                , i = document.querySelector(".account-file-input");
+            if(a){
+                let e = a.src;
+                i.onchange = () => {
+                    const file = i.files[0];
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    const validExtensions = ["jpg", "jpeg", "png"];
+                    if(!validExtensions.includes(fileExtension)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Only accept file type: .jpg, .jpeg, .png',
+                            showClass: {
+                                popup: "animate__animated animate__shakeX"
+                            },
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            },
+                            buttonsStyling: !1
+                        });
+                        i.value = "";
+                        return;
+                    }
+                    if(file.size > 5 * 1024 * 1024) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'File size must be less than 5MB',
+                            showClass: {
+                                popup: "animate__animated animate__shakeX"
+                            },
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            },
+                            buttonsStyling: !1
+                        });
+                        i.value = "";
+                        return;
+                    }
+                    //Call api to set avatar
+                    const userId = document.getElementById("editUserForm").elements.namedItem("id").value;
+                    const formData = new FormData();
+                    formData.append("avatar", file);
+                    formData.append("userId", userId);
+                    console.log(file.name);
+                    console.log(userId);
+                    fetch("/api/users/set-user-avatar", {
+                        method: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                        },
+                        body: formData
+                    }).then(response => response.json()).then(data => {
+                        if(data.success) {
+                            console.log("Success");
+                            a.src = window.URL.createObjectURL(i.files[0]);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Avatar updated successfully',
+                                showClass: {
+                                    popup: "animate__animated animate__bounceIn"
+                                },
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                },
+                                buttonsStyling: !1
+                            }).then(() => {
+                                i.files[0] && (a.src = window.URL.createObjectURL(i.files[0]))
+                            });
+                        } else {
+                            console.log("Fail");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong',
+                                showClass: {
+                                    popup: "animate__animated animate__shakeX"
+                                },
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                },
+                                buttonsStyling: !1
+                            });
+                        }
+                    }).catch(error => {
+                        console.log("Error");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong',
+                            showClass: {
+                                popup: "animate__animated animate__shakeX"
+                            },
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            },
+                            buttonsStyling: !1
+                        });
+                    });
+                }
+            }
+        });
+
+    </script>
     </body>
 </th:block>
 </html>

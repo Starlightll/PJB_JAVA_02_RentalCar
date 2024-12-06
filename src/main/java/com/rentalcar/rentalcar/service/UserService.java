@@ -183,6 +183,31 @@ public class UserService implements IUserService {
 
     }
 
+    @Override
+    @Transactional
+    public void setUserAvatar(User user, MultipartFile avatarFile) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            if(avatarFile != null && !avatarFile.isEmpty()){
+                //Set default avatar
+                String folderName = String.format("%s", updateUser.getId()+ "_" + updateUser.getUsername() +"/");
+                Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(avatarFile, userFolderPath, "avatar.png");
+                    updateUser.setAvatar(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            userRepo.save(updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
+    }
+
     public boolean checkEmail(String email) {
         return userRepo.getUserByEmail(email) != null;
     }
