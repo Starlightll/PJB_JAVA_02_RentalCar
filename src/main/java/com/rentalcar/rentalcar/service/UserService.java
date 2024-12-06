@@ -147,8 +147,40 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void updateUser(User user) {
-//        userRepo.save(user);
+    @Transactional
+    public void updateUser(User user, MultipartFile drivingLicense) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            updateUser.setUsername(user.getUsername());
+            updateUser.setFullName(user.getFullName());
+            updateUser.setDob(user.getDob());
+            updateUser.setNationalId(user.getNationalId());
+            updateUser.setCity(user.getCity());
+            updateUser.setDistrict(user.getDistrict());
+            updateUser.setWard(user.getWard());
+            updateUser.setStreet(user.getStreet());
+            updateUser.setStatus(user.getStatus());
+            if(drivingLicense != null && !drivingLicense.isEmpty()){
+                //Set default avatar
+                String folderName = String.format("%s", updateUser.getId()+ "_" + updateUser.getUsername() +"/");
+                Path userFolderPath = Paths.get("uploads/DriveLicense/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(drivingLicense, userFolderPath, "drivingLicense.png");
+                    updateUser.setDrivingLicense(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            String phoneNormalized = phoneNumberStandardService.normalizePhoneNumber(user.getPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+            updateUser.setPhone(phoneNormalized);
+            userRepo.save(updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
+
     }
 
     public boolean checkEmail(String email) {

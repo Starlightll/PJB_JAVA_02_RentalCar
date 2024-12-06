@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -83,6 +84,7 @@ public class UserManagementController {
     @PostMapping("/user-management/update-user")
     public ResponseEntity<Map<String, Object>> updateUser(
             @ModelAttribute("user") User user,
+            @RequestParam(value = "drivingLicenseFile", required = false) MultipartFile drivingLicenseFile,
             BindingResult result
     ) {
         Map<String, Object> response = new HashMap<>();
@@ -91,7 +93,7 @@ public class UserManagementController {
             return ResponseEntity.badRequest().body(response);
         }
         try{
-            userService.updateUser(user);
+            userService.updateUser(user, drivingLicenseFile);
         }catch (Exception e){
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);

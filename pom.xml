@@ -258,8 +258,6 @@
             <version>5.5.13.4</version>
         </dependency>
 
-
-
         <dependency>
             <groupId>org.webjars.bowergithub.timmywil</groupId>
             <artifactId>panzoom</artifactId>
