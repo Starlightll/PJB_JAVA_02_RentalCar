@@ -104,6 +104,7 @@ public interface RatingStarRepository extends JpaRepository<Feedback, Long> {
             "WHERE c.userId = :userId", nativeQuery = true)
     long countByUser(@Param("userId") Long userId);
 
-
+    @Query("SELECT f FROM Feedback f WHERE f.booking.bookingId = :bookingId")
+    List<Feedback> getByBookingid(@Param("bookingId") Long bookingId);
 
 }
