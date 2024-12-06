@@ -19,4 +19,5 @@ public interface IUserService {
     void setUserStatus(User user, UserStatus statusId);
     void setUserDefaultAvatar(User user);
     void updateUser(User user, MultipartFile drivingLicenseFile);
+    void setUserAvatar(User user, MultipartFile avatarFile);
 }

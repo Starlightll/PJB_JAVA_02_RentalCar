@@ -9,12 +9,11 @@ import com.rentalcar.rentalcar.service.PhoneNumberStandardService;
 import com.rentalcar.rentalcar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -53,5 +52,19 @@ public class UserAPI {
         phone = phone.replaceAll("[^0-9]", "");
         boolean exists = phoneNumberStandardService.isPhoneNumberExists(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
         return ResponseEntity.ok(!exists);
+    }
+
+    @PostMapping("/set-user-avatar")
+    public ResponseEntity<Map<String, Object>> setUserAvatar(
+            @RequestParam(value = "userId") Long userId,
+            @RequestParam(value = "avatar") MultipartFile avatar
+            ) {
+
+        User user = userRepo.getUserById(userId);
+        if(user == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+        }
+        userService.setUserAvatar(user, avatar);
+        return ResponseEntity.ok(Map.of("success", "Avatar updated"));
     }
 }
