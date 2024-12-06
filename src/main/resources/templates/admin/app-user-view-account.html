@@ -69,8 +69,8 @@
                                     <div class="card-body pt-12">
                                         <div class="user-avatar-section">
                                             <div class=" d-flex align-items-center flex-column">
-                                                <img class="img-fluid rounded mb-4" src="../../assets/img/avatars/1.png"
-                                                     height="120" width="120" alt="User avatar"/>
+                                                <img class="img-fluid rounded mb-4" th:src="'\\' + ${user.getAvatar()}" onerror="LoadDefaultAvatar()"
+                                                     height="120" width="120" alt="User avatar" id="userAvatar"/>
                                                 <div class="user-info text-center">
                                                     <h5 th:text="${user.getUsername()}">Violet Mendoza</h5>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Admin'}"
@@ -154,32 +154,35 @@
                                                 class="bx bx-user bx-sm me-1_5"></i>Account</a></li>
                                         <li class="nav-item"><a class="nav-link" href="app-user-view-security.html"><i
                                                 class="bx bx-lock-alt bx-sm me-1_5"></i>Security</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="app-user-view-billing.html"><i
-                                                class="bx bx-detail bx-sm me-1_5"></i>Billing & Plans</a></li>
                                         <li class="nav-item"><a class="nav-link"
                                                                 href="app-user-view-notifications.html"><i
                                                 class="bx bx-bell bx-sm me-1_5"></i>Notifications</a></li>
-                                        <li class="nav-item"><a class="nav-link"
-                                                                href="app-user-view-connections.html"><i
-                                                class="bx bx-link bx-sm me-1_5"></i>Connections</a></li>
                                     </ul>
                                 </div>
                                 <!--/ User Pills -->
                                 <!-- Car table -->
                                 <th:block th:if="${user.getRoles().get(0).getRoleName() == 'Car Owner'}">
                                     <div class="card mb-6">
-                                        <h5 class="card-header pb-0 text-sm-start text-center">Car List</h5>
-                                        <div class="table-responsive mb-4">
-                                            <table class="table datatable-project">
-                                                <thead class="border-top">
+                                        <div class="card-header pb-0 text-sm-start text-center">
+                                            <h5 class="card-title mb-0">Car List</h5>
+                                            <div class="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0 g-6">
+                                                <div class="col-md-4 user_role"></div>
+                                                <div class="col-md-4 user_plan"></div>
+                                                <div class="col-md-4 user_status"></div>
+                                            </div>
+                                        </div>
+                                        <div class="card-datatable table-responsive">
+                                            <table class="datatables-users table border-top">
+                                                <thead>
                                                 <tr>
                                                     <th></th>
                                                     <th></th>
-                                                    <th>Project</th>
-                                                    <th>Leader</th>
-                                                    <th>Team</th>
-                                                    <th class="w-px-200">Progress</th>
-                                                    <th>Action</th>
+                                                    <th>Car</th>
+                                                    <th>Price</th>
+                                                    <th>License</th>
+                                                    <th>Base price</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -251,14 +254,9 @@
                                                 </select>
                                             </div>
                                             <div class="input col-12 col-md-6">
-                                                <label class="form-label" for="modalEditUserPhone">Phone Number</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text">VN (+84)</span>
-                                                    <input type="text" id="modalEditUserPhone" name="modalEditUserPhone"
-                                                           th:field="*{phone}"
-                                                           class="form-control phone-number-mask"
-                                                           placeholder="1234 567890" value=""/>
-                                                </div>
+                                                <label class="form-label" for="modalEditUserPhone">Phone</label>
+                                                <input type="text" id="modalEditUserPhone" class="phone-number-mask form-control" th:field="*{phone}"
+                                                       placeholder="(+84) 12 345 678" name="modalEditUserPhone" autocomplete="on tel"/>
                                             </div>
                                             <div class="input col-6 col-md-6">
                                                 <label class="form-label" for="modalEditUserNationalID">National
@@ -470,6 +468,10 @@
 
         function LoadDefaultImage() {
             document.querySelector('.image-thumbnail').src = '/images/no-image-available.jpg';
+        }
+
+        function LoadDefaultAvatar() {
+            document.querySelector('#userAvatar').src = '/images/avt.png';
         }
 
         document.addEventListener('DOMContentLoaded', function () {

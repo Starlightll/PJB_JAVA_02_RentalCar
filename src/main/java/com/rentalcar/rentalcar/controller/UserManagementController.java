@@ -93,7 +93,7 @@ public class UserManagementController {
             return ResponseEntity.badRequest().body(response);
         }
         try{
-            userService.updateUser(user);
+            userService.updateUser(user, drivingLicenseFile);
         }catch (Exception e){
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);

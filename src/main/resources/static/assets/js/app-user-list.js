@@ -1,5 +1,4 @@
 $(function () {
-
     let t, a, n;
     n = (isDarkStyle ? (t = config.colors_dark.borderColor, a = config.colors_dark.bodyBg, config.colors_dark) : (t = config.colors.borderColor, a = config.colors.bodyBg, config.colors)).headingColor;
     var e, s = $(".datatables-users"), o = $(".select2"), i = "/admin/user-management/user-detail", r = {
