@@ -716,7 +716,7 @@
                                                         </div>
 
                                                     </div>
-                                                    <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+                                                    <div th:if="${booking.bookingStatus == 'Completed'}" class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                                         <!-- Nút xuất file Excel -->
                                                         <a th:href="${'/bills/export-pdf?bookingId='+ actual.getBookingId() + '&carId=' +actual.getCarId()+'&userId='+actual.getUserId()}" class="btn btn-success">Export to Pdf</a>
                                                     </div>

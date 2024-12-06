@@ -594,7 +594,8 @@
                                                                 Ratings: </p>
                                                             <div class="rating">
                                                                 <div class="star"
-                                                                     th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
+                                                                     th:style="'width:' + (${carRating} * 20) + '%'">
+
                                                                     <i class="fa fa-star"></i>
                                                                     <i class="fa fa-star"></i>
                                                                     <i class="fa fa-star"></i>

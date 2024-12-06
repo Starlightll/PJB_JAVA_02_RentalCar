@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.dto;
 
+import com.rentalcar.rentalcar.entity.Car;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,7 +43,21 @@ public class CarDto {
     private Integer bookingStatusId;
     private String bookingStatusName;
     private Long bookingId;
+    private Car car;
 
+
+
+    // Constructor
+    public CarDto(Car car, double avgRating) {
+        this.car = car;
+        this.averageRating = avgRating;
+    }
+
+    //Rating for Car
+    public CarDto(Long carId, double avgRating) {
+        this.carId = carId;
+        this.averageRating = avgRating;
+    }
 
     public CarDto(Long carId, String name, String licensePlate, String model, String color, Integer seatNo,
                   Integer productionYear, String transmission, String fuel, double mileage, double fuelConsumption,

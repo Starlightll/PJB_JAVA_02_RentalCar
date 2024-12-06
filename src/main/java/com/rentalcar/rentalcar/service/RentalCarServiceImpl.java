@@ -110,30 +110,25 @@ public class RentalCarServiceImpl implements RentalCarService {
             double returnDeposit = 0; //tiền phải hoàn trả
             double fineLateTimePerDay =baseprice +((baseprice * FINE_COST) / 100); //tiền phạt trên ngày
             double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
+            double salaryDriver = 0;
+            Long driverId = result[17] != null ? Long.valueOf((Integer) result[17]) : null;
 
-
-
-            Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
+            Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
             if (bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
                 bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
 
-                if(actualEndDate.isBefore(endDate)) { //kiểm tra xem actual date có nhỏ hơn enđate hay không
-                    map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
-                }
-
-                if(actualEndDate.isAfter(endDate)) {
-                    Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
-                    totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,baseprice,  hourlyRate);
-                }
-
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
 //            tính late date
                 Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
                 if (CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
                     fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay, fineLateTimePerHour);
+                    Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
+                    totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,baseprice,  hourlyRate);
                 }
             } else if (LocalDateTime.now().isAfter(endDate)) {
-                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, baseprice, hourlyRate);
+                Map<String, Long> numberOfDayDb = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayDb, baseprice, hourlyRate);
                 if (CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
                     Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
@@ -141,11 +136,10 @@ public class RentalCarServiceImpl implements RentalCarService {
                 }
             }else if( bookingStatus.equalsIgnoreCase("In-Progress") ||
                     bookingStatus.equalsIgnoreCase("Pending return")){//Lấy động dữ liệu theo thời gian thực khi đang trong quá trình dùng xe
-                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
-                Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());// tổng số ngày thực
-                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,baseprice,  hourlyRate);
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,baseprice,  hourlyRate);
 
             } else {
+                map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
                 totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, baseprice, hourlyRate);
             }
 
@@ -156,6 +150,11 @@ public class RentalCarServiceImpl implements RentalCarService {
             if(actualEndDate.isAfter(endDate) || LocalDateTime.now().isAfter(endDate)) {
                 totalPrice += fineLateTime;
             }
+            User driver = userRepository.getUserById(driverId);
+            if(driver != null) {
+                salaryDriver = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,driver.getSalaryDriver(),driver.getSalaryDriver() / 24);
+            }
+            double totalPayment = salaryDriver + totalMoney;
 
             MyBookingDto bookingDto = new MyBookingDto(
                     Long.valueOf((Integer) result[0]),
@@ -176,10 +175,12 @@ public class RentalCarServiceImpl implements RentalCarService {
                     (String) result[14],
                     (String) result[15],
                     (Integer) result[16],
+                    driverId,
                     lateTime,
                     fineLateTime,
                     returnDeposit,
-                    totalMoney
+                    totalMoney,
+                    totalPayment
             );
             bookingDtos.add(bookingDto);
         }
