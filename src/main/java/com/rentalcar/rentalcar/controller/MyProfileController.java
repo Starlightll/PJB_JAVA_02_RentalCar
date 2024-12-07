@@ -4,6 +4,7 @@ import com.rentalcar.rentalcar.dto.MyProfileDto;
 import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.exception.UserException;
+import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.MyProfileService;
 import com.rentalcar.rentalcar.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -33,6 +34,9 @@ public class MyProfileController {
     MyProfileService myProfileService;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepo userRepo;
 
 
     @GetMapping("/change-password")
@@ -93,6 +97,15 @@ public class MyProfileController {
 
         model.addAttribute("userInfo", user);
         return "MyProfile_ChangPassword";
+    }
+
+    @GetMapping("/my-profilev2")
+    public String myProfileV2(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        User userInfo = userRepo.getUserById(user.getId());
+
+        model.addAttribute("userInfo", userInfo);
+        return "MyProfile_ChangPasswordV2";
     }
 
 
