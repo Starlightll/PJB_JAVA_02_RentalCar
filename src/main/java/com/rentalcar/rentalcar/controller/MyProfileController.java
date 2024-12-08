@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Controller
@@ -87,8 +88,6 @@ public class MyProfileController {
     }
 
 
-
-
     @GetMapping("/my-profile")
     public String myProfile(Model model, HttpSession session) {
         model.addAttribute("activeTab", "PersonalInfo"); // Set default tab
@@ -108,12 +107,58 @@ public class MyProfileController {
         return "MyProfile_ChangPasswordV2";
     }
 
+    @PostMapping("/update-avatar")
+    public ResponseEntity<Map<String, Object>> updateAvatar(
+            @RequestParam(value = "avatar") MultipartFile avatar,
+            HttpSession httpSession) {
+        User user = userRepo.getUserById(((User) httpSession.getAttribute("user")).getId());
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+        }
+        userService.setUserAvatar(user, avatar);
+        User logedUser = (User) httpSession.getAttribute("user");
+        // Update avatar in session if the user is the loged user
+        if (Objects.equals(user.getId(), logedUser.getId())) {
+            logedUser.setAvatar(user.getAvatar());
+            httpSession.setAttribute("user", logedUser);
+        }
+        return ResponseEntity.ok(Map.of("success", "Avatar updated"));
+    }
+
+
+    @PostMapping("/update-profile")
+    public ResponseEntity<Map<String, Object>> updateProfile(
+            @ModelAttribute("user") User user,
+            @RequestParam(value = "drivingLicenseFile", required = false) MultipartFile drivingLicenseFile,
+            BindingResult result,
+            HttpSession session
+    ) {
+        Map<String, Object> response = new HashMap<>();
+        if (result.hasErrors()) {
+            response.put("errors", result.getAllErrors());
+            return ResponseEntity.badRequest().body(response);
+        }
+        User userInSession = (User) session.getAttribute("user");
+        //Check if the user is updating their own profile
+        if (!Objects.equals(user.getId(), userInSession.getId())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN);
+        }
+        try {
+            userService.updateProfile(user, drivingLicenseFile);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("message", "User updated successfully");
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping("/save")
     public String saveUser(@Valid @ModelAttribute("userInfo") UserInfoDto userInfoRequest,
                            BindingResult bindingResult,
                            HttpSession session,
-                           RedirectAttributes models , Model model,
+                           RedirectAttributes models, Model model,
                            @RequestParam(value = "drivingLicense", required = false) MultipartFile drivingLicense) {
 
         User user = (User) session.getAttribute("user");
@@ -125,29 +170,26 @@ public class MyProfileController {
         if (drivingLicense.isEmpty() && user.getDrivingLicense() == null) {
             bindingResult.rejectValue("drivingLicense", "error.userInfo", "File upload is required : ");
 
-        }else{
+        } else {
 
             try {
                 String fileName = drivingLicense.getOriginalFilename();
-                if(fileName.length() > 50){
+                if (fileName.length() > 50) {
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "Filename is too long. Please rename the file.");
 
-                }
-                else if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$") && !fileName.isEmpty()) {
+                } else if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$") && !fileName.isEmpty()) {
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "Invalid file extension. Only JPG, PNG, and GIF are allowed.");
 
-                }else if (drivingLicense.getSize() > 200 * 1024 * 1024) { // 200MB = 200 * 1024 * 1024 bytes
+                } else if (drivingLicense.getSize() > 200 * 1024 * 1024) { // 200MB = 200 * 1024 * 1024 bytes
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "File size exceeds 200MB. Please upload a smaller file.");
-                }
-                else {
-                    String uploadDir = "uploads/DriveLicense/" + user.getId()+ "_" + user.getUsername() +  "/"; // Specify your upload directory
+                } else {
+                    String uploadDir = "uploads/DriveLicense/" + user.getId() + "_" + user.getUsername() + "/"; // Specify your upload directory
                     Path filePath = Paths.get(uploadDir, fileName);
                     Files.write(filePath, drivingLicense.getBytes());
 
                     // Set the file path in the new field
                     userInfoRequest.setDrivingLicensePath(filePath.toString());
                 }
-
 
 
             } catch (IOException e) {
@@ -212,6 +254,7 @@ public class MyProfileController {
         models.addFlashAttribute("success1", "Update successfully!!!");
         return "redirect:/my-profile";
     }
+
     private String normalizePhone(String phone) {
         // Loại bỏ khoảng trắng và các ký tự không phải số
         phone = phone.trim().replaceAll("\\D", "");
@@ -225,6 +268,27 @@ public class MyProfileController {
         }
 
         return phone;
+    }
+
+    // Controller
+    @GetMapping("/my-info")
+    public ResponseEntity<?> myInfo(HttpSession session) {
+        try {
+            User user = (User) session.getAttribute("user");
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User not found");
+            }
+
+            User userInfo = userRepo.getUserById(user.getId());
+            if (userInfo == null) {
+                return ResponseEntity.badRequest().body("User not found");
+            }
+
+            return ResponseEntity.ok(userInfo);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error getting user info");
+        }
+
     }
 
 

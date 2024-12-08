@@ -20,19 +20,20 @@
         </button>
 
         <div class="collapse navbar-collapse" id="ftco-nav">
-            <ul class="navbar-nav ml-auto " style="backdrop-filter: blur(40px);border-radius: 15px;">
+            <ul class="navbar-nav ml-auto p-0" style="backdrop-filter: blur(40px);border-radius: 15px; margin-right: 10px;">
                 <li class="nav-item active"><a href="/" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-                <li class="nav-item"><a href="car.html" class="nav-link">Cars</a></li>
+                <li class="nav-item"><a href="/cars" class="nav-link">Cars</a></li>
             </ul>
+            <div style="border: solid 2px #00c86f; margin: 10px 0; display: none" class="line-distract"></div>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
                 <th:block th:if="${session.user != null}">
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" role="button"
+                        <a href="#" class="nav-link dropdown-toggle" role="button" style="padding: 20px 0 !important;"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <!-- Hiển thị Avatar -->
-                            <img src="/images/avt.png" class="rounded-circle"
-                                 style="width: 40px; height: 40px; object-fit: cover;" alt="Avatar">
+                            <img th:src="${session.user.getAvatar() != null ? '/' + session.user.getAvatar() : '/images/avt.png'}" class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ffffff; padding: 0" alt="Avatar">
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdown">
                             <div class="menu-title">

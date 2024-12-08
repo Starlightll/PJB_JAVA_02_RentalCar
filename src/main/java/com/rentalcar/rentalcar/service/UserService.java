@@ -164,7 +164,6 @@ public class UserService implements IUserService {
             updateUser.setStreet(user.getStreet());
             updateUser.setStatus(user.getStatus());
             if(drivingLicense != null && !drivingLicense.isEmpty()){
-                //Set default avatar
                 String folderName = String.format("%s", updateUser.getId()+ "_" + updateUser.getUsername() +"/");
                 Path userFolderPath = Paths.get("uploads/DriveLicense/"+ folderName);
                 try {
@@ -181,6 +180,37 @@ public class UserService implements IUserService {
             throw new UserException("Something went wrong");
         }
 
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(User user, MultipartFile drivingLicenseFile) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            updateUser.setFullName(user.getFullName());
+            updateUser.setDob(user.getDob());
+            updateUser.setNationalId(user.getNationalId());
+            updateUser.setCity(user.getCity());
+            updateUser.setDistrict(user.getDistrict());
+            updateUser.setWard(user.getWard());
+            updateUser.setStreet(user.getStreet());
+            if(drivingLicenseFile != null && !drivingLicenseFile.isEmpty()){
+                String folderName = String.format("%s", updateUser.getId()+ "_" + updateUser.getUsername() +"/");
+                Path userFolderPath = Paths.get("uploads/DriveLicense/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(drivingLicenseFile, userFolderPath, "drivingLicense.png");
+                    updateUser.setDrivingLicense(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            userRepo.save(updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
     }
 
     @Override
@@ -206,6 +236,11 @@ public class UserService implements IUserService {
         }catch (Exception e){
             throw new UserException("Something went wrong");
         }
+    }
+
+    @Override
+    public boolean checkNationalId(String nationalId) {
+        return userRepo.existsByNationalId(nationalId);
     }
 
     public boolean checkEmail(String email) {

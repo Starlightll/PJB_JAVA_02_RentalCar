@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,6 +54,21 @@ public class UserAPI {
         }
         phone = phone.replaceAll("[^0-9]", "");
         boolean exists = phoneNumberStandardService.isPhoneNumberExists(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+        return ResponseEntity.ok(!exists);
+    }
+
+    @GetMapping("/check-nationalId")
+    public ResponseEntity<?> checkNationalId(
+            @RequestParam(value = "nationalId") String nationalId,
+            @RequestParam(value = "userId", required = false) String userId
+    ) {
+        if(userId != null) {
+            User user = userRepo.getUserById(Long.parseLong(userId));
+            if(user.getNationalId().equals(nationalId)) {
+                return ResponseEntity.ok(true);
+            }
+        }
+        boolean exists = userService.checkNationalId(nationalId);
         return ResponseEntity.ok(!exists);
     }
 
