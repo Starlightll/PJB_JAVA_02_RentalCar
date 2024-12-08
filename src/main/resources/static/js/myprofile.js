@@ -556,6 +556,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         showConfirmButton: false,
                                         timer: 1500
                                     }).then(() => {
+                                        changePasswordForm.reset();
                                         const newPassword = document.getElementById('inputNewPassword');
                                         const confirmPassword = document.getElementById('inputConfirmPassword');
                                         const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
