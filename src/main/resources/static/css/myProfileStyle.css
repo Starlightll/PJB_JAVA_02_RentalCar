@@ -128,7 +128,7 @@ button {
 @media (max-width: 768px) {
     .container {
         width: 100%;
-        padding: 10px;
+        /*padding: 10px;*/
     }
 
     .form-row {
