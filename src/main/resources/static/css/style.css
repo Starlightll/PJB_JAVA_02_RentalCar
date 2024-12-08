@@ -11570,6 +11570,9 @@ h1, h2, h3, h4, h5,
         position: relative;
         top: 0;
     }
+    .line-distract{
+        display: block !important;
+    }
 }
 
 .ftco-navbar-light .navbar-brand {

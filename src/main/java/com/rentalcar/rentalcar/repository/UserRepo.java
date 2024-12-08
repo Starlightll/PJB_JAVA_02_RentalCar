@@ -53,6 +53,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
             "    AND b.bookingId = :bookingId; \n", nativeQuery = true)
     List<Object[]> getAllDriver(@Param("bookingId") Integer bookingId);
 
+    boolean existsByNationalId(String nationalId);
 
     boolean existsByPhone(String phone);
 

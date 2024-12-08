@@ -4,8 +4,11 @@ body {
     padding: 0;
     /*background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");*/
     background-image: url("/images/car-16.jpg");
-    background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 100vh;
 }
 
 
@@ -28,7 +31,7 @@ body {
     flex-direction: column;
     top: 15%;
     max-width: 1450px;
-    min-height: 1190px;
+    /*min-height: 1190px;*/
 }
 
 h2 {
@@ -55,14 +58,14 @@ form {
     margin-bottom: 30px;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 30px;
-    height: 80px; /* Chiều cao cố định cho mỗi form-group để giữ vị trí */
-    justify-content: space-between; /* Giúp các phần tử cách đều nhau */
-    width: 30%;
-}
+/*.form-group {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    margin-bottom: 30px;*/
+/*    height: 80px; !* Chiều cao cố định cho mỗi form-group để giữ vị trí *!*/
+/*    justify-content: space-between; !* Giúp các phần tử cách đều nhau *!*/
+/*    width: 30%;*/
+/*}*/
 
 label {
     display: block;
@@ -246,9 +249,9 @@ button {
     border-radius: 5px;
 }
 
-#MyProfile .form-group {
-    margin-bottom: 25px; /* Tăng khoảng cách giữa các nhóm form */
-}
+/*#MyProfile .form-group {*/
+/*    margin-bottom: 25px; !* Tăng khoảng cách giữa các nhóm form *!*/
+/*}*/
 
 #MyProfile .buttons {
     margin-top: 30px; /* Tăng khoảng cách trên các nút */
