@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     /*background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");*/
-    background-image: url("/images/car-3.jpg");
+    background-image: url("/images/car-16.jpg");
     background-size: cover;
     background-position: center;
 }
@@ -28,6 +28,7 @@ body {
     flex-direction: column;
     top: 15%;
     max-width: 1450px;
+    min-height: 1190px;
 }
 
 h2 {
@@ -128,7 +129,6 @@ button {
 @media (max-width: 768px) {
     .container {
         width: 100%;
-        padding: 10px;
     }
 
     .form-row {
