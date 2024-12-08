@@ -141,11 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         confirmButtonText: 'Yes!',
                         cancelButtonText: 'No, cancel!',
                         reverseButtons: true,
-                        customClass: {
-                            confirmButton: "btn btn-primary me-3",
-                            cancelButton: "btn btn-label-secondary",
-                        },
-                        buttonsStyling: !1
                     }).then((result) => {
                         if (result.isConfirmed) {
 
@@ -206,11 +201,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: 'Yes!',
                 cancelButtonText: 'No, cancel!',
                 reverseButtons: true,
-                customClass: {
-                    confirmButton: "btn btn-primary me-3",
-                    cancelButton: "btn btn-label-secondary",
-                },
-                buttonsStyling: !1
             }).then((result) => {
                 if (result.isConfirmed) {
                     reloadForm();
@@ -360,11 +350,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: 'Yes!',
                 cancelButtonText: 'No, cancel!',
                 reverseButtons: true,
-                customClass: {
-                    confirmButton: "btn btn-primary me-3",
-                    cancelButton: "btn btn-label-secondary",
-                },
-                buttonsStyling: !1
             }).then((result) => {
                 if (result.isConfirmed) {
                     const data = new FormData();
