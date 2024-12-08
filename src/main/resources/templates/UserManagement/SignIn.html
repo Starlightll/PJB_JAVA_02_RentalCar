@@ -14,21 +14,24 @@
     <style>
         /* Google Font Link */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: "Poppins", sans-serif;
         }
+
         body {
             min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            /*align-items: center;*/
+            /*justify-content: center;*/
             backdrop-filter: blur(5px) brightness(0.5);
             background: url("/images/nhatrang.jpg") no-repeat center;
-            padding: 30px;
+            /*padding: 30px;*/
         }
+
         .container {
             position: relative;
             max-width: 850px;
@@ -37,8 +40,9 @@
             padding: 40px 30px;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
             perspective: 2700px;
-            height: 800px;
+            height: 760px;
         }
+
         .container .cover {
             position: absolute;
             top: 0;
@@ -51,12 +55,15 @@
             transform-style: preserve-3d;
             backface-visibility: hidden;
         }
+
         .container #flip:checked ~ .cover {
             transform: rotateY(-180deg);
         }
+
         .container #flip:checked ~ .forms .login-form {
             pointer-events: none;
         }
+
         .container .cover .front,
         .container .cover .back {
             position: absolute;
@@ -65,9 +72,11 @@
             height: 100%;
             width: 100%;
         }
+
         .cover .back {
             transform: rotateY(180deg);
         }
+
         .container .cover img {
             position: absolute;
             height: 100%;
@@ -75,6 +84,7 @@
             object-fit: cover;
             z-index: 10;
         }
+
         .container .cover .text {
             position: absolute;
             z-index: 10;
@@ -85,6 +95,7 @@
             align-items: center;
             justify-content: center;
         }
+
         .container .cover .text::before {
             content: '';
             position: absolute;
@@ -93,6 +104,7 @@
             opacity: 0.5;
             background: #000000;
         }
+
         .cover .text .text-1,
         .cover .text .text-2 {
             z-index: 20;
@@ -101,32 +113,38 @@
             color: #fff;
             text-align: center;
         }
+
         .cover .text .text-2 {
             font-size: 15px;
             font-weight: 500;
         }
+
         .container .forms {
             height: 100%;
             width: 100%;
             background: #fff;
             display: flex;
         }
+
         .container .form-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
         }
+
         .form-content .login-form,
         .form-content .signup-form {
             width: calc(100% / 2 - 25px);
         }
+
         .forms .form-content .title {
             position: relative;
             font-size: 24px;
             font-weight: 500;
             color: #333;
         }
+
         .forms .form-content .title:before {
             content: '';
             position: absolute;
@@ -136,12 +154,15 @@
             width: 25px;
             background: #00c86f;
         }
+
         .forms .signup-form .title:before {
             width: 20px;
         }
+
         .forms .form-content .input-boxes {
             margin-top: 30px;
         }
+
         .forms .form-content .input-box {
             display: flex;
             align-items: center;
@@ -150,6 +171,7 @@
             margin: 10px 0;
             position: relative;
         }
+
         .form-content .input-box input {
             height: 100%;
             width: 100%;
@@ -161,31 +183,38 @@
             border-bottom: 2px solid rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
+
         .form-content .input-box input:focus,
         .form-content .input-box input:valid {
             border-color: #00c86f;
         }
+
         .form-content .input-box i {
             position: absolute;
             color: #222423;
             font-size: 17px;
             padding-left: 4px;
         }
+
         .forms .form-content .text {
             font-size: 14px;
             font-weight: 500;
             color: #333;
         }
+
         .forms .form-content .text a {
             text-decoration: none;
         }
+
         .forms .form-content .text a:hover {
             text-decoration: underline;
         }
+
         .forms .form-content .button {
             color: #fff;
             margin-top: 40px;
         }
+
         .forms .form-content .button input {
             color: #fff;
             background: #000000;
@@ -194,38 +223,48 @@
             cursor: pointer;
             transition: all 0.4s ease;
         }
+
         .forms .form-content .button input:hover {
             background: #5b13b9;
         }
+
         .forms .form-content label {
             color: #5b13b9;
             cursor: pointer;
         }
+
         .forms .form-content label:hover {
             text-decoration: underline;
         }
+
         .forms .form-content .login-text,
         .forms .form-content .sign-up-text {
             text-align: center;
             margin-top: 25px;
         }
+
         .container #flip {
             display: none;
         }
+
         @media (max-width: 730px) {
             .container .cover {
                 display: none;
             }
+
             .form-content .login-form,
             .form-content .signup-form {
                 width: 100%;
             }
+
             .form-content .signup-form {
                 display: none;
             }
+
             .container #flip:checked ~ .forms .signup-form {
                 display: block;
             }
+
             .container #flip:checked ~ .forms .login-form {
                 display: none;
             }
@@ -256,13 +295,15 @@
         }
 
         .form-submit-re.active {
-            opacity: 1 ;
+            opacity: 1;
             cursor: pointer !important;
 
         }
+
         .form-group {
             margin-top: 10px;
         }
+
         .custom-confirm-btn, .custom-cancel-btn {
             width: 100px; /* Make both buttons the same width */
             padding: 10px; /* Add padding for better appearance */
@@ -296,137 +337,183 @@
             cursor: not-allowed;
         }
 
+        .content-wrapper {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+
+        }
+
     </style>
 </head>
 <body>
-<div class="container">
-    <input type="checkbox" id="flip" th:checked="${hasSignupErrors}">
+<div class="content-wrapper">
+    <div class="container">
+        <input type="checkbox" id="flip" th:checked="${hasSignupErrors}">
 
-    <div class="cover">
-        <div class="front">
-            <img src="/images/bg_2.jpg" alt="">
-            <div class="text">
-                <span class="text-1">Every new friend is a <br> new adventure</span>
-                <span class="text-2">Let's get connected</span>
-            </div>
-        </div>
-        <div class="back">
-            <img class="backImg" src="/images/car-3.jpg" alt="">
-            <div class="text">
-                <span class="text-1">Complete miles of journey <br> with one step</span>
-                <span class="text-2">Let's get started</span>
-            </div>
-        </div>
-    </div>
-    <div class="forms">
-        <div class="form-content">
-            <div class="login-form">
-                <div class="title">SIGN IN</div>
-
-                <div th:if="${success}">
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            Swal.fire({
-                                title: 'Registered successfully!',
-                                text: '\n' +
-                                    'We have sent an account activation link to your email, please check your email and activate your account.',
-                                icon: 'success',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    confirmButton: 'custom-confirm-btn'
-                                }
-                            });
-                        });
-                    </script>
+        <div class="cover">
+            <div class="front">
+                <img src="/images/bg_2.jpg" alt="">
+                <div class="text">
+                    <span class="text-1">Every new friend is a <br> new adventure</span>
+                    <span class="text-2">Let's get connected</span>
                 </div>
-
-
-                <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
-
-                    <div th:if="${param.error}" style="color: red">
-                        <span th:text="${param.message}"></span>
-
-                        <div th:if="${param.confirmation != null && param.confirmation.contains('true')}">
-                            <a href="/send-activation" style="color: blue">Click here to active.</a>
-                        </div>
-                    </div>
-
-                    <div class="input-boxes">
-                        <div class="input-box">
-                            <i class="fas fa-envelope"></i>
-                            <label for="your-email"></label><input type="email" name="email" id="your-email" th:value="${param.email}" placeholder="Enter your email" autofocus required>
-                        </div>
-                        <div class="input-box">
-                            <i class="fas fa-lock"></i>
-                            <label for="your_pass"></label><input type="password" name="password" id="your_pass" placeholder="Enter your password" required>
-                        </div>
-                        <div class="text"><a href="/forgot-password">Forgot password?</a></div>
-                        <div class="button input-box">
-                            <input type="submit" value="Login">
-                        </div>
-                        <div class="text sign-up-text">Don't have an account? <label for="flip">Sign up now</label></div>
-                    </div>
-                </form>
             </div>
-            <div class="signup-form">
-                <div class="title">SIGN UP</div>
-                <form method="post" class="register-form" id="register-form" th:action="@{/register}"
-                      th:object="${registerDto}">
+            <div class="back">
+                <img class="backImg" src="/images/car-3.jpg" alt="">
+                <div class="text">
+                    <span class="text-1">Complete miles of journey <br> with one step</span>
+                    <span class="text-2">Let's get started</span>
+                </div>
+            </div>
+        </div>
+        <div class="forms">
+            <div class="form-content">
+                <div class="login-form">
 
-                    <div class="input-boxes">
-                        <div class="input-box">
-                            <i class="fas fa-user"></i>
-                            <label for="name"></label><input type="text" th:field="*{username}" name="username" id="name" placeholder="Enter your name"
-                                                             required >
+                    <div class="logo"
+                         style="margin-bottom: 60px; display: flex; align-items: center; flex-direction: column; margin: 0 auto; margin-bottom: 60px; width: fit-content">
+                        <a href="/" style="text-decoration: none">
+                            <svg width="70" height="71" viewBox="0 0 70 71" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M45.8635 8.03738L41.6688 6.40818L40.0396 10.6029L35.0093 23.5545L29.9939 10.5972L28.3694 6.40059L24.1729 8.02499C17.6454 10.5516 12.2068 15.2811 8.79872 21.3948C5.39061 27.5084 4.22747 34.6213 5.51068 41.5021C6.79388 48.3829 10.4426 54.5984 15.8253 59.0727C21.208 63.5469 27.9857 65.9982 34.9851 66.0022C41.9845 66.0062 48.765 63.5627 54.1528 59.0946C59.5405 54.6265 63.1964 48.4151 64.4875 41.5358C65.7785 34.6565 64.6235 27.5423 61.2224 21.4247C57.8213 15.3072 52.3881 10.5715 45.8635 8.03738ZM33.4334 31.9493L35.0049 31.341L36.5757 31.9511C37.5208 32.3182 38.3079 33.0042 38.8006 33.8904C39.2933 34.7767 39.4607 35.8073 39.2736 36.8038C39.0866 37.8004 38.557 38.7002 37.7765 39.3475C36.8974 40.0765 36.3603 40.9931 36.0937 41.4768C35.7679 42.068 35.4789 42.7141 35.2318 43.3073C35.1553 43.491 35.0774 43.6833 34.9987 43.8812C34.9197 43.6821 34.8414 43.4887 34.7645 43.304C34.5177 42.7106 34.2291 42.0645 33.9037 41.4734C33.6375 40.9897 33.1015 40.0736 32.2241 39.3443C31.4444 38.6962 30.9158 37.7958 30.7299 36.799C30.544 35.8022 30.7125 34.7718 31.2062 33.8861C31.6999 33.0004 32.4878 32.3153 33.4334 31.9493Z"
+                                      fill="url(#paint0_linear_2_2)" stroke="#363F38" stroke-width="9"/>
+                                <defs>
+                                    <linearGradient id="paint0_linear_2_2" x1="35" y1="3" x2="35" y2="65.5"
+                                                    gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#00FFA6"/>
+                                        <stop offset="1" stop-color="#00FF62"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </a>
+                        <a href="/" style="text-decoration: none">
+                            <span style="font-size: 40px; font-weight: 600; color: #00c86f; margin: 0 10px">CAR<span
+                                    style="color: #212121; ">BOOK</span></span>
+                        </a>
+                    </div>
+                    <div class="title">SIGN IN</div>
 
-                        </div>
-<!--                        Lỗi backend-->
-                        <div  th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></div>
-<!--                        Lỗi fontend-->
-                        <div id="usernameError" style="color: red"></div>
+                    <div th:if="${success}">
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                Swal.fire({
+                                    title: 'Registered successfully!',
+                                    text: '\n' +
+                                        'We have sent an account activation link to your email, please check your email and activate your account.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        confirmButton: 'custom-confirm-btn'
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
 
-                        <div class="input-box">
-                            <i class="fas fa-envelope"></i>
-                            <label for="email"></label><input type="email" name="email" id="email" th:field="*{email}" placeholder="Enter your email" required oninput="validateEmail()">
 
-                        </div>
-                        <div  th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
-                        <div id="emailError" style="color: red"></div>
+                    <form method="POST" th:action="@{/login}" class="register-form" id="login-form">
 
-                        <div class="input-box">
-                            <i class="fas fa-phone"></i>
-                            <label for="phoneNumber"></label><input type="text" name="phoneNumber" id="phoneNumber" th:field="*{phoneNumber}"
-                                                                    placeholder="Enter your phone" required  oninput="validatePhone()">
-                        </div>
-                        <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
-                             style="color: red"></div>
-                        <div id="phoneError" style="color: red"></div>
+                        <div th:if="${param.error}" style="color: red">
+                            <span th:text="${param.message}"></span>
 
-                        <div class="input-box">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" name="password" id="pass" th:field="*{password}"
-                                   placeholder="Password" required oninput="validatePassword()">
-                        </div>
-                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></div>
-                        <div id="passwordError" style="color: red"></div>
-
-                        <div class="input-box">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"
-                                   placeholder="Repeat your password" required oninput="validateConfirmPassword()">
-                        </div>
-                        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
-                             style="color: red"></div>
-                        <div id="confirmPasswordError" style="color: red"></div>
-
-                        <div class="role">
-                            <div>
-                                <input type="radio" value=3 id="radioOne" name="role" checked/>
-                                <label for="radioOne" class="radio no-absolute-label">Customer</label>
+                            <div th:if="${param.confirmation != null && param.confirmation.contains('true')}">
+                                <a href="/send-activation" style="color: blue">Click here to active.</a>
                             </div>
-                            <div>
-                                <input type="radio" value="2" id="radioTwo" name="role"/>
-                                <label for="radioTwo" class="radio no-absolute-label">Car Owner</label>
+                        </div>
+
+                        <div class="input-boxes">
+                            <div class="input-box">
+                                <i class="fas fa-envelope"></i>
+                                <label for="your-email"></label><input type="email" name="email" id="your-email"
+                                                                       th:value="${param.email}"
+                                                                       placeholder="Enter your email" autofocus
+                                                                       required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <label for="your_pass"></label><input type="password" name="password" id="your_pass"
+                                                                      placeholder="Enter your password" required>
+                            </div>
+                            <div class="text"><a href="/forgot-password">Forgot password?</a></div>
+                            <div class="button input-box">
+                                <input type="submit" value="Login">
+                            </div>
+                            <div class="text sign-up-text">Don't have an account? <label for="flip">Sign up now</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="signup-form">
+                    <div class="title">SIGN UP</div>
+                    <form method="post" class="register-form" id="register-form" th:action="@{/register}"
+                          th:object="${registerDto}">
+
+                        <div class="input-boxes" style="overflow-y: auto;height: 340px;">
+                            <div class="input-box">
+                                <i class="fas fa-user"></i>
+                                <label for="name"></label><input type="text" th:field="*{username}" name="username"
+                                                                 id="name" placeholder="Enter your name"
+                                                                 required>
+
+                            </div>
+                            <!--                        Lỗi backend-->
+                            <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                 style="color: red"></div>
+                            <!--                        Lỗi fontend-->
+                            <div id="usernameError" style="color: red"></div>
+
+                            <div class="input-box">
+                                <i class="fas fa-envelope"></i>
+                                <label for="email"></label><input type="email" name="email" id="email"
+                                                                  th:field="*{email}" placeholder="Enter your email"
+                                                                  required oninput="validateEmail()">
+
+                            </div>
+                            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+                            <div id="emailError" style="color: red"></div>
+
+                            <div class="input-box">
+                                <i class="fas fa-phone"></i>
+                                <label for="phoneNumber"></label><input type="tel" name="phoneNumber" id="phoneNumber"
+                                                                        th:field="*{phoneNumber}"
+                                                                        placeholder="Enter your phone" required
+                                                                        oninput="validatePhone()">
+                            </div>
+                            <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+                                 style="color: red"></div>
+                            <div id="phoneError" style="color: red"></div>
+
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" name="password" id="pass" th:field="*{password}"
+                                       placeholder="Password" required oninput="validatePassword()">
+                            </div>
+                            <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                                 style="color: red"></div>
+                            <div id="passwordError" style="color: red"></div>
+
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" name="confirmPassword" id="re_pass" th:field="*{confirmPassword}"
+                                       placeholder="Repeat your password" required oninput="validateConfirmPassword()">
+                            </div>
+                            <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                                 style="color: red"></div>
+                            <div id="confirmPasswordError" style="color: red"></div>
+
+                            <div class="role">
+                                <div>
+                                    <input type="radio" value=3 id="radioOne" name="role" checked/>
+                                    <label for="radioOne" class="radio no-absolute-label">Customer</label>
+                                </div>
+                                <div>
+                                    <input type="radio" value="2" id="radioTwo" name="role"/>
+                                    <label for="radioTwo" class="radio no-absolute-label">Car Owner</label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -435,17 +522,19 @@
                                 statements in <a href="/agree-term-service"  target="_blank" class="term-service">Terms of service</a></label>
                         </div>
                         <div th:if="${#fields.hasErrors('agreedTerms')}" th:errors="*{agreedTerms}" style="color: red; font-size: small;"></div>
+
                         <div class="button input-box">
-                            <input type="submit" name="signup" id="signup" class="form-submit-re" value="Register" disabled/>
+                            <input type="submit" name="signup" id="signup" class="form-submit-re" value="Register"
+                                   disabled/>
                         </div>
-                        <div class="text sign-up-text">Already have an account? <label for="flip">Sign in now</label></div>
-                    </div>
-                </form>
+                        <div class="text sign-up-text">Already have an account? <label for="flip">Sign in now</label>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <script th:inline="javascript">
 
