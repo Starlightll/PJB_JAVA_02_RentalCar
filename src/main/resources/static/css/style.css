@@ -232,8 +232,8 @@ button {
 }
 
 button:focus {
-    outline: 1px dotted;
-    outline: 2px solid #01d28e;
+    /*outline: 1px dotted;*/
+    /*outline: 2px solid #01d28e;*/
 }
 
 input,
