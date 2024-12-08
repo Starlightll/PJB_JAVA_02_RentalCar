@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             callback: {
                                 callback: function (input) {
-                                    if(input.value.trim() !== '') {
+                                    if (input.value.trim() !== '') {
                                         //Regex for only numbers
                                         const nationalIdRegex = /^\d+$/;
                                         const isValidFormat = nationalIdRegex.test(input.value);
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const avatarInput = document.getElementById('avatarInput');
         avatarInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
-            if(file.size > MAX_FILE_SIZE) {
+            if (file.size > MAX_FILE_SIZE) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 return;
             }
-            if(!FILE_TYPES.includes(file.type)) {
+            if (!FILE_TYPES.includes(file.type)) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -392,3 +392,201 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 )
+
+document.addEventListener('DOMContentLoaded', function () {
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    const changePasswordValidator = FormValidation.formValidation(changePasswordForm, {
+        fields: {
+            oldPassword: {
+                validators: {
+                    notEmpty: {
+                        message: "The current password is required"
+                    },
+                    callback: {
+                        callback: function () {
+                            const oldPassword = changePasswordForm.querySelector('[name="oldPassword"]');
+                            const oldPasswordHelp = document.getElementById('oldPasswordHelp');
+                            oldPasswordHelp.innerHTML = '';
+                            oldPassword.classList.remove('is-invalid');
+                        }
+                    }
+                }
+            },
+            newPassword: {
+                validators: {
+                    callback: {
+                        callback: function (input) {
+                            const password = input.value;
+                            if (password.trim() === '') {
+                                return {
+                                    valid: false,
+                                    message: "The password is required"
+                                };
+                            } else {
+                                const hasNumber = /\d/.test(password);
+                                const hasUpperCase = /[A-Z]/.test(password);
+                                const hasLowerCase = /[a-z]/.test(password);
+                                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                                let errors = [];
+
+                                let passwordStrength = 0;
+
+                                if (!hasUpperCase) {
+                                    errors.push("Password must contain at least one capital letter");
+                                } else {
+                                    errors.push("<span style='color: green;'>Password must contain at least one capital letter</span>");
+                                    passwordStrength += 1;
+                                }
+                                if (!hasLowerCase) {
+                                    errors.push("Password must contain at least one lowercase letter");
+                                } else {
+                                    errors.push("<span style='color: green;'>Password must contain at least one lowercase letter</span>");
+                                    passwordStrength += 1;
+                                }
+                                if (password.length < 8 || password.length > 30) {
+                                    errors.push("Password must be at 8 - 30 characters long");
+                                } else {
+                                    errors.push("<span style='color: green;'>Password must be at 8 - 30 characters long</span>");
+                                    passwordStrength += 1;
+                                }
+                                if (!hasNumber || !hasSpecialChar) {
+                                    errors.push("Password must contain at least one number and one special character");
+                                } else {
+                                    errors.push("<span style='color: green;'>Password must contain at least one number and one special character</span>");
+                                    passwordStrength += 1;
+                                }
+
+                                const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
+                                let strength = 25 * passwordStrength;
+                                console.log(strength);
+                                if (strength > 0 && strength <= 25) {
+                                    passwordStrengthLevel.style.width = '25%';
+                                    passwordStrengthLevel.style.backgroundColor = '#ff0000';
+                                }
+                                if (strength > 25 && strength <= 50) {
+                                    passwordStrengthLevel.style.width = '50%';
+                                    passwordStrengthLevel.style.backgroundColor = '#ff6f00';
+                                }
+                                if (strength > 50 && strength <= 75) {
+                                    passwordStrengthLevel.style.width = '75%';
+                                    passwordStrengthLevel.style.backgroundColor = '#ffb300';
+                                }
+                                if (strength > 75 && strength <= 100) {
+                                    passwordStrengthLevel.style.width = '100%';
+                                    passwordStrengthLevel.style.backgroundColor = '#00ff89';
+                                }
+
+                                if (passwordStrength < 4) {
+                                    return {
+                                        valid: false,
+                                        message: errors.join('<br>')
+                                    }
+                                }
+                                const newPassword = changePasswordForm.querySelector('[name="newPassword"]').classList.add('is-valid');
+                                return true;
+                            }
+                        },
+                    }
+                }
+            },
+            confirmPassword: {
+                validators: {
+                    callback: {
+                        callback: function (input) {
+                            if (input.value.trim() === '') {
+                                return {
+                                    valid: false,
+                                    message: "The confirm password is required"
+                                };
+                            }
+                            const newPassword = changePasswordForm.querySelector('[name="newPassword"]').value;
+                            if (input.value !== newPassword) {
+                                return {
+                                    valid: false,
+                                    message: "The confirm password does not match"
+                                };
+                            }
+                            const confirmPassword = changePasswordForm.querySelector('[name="confirmPassword"]').classList.add('is-valid');
+                            return true;
+                        }
+                    }
+                }
+            }
+        },
+        plugins: {
+            trigger: new FormValidation.plugins.Trigger,
+            bootstrap5: new FormValidation.plugins.Bootstrap5({
+                eleValidClass: "",
+                rowSelector: ".input"
+            }),
+            autoFocus: new FormValidation.plugins.AutoFocus
+        }
+    });
+
+    changePasswordForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        changePasswordValidator.validate().then(function (e) {
+            if ("Valid" === e) {
+                const data = new FormData(changePasswordForm);
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: !0,
+                    confirmButtonText: 'Yes!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/change-passwordv2`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                            },
+                            body: data
+                        }).then(response => {
+                            if (response.ok) {
+                                response.json().then(data => {
+                                    console.log(data);
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success',
+                                        text: data.message,
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    }).then(() => {
+                                        const newPassword = document.getElementById('inputNewPassword');
+                                        const confirmPassword = document.getElementById('inputConfirmPassword');
+                                        const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
+                                        passwordStrengthLevel.style.width = '0%';
+                                        newPassword.classList.remove('is-valid');
+                                        confirmPassword.classList.remove('is-valid');
+                                    });
+                                });
+                            } else {
+                                response.json().then(data => {
+                                    console.log(data);
+                                    if (data.wrongPass) {
+                                        const oldPassword = changePasswordForm.querySelector('[name="oldPassword"]');
+                                        const oldPasswordHelp = document.getElementById('oldPasswordHelp');
+                                        oldPasswordHelp.innerHTML = '<span style="color: red;">' + data.wrongPass + '</span>';
+                                        oldPassword.classList.add('is-invalid');
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Warning',
+                                            text: 'Change password failed',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+});

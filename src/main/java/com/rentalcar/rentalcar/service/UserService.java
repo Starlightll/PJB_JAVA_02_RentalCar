@@ -9,9 +9,11 @@ import com.rentalcar.rentalcar.entity.UserRole;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.repository.UserRoleRepo;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -241,6 +243,32 @@ public class UserService implements IUserService {
     @Override
     public boolean checkNationalId(String nationalId) {
         return userRepo.existsByNationalId(nationalId);
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(User user, String oldPassword, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(passwordEncoder.matches(oldPassword, user.getPassword())){
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encodedPassword);
+            userRepo.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void logout(HttpSession session) {
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+
+        SecurityContextHolder.clearContext();
+
+        // Clear session
+        session.removeAttribute("user");
+        session.invalidate();
     }
 
     public boolean checkEmail(String email) {
