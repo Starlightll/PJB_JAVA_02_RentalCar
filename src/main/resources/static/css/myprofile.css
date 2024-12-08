@@ -1,0 +1,256 @@
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /*background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");*/
+    background-image: url("/images/car-16.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+
+.forgot-password-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+}
+
+.container-myProfile {
+    position: relative;
+    width: 100%;
+    background: rgb(253 253 253);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    top: 15%;
+    max-width: 1450px;
+    min-height: 1190px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    height: 80px; /* Chiều cao cố định cho mỗi form-group để giữ vị trí */
+    justify-content: space-between; /* Giúp các phần tử cách đều nhau */
+    width: 30%;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #181818;
+}
+
+input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="password"] {
+    width: 50%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+.address-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.address-row select, .address-row input {
+    flex: 1;
+}
+
+.buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/*button:hover {*/
+/*    background-color: #01d28e;*/
+/*}*/
+
+.forgot-password-wrapper .container {
+    /* Chỉ áp dụng các styles này cho trang Forgot Password */
+    background-color: white;
+    padding: 20px;
+}
+
+.forgot-password-wrapper .blur-background {
+    /* Styles cho background bị làm mờ */
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
+    .address-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .tabs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tablink {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 20px;
+    }
+
+    .form-row, .address-row {
+        flex-direction: column;
+    }
+
+    .buttons button {
+        width: 100%;
+    }
+}
+
+#Security {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#Security form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa các thành phần bên trong form */
+    width: 100%;
+}
+
+#Security label {
+    width: 50%; /* Đảm bảo label rộng theo form */
+    text-align: left; /* Đảm bảo text của label nằm bên trái */
+}
+
+#Security input[type="password"] {
+    width: 50%; /* Điều chỉnh chiều rộng của các ô input */
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#Security .buttons {
+    display: flex;
+    justify-content: center;
+    width: 50%;
+    gap: 20px;
+}
+
+#Security .buttons button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#Security .buttons button:hover {
+    background-color: #555;
+}
+
+
+#MyProfile label {
+    width: 50%; /* Điều chỉnh độ rộng của label */
+    text-align: left; /* Đảm bảo text của label nằm bên trái */
+    margin-bottom: 15px; /* Tăng khoảng cách dưới label */
+}
+
+#PersonalInfo input[type="text"],
+#PersonalInfo input[type="email"],
+#PersonalInfo input[type="tel"],
+#PersonalInfo input[type="date"],
+#PersonalInfo select {
+    width: 100%; /* Điều chỉnh chiều rộng của các ô input */
+    padding: 8px;
+    margin-bottom: 20px; /* Tăng khoảng cách dưới các ô input */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#MyProfile .form-group {
+    margin-bottom: 25px; /* Tăng khoảng cách giữa các nhóm form */
+}
+
+#MyProfile .buttons {
+    margin-top: 30px; /* Tăng khoảng cách trên các nút */
+    gap: 20px; /* Tăng khoảng cách giữa các nút */
+}
