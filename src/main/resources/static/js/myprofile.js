@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const hasNumber = /\d/.test(password);
                                 const hasUpperCase = /[A-Z]/.test(password);
                                 const hasLowerCase = /[a-z]/.test(password);
-                                const hasSpecialChar = /[^a-zA-Z0-9]/.test(password);
+                                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
                                 let errors = [];
 
                                 if (!hasUpperCase) {
@@ -449,49 +449,20 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                                 if (!hasNumber || !hasSpecialChar) {
                                     errors.push("Password must contain at least one number and one special character");
-                                } else {
+                                } else if(hasNumber && hasSpecialChar){
                                     errors.push("<span style='color: green;'>Password must contain at least one number and one special character</span>");
                                 }
 
-
                                 const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
-                                let strength = (100 / 8) * calculatePasswordStrength(password);
-                                console.log('Strength: ' + strength);
-                                if (strength <= 0) {
-                                    passwordStrengthLevel.style.width = '0%';
-                                }
-                                if (strength > 0 && strength <= 12.5) {
-                                    passwordStrengthLevel.style.width = '12.5%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ff0000';
-                                }
-                                if (strength > 12.5 && strength <= 25) {
-                                    passwordStrengthLevel.style.width = '25%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ff7f00';
-                                }
-                                if (strength > 25 && strength <= 37.5) {
-                                    passwordStrengthLevel.style.width = '37.5%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ff9d00';
-                                }
-                                if (strength > 37.5 && strength <= 50) {
-                                    passwordStrengthLevel.style.width = '50%';
-                                    passwordStrengthLevel.style.backgroundColor = '#f7ff00';
-                                }
-                                if (strength > 50 && strength <= 62.5) {
-                                    passwordStrengthLevel.style.width = '62.5%';
-                                    passwordStrengthLevel.style.backgroundColor = '#aaff00';
-                                }
-                                if (strength > 62.5 && strength <= 74.5) {
-                                    passwordStrengthLevel.style.width = '74.5%';
-                                    passwordStrengthLevel.style.backgroundColor = '#aaff00';
-                                }
-                                if (strength > 74.5 && strength <= 87) {
-                                    passwordStrengthLevel.style.width = '87%';
-                                    passwordStrengthLevel.style.backgroundColor = '#00ff00';
-                                }
-                                if (strength > 87 && strength <= 100) {
-                                    passwordStrengthLevel.style.width = '100%';
-                                    passwordStrengthLevel.style.backgroundColor = '#00ff00';
-                                }
+                                let strength = calculatePasswordStrength(password);
+
+                                strength = Math.max(0, Math.min(100, strength));
+
+                                const hue = (strength / 100) * 120;
+                                const color = `hsl(${hue}, 100%, 50%)`;
+
+                                passwordStrengthLevel.style.width = `${strength}%`;
+                                passwordStrengthLevel.style.backgroundColor = color;
 
                                 if (!hasNumber || !hasUpperCase || !hasLowerCase || !hasSpecialChar || password.length < 8 || password.length > 32) {
                                     return {
@@ -505,7 +476,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                         message: "Password is weak"
                                     }
                                 }
-                                const newPassword = changePasswordForm.querySelector('[name="newPassword"]').classList.add('is-valid');
+                                const newPassword = changePasswordForm.querySelector('[name="newPassword"]');
+                                newPassword.classList.add('is-valid');
                                 return true;
                             }
                         },
@@ -622,20 +594,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const hasLowerCase = /[a-z]/.test(password);
         const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
         const hasNoRepeatedChar = !/(.)\1{2,}/.test(password);
+
         //Bonus length
         let lengthBonus = 0;
         const refinedPassword = removeExcessRepeats(password);
-        if (refinedPassword.length >= 10) {
-            lengthBonus = 0.5;
+        lengthBonus = refinedPassword.length / 8;
+        if(refinedPassword.length <= 8){
+            lengthBonus = refinedPassword.length / 8;
         }
-        if (refinedPassword.length >= 12) {
-            lengthBonus = 1;
+        if(refinedPassword.length > 8 && refinedPassword.length <= 12){
+            lengthBonus = refinedPassword.length / 6;
         }
-        if (refinedPassword.length >= 14) {
-            lengthBonus = 1.5;
+        if(refinedPassword.length > 12 && refinedPassword.length <= 16){
+            lengthBonus = refinedPassword.length / 4;
         }
-        if (refinedPassword.length >= 16) {
-            lengthBonus = 2;
+        if(refinedPassword.length > 16 && refinedPassword.length <= 20){
+            lengthBonus = refinedPassword.length / 2;
         }
         //Bonus for having at least one of each
         let numberBonus = 0;
@@ -651,22 +625,46 @@ document.addEventListener('DOMContentLoaded', function () {
         if (hasSpecialChar) {
             numberBonus++;
         }
-        let totalBonusOfRegex = numberBonus * 0.5 + (4 - numberBonus) * -0.5;
-        if (hasNoRepeatedChar && password.length >= 4) {
-            bonus += 1;
+        let totalBonusOfRegex = numberBonus * 0.5;
+
+        let maxBonus = -1;
+        // if(!hasNumber || !hasUpperCase || !hasLowerCase || !hasSpecialChar || password.length < 8){
+        //     maxBonus = numberBonus;
+        // }
+
+        //Bonus of consistency
+        let consistencyBonus = 0;
+        if (hasNoRepeatedChar && password.length >= 8) {
+            consistencyBonus += 1;
+        }else if (hasNumber && hasUpperCase && hasLowerCase && hasSpecialChar && isSequential(password) && password.length >= 8) {
+            consistencyBonus += 0.2;
         }
-        if (isSequential(password) && password.length >= 4) {
-            bonus += 1;
+
+        if (!isSequential(password) && password.length >= 8) {
+            consistencyBonus += 1;
+        }else if(hasNumber && hasUpperCase && hasLowerCase && hasSpecialChar && !hasNoRepeatedChar && password.length >= 8){
+            consistencyBonus += 0.2;
         }
+
         bonus += totalBonusOfRegex + lengthBonus;
+
         if(bonus < 0){
             bonus = 0;
         }
-        return bonus;
+        if(bonus > maxBonus && maxBonus !== -1){
+            bonus = maxBonus;
+        }
+        console.log("-----------------------");
+        console.log("Consistency bonus: " + consistencyBonus);
+        console.log("Length bonus: " + lengthBonus);
+        console.log("Total bonus of regex: " + totalBonusOfRegex);
+        console.log("Total bonus: " + bonus);
+        return (bonus/8) * 100;
     }
 
     function removeExcessRepeats(input) {
-        return input.replace(/(.)\1{3,}/g, '$1$1$1');
+
+        return input.replace(/(.)\1{3,}/g, '$1$1$1')
     }
 
     function isSequential(input) {
@@ -676,13 +674,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const third = input.charCodeAt(i + 2);
 
             if (second === first + 1 && third === second + 1) {
-                return false;
+                return true;
             }
 
             if (second === first - 1 && third === second - 1) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 });
