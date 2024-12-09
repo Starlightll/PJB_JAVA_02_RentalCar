@@ -25,8 +25,6 @@
 <body>
 <th:block layout:fragment="content">
     <body>
-
-
     <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_3.jpg');" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -52,9 +50,19 @@
                         <p>At Carbook, we provide convenient and affordable car rental solutions for travelers and locals alike. Whether you're going on a road trip, attending a business meeting, or need a vehicle for any occasion, we've got the right car for you. We offer a wide selection of cars from compact models to luxury vehicles, all well-maintained and ready to take you wherever you need to go.</p>
                         <p>Our goal is to make your car rental experience as smooth and hassle-free as possible. With easy online booking, flexible rental options, and 24/7 customer support, we ensure that you can enjoy your journey without worrying about the details. Discover the freedom to explore your city or beyond with Carbook — your trusted partner in car rentals.</p>
 
-                        <p>
-                            <a href="#" id="searchVehicleBtn" class="btn btn-primary py-3 px-4">Search Vehicle</a>
-                        </p>
+                        <th:block th:if="${user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
+                            <p>
+                                <a href="#" id="searchVehicleBtn" class="btn btn-primary py-3 px-4">Search Vehicle</a>
+                            </p>
+                        </th:block>
+                        <th:block th:if="${user.roles[0].getRoleName().equalsIgnoreCase('Car Owner')}">
+                            <p>
+                                <a href="/car-owner/my-cars" id="seeVehicleBtn" class="btn btn-primary py-3 px-4">See Your Vehicle</a>
+                            </p>
+                        </th:block>
+
+
+
                     </div>
                 </div>
             </div>

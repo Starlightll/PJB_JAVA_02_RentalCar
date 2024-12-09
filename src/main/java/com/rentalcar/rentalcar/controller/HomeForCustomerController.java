@@ -1,6 +1,8 @@
 package com.rentalcar.rentalcar.controller;
 
+import com.rentalcar.rentalcar.dto.FeedbackDto;
 import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.repository.RatingStarRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
 import com.rentalcar.rentalcar.dto.CarDto;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -20,6 +23,9 @@ public class HomeForCustomerController {
 
     @Autowired
     private CarRepository carRepository;
+
+    @Autowired
+    private RatingStarRepository ratingStarRepository;
 
     @GetMapping("/homepage-customer")
     public String customerHomepage(Model model, HttpSession session) {
@@ -39,7 +45,6 @@ public class HomeForCustomerController {
             String right = (String) car[7];
             Double averageRating = (car[8] != null) ? ((Number) car[8]).doubleValue() : 0.0;
 
-
             CarDto carDto = new CarDto();
             carDto.setCarId(carId);
             carDto.setName(name);
@@ -54,13 +59,30 @@ public class HomeForCustomerController {
             carDtoList.add(carDto);
         }
 
+        List<Object[]> topFeedbacks = ratingStarRepository.findTop5RandomFeedbackWithRatingAndContent();
+
+        List<FeedbackDto> feedbackDtoList = new ArrayList<>();
+        for (Object[] feedback : topFeedbacks) {
+            String username = (String) feedback[0];
+            String avatar = (String) feedback[1];
+            String content = (String) feedback[2];
+
+            FeedbackDto feedbackDto = new FeedbackDto();
+            feedbackDto.setUsername(username);
+            feedbackDto.setAvatar(avatar);
+            feedbackDto.setContent(content);
+            feedbackDtoList.add(feedbackDto);
+        }
+
         model.addAttribute("topCars", carDtoList);
+        model.addAttribute("topFeedbacks", feedbackDtoList);
 
         return "HomepageForCustomer";
     }
 
 
-     @GetMapping("/homepage-customer/my-profile")
+
+    @GetMapping("/homepage-customer/my-profile")
     public String myProfileHomepage() {
         return "MyProfile_ChangPassword";
      }
