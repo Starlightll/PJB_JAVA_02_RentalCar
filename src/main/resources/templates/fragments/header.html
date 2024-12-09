@@ -20,26 +20,27 @@
         </button>
 
         <div class="collapse navbar-collapse" id="ftco-nav">
-            <ul class="navbar-nav ml-auto ">
+            <ul class="navbar-nav ml-auto p-0" style="backdrop-filter: blur(40px);border-radius: 15px; margin-right: 10px;">
                 <li class="nav-item active"><a href="/" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-                <li class="nav-item"><a href="car.html" class="nav-link">Cars</a></li>
+                <li class="nav-item"><a href="/cars" class="nav-link">Cars</a></li>
             </ul>
+            <div style="border: solid 2px #00c86f; margin: 10px 0; display: none" class="line-distract"></div>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
                 <th:block th:if="${session.user != null}">
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" role="button"
+                        <a href="#" class="nav-link dropdown-toggle" role="button" style="padding: 20px 0 !important;"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <!-- Hiển thị Avatar -->
-                            <img src="/images/avt.png" class="rounded-circle"
-                                 style="width: 40px; height: 40px; object-fit: cover;" alt="Avatar">
+                            <img th:src="${session.user.getAvatar() != null ? '/' + session.user.getAvatar() : '/images/avt.png'}" class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ffffff; padding: 0" alt="Avatar">
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <div class="dropdown-menu dropdown-menu-right">
                             <div class="menu-title">
                                 <h6 class="dropdown-header">Hello, <span th:text="${session.user.username}"></span></h6>
                             </div>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/my-profile">My Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/my-profile">My Profile</a>
                             <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
                                 <a class="dropdown-item" href="/customer/my-bookings">My Booking</a>
                             </th:block>
@@ -49,10 +50,11 @@
                                 <a class="dropdown-item" href="/homepage-carowner/my-feedback">My Feedback</a>
                                 <a class="dropdown-item" href="/car-owner/revenue">Revenue</a>
                             </th:block>
-                                <a class="dropdown-item" href="/wallet/my-wallet">My Wallet</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/logout" id="logout-link">Logout</a>
+                            <a class="dropdown-item" href="/wallet/my-wallet">My Wallet</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout" id="logout-link">Logout</a>
                         </div>
+
                     </li>
 
                 </th:block>

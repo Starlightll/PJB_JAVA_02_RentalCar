@@ -1,0 +1,127 @@
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /*background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");*/
+    background-image: url("/images/car-16.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+
+.forgot-password-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+}
+
+.container-myProfile {
+    position: relative;
+    width: 100%;
+    background: rgb(253 253 253);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    top: 15%;
+    max-width: 1450px;
+    /*min-height: 1190px;*/
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #181818;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/*button:hover {*/
+/*    background-color: #01d28e;*/
+/*}*/
+
+.forgot-password-wrapper .container {
+    /* Chỉ áp dụng các styles này cho trang Forgot Password */
+    background-color: white;
+    padding: 20px;
+}
+
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
+    .address-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .tabs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tablink {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 20px;
+    }
+
+    .form-row, .address-row {
+        flex-direction: column;
+    }
+
+    .buttons button {
+        width: 100%;
+    }
+}
+
+
