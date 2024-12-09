@@ -408,7 +408,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             const oldPasswordHelp = document.getElementById('oldPasswordHelp');
                             oldPasswordHelp.innerHTML = '';
                             oldPassword.classList.remove('is-invalid');
-                        }
+                            return true;
+                        },
                     }
                 }
             },
@@ -418,6 +419,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         callback: function (input) {
                             const password = input.value;
                             if (password.trim() === '') {
+                                const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
+                                passwordStrengthLevel.style.width = '0%';
                                 return {
                                     valid: false,
                                     message: "The password is required"
@@ -429,60 +432,52 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
                                 let errors = [];
 
-                                let passwordStrength = 0;
-
                                 if (!hasUpperCase) {
                                     errors.push("Password must contain at least one capital letter");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must contain at least one capital letter</span>");
-                                    passwordStrength += 1;
                                 }
                                 if (!hasLowerCase) {
                                     errors.push("Password must contain at least one lowercase letter");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must contain at least one lowercase letter</span>");
-                                    passwordStrength += 1;
                                 }
-                                if (password.length < 8 || password.length > 30) {
+                                if (password.length < 8 || password.length > 32) {
                                     errors.push("Password must be at 8 - 30 characters long");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must be at 8 - 30 characters long</span>");
-                                    passwordStrength += 1;
                                 }
                                 if (!hasNumber || !hasSpecialChar) {
                                     errors.push("Password must contain at least one number and one special character");
-                                } else {
+                                } else if(hasNumber && hasSpecialChar){
                                     errors.push("<span style='color: green;'>Password must contain at least one number and one special character</span>");
-                                    passwordStrength += 1;
                                 }
 
                                 const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
-                                let strength = 25 * passwordStrength;
-                                console.log(strength);
-                                if (strength > 0 && strength <= 25) {
-                                    passwordStrengthLevel.style.width = '25%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ff0000';
-                                }
-                                if (strength > 25 && strength <= 50) {
-                                    passwordStrengthLevel.style.width = '50%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ff6f00';
-                                }
-                                if (strength > 50 && strength <= 75) {
-                                    passwordStrengthLevel.style.width = '75%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ffb300';
-                                }
-                                if (strength > 75 && strength <= 100) {
-                                    passwordStrengthLevel.style.width = '100%';
-                                    passwordStrengthLevel.style.backgroundColor = '#00ff89';
-                                }
+                                let strength = calculatePasswordStrength(password);
 
-                                if (passwordStrength < 4) {
+                                strength = Math.max(0, Math.min(100, strength));
+
+                                const hue = (strength / 100) * 120;
+                                const color = `hsl(${hue}, 100%, 50%)`;
+
+                                passwordStrengthLevel.style.width = `${strength}%`;
+                                passwordStrengthLevel.style.backgroundColor = color;
+
+                                if (!hasNumber || !hasUpperCase || !hasLowerCase || !hasSpecialChar || password.length < 8 || password.length > 32) {
                                     return {
                                         valid: false,
                                         message: errors.join('<br>')
                                     }
                                 }
-                                const newPassword = changePasswordForm.querySelector('[name="newPassword"]').classList.add('is-valid');
+                                if (strength < 37.5) {
+                                    return {
+                                        valid: false,
+                                        message: "Password is weak"
+                                    }
+                                }
+                                const newPassword = changePasswordForm.querySelector('[name="newPassword"]');
+                                newPassword.classList.add('is-valid');
                                 return true;
                             }
                         },
@@ -506,7 +501,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                     message: "The confirm password does not match"
                                 };
                             }
-                            const confirmPassword = changePasswordForm.querySelector('[name="confirmPassword"]').classList.add('is-valid');
+                            const confirmPassword = changePasswordForm.querySelector('[name="confirmPassword"]');
+                            confirmPassword.classList.add('is-valid');
                             return true;
                         }
                     }
@@ -590,4 +586,101 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    function calculatePasswordStrength(password){
+        let bonus = 0;
+        const hasNumber = /\d/.test(password);
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const hasNoRepeatedChar = !/(.)\1{2,}/.test(password);
+
+        //Bonus length
+        let lengthBonus = 0;
+        const refinedPassword = removeExcessRepeats(password);
+        lengthBonus = refinedPassword.length / 8;
+        if(refinedPassword.length <= 8){
+            lengthBonus = refinedPassword.length / 8;
+        }
+        if(refinedPassword.length > 8 && refinedPassword.length <= 12){
+            lengthBonus = refinedPassword.length / 6;
+        }
+        if(refinedPassword.length > 12 && refinedPassword.length <= 16){
+            lengthBonus = refinedPassword.length / 4;
+        }
+        if(refinedPassword.length > 16 && refinedPassword.length <= 20){
+            lengthBonus = refinedPassword.length / 2;
+        }
+        //Bonus for having at least one of each
+        let numberBonus = 0;
+        if (hasNumber) {
+            numberBonus++;
+        }
+        if (hasUpperCase) {
+            numberBonus++;
+        }
+        if (hasLowerCase) {
+            numberBonus++;
+        }
+        if (hasSpecialChar) {
+            numberBonus++;
+        }
+        let totalBonusOfRegex = numberBonus * 0.5;
+
+        let maxBonus = -1;
+        // if(!hasNumber || !hasUpperCase || !hasLowerCase || !hasSpecialChar || password.length < 8){
+        //     maxBonus = numberBonus;
+        // }
+
+        //Bonus of consistency
+        let consistencyBonus = 0;
+        if (hasNoRepeatedChar && password.length >= 8) {
+            consistencyBonus += 1;
+        }else if (hasNumber && hasUpperCase && hasLowerCase && hasSpecialChar && isSequential(password) && password.length >= 8) {
+            consistencyBonus += 0.2;
+        }
+
+        if (!isSequential(password) && password.length >= 8) {
+            consistencyBonus += 1;
+        }else if(hasNumber && hasUpperCase && hasLowerCase && hasSpecialChar && !hasNoRepeatedChar && password.length >= 8){
+            consistencyBonus += 0.2;
+        }
+
+        bonus += totalBonusOfRegex + lengthBonus;
+
+        if(bonus < 0){
+            bonus = 0;
+        }
+        if(bonus > maxBonus && maxBonus !== -1){
+            bonus = maxBonus;
+        }
+        console.log("-----------------------");
+        console.log("Consistency bonus: " + consistencyBonus);
+        console.log("Length bonus: " + lengthBonus);
+        console.log("Total bonus of regex: " + totalBonusOfRegex);
+        console.log("Total bonus: " + bonus);
+        return (bonus/8) * 100;
+    }
+
+    function removeExcessRepeats(input) {
+
+        return input.replace(/(.)\1{3,}/g, '$1$1$1')
+    }
+
+    function isSequential(input) {
+        for (let i = 0; i < input.length - 2; i++) {
+            const first = input.charCodeAt(i);
+            const second = input.charCodeAt(i + 1);
+            const third = input.charCodeAt(i + 2);
+
+            if (second === first + 1 && third === second + 1) {
+                return true;
+            }
+
+            if (second === first - 1 && third === second - 1) {
+                return true;
+            }
+        }
+        return false;
+    }
 });
