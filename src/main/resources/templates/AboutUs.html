@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+      lang="en">
+<head>
+    <title>About Us</title>
+    <style>
+        .google-map-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 10px auto;
+            padding-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+
+        }
+
+        iframe {
+            width: 100%;
+            height: 450px;
+        }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <body>
+
+
+    <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_3.jpg');" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/homepage-customer">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>About us <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-3 bread">About Us</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ftco-section ftco-about">
+        <div class="container">
+            <div class="row no-gutters">
+                <div class="col-md-6 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url(images/about.jpg);">
+                </div>
+                <div class="col-md-6 wrap-about ftco-animate">
+                    <div class="heading-section heading-section-white pl-md-5">
+                        <span class="subheading">About us</span>
+                        <h2 class="mb-4">Welcome to Carbook</h2>
+
+                        <p>At Carbook, we provide convenient and affordable car rental solutions for travelers and locals alike. Whether you're going on a road trip, attending a business meeting, or need a vehicle for any occasion, we've got the right car for you. We offer a wide selection of cars from compact models to luxury vehicles, all well-maintained and ready to take you wherever you need to go.</p>
+                        <p>Our goal is to make your car rental experience as smooth and hassle-free as possible. With easy online booking, flexible rental options, and 24/7 customer support, we ensure that you can enjoy your journey without worrying about the details. Discover the freedom to explore your city or beyond with Carbook — your trusted partner in car rentals.</p>
+
+                        <p>
+                            <a href="#" id="searchVehicleBtn" class="btn btn-primary py-3 px-4">Search Vehicle</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Google Map Section -->
+    <section class="google-map-section">
+        <div class="container" style="margin-top: 30px;">
+            <div class="row justify-content-center ">
+                <div class="col-md-7 text-center heading-section ftco-animate">
+                    <h2 class="mb-3">Our Location</h2>
+                    <p>Find us at our office, and feel free to drop by for any car rental inquiries!</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <!-- Google Map with styling for border-radius, width, and centering -->
+                    <div class="google-map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7098.8224862088155!2d105.52644188251918!3d21.015013968840332!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abc60e7d3f19%3A0x2be9d7d0b5abcbf4!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBGUFQgSMOgIE7hu5lp!5e0!3m2!1svi!2s!4v1733773139614!5m2!1svi!2s"
+                                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+    <script>
+        // Get tomorrow's date in YYYY-MM-DD format
+        function getTomorrowDate() {
+            let today = new Date();
+            let tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1); // Add one day to today
+            let day = tomorrow.getDate().toString().padStart(2, '0');
+            let month = (tomorrow.getMonth() + 1).toString().padStart(2, '0');
+            let year = tomorrow.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
+
+        // URL-encode the time string
+        function encodeTime(time) {
+            return encodeURIComponent(time);
+        }
+
+        // Set the URL for the button click
+        const tomorrowDate = getTomorrowDate();
+        const pickTime = encodeTime("00:00"); // 12:00 AM
+        const dropTime = encodeTime("12:00"); // 12:00 PM
+
+        document.getElementById("searchVehicleBtn").href = `http://localhost:8080/searchCar?name=&pickDate=${tomorrowDate}&pickTime=${pickTime}&dropDate=${tomorrowDate}&dropTime=${dropTime}`;
+    </script>
+
+    </body>
+</th:block>
+</body>
+</html>

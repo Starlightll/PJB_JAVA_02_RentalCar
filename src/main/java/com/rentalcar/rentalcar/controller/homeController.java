@@ -57,6 +57,11 @@ public class homeController {
         return "redirect:/";
     }
 
+    @GetMapping("/about-us")
+    public String aboutUs(Model model) {
+        return "AboutUs";
+    }
+
 
 
 }
