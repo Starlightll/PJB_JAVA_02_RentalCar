@@ -281,6 +281,38 @@
 
 
     </body>
+    <script>
+        //search with locaiton
+        // Get tomorrow's date
+        function getTomorrowDate() {
+            let today = new Date();
+            let tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1); // Add one day to today
+            let day = tomorrow.getDate().toString().padStart(2, '0');
+            let month = (tomorrow.getMonth() + 1).toString().padStart(2, '0');
+            let year = tomorrow.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
+
+        // URL-encode the time string
+        function encodeTime(time) {
+            return encodeURIComponent(time);
+        }
+
+        // Set the URLs dynamically
+        document.addEventListener("DOMContentLoaded", function () {
+            const tomorrowDate = getTomorrowDate();
+            const pickTime = encodeTime("00:00");
+            const dropTime = encodeTime("12:00");
+
+            document.getElementById("hanoi").href = `http://localhost:8080/searchCar?name=Hà+Nội&pickDate=${tomorrowDate}&pickTime=${pickTime}&dropDate=${tomorrowDate}&dropTime=${dropTime}`;
+            document.getElementById("hochiminh").href = `http://localhost:8080/searchCar?name=Hồ+Chí+Minh&pickDate=${tomorrowDate}&pickTime=${pickTime}&dropDate=${tomorrowDate}&dropTime=${dropTime}`;
+            document.getElementById("nhatrang").href = `http://localhost:8080/searchCar?name=Nha+Trang&pickDate=${tomorrowDate}&pickTime=${pickTime}&dropDate=${tomorrowDate}&dropTime=${dropTime}`;
+            document.getElementById("quangninh").href = `http://localhost:8080/searchCar?name=Quảng+Ninh&pickDate=${tomorrowDate}&pickTime=${pickTime}&dropDate=${tomorrowDate}&dropTime=${dropTime}`;
+            document.getElementById("danang").href = `http://localhost:8080/searchCar?name=Đà+Nẵng&pickDate=${tomorrowDate}&pickTime=${pickTime}&dropDate=${tomorrowDate}&dropTime=${dropTime}`;
+            document.getElementById("dalat").href = `http://localhost:8080/searchCar?name=Lâm+Đồng&pickDate=${tomorrowDate}&pickTime=${pickTime}&dropDate=${tomorrowDate}&dropTime=${dropTime}`;
+        });
+    </script>
 </th:block>
 </body>
 </html>
