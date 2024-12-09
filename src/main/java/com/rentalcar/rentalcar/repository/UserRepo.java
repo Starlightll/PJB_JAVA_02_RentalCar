@@ -62,5 +62,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.status != 'DELETED'")
     List<User> getAllUsers();
 
-
+    //Select first User from Users where username = :username order by userId asc
+    @Query(value = "SELECT TOP 1 * FROM Users WHERE username = :username ORDER BY userId ASC", nativeQuery = true)
+    User getUserByUsername(@Param("username") String username);
 }

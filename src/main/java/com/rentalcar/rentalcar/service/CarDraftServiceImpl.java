@@ -45,7 +45,7 @@ public class CarDraftServiceImpl implements CarDraftService {
         CarDraft carDraft = getDraftByLastModified(userId);
         if (carDraft != null) {
             String folderName = String.format("%s", carDraft.getDraftId()+"");
-            Path draftFolderPath = Paths.get("uploads/CarOwner/"+userId+"/Draft/", folderName);
+            Path draftFolderPath = Paths.get("uploads/User/"+userId+"/Draft/", folderName);
             fileStorageService.deleteFolder(draftFolderPath);
         }
         carDraftRepository.deleteDraftByUserId(userId);
@@ -58,7 +58,7 @@ public class CarDraftServiceImpl implements CarDraftService {
 
         // Create folder path
         String folderName = String.format("%s", draftId);
-        Path draftFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", folderName);
+        Path draftFolderPath = Paths.get("uploads/User/"+user.getId()+"/Draft/", folderName);
 
         try {
 
@@ -149,7 +149,7 @@ public class CarDraftServiceImpl implements CarDraftService {
 
         // Create folder path
         String folderName = String.format("%s", draftId);
-        Path draftFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", folderName);
+        Path draftFolderPath = Paths.get("uploads/User/"+user.getId()+"/Draft/", folderName);
 
         try {
             // Store each file if it exists
@@ -424,8 +424,8 @@ public class CarDraftServiceImpl implements CarDraftService {
 
     private void setCarDocumentFiles(Car car, CarDraft carDraft, User user){
         //Car files
-        Path sourceFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
-        Path targetFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", car.getCarId()+"");
+        Path sourceFolder = Paths.get("uploads/User/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
+        Path targetFolder = Paths.get("uploads/User/"+user.getId()+"/Car/", car.getCarId()+"");
         if(fileStorageService.copyFiles(sourceFolder, targetFolder)){
             car.setRegistration(carDraft.getRegistration().replace(sourceFolder.toString(), targetFolder.toString()));
             car.setCertificate(carDraft.getCertificate().replace(sourceFolder.toString(), targetFolder.toString()));

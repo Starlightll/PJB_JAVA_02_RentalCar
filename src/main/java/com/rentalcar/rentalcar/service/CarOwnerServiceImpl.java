@@ -60,7 +60,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
             }
             // Create folder path
             String folderName = String.format("%s", car.getCarId()+"");
-            Path carFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", folderName);
+            Path carFolderPath = Paths.get("uploads/User/"+user.getId()+"/Car/", folderName);
             Path imageFilePath;
             // Store each file if it exists
             //Front image
@@ -335,8 +335,8 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     private void setCarFiles(Car car, CarDraft carDraft, User user){
         //Car files
-        Path sourceFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
-        Path targetFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", car.getCarId()+"");
+        Path sourceFolder = Paths.get("uploads/User/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
+        Path targetFolder = Paths.get("uploads/User/"+user.getId()+"/Car/", car.getCarId()+"");
         if(fileStorageService.moveFiles(sourceFolder, targetFolder)){
             car.setFrontImage(carDraft.getFrontImage().replace(sourceFolder.toString(), targetFolder.toString()));
             car.setBackImage(carDraft.getBackImage().replace(sourceFolder.toString(), targetFolder.toString()));
