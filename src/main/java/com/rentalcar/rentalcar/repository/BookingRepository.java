@@ -62,5 +62,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             nativeQuery = true)
     List<Object[]> findByEndDateBetween(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
+    @Query("SELECT SUM(b.totalPrice) FROM Booking b JOIN b.bookingCars bc JOIN bc.car c WHERE c.user.id = :userId AND b.endDate >= :startDate AND b.endDate < :endDate")
+    Double calculateRevenueByCarOwnerAndDate(@Param("userId") Long userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query(value = "SELECT COUNT(b.bookingId) " +
+            "FROM RentalCar.dbo.Booking b " +
+            "WHERE YEAR(b.startDate) = :year AND MONTH(b.startDate) = :month",
+            nativeQuery = true)
+    int countBookingsInMonth(@Param("year") int year, @Param("month") int month);
+
 
 }
