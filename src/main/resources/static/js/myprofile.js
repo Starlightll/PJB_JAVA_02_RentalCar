@@ -418,7 +418,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     callback: {
                         callback: function (input) {
                             const password = input.value;
-                            let passwordStrength = 0;
                             if (password.trim() === '') {
                                 const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
                                 passwordStrengthLevel.style.width = '0%';
@@ -430,70 +429,39 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const hasNumber = /\d/.test(password);
                                 const hasUpperCase = /[A-Z]/.test(password);
                                 const hasLowerCase = /[a-z]/.test(password);
-                                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-                                const hasLength12 = password.length >= 12;
-                                const hasLength16 = password.length >= 16;
-                                const hasLength20 = password.length >= 20;
-                                const hasLength24 = password.length >= 24;
-                                const hasNoRepeatedChar = !/(.)\1{2,}/.test(password);
-                                const hasNoSequentialChar = !/123|abc|qwe|asd|zxc/.test(password.toLowerCase());
-
+                                const hasSpecialChar = /[^a-zA-Z0-9]/.test(password);
                                 let errors = [];
 
                                 if (!hasUpperCase) {
                                     errors.push("Password must contain at least one capital letter");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must contain at least one capital letter</span>");
-                                    passwordStrength += 1;
                                 }
                                 if (!hasLowerCase) {
                                     errors.push("Password must contain at least one lowercase letter");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must contain at least one lowercase letter</span>");
-                                    passwordStrength += 1;
                                 }
                                 if (password.length < 8 || password.length > 32) {
-                                    // console.log(password.length);
                                     errors.push("Password must be at 8 - 30 characters long");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must be at 8 - 30 characters long</span>");
-                                    passwordStrength += 1;
                                 }
                                 if (!hasNumber || !hasSpecialChar) {
                                     errors.push("Password must contain at least one number and one special character");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must contain at least one number and one special character</span>");
-                                    passwordStrength += 1;
-                                }
-                                if(hasNumber && hasUpperCase && hasLowerCase && hasSpecialChar && password.length >= 8) {
-                                    if (hasNoRepeatedChar) {
-                                        passwordStrength += 1;
-                                    }
-                                    if (hasNoSequentialChar) {
-                                        passwordStrength += 1;
-                                    }
-                                    if (hasLength12) {
-                                        passwordStrength += 0.5;
-                                    }
-                                    if (hasLength16) {
-                                        passwordStrength += 0.5;
-                                    }
-                                    if (hasLength20) {
-                                        passwordStrength += 0.5;
-                                    }
-                                    if (hasLength24) {
-                                        passwordStrength += 0.5;
-                                    }
                                 }
 
+
                                 const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
-                                let strength = (100/8) * passwordStrength;
-                                console.log(strength);
+                                let strength = (100 / 8) * calculatePasswordStrength(password);
+                                console.log('Strength: ' + strength);
                                 if (strength <= 0) {
                                     passwordStrengthLevel.style.width = '0%';
                                 }
                                 if (strength > 0 && strength <= 12.5) {
-                                    passwordStrengthLevel.style.width = '15%';
+                                    passwordStrengthLevel.style.width = '12.5%';
                                     passwordStrengthLevel.style.backgroundColor = '#ff0000';
                                 }
                                 if (strength > 12.5 && strength <= 25) {
@@ -501,22 +469,26 @@ document.addEventListener('DOMContentLoaded', function () {
                                     passwordStrengthLevel.style.backgroundColor = '#ff7f00';
                                 }
                                 if (strength > 25 && strength <= 37.5) {
-                                    passwordStrengthLevel.style.width = '40%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ffbf00';
+                                    passwordStrengthLevel.style.width = '37.5%';
+                                    passwordStrengthLevel.style.backgroundColor = '#ff9d00';
                                 }
                                 if (strength > 37.5 && strength <= 50) {
-                                    passwordStrengthLevel.style.width = '55%';
-                                    passwordStrengthLevel.style.backgroundColor = '#aaff00';
+                                    passwordStrengthLevel.style.width = '50%';
+                                    passwordStrengthLevel.style.backgroundColor = '#f7ff00';
                                 }
                                 if (strength > 50 && strength <= 62.5) {
-                                    passwordStrengthLevel.style.width = '65%';
+                                    passwordStrengthLevel.style.width = '62.5%';
                                     passwordStrengthLevel.style.backgroundColor = '#aaff00';
                                 }
-                                if (strength > 75 && strength <= 87.5) {
-                                    passwordStrengthLevel.style.width = '80%';
+                                if (strength > 62.5 && strength <= 74.5) {
+                                    passwordStrengthLevel.style.width = '74.5%';
+                                    passwordStrengthLevel.style.backgroundColor = '#aaff00';
+                                }
+                                if (strength > 74.5 && strength <= 87) {
+                                    passwordStrengthLevel.style.width = '87%';
                                     passwordStrengthLevel.style.backgroundColor = '#00ff00';
                                 }
-                                if (strength > 87.5 && strength <= 100) {
+                                if (strength > 87 && strength <= 100) {
                                     passwordStrengthLevel.style.width = '100%';
                                     passwordStrengthLevel.style.backgroundColor = '#00ff00';
                                 }
@@ -525,6 +497,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                     return {
                                         valid: false,
                                         message: errors.join('<br>')
+                                    }
+                                }
+                                if (strength < 37.5) {
+                                    return {
+                                        valid: false,
+                                        message: "Password is weak"
                                     }
                                 }
                                 const newPassword = changePasswordForm.querySelector('[name="newPassword"]').classList.add('is-valid');
@@ -636,4 +614,75 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    function calculatePasswordStrength(password){
+        let bonus = 0;
+        const hasNumber = /\d/.test(password);
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const hasNoRepeatedChar = !/(.)\1{2,}/.test(password);
+        //Bonus length
+        let lengthBonus = 0;
+        const refinedPassword = removeExcessRepeats(password);
+        if (refinedPassword.length >= 10) {
+            lengthBonus = 0.5;
+        }
+        if (refinedPassword.length >= 12) {
+            lengthBonus = 1;
+        }
+        if (refinedPassword.length >= 14) {
+            lengthBonus = 1.5;
+        }
+        if (refinedPassword.length >= 16) {
+            lengthBonus = 2;
+        }
+        //Bonus for having at least one of each
+        let numberBonus = 0;
+        if (hasNumber) {
+            numberBonus++;
+        }
+        if (hasUpperCase) {
+            numberBonus++;
+        }
+        if (hasLowerCase) {
+            numberBonus++;
+        }
+        if (hasSpecialChar) {
+            numberBonus++;
+        }
+        let totalBonusOfRegex = numberBonus * 0.5 + (4 - numberBonus) * -0.5;
+        if (hasNoRepeatedChar && password.length >= 4) {
+            bonus += 1;
+        }
+        if (isSequential(password) && password.length >= 4) {
+            bonus += 1;
+        }
+        bonus += totalBonusOfRegex + lengthBonus;
+        if(bonus < 0){
+            bonus = 0;
+        }
+        return bonus;
+    }
+
+    function removeExcessRepeats(input) {
+        return input.replace(/(.)\1{3,}/g, '$1$1$1');
+    }
+
+    function isSequential(input) {
+        for (let i = 0; i < input.length - 2; i++) {
+            const first = input.charCodeAt(i);
+            const second = input.charCodeAt(i + 1);
+            const third = input.charCodeAt(i + 2);
+
+            if (second === first + 1 && third === second + 1) {
+                return false;
+            }
+
+            if (second === first - 1 && third === second - 1) {
+                return false;
+            }
+        }
+        return true;
+    }
 });
