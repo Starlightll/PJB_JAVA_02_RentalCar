@@ -408,7 +408,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             const oldPasswordHelp = document.getElementById('oldPasswordHelp');
                             oldPasswordHelp.innerHTML = '';
                             oldPassword.classList.remove('is-invalid');
-                        }
+                            return true;
+                        },
                     }
                 }
             },
@@ -417,7 +418,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     callback: {
                         callback: function (input) {
                             const password = input.value;
+                            let passwordStrength = 0;
                             if (password.trim() === '') {
+                                const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
+                                passwordStrengthLevel.style.width = '0%';
                                 return {
                                     valid: false,
                                     message: "The password is required"
@@ -427,9 +431,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const hasUpperCase = /[A-Z]/.test(password);
                                 const hasLowerCase = /[a-z]/.test(password);
                                 const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-                                let errors = [];
+                                const hasLength12 = password.length >= 12;
+                                const hasLength16 = password.length >= 16;
+                                const hasLength20 = password.length >= 20;
+                                const hasLength24 = password.length >= 24;
+                                const hasNoRepeatedChar = !/(.)\1{2,}/.test(password);
+                                const hasNoSequentialChar = !/123|abc|qwe|asd|zxc/.test(password.toLowerCase());
 
-                                let passwordStrength = 0;
+                                let errors = [];
 
                                 if (!hasUpperCase) {
                                     errors.push("Password must contain at least one capital letter");
@@ -443,7 +452,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                     errors.push("<span style='color: green;'>Password must contain at least one lowercase letter</span>");
                                     passwordStrength += 1;
                                 }
-                                if (password.length < 8 || password.length > 30) {
+                                if (password.length < 8 || password.length > 32) {
+                                    // console.log(password.length);
                                     errors.push("Password must be at 8 - 30 characters long");
                                 } else {
                                     errors.push("<span style='color: green;'>Password must be at 8 - 30 characters long</span>");
@@ -455,28 +465,63 @@ document.addEventListener('DOMContentLoaded', function () {
                                     errors.push("<span style='color: green;'>Password must contain at least one number and one special character</span>");
                                     passwordStrength += 1;
                                 }
+                                if(hasNumber && hasUpperCase && hasLowerCase && hasSpecialChar && password.length >= 8) {
+                                    if (hasNoRepeatedChar) {
+                                        passwordStrength += 1;
+                                    }
+                                    if (hasNoSequentialChar) {
+                                        passwordStrength += 1;
+                                    }
+                                    if (hasLength12) {
+                                        passwordStrength += 0.5;
+                                    }
+                                    if (hasLength16) {
+                                        passwordStrength += 0.5;
+                                    }
+                                    if (hasLength20) {
+                                        passwordStrength += 0.5;
+                                    }
+                                    if (hasLength24) {
+                                        passwordStrength += 0.5;
+                                    }
+                                }
 
                                 const passwordStrengthLevel = document.getElementById('passwordStrengthLevel');
-                                let strength = 25 * passwordStrength;
+                                let strength = (100/8) * passwordStrength;
                                 console.log(strength);
-                                if (strength > 0 && strength <= 25) {
-                                    passwordStrengthLevel.style.width = '25%';
+                                if (strength <= 0) {
+                                    passwordStrengthLevel.style.width = '0%';
+                                }
+                                if (strength > 0 && strength <= 12.5) {
+                                    passwordStrengthLevel.style.width = '15%';
                                     passwordStrengthLevel.style.backgroundColor = '#ff0000';
                                 }
-                                if (strength > 25 && strength <= 50) {
-                                    passwordStrengthLevel.style.width = '50%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ff6f00';
+                                if (strength > 12.5 && strength <= 25) {
+                                    passwordStrengthLevel.style.width = '25%';
+                                    passwordStrengthLevel.style.backgroundColor = '#ff7f00';
                                 }
-                                if (strength > 50 && strength <= 75) {
-                                    passwordStrengthLevel.style.width = '75%';
-                                    passwordStrengthLevel.style.backgroundColor = '#ffb300';
+                                if (strength > 25 && strength <= 37.5) {
+                                    passwordStrengthLevel.style.width = '40%';
+                                    passwordStrengthLevel.style.backgroundColor = '#ffbf00';
                                 }
-                                if (strength > 75 && strength <= 100) {
+                                if (strength > 37.5 && strength <= 50) {
+                                    passwordStrengthLevel.style.width = '55%';
+                                    passwordStrengthLevel.style.backgroundColor = '#aaff00';
+                                }
+                                if (strength > 50 && strength <= 62.5) {
+                                    passwordStrengthLevel.style.width = '65%';
+                                    passwordStrengthLevel.style.backgroundColor = '#aaff00';
+                                }
+                                if (strength > 75 && strength <= 87.5) {
+                                    passwordStrengthLevel.style.width = '80%';
+                                    passwordStrengthLevel.style.backgroundColor = '#00ff00';
+                                }
+                                if (strength > 87.5 && strength <= 100) {
                                     passwordStrengthLevel.style.width = '100%';
-                                    passwordStrengthLevel.style.backgroundColor = '#00ff89';
+                                    passwordStrengthLevel.style.backgroundColor = '#00ff00';
                                 }
 
-                                if (passwordStrength < 4) {
+                                if (!hasNumber || !hasUpperCase || !hasLowerCase || !hasSpecialChar || password.length < 8 || password.length > 32) {
                                     return {
                                         valid: false,
                                         message: errors.join('<br>')
@@ -506,7 +551,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                     message: "The confirm password does not match"
                                 };
                             }
-                            const confirmPassword = changePasswordForm.querySelector('[name="confirmPassword"]').classList.add('is-valid');
+                            const confirmPassword = changePasswordForm.querySelector('[name="confirmPassword"]');
+                            confirmPassword.classList.add('is-valid');
                             return true;
                         }
                     }
