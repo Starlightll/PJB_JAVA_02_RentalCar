@@ -35,12 +35,12 @@
                             <img th:src="${session.user.getAvatar() != null ? '/' + session.user.getAvatar() : '/images/avt.png'}" class="rounded-circle"
                                  style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ffffff; padding: 0" alt="Avatar">
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <div class="dropdown-menu dropdown-menu-right">
                             <div class="menu-title">
                                 <h6 class="dropdown-header">Hello, <span th:text="${session.user.username}"></span></h6>
                             </div>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/my-profile">My Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/my-profile">My Profile</a>
                             <th:block th:if="${session.user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
                                 <a class="dropdown-item" href="/customer/my-bookings">My Booking</a>
                             </th:block>
@@ -49,10 +49,11 @@
                                 <a class="dropdown-item" href="/car-owner/my-bookings">My Cars' Bookings</a>
                                 <a class="dropdown-item" href="/homepage-carowner/my-feedback">My Feedback</a>
                             </th:block>
-                                <a class="dropdown-item" href="/wallet/my-wallet">My Wallet</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/logout" id="logout-link">Logout</a>
+                            <a class="dropdown-item" href="/wallet/my-wallet">My Wallet</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout" id="logout-link">Logout</a>
                         </div>
+
                     </li>
 
                 </th:block>
