@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -84,6 +85,37 @@ public class MyProfileController {
             }
             result.getFieldErrors().forEach(error -> response.put(error.getField(), error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response); // Trả về lỗi kèm thông báo lỗi
+        }
+    }
+
+    @PostMapping("/change-passwordv2")
+    public ResponseEntity<Map<String, Object>> changePasswordV2(
+            @RequestParam(value = "oldPassword") String oldPassword,
+            @RequestParam(value = "newPassword") String newPassword,
+            HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = (User) session.getAttribute("user");
+            if (user == null) {
+                response.put("error", "User not found");
+                return ResponseEntity.badRequest().body(response);
+            }
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(oldPassword);
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                response.put("wrongPass", "Old password is incorrect");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if(userService.changePassword(user, oldPassword, newPassword)){
+                //Log out user after changing password
+                userService.logout(session);
+                response.put("success", "Password changed");
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (UserException ex) {
+            response.put("error", ex.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
@@ -183,7 +215,7 @@ public class MyProfileController {
                 } else if (drivingLicense.getSize() > 200 * 1024 * 1024) { // 200MB = 200 * 1024 * 1024 bytes
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "File size exceeds 200MB. Please upload a smaller file.");
                 } else {
-                    String uploadDir = "uploads/DriveLicense/" + user.getId() + "_" + user.getUsername() + "/"; // Specify your upload directory
+                    String uploadDir = "uploads/User/" + user.getId(); // Specify your upload directory
                     Path filePath = Paths.get(uploadDir, fileName);
                     Files.write(filePath, drivingLicense.getBytes());
 

@@ -50,6 +50,10 @@ public class RegisterUserServiceImpl implements RegisterUserService {
             throw new UserException("Email already exists");
         }
 
+        if(userRepository.getUserByUsername(userDto.getUsername()) != null) {
+            throw new UserException("Username already exists");
+        }
+
         if (!userDto.getPassword().equalsIgnoreCase(userDto.getConfirmPassword())) {
             throw new UserException("Passwords do not match");
         }
@@ -84,7 +88,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         userRoleRepo.save(userRole);
 
         //Set avatar
-        String folderName = String.format("%s", user.getId() + "_" + user.getUsername());
+        String folderName = String.format("%s", user.getId());
         Path userFolderPath = Paths.get("uploads/User/"+ folderName);
         try {
             //Random default avatar
