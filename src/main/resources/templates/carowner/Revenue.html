@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <title>Revenue</title>
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="/webjars/toastr/2.1.0/toastr.css">
+  <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
+  <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
+  <script src="/webjars/chartjs/4.4.3/dist/chart.umd.js"></script>
+
+  <style>
+    .hero-wrap {
+      height: 200px !important;
+      position: relative;
+      background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      height: 200px !important;
+    }
+
+    .slider-text {
+      height: 200px !important;
+    }
+
+    .filter-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .filter-card label {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .filter-card select, .filter-card button {
+      width: 100%;
+      margin-top: 5px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .filter-card button {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+    }
+
+    .filter-card button:hover {
+      background-color: #0056b3;
+    }
+
+    .chart-container {
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+    }
+
+    .summary-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .summary-card h4 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .summary-card span {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .summary-card small {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.85em;
+      color: #555;
+    }
+
+    #myChart {
+      height: 360px !important;
+    }
+
+    #myPieChart {
+      height: 360px !important;
+    }
+
+  </style>
+</head>
+<body>
+<th:block layout:fragment="content">
+
+  <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+        <div class="col-md-9 ftco-animate">
+          <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+            <span>Revenue <i class="ion-ios-arrow-forward"></i></span></p>
+          <h1 class="mb-3 bread">My Revenue!</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container mt-4">
+    <!-- Filter and Chart Section -->
+    <div class="row">
+      <!-- Filter Section -->
+      <div class="col-md-3">
+        <div class="filter-card">
+          <form id="chartForm" method="get" action="/car-owner/revenue">
+            <label for="year">Year</label>
+            <select id="year" name="year" required >
+              <option value="2024" th:selected="${year == 2024}">2024</option>
+              <option value="2025" th:selected="${year == 2025}">2025</option>
+            </select>
+            <label for="month">Month</label>
+            <select id="month" name="month" required >
+              <option value="all" th:selected="${month == 'all'}">All Months</option>
+              <option value="1" th:selected="${month == '1'}">January</option>
+              <option value="2" th:selected="${month == '2'}">February</option>
+              <option value="3" th:selected="${month == '3'}">March</option>
+              <option value="4" th:selected="${month == '4'}">April</option>
+              <option value="5" th:selected="${month == '5'}">May</option>
+              <option value="6" th:selected="${month == '6'}">June</option>
+              <option value="7" th:selected="${month == '7'}">July</option>
+              <option value="8" th:selected="${month == '8'}">August</option>
+              <option value="9" th:selected="${month == '9'}">September</option>
+              <option value="10" th:selected="${month == '10'}">October</option>
+              <option value="11" th:selected="${month == '11'}">November</option>
+              <option value="12" th:selected="${month == '12'}">December</option>
+            </select>
+            <label for="week">Week</label>
+            <select id="week" name="week" th:disabled="${month == 'all'}" >
+              <option value="all" th:selected="${week == 'all'}">All Weeks</option>
+              <option value="1" th:selected="${week == '1'}">Week 1</option>
+              <option value="2" th:selected="${week == '2'}">Week 2</option>
+              <option value="3" th:selected="${week == '3'}">Week 3</option>
+              <option value="4" th:selected="${week == '4'}">Week 4</option>
+            </select>
+          </form>
+        </div>
+      </div>
+
+      <!-- Chart Section -->
+      <div class="col-md-9">
+        <div class="chart-container" style="height: 410px;">
+          <p style="margin: 0; padding: 0; color: black; font-weight: 550;">Revenue Overview</p>
+          <canvas id="myChart" style="height: 410px; max-width: 100%;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Cards Section -->
+    <div class="row mt-3">
+      <div class="col-md-3">
+        <div class="summary-card">
+          <h4>Total Revenue this Year</h4>
+          <span th:text="${totalRevenueYear}">0</span> VND
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="summary-card">
+          <h4>Total Revenue this Month</h4>
+          <span th:text="${totalRevenueMonth}">0</span> VND
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="summary-card">
+          <h4>Revenue Comparison with Last Month</h4>
+          <span th:class="${revenueComparison < 100 ? 'text-danger' : 'text-success'}" th:text="${revenueComparison}">0</span>%
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="summary-card">
+          <h4>Total Bookings This Month</h4>
+          <span th:text="${monthlyBookings}">0</span>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Transaction Details</h4>
+          </div>
+          <div class="card-body table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+              <thead class="thead-dark text-center">
+              <tr>
+                <th>No</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Car Name</th>
+                <th>Customer</th>
+              </tr>
+              </thead>
+              <tbody class="text-center">
+              <tr th:each="transaction, iterStat : ${transactions}">
+                <td th:text="${iterStat.index + 1}"></td>
+                <td th:text="${(transaction.transactionType == 'Withdraw'
+                            or transaction.transactionType == 'Pay deposit'
+                            or  transaction.transactionType == 'Offset final payment'
+                            or transaction.transactionType == 'Pay final payment'
+                            or transaction.transactionType == 'Return remaining deposit'
+                            or transaction.transactionType == 'Refund deposit'
+                            or transaction.transactionType == 'Pay for driver rental'
+                            or transaction.transactionType == 'Receive salary'? '-' : '+')
+                            + transaction.getAmount() + ' VND'}"
+                    th:class="${transaction.transactionType == 'Withdraw' or transaction.transactionType == 'Pay deposit' or transaction.transactionType == 'Offset final payment'  or transaction.transactionType == 'Pay final payment'
+                            or transaction.transactionType == 'Return remaining deposit' or transaction.transactionType == 'Refund deposit' or transaction.transactionType == 'Receive salary'
+                             or transaction.transactionType == 'Pay for driver rental' ? 'text-danger' : 'text-success'}">
+                </td>
+                <td th:text="${transaction.getTransactionType()}"></td>
+                <td th:text="${#temporals.format(transaction.getTransactionDate(), 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${transaction.getBooking() != null ? transaction.getBooking().getCar().getCarName() : 'N/A'}"></td>
+                <td th:text="${transaction.getBooking() != null ? transaction.getBooking().getUser().getUsername() : 'N/A'}"></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Biểu đồ Pie và Breakdown -->
+    <div class="row mt-4 mb-5">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="chart-container" style="padding: 20px; display: flex; align-items: center; gap: 20px;">
+
+            <!-- Biểu đồ Pie -->
+            <div style="flex: 1; max-width: 60%;">
+              <p style="margin: 0; padding: 0; color: black; font-weight: 550;">Revenue Distribution</p>
+              <canvas id="myPieChart" style="height: 360px; max-width: 100%;"></canvas>
+            </div>
+
+            <!-- Breakdown -->
+            <div style="flex: 1; max-width: 40%; padding-left: 20px; border-left: 1px solid #ddd;">
+              <p style="margin: 0 0 10px; font-weight: 500; color: #333;">Breakdown:</p>
+              <ul id="revenue-breakdown" style="list-style: none; padding-left: 0;">
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:inline="javascript">
+      let myChart = null;
+
+      function updateRevenueData() {
+        const year = document.getElementById('year').value;
+        const month = document.getElementById('month').value;
+        const week = document.getElementById('week').value;
+
+        $.ajax({
+          url: '/car-owner/revenue',
+          method: 'GET',
+          data: { year: year, month: month, week: week },
+          success: function(response) {
+            if (myChart) {
+              myChart.destroy();
+            }
+
+            const labels = response.labels;
+            const data = response.data;
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Revenue',
+                  data: data,
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+
+            document.querySelector('.summary-card span').textContent = response.totalRevenueMonth + ' VND';
+            document.getElementById('totalRevenueYear').textContent = response.totalRevenueYear + ' VND';
+            document.getElementById('totalRevenueMonth').textContent = response.totalRevenueMonth + ' VND';
+            document.getElementById('revenueComparison').textContent = response.revenueComparison + '%';
+            document.getElementById('monthlyBookings').textContent = response.monthlyBookings;
+          },
+          error: function(xhr, status, error) {
+            console.error('Error fetching data: ', error);
+          }
+        });
+      }
+
+      document.getElementById('year').addEventListener('change', updateRevenueData);
+      document.getElementById('month').addEventListener('change', updateRevenueData);
+      document.getElementById('week').addEventListener('change', updateRevenueData);
+
+      document.getElementById('month').addEventListener('change', function () {
+        const weekSelect = document.getElementById('week');
+        if (this.value === 'all') {
+          weekSelect.disabled = true;
+          weekSelect.value = 'all';
+        } else {
+          weekSelect.disabled = false;
+          weekSelect.value = 'all';
+        }
+      });
+
+      $(document).ready(function() {
+        let myChart;
+
+        function updateChart() {
+          $('#myChart').css('height', '410px');
+
+          $.ajax({
+            url: '/car-owner/revenue',
+            method: 'GET',
+            data: {
+              year: $('#year').val(),
+              month: $('#month').val(),
+              week: $('#week').val()
+            },
+            success: function(response) {
+              console.log(response);
+
+              if (myChart) {
+                myChart.destroy();
+              }
+
+              const labels = response.labels;
+              const data = response.data;
+
+              console.log('Labels:', labels);
+              console.log('Data:', data);
+
+              const ctx = document.getElementById('myChart').getContext('2d');
+
+              myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: 'Revenue',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true
+                    }
+                  }
+                }
+              });
+
+              $('#total-revenue-year').text(response.totalRevenueYear);
+              $('#total-revenue-month').text(response.totalRevenueMonth);
+              $('#revenue-comparison').text(response.revenueComparison);
+              $('#total-bookings').text(response.totalBookings);
+            },
+            error: function(xhr, status, error) {
+              // Log any errors for debugging
+              console.error("Error fetching data: ", error);
+              alert("An error occurred while fetching data.");
+            }
+          });
+        }
+
+        $('#year, #month, #week').change(function() {
+          updateChart();
+        });
+
+        updateChart();
+      });
+
+    </script>
+
+    <script th:inline="javascript">
+      const pieData = /*[[${pieData}]]*/ [];
+      const pieLabels = /*[[${pieLabels}]]*/ [];
+      const pieColors = [
+        '#007bff', // Blue
+        '#ffc107', // Yellow
+        '#28a745', // Green
+        '#dc3545', // Red
+        '#6f42c1', // Purple
+        '#17a2b8'  // Cyan
+      ];
+
+      // Create the pie chart
+      const pieCtx = document.getElementById('myPieChart').getContext('2d');
+      const myPieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+          labels: pieLabels,
+          datasets: [{
+            data: pieData,
+            backgroundColor: pieColors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(tooltipItem) {
+                  return `${tooltipItem.label}: ${tooltipItem.raw} VND`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      function updateBreakdownData() {
+        const breakdownContainer = document.getElementById('revenue-breakdown');
+        breakdownContainer.innerHTML = '';
+
+        const totalRevenue = pieData.reduce((acc, value) => acc + value, 0);
+
+        pieData.forEach((data, index) => {
+          const breakdownItem = document.createElement('li');
+          const colorBox = document.createElement('span');
+
+          colorBox.style.display = 'inline-block';
+          colorBox.style.width = '10px';
+          colorBox.style.height = '10px';
+          colorBox.style.backgroundColor = pieColors[index];
+          colorBox.style.marginRight = '10px';
+
+          const percentage = ((data / totalRevenue) * 100).toFixed(2);
+
+          breakdownItem.textContent = `${pieLabels[index]}: ${data} VND (${percentage}%)`;
+          breakdownItem.style.padding = '5px';
+          breakdownItem.style.marginBottom = '5px';
+          breakdownItem.style.borderRadius = '4px';
+          breakdownItem.style.color = 'black';
+
+          breakdownItem.prepend(colorBox);
+
+          breakdownContainer.appendChild(breakdownItem);
+        });
+      }
+
+      updateBreakdownData();
+
+    </script>
+
+  </div>
+
+</th:block>
+</body>
+</html>

@@ -2,10 +2,7 @@ package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentalcar.rentalcar.dto.CarDto;
-import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarDraft;
-import com.rentalcar.rentalcar.entity.CarStatus;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
@@ -30,6 +27,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -62,6 +61,8 @@ public class CarOwnerController {
     private RevenueService revenueService ;
     @Autowired
     private BookingRepository bookingRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -694,6 +695,23 @@ public class CarOwnerController {
             return ResponseEntity.ok(responseData);
         }
 
+        LocalDateTime startOfThisMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfThisMonth = YearMonth.now().atEndOfMonth().atTime(23, 59, 59);
+
+        Map<String, BigDecimal> pieChartData = new HashMap<>();
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTransactionDateBetween(userId, startOfThisMonth, endOfThisMonth);
+
+        for (Transaction transaction : transactions) {
+            if (!pieChartData.containsKey(transaction.getTransactionType())) {
+                pieChartData.put(transaction.getTransactionType(), transaction.getAmount());
+            } else {
+                BigDecimal currentAmount = pieChartData.get(transaction.getTransactionType());
+                pieChartData.put(transaction.getTransactionType(), currentAmount.add(transaction.getAmount()));
+            }
+        }
+
+
+        model.addAttribute("transactions", transactions);
         model.addAttribute("monthlyBookings", monthlyBookings);
         model.addAttribute("totalRevenueYear", formatRevenue(totalRevenueYear));
         model.addAttribute("totalRevenueMonth", formatRevenue(totalRevenueMonth));
@@ -703,6 +721,8 @@ public class CarOwnerController {
         model.addAttribute("week", week != null ? week : "all");
         model.addAttribute("labels", revenueData.keySet());
         model.addAttribute("data", revenueData.values());
+        model.addAttribute("pieLabels", pieChartData.keySet());
+        model.addAttribute("pieData", pieChartData.values());
 
         return "carowner/revenue";
     }
