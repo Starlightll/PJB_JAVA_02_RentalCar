@@ -1,9 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => {
-    loadDriverList();
-    loadUpdateDriverList()
-});
-
-
 
 function loadDriverList() {
     $.ajax({
