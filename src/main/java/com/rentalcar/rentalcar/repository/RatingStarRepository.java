@@ -107,4 +107,18 @@ public interface RatingStarRepository extends JpaRepository<Feedback, Long> {
     @Query("SELECT f FROM Feedback f WHERE f.booking.bookingId = :bookingId")
     List<Feedback> getByBookingid(@Param("bookingId") Long bookingId);
 
+    @Query(value = "SELECT TOP 5 " +
+            "u.username, " +
+            "u.avatar, " +
+            "f.content, " +
+            "b.startDate AS bookingStartDate " +
+            "FROM Feedback f " +
+            "JOIN Booking b ON f.bookingId = b.bookingId " +
+            "JOIN Users u ON b.userId = u.userId " +
+            "WHERE f.rating = 5 " +
+            "AND ISNULL(LTRIM(RTRIM(f.content)), '') <> '' " +
+            "ORDER BY NEWID()",
+            nativeQuery = true)
+    List<Object[]> findTop5RandomFeedbackWithRatingAndContent();
+
 }

@@ -207,6 +207,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                                 if (bookedStatusOptional.isPresent()) {
                                     CarStatus bookedStatus = bookedStatusOptional.get();
                                     car.setCarStatus(bookedStatus);
+                                    car.setLastModified(new Date());
                                     carRepository.save(car);
                                 } else {
                                     System.out.println("Car status 'Pending confirm' not found.");
@@ -255,6 +256,7 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                             if (bookedStatusOptional.isPresent()) {
                                 CarStatus bookedStatus = bookedStatusOptional.get();
                                 car.setCarStatus(bookedStatus);
+                                car.setLastModified(new Date());
                                 carRepository.save(car);
                             } else {
                                 System.out.println("Car status 'Pending confirm' not found.");
@@ -511,7 +513,6 @@ public class ReturnCarServiceImpl implements ReturnCarService {
                         booking.setBookingStatus(completedStatus);
                         booking.setLastModified(new Date());
                         rentalCarRepository.save(booking);
-
 
                         emailService.sendPaymentConfirmation(car_owner, booking, bookingDto.getCarId(), bookingDto.getCarname(), remainingMoney);
                         return 1;
