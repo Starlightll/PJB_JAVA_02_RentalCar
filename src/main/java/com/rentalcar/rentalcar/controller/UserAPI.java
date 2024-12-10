@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * REST controller for managing user-related operations.
+ */
 @RestController
 @RequestMapping("/api/users")
 public class UserAPI {

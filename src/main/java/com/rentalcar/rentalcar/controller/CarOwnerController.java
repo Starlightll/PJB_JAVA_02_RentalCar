@@ -36,6 +36,11 @@ import java.util.regex.Pattern;
 
 import static com.rentalcar.rentalcar.common.Regex.*;
 
+/**
+ * The CarOwnerController class provides endpoints for managing car-related operations
+ * for car owners. This includes functionalities to add, edit, update, delete cars,
+ * and handle various car status changes and requests.
+ */
 @Controller
 @RequestMapping("/car-owner")
 public class CarOwnerController {
@@ -123,15 +128,15 @@ public class CarOwnerController {
 
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
-        } else {
-            model.addAttribute("carList", cars);
-            model.addAttribute("carDTOList", carDTOs);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", carPage.getTotalPages());
-            model.addAttribute("sortBy", sortBy);
-            model.addAttribute("order", order);
-            model.addAttribute("size", size);
         }
+        model.addAttribute("carList", cars);
+        model.addAttribute("carDTOList", carDTOs);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", carPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("order", order);
+        model.addAttribute("size", size);
+
         return "/carowner/MyCars";
     }
 
@@ -337,7 +342,7 @@ public class CarOwnerController {
         if (!Objects.equals(car.getUser().getId(), user.getId()) || !statusIds.contains(car.getCarStatus().getStatusId())) {
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
-        if(licensePlate == null || model == null || color == null || productionYear == null || seatNo == null || transmissionType == null || fuelType == null) {
+        if (licensePlate == null || model == null || color == null || productionYear == null || seatNo == null || transmissionType == null || fuelType == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data");
         }
 
@@ -353,12 +358,11 @@ public class CarOwnerController {
 
         MultipartFile[] files = {registration, certificate, insurance};
         //Create CarDraft and save here - I will do it tomorrow
-        if(carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId)){
+        if (carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId)) {
             return ResponseEntity.ok("Request sent successfully");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Can't send request");
     }
-
 
 
     @GetMapping("/delete-car")
@@ -394,8 +398,8 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-cancel")
     public String confirmCancel(@RequestParam("carId") Long carId,
-                                 HttpSession session,
-                                 Model model) {
+                                HttpSession session,
+                                Model model) {
         boolean isConfirmDeposit = rentalCarService.confirmCancelBookingCar(carId, session);
         if (isConfirmDeposit) {
             model.addAttribute("message_" + carId, "Confirm booking cancellation and refund deposit to customer!");
@@ -483,12 +487,12 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-cancel-mycar")
     public String confirmCancelmyCar(@RequestParam("carId") Long carId,
-                                      @RequestParam(defaultValue = "1") int page,
-                                      @RequestParam(defaultValue = "5") int size,
-                                      @RequestParam(defaultValue = "lastModified") String sortBy,
-                                      @RequestParam(defaultValue = "desc") String order,
-                                      HttpSession session,
-                                      Model model) {
+                                     @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "5") int size,
+                                     @RequestParam(defaultValue = "lastModified") String sortBy,
+                                     @RequestParam(defaultValue = "desc") String order,
+                                     HttpSession session,
+                                     Model model) {
         boolean isConfirmDeposit = rentalCarService.confirmCancelBookingCar(carId, session);
         if (isConfirmDeposit) {
             model.addAttribute("message_" + carId, "Confirm booking cancellation and refund deposit to customer!");
@@ -559,7 +563,7 @@ public class CarOwnerController {
 
     @GetMapping("/check-return")
     public ResponseEntity<?> checkReturn(@RequestParam("carId") Long carId,
-                                            HttpSession session) {
+                                         HttpSession session) {
         Map<String, String> response = rentalCarService.checkReturnCar(carId, session);
 
         if ("success".equals(response.get("status"))) {
@@ -571,8 +575,8 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-return-car")
     public ResponseEntity<Map<String, Object>> confirmReturnCar(@RequestParam("carId") Long carId,
-                                                                 HttpSession session,
-                                                                 Model model) {
+                                                                HttpSession session,
+                                                                Model model) {
         User user = (User) session.getAttribute("user");
 
         Map<String, Object> response = new HashMap<>();
@@ -586,9 +590,9 @@ public class CarOwnerController {
         // Handle response based on caseReturn value
         if (casePayment == 1) {
             return generateResponse(response, "success1", "Booking has been successfully completed.");
-        } else if(casePayment == -1) {
+        } else if (casePayment == -1) {
             return generateResponse(response, "success2", "Not enough money! Please top up your wallet and try again!!!");
-        } else if(casePayment == 2) {
+        } else if (casePayment == 2) {
             return generateResponse(response, "success3", "Waiting customer payment!");
         }
 
@@ -639,7 +643,7 @@ public class CarOwnerController {
 
     @GetMapping("/check-payment")
     public ResponseEntity<?> checkPayment(@RequestParam("carId") Long carId,
-                                         HttpSession session) {
+                                          HttpSession session) {
         Map<String, String> response = rentalCarService.checkReturnCar(carId, session);
 
         if ("success".equals(response.get("status"))) {
