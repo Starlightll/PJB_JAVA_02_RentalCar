@@ -212,7 +212,7 @@
             <h4>Transaction Details</h4>
           </div>
           <div class="card-body table-responsive">
-            <table class="table table-bordered table-hover table-striped">
+            <table class="table table-bordered table-hover table-striped" id="transactionsTable">
               <thead class="thead-dark text-center">
               <tr>
                 <th>No</th>
@@ -223,12 +223,12 @@
                 <th>Customer</th>
               </tr>
               </thead>
-              <tbody class="text-center">
+              <tbody id="transactionsTableBody" class="text-center">
               <tr th:each="transaction, iterStat : ${transactions}">
                 <td th:text="${iterStat.index + 1}"></td>
                 <td th:text="${(transaction.transactionType == 'Withdraw'
                             or transaction.transactionType == 'Pay deposit'
-                            or  transaction.transactionType == 'Offset final payment'
+                            or transaction.transactionType == 'Offset final payment'
                             or transaction.transactionType == 'Pay final payment'
                             or transaction.transactionType == 'Return remaining deposit'
                             or transaction.transactionType == 'Refund deposit'
@@ -246,6 +246,9 @@
               </tr>
               </tbody>
             </table>
+            <!-- Pagination Controls -->
+            <div id="paginationControls" class="text-center mt-3">
+            </div>
           </div>
         </div>
       </div>
@@ -490,6 +493,91 @@
       }
 
       updateBreakdownData();
+
+      document.addEventListener("DOMContentLoaded", function() {
+        const rowsPerPage = 5; // Number of rows per page
+        const table = document.getElementById('transactionsTable');
+        const tbody = document.getElementById('transactionsTableBody');
+        const rows = Array.from(tbody.getElementsByTagName('tr'));
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        const paginationControls = document.getElementById('paginationControls');
+
+        let currentPage = 1;
+
+        // Function to display rows based on current page
+        function displayRows(page) {
+          const start = (page - 1) * rowsPerPage;
+          const end = start + rowsPerPage;
+
+          // Hide all rows
+          rows.forEach((row, index) => {
+            row.style.display = index >= start && index < end ? '' : 'none';
+          });
+        }
+
+        // Function to create pagination controls
+        function createPaginationControls() {
+          paginationControls.innerHTML = ''; // Clear existing pagination controls
+
+          const prevButton = document.createElement('button');
+          prevButton.textContent = 'Previous';
+          prevButton.classList.add('btn', 'btn-primary', 'mr-2');
+          prevButton.disabled = currentPage === 1;
+          prevButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+              currentPage--;
+              displayRows(currentPage);
+              updatePaginationControls();
+            }
+          });
+
+          const nextButton = document.createElement('button');
+          nextButton.textContent = 'Next';
+          nextButton.classList.add('btn', 'btn-primary', 'ml-2');
+          nextButton.disabled = currentPage === totalPages;
+          nextButton.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+              currentPage++;
+              displayRows(currentPage);
+              updatePaginationControls();
+            }
+          });
+
+          // Page Info
+          const pageInfo = document.createElement('span');
+          pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+          paginationControls.appendChild(prevButton);
+          paginationControls.appendChild(pageInfo);
+          paginationControls.appendChild(nextButton);
+
+          // "Go to page" selector
+          const pageSelect = document.createElement('select');
+          pageSelect.classList.add('ml-3', 'form-control', 'w-auto');
+          for (let i = 1; i <= totalPages; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            pageSelect.appendChild(option);
+          }
+          pageSelect.value = currentPage; // Set the current page as selected
+          pageSelect.addEventListener('change', function() {
+            currentPage = parseInt(pageSelect.value);
+            displayRows(currentPage);
+            updatePaginationControls();
+          });
+
+          paginationControls.appendChild(pageSelect);
+        }
+
+        // Function to update pagination controls
+        function updatePaginationControls() {
+          createPaginationControls();
+        }
+
+        // Initial display and pagination setup
+        displayRows(currentPage);
+        createPaginationControls();
+      });
 
     </script>
 
