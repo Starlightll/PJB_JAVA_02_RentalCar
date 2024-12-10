@@ -29,6 +29,11 @@ import java.util.Map;
 import java.util.Objects;
 
 
+/**
+ * The MyProfileController class provides endpoints to manage user profile related actions
+ * including password change, avatar update, and profile information update.
+ */
+
 @Controller
 public class MyProfileController {
 

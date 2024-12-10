@@ -31,6 +31,11 @@ import java.util.regex.Pattern;
 
 import static com.rentalcar.rentalcar.common.Regex.*;
 
+/**
+ * The CarOwnerController class provides endpoints for managing car-related operations
+ * for car owners. This includes functionalities to add, edit, update, delete cars,
+ * and handle various car status changes and requests.
+ */
 @Controller
 @RequestMapping("/car-owner")
 public class CarOwnerController {
