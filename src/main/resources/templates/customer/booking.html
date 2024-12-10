@@ -1265,7 +1265,7 @@
         window.onload = function () {
             calculateOnPageLoad();
         };
-        
+
         function calculateOnPageLoad() {
             const pickupLocation = document.getElementById('pickupLocation').innerText;
             const pickupDate = document.getElementById('pickupDate').innerText;
@@ -1740,6 +1740,33 @@
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
         window.addEventListener('pageshow', toggleDriverInfoFields);
 
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDriverList();
+        });
+
+    </script>
+
+    <script>
+        $('#province, #district , #ward').select2({
+            placeholder: "Select a province",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+        $('#district').select2({
+            placeholder: "Select a district",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+        $('#ward').select2({
+            placeholder: "Select a ward",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
     </script>
     <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/customer/book-car.js"></script>

@@ -478,6 +478,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             CarStatus notAvailableStatus = carStatusRepository.findById(14)
                     .orElseThrow(() -> new RuntimeException("Status not found"));
             car.setCarStatus(notAvailableStatus);
+            car.setLastModified(new Date());
             carRepository.save(car);
 
         } catch (Exception e) {
