@@ -61,7 +61,7 @@
                               </div>
                               <div class="form-group col-4">
                                   <label for="time_pick" class="label" style="color: #1a91da;">Pick-up time</label>
-                                  <input name="pickTime" type="time" class="form-control" id="time_picks" th:value="${pickTime}">
+                                  <input name="pickTime" style="width: 110%" type="time" class="form-control" id="time_picks" th:value="${pickTime}">
                                   <small id="pick-time-error" style="color: red;"></small>
                                   <div th:if="${sendPickTime != null}">
                                       <p class="validate-msg" th:text="${sendPickTime}" style="color: red;"></p>
@@ -81,7 +81,7 @@
                               </div>
                               <div class="form-group col-4">
                                   <label for="time_drop" class="label" style="color: #1a91da;">Drop-off time</label>
-                                  <input name="dropTime" type="time" class="form-control" id="time_drops" th:value="${dropTime}">
+                                  <input name="dropTime" style="width: 110%" type="time" class="form-control" id="time_drops" th:value="${dropTime}">
                                   <small id="drop-time-error" style="color: red;"></small>
                                   <div th:if="${sendDropTime != null}">
                                       <p class="validate-msg" th:text="${sendDropTime}" style="color: red;"></p>

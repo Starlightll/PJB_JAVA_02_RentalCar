@@ -33,6 +33,7 @@ public class FeedbackDto {
     private LocalDateTime startDate;
     private LocalDateTime actualEndDate;
     private String username;
+    private String avatar;
 
     public FeedbackDto(String content, LocalDateTime date, Integer rating, Long bookingId,
                        LocalDateTime actualEndDate, LocalDateTime startDate,
