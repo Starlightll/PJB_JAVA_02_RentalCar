@@ -2,7 +2,8 @@ body {
     font-family: "Poppins", Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");
+    /*background-image: url("/images/2024-Renault-Embleme-Concept-005-2000.jpg");*/
+    background-image: url("/images/car-3.jpg");
     background-size: cover;
     background-position: center;
 }
@@ -13,13 +14,12 @@ body {
     justify-content: center;
     align-items: center;
     padding: 50px;
-
 }
 
 .container-myProfile {
     position: relative;
-    width: 80%;
-    background: rgba(255, 255, 255, 0.9);
+    width: 100%;
+    background: rgb(253 253 253);
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 40px;
@@ -27,7 +27,7 @@ body {
     display: flex;
     flex-direction: column;
     top: 15%;
-
+    max-width: 1450px;
 }
 
 h2 {
@@ -109,9 +109,9 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #01d28e;
-}
+/*button:hover {*/
+/*    background-color: #01d28e;*/
+/*}*/
 
 .forgot-password-wrapper .container {
     /* Chỉ áp dụng các styles này cho trang Forgot Password */
@@ -128,7 +128,7 @@ button:hover {
 @media (max-width: 768px) {
     .container {
         width: 100%;
-        padding: 10px;
+        /*padding: 10px;*/
     }
 
     .form-row {

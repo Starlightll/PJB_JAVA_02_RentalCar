@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+<body>
 <nav class="layout-navbar navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme container-fluid"
      id="layout-navbar" th:fragment="navbar">
     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0   d-xl-none ">
@@ -410,7 +415,7 @@
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <img src="/images/avt.png" alt="" class="w-px-40 h-auto rounded-circle">
+                        <img th:src="${session.user.getAvatar() == null ? '/images/avt.png' : '/' + session.user.getAvatar()}" alt="" class="w-px-40 h-auto rounded-circle">
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -419,7 +424,7 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <img src="/images/avt.png" alt=""
+                                        <img th:src="${session.user.getAvatar() == null ? '/images/avt.png' : '/' + session.user.getAvatar()}" alt=""
                                              class="w-px-40 h-auto rounded-circle">
                                     </div>
                                 </div>
@@ -505,3 +510,6 @@
 
 
 </nav>
+
+</body>
+</html>

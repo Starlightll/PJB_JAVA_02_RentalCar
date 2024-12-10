@@ -9,9 +9,11 @@ import com.rentalcar.rentalcar.entity.UserRole;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.repository.UserRoleRepo;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +56,7 @@ public class UserService implements IUserService {
             if (drivingLicenseFile != null && !drivingLicenseFile.isEmpty()) {
                 try {
                     // Define the directory where the file will be saved
-                    String uploadDir = "uploads/DriveLicense/" + users.getId()+ "_" + users.getUsername() +"/"; // Update as needed
+                    String uploadDir = "uploads/User/" + users.getId(); // Update as needed
                     Files.createDirectories(Paths.get(uploadDir)); // Ensure directory exists
 
                     String fileName = drivingLicenseFile.getOriginalFilename();
@@ -110,7 +112,7 @@ public class UserService implements IUserService {
         //Set default role
         setUserRole(user, role);
         //Set default avatar
-        String folderName = String.format("%s", user.getId() + "_" + user.getUsername());
+        String folderName = String.format("%s", user.getId());
         Path userFolderPath = Paths.get("uploads/User/"+ folderName);
         try {
             //Random default avatar
@@ -164,9 +166,8 @@ public class UserService implements IUserService {
             updateUser.setStreet(user.getStreet());
             updateUser.setStatus(user.getStatus());
             if(drivingLicense != null && !drivingLicense.isEmpty()){
-                //Set default avatar
-                String folderName = String.format("%s", updateUser.getId()+ "_" + updateUser.getUsername() +"/");
-                Path userFolderPath = Paths.get("uploads/DriveLicense/"+ folderName);
+                String folderName = String.format("%s", updateUser.getId());
+                Path userFolderPath = Paths.get("uploads/User/"+ folderName);
                 try {
                     String storagePath = fileStorageService.storeFile(drivingLicense, userFolderPath, "drivingLicense.png");
                     updateUser.setDrivingLicense(storagePath);
@@ -181,6 +182,93 @@ public class UserService implements IUserService {
             throw new UserException("Something went wrong");
         }
 
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(User user, MultipartFile drivingLicenseFile) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            updateUser.setFullName(user.getFullName());
+            updateUser.setDob(user.getDob());
+            updateUser.setNationalId(user.getNationalId());
+            updateUser.setCity(user.getCity());
+            updateUser.setDistrict(user.getDistrict());
+            updateUser.setWard(user.getWard());
+            updateUser.setStreet(user.getStreet());
+            if(drivingLicenseFile != null && !drivingLicenseFile.isEmpty()){
+                String folderName = String.format("%s", updateUser.getId());
+                Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(drivingLicenseFile, userFolderPath, "drivingLicense.png");
+                    updateUser.setDrivingLicense(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            userRepo.save(updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void setUserAvatar(User user, MultipartFile avatarFile) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            if(avatarFile != null && !avatarFile.isEmpty()){
+                //Set default avatar
+                String folderName = String.format("%s", updateUser.getId());
+                Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(avatarFile, userFolderPath, "avatar.png");
+                    updateUser.setAvatar(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            userRepo.save(updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
+    }
+
+    @Override
+    public boolean checkNationalId(String nationalId) {
+        return userRepo.existsByNationalId(nationalId);
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(User user, String oldPassword, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(passwordEncoder.matches(oldPassword, user.getPassword())){
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encodedPassword);
+            userRepo.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void logout(HttpSession session) {
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+
+        SecurityContextHolder.clearContext();
+
+        // Clear session
+        session.removeAttribute("user");
+        session.invalidate();
     }
 
     public boolean checkEmail(String email) {

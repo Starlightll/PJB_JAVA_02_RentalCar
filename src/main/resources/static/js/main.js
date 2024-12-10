@@ -69,7 +69,8 @@
 		$('.carousel-car').owlCarousel({
 			center: true,
 			loop: true,
-			autoplay: true,
+			// autoplay: true,
+			mouseDrag: !0,
 			items:1,
 			margin: 30,
 			stagePadding: 0,

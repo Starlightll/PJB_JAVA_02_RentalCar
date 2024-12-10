@@ -232,8 +232,8 @@ button {
 }
 
 button:focus {
-    outline: 1px dotted;
-    outline: 2px solid #01d28e;
+    /*outline: 1px dotted;*/
+    /*outline: 2px solid #01d28e;*/
 }
 
 input,
@@ -11569,6 +11569,9 @@ h1, h2, h3, h4, h5,
         background: #000000 !important;
         position: relative;
         top: 0;
+    }
+    .line-distract{
+        display: block !important;
     }
 }
 
