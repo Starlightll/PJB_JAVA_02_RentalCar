@@ -270,6 +270,14 @@
             <version>4.5.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>chartjs</artifactId>
+            <version>4.4.3</version>
+        </dependency>
+
+
+
     </dependencies>
 
 
