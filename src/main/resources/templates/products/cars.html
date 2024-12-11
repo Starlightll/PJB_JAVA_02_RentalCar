@@ -28,6 +28,8 @@
     <link href="/cars/css/all.css" rel="stylesheet" media="screen">
     <!-- Main Custom Css -->
     <link href="/cars/css/custom.css" rel="stylesheet" media="screen">
+    <!-- Flatpickr   -->
+    <link rel="stylesheet" href="/webjars/flatpickr/4.6.13/dist/themes/material_green.css">
     <style>
         .hero-wrap {
             height: 200px !important;
@@ -47,6 +49,51 @@
 
         .slider-text {
             height: 200px !important;
+        }
+
+        p {
+            font-size: 0.8rem;
+        }
+
+        .basePrice {
+            font-size: 1.4rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .pickup-location-fleet {
+            margin: 0 auto;
+            background-color: #1b1b1b;
+        }
+
+        .pickup-location-fleet h5 {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            /*text-align: center;*/
+            margin: 0;
+            padding: 10px 0;
+        }
+
+        .location-search {
+            width: 100%;
+            padding: 10px 20px;
+            background: var(--white-color);
+            color: var(--text-color);
+            font-weight: 500;
+            border: none;
+            /*border-radius: 30px;*/
+            box-shadow: none;
+        }
+
+        .fleets-search-box {
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .fleets-sidebar-list {
+            border-bottom: 1px solid var(--accent-color);
         }
     </style>
 </head>
@@ -69,9 +116,51 @@
     </section>
 
     <!-- Page Fleets Start -->
-    <div class="page-fleets">
+    <div class="container page-fleets">
         <div class="container" style="max-width: 1300px;">
             <div class="row">
+                <div class="col-12" style="display: none">
+                    <div class="pickup-location-fleet fleets-sidebar wow fadeInUp mb-3 row"
+                         style="visibility: visible; animation-name: fadeInUp;">
+                        <div class="col-12 col-md-6">
+                            <h5>Pickup location</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h5>Pickup date</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h5>Pickup time</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h5>Drop time</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-lg-3">
                     <!-- Fleets Sidebar Start -->
                     <div class="fleets-sidebar wow fadeInUp">
@@ -79,14 +168,33 @@
                         <div class="fleets-search-box">
                             <form id="fleetsForm" action="#" method="POST">
                                 <div class="form-group">
-                                    <input type="text" name="search" class="form-control"  id="search" placeholder="Search..." required>
-                                    <button type="submit" class="section-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    <input type="text" name="search" class="form-control" id="search"
+                                           placeholder="Pickup location" required>
+                                    <button type="submit" class="section-icon-btn"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button>
                                 </div>
+                                <div>
+                                    <p class="mb-0">Rent trip</p>
+                                    <div class="form-group">
+                                        <input type="text" name="search" id="pickupDateTime" class="form-control flatpickr-validate"
+                                               placeholder="Days for rent" required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="mb-0">Drop date time</p>
+                                    <div class="form-group">
+                                        <input type="text" name="search" id="dropDateTime" class="form-control flatpickr-validate"
+                                               placeholder="Pickup date time" required>
+                                    </div>
+                                </div>
+                                <small id="pickupInfoHelp" style="color: rgb(255,150,0); gap: 3px"></small>
+                                <!-- Fleets Sidebar List End -->
                             </form>
                         </div>
                         <!-- Fleets Search Box End -->
 
                         <div class="fleets-sidebar-list-box">
+
                             <!-- Fleets Sidebar List Start -->
                             <div class="fleets-sidebar-list">
                                 <div class="fleets-list-title">
@@ -97,35 +205,35 @@
                                     <li>
                                         <p>Waiting for update</p>
                                     </li>
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox1">-->
-<!--                                        <label class="form-check-label" for="checkbox1">sport cars</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox1">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox1">sport cars</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox2">-->
-<!--                                        <label class="form-check-label" for="checkbox2">electric car</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox2">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox2">electric car</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox3">-->
-<!--                                        <label class="form-check-label" for="checkbox3">Convertible</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox3">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox3">Convertible</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox4">-->
-<!--                                        <label class="form-check-label" for="checkbox4">luxury cars</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox4">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox4">luxury cars</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox5">-->
-<!--                                        <label class="form-check-label" for="checkbox5">sedan</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox5">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox5">sedan</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox6">-->
-<!--                                        <label class="form-check-label" for="checkbox6">coupe cars</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox6">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox6">coupe cars</label>-->
+                                    <!--                                    </li>-->
                                 </ul>
                             </div>
                             <!-- Fleets Sidebar List End -->
@@ -140,25 +248,25 @@
                                     <li>
                                         <p>Waiting for update</p>
                                     </li>
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox7">-->
-<!--                                        <label class="form-check-label" for="checkbox7">abu dhabi</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox7">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox7">abu dhabi</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox8">-->
-<!--                                        <label class="form-check-label" for="checkbox8">alain</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox8">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox8">alain</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox9">-->
-<!--                                        <label class="form-check-label" for="checkbox9">dubai</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox9">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox9">dubai</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox10">-->
-<!--                                        <label class="form-check-label" for="checkbox10">sharjah</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox10">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox10">sharjah</label>-->
+                                    <!--                                    </li>-->
                                 </ul>
                             </div>
                             <!-- Fleets Sidebar List End -->
@@ -173,20 +281,20 @@
                                     <li>
                                         <p>Waiting for update</p>
                                     </li>
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox11">-->
-<!--                                        <label class="form-check-label" for="checkbox11">abu dhabi</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox11">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox11">abu dhabi</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox12">-->
-<!--                                        <label class="form-check-label" for="checkbox12">alain</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox12">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox12">alain</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox13">-->
-<!--                                        <label class="form-check-label" for="checkbox13">dubai</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox13">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox13">dubai</label>-->
+                                    <!--                                    </li>-->
                                 </ul>
                             </div>
                             <!-- Fleets Sidebar List End -->
@@ -203,59 +311,85 @@
                                 <h1 data-cursor="-opaque">No car found!</h1>
                             </div>
                             <th:block th:each="car, iterStat: ${cars}">
-                            <div class="col-lg-4 col-md-6">
-                                <!-- Perfect Fleets Item Start -->
-                                <div class="perfect-fleet-item fleets-collection-item wow fadeInUp" style="display: flex; flex-direction: column">
-                                    <!-- Image Box Start -->
-                                    <div class="image-box" style="	border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
-                                        <img th:src="${car.getFrontImage()}"   style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;" alt="">
-                                    </div>
-                                    <!-- Image Box End -->
+                                <div class="col-lg-4 col-md-6">
+                                    <!-- Perfect Fleets Item Start -->
+                                    <div class="perfect-fleet-item fleets-collection-item wow fadeInUp"
+                                         style="display: flex; flex-direction: column">
+                                        <!-- Image Box Start -->
+                                        <div class="image-box"
+                                             style="	border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
+                                            <img th:src="${car.getFrontImage()}"
+                                                 style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;"
+                                                 alt="">
+                                        </div>
+                                        <!-- Image Box End -->
 
-                                    <!-- Perfect Fleets Content Start -->
-                                    <div class="perfect-fleet-content">
-                                        <!-- Perfect Fleets Title Start -->
-                                        <div class="perfect-fleet-title">
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 1}" th:text="${car.getCarStatus().getName()}" style="color: #2c8b00; background-color: #e2ffde">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 2}" th:text="${car.getCarStatus().getName()}" style="color: #7300ff; background-color: #f3edff">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 3}" th:text="${car.getCarStatus().getName()}" style="color: #ff0000; background-color: #ffdede">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 5}" th:text="${car.getCarStatus().getName()}" style="color: #3d3d3d; background-color: #e4e4e4">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 6}" th:text="${car.getCarStatus().getName()}" style="color: #ff8c00; background-color: #ffedde">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 10}" th:text="${car.getCarStatus().getName()}" style="color: #00c4ff; background-color: #defbff">Undefined</h3>
-                                            <h2 th:text="${car.getCarName()}">Undefined</h2>
+                                        <!-- Perfect Fleets Content Start -->
+                                        <div class="perfect-fleet-content">
+                                            <!-- Perfect Fleets Title Start -->
+                                            <div class="perfect-fleet-title">
+                                                <h3 th:if="${car.getCarStatus().getStatusId() == 1}"
+                                                    th:text="${car.getCarStatus().getName()}"
+                                                    style="color: #2c8b00; background-color: #e2ffde">Undefined</h3>
+                                                <h3 th:if="${car.getCarStatus().getStatusId() == 2}"
+                                                    th:text="${car.getCarStatus().getName()}"
+                                                    style="color: #7300ff; background-color: #f3edff">Undefined</h3>
+                                                <h3 th:if="${car.getCarStatus().getStatusId() == 3}"
+                                                    th:text="${car.getCarStatus().getName()}"
+                                                    style="color: #ff0000; background-color: #ffdede">Undefined</h3>
+                                                <h3 th:if="${car.getCarStatus().getStatusId() == 5}"
+                                                    th:text="${car.getCarStatus().getName()}"
+                                                    style="color: #3d3d3d; background-color: #e4e4e4">Undefined</h3>
+                                                <h3 th:if="${car.getCarStatus().getStatusId() == 6}"
+                                                    th:text="${car.getCarStatus().getName()}"
+                                                    style="color: #ff8c00; background-color: #ffedde">Undefined</h3>
+                                                <h3 th:if="${car.getCarStatus().getStatusId() == 10}"
+                                                    th:text="${car.getCarStatus().getName()}"
+                                                    style="color: #00c4ff; background-color: #defbff">Undefined</h3>
+                                                <h2 th:text="${car.getCarName()}">Undefined</h2>
+                                            </div>
+                                            <!-- Perfect Fleets Content End -->
+
+                                            <!-- Perfect Fleets Body Start -->
+                                            <div class="perfect-fleet-body">
+                                                <ul>
+                                                    <li><i class="fa fa-user"></i>
+                                                        <p th:text="${car.getSeat()+' passenger'}" class="m-0"></p></li>
+                                                    <li><i class="fa fa-sliders"></i>
+                                                        <p th:text="${car.getTransmission()}" class="m-0"></p></li>
+                                                    <li><i class="fa fa-gas-pump"></i>
+                                                        <p th:text="${car.getFuelType()}" class="m-0"></p></li>
+                                                </ul>
+                                            </div>
+                                            <!-- Perfect Fleets Body End -->
+
+                                            <!-- Perfect Fleets Footer End -->
+                                        </div>
+                                        <!-- Perfect Fleets Footer Start -->
+                                        <div class="perfect-fleet-footer">
+                                            <!-- Perfect Fleets Pricing Start -->
+                                            <div class="perfect-fleet-pricing d-flex">
+                                                <h2 data-cursor="-opaque" class="basePrice"
+                                                    th:title="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')}"
+                                                    th:text="${car.getBasePrice()}"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top">
+                                                </h2>
+                                                <span style="font-size: 14px;font-weight: 400; align-self: center">/day</span>
+                                            </div>
+                                            <!-- Perfect Fleets Pricing End -->
+
+                                            <!-- Perfect Fleets Btn Start -->
+                                            <div class="perfect-fleet-btn">
+                                                <a href="#" class="section-icon-btn"><img src="images/arrow-white.svg"
+                                                                                          alt=""></a>
+                                            </div>
+                                            <!-- Perfect Fleets Btn End -->
                                         </div>
                                         <!-- Perfect Fleets Content End -->
-
-                                        <!-- Perfect Fleets Body Start -->
-                                        <div class="perfect-fleet-body">
-                                            <ul>
-                                                <li><i class="fa fa-user"></i><p th:text="${car.getSeat()+' passenger'}" class="m-0"></p></li>
-                                                <li><i class="fa fa-sliders"></i><p th:text="${car.getTransmission()}" class="m-0"></p></li>
-                                                <li><i class="fa fa-gas-pump"></i><p th:text="${car.getFuelType()}" class="m-0"></p></li>
-                                            </ul>
-                                        </div>
-                                        <!-- Perfect Fleets Body End -->
-
-                                        <!-- Perfect Fleets Footer End -->
                                     </div>
-                                    <!-- Perfect Fleets Footer Start -->
-                                    <div class="perfect-fleet-footer">
-                                        <!-- Perfect Fleets Pricing Start -->
-                                        <div class="perfect-fleet-pricing d-flex">
-                                            <h2 data-cursor="-opaque" class="basePrice" th:text="${car.getBasePrice()}"></h2><span style="font-size: 14px;font-weight: 400; align-self: center">/day</span>
-                                        </div>
-                                        <!-- Perfect Fleets Pricing End -->
-
-                                        <!-- Perfect Fleets Btn Start -->
-                                        <div class="perfect-fleet-btn">
-                                            <a href="#" class="section-icon-btn"><img src="images/arrow-white.svg" alt=""></a>
-                                        </div>
-                                        <!-- Perfect Fleets Btn End -->
-                                    </div>
-                                    <!-- Perfect Fleets Content End -->
+                                    <!-- Perfect Fleets Item End -->
                                 </div>
-                                <!-- Perfect Fleets Item End -->
-                            </div>
                             </th:block>
                             <div class="col-lg-12">
                                 <!-- Fleets Pagination Start -->
@@ -321,6 +455,8 @@
     <script src="/cars/js/wow.js"></script>
     <!-- Main Custom js file -->
     <script src="/cars/js/function.js"></script>
+    <!-- Flatpickr -->
+    <script src="/webjars/flatpickr/4.6.13/dist/flatpickr.min.js"></script>
     <script defer>
         const priceElements = document.querySelectorAll('.basePrice');
 
@@ -331,6 +467,77 @@
                 currency: 'VND'
             }).format(price);
         });
+
+        // Flatpickr
+        flatpickr('.flatpickr-validate', {
+            allowInput: false,
+            minDate: "today",
+            defaultDate: "today",
+            enableTime: true,
+            minTime: "05:00",
+            maxTime: "21:00",
+            minuteIncrement: 30,
+            time_24hr: true,
+            onOpen: function(selectedDates, dateStr, instance) {
+                adjustMinTime(selectedDates, dateStr, instance);
+                // Prevent typing in hour and minute fields
+                const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
+                const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+                hourInput.setAttribute('readonly', 'readonly');
+                minuteInput.setAttribute('readonly', 'readonly');
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                adjustMinTime(selectedDates, dateStr, instance);
+            },
+        });
+
+
+        function adjustMinTime(selectedDates, dateStr, instance) {
+            const now = new Date();
+            let currentHour = now.getHours();
+            let currentMinute = now.getMinutes();
+
+            if (currentHour < 5) {
+                instance.set("minTime", "05:00");
+            } else {
+
+                let nextHour = currentHour + 1;
+                if (nextHour > 21) nextHour = 21; // Cap minTime at 21:00
+
+                instance.set("minTime", `${String(nextHour).padStart(2, '0')}:00`);
+            }
+        }
+
+        const dropDateTime = document.querySelector('#dropDateTime');
+        dropDateTime.addEventListener('change', adjustMinRentTime);
+
+        function adjustMinRentTime() {
+            const pickupInfoHelp = document.getElementById('pickupInfoHelp');
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            const dropDateTime = document.querySelector('#dropDateTime').value;
+
+            if (!pickupDateTime || !dropDateTime) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
+                return;
+            }
+
+            const pickupDate = new Date(pickupDateTime);
+            const dropDate = new Date(dropDateTime);
+
+            if (isNaN(pickupDate.getTime()) || isNaN(dropDate.getTime())) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Invalid date or time selected</span>';
+                return;
+            }
+
+            const diffHours = (dropDate - pickupDate) / 1000 / 60 / 60;
+
+            if (diffHours < 2) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Minimum rent time is 2 hours</span>';
+                return;
+            }
+
+            pickupInfoHelp.textContent = '';
+        }
 
     </script>
     </body>
