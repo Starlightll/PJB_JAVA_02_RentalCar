@@ -2,14 +2,13 @@ package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentalcar.rentalcar.dto.CarDto;
-import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarDraft;
-import com.rentalcar.rentalcar.entity.CarStatus;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import com.rentalcar.rentalcar.service.RentalCarService;
+import com.rentalcar.rentalcar.service.RevenueService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +23,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,6 +61,13 @@ public class CarOwnerController {
     @Autowired
     private RentalCarService rentalCarService;
     private CarDraftRepository carDraftRepository;
+
+    @Autowired
+    private RevenueService revenueService ;
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -645,6 +657,117 @@ public class CarOwnerController {
         response.put("status", status);
         response.put("message", message);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/revenue")
+    public Object getRevenuePage(
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "week", required = false) String week,
+            Model model,
+            HttpSession session,
+            HttpServletRequest request) {
+
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+
+        Long userId = user.getId();
+        year = (year != null) ? year : LocalDate.now().getYear();
+
+        Map<String, Double> revenueData = getRevenueData(userId, year, month, week);
+
+        int thisYear = LocalDate.now().getYear();
+        int thisMonth = LocalDate.now().getMonthValue();
+        int lastMonth = (thisMonth == 1) ? 12 : thisMonth - 1;
+
+        BigDecimal totalRevenueYear = calculateTotalRevenue(revenueService.getYearlyRevenue(userId, thisYear));
+        BigDecimal totalRevenueMonth = calculateTotalRevenue(revenueService.getMonthlyRevenue(userId, thisYear, thisMonth));
+        BigDecimal totalLastRevenueMonth = calculateTotalRevenue(revenueService.getMonthlyRevenue(userId, lastMonth == 12 ? thisYear - 1 : thisYear, lastMonth));
+        BigDecimal rateComparison = calculateComparisonRate(totalRevenueMonth, totalLastRevenueMonth);
+
+        int monthlyBookings = bookingRepository.countBookingsInMonth(thisYear, thisMonth);
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("labels", revenueData.keySet());
+            responseData.put("data", revenueData.values());
+            responseData.put("totalRevenueYear", formatRevenue(totalRevenueYear));
+            responseData.put("totalRevenueMonth", formatRevenue(totalRevenueMonth));
+            responseData.put("revenueComparison", rateComparison.doubleValue());
+            responseData.put("monthlyBookings", monthlyBookings);
+
+            return ResponseEntity.ok(responseData);
+        }
+
+        LocalDateTime startOfThisMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfThisMonth = YearMonth.now().atEndOfMonth().atTime(23, 59, 59);
+
+        Map<String, BigDecimal> pieChartData = new HashMap<>();
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTransactionDateBetween(userId, startOfThisMonth, endOfThisMonth);
+
+        for (Transaction transaction : transactions) {
+            if (!pieChartData.containsKey(transaction.getTransactionType())) {
+                pieChartData.put(transaction.getTransactionType(), transaction.getAmount());
+            } else {
+                BigDecimal currentAmount = pieChartData.get(transaction.getTransactionType());
+                pieChartData.put(transaction.getTransactionType(), currentAmount.add(transaction.getAmount()));
+            }
+        }
+
+
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("monthlyBookings", monthlyBookings);
+        model.addAttribute("totalRevenueYear", formatRevenue(totalRevenueYear));
+        model.addAttribute("totalRevenueMonth", formatRevenue(totalRevenueMonth));
+        model.addAttribute("revenueComparison", rateComparison.doubleValue());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month != null ? month : "all");
+        model.addAttribute("week", week != null ? week : "all");
+        model.addAttribute("labels", revenueData.keySet());
+        model.addAttribute("data", revenueData.values());
+        model.addAttribute("pieLabels", pieChartData.keySet());
+        model.addAttribute("pieData", pieChartData.values());
+
+        return "carowner/revenue";
+    }
+
+
+    private BigDecimal calculateTotalRevenue(Map<String, Double> revenue) {
+        return revenue.values().stream()
+                .map(BigDecimal::valueOf)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal calculateComparisonRate(BigDecimal current, BigDecimal previous) {
+        if (previous.compareTo(BigDecimal.ZERO) != 0) {
+            return current.multiply(BigDecimal.valueOf(100))
+                    .divide(previous, 2, RoundingMode.HALF_UP);
+        }
+        return BigDecimal.valueOf(100);
+    }
+
+    private String formatRevenue(BigDecimal revenue) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
+        return decimalFormat.format(revenue != null ? revenue.intValue() : BigDecimal.ZERO);
+    }
+
+    private Map<String, Double> getRevenueData(Long userId, Integer year, String month, String week) {
+        if (month == null || "all".equalsIgnoreCase(month)) {
+            if (week == null || "all".equalsIgnoreCase(week)) {
+                return revenueService.getYearlyRevenue(userId, year);
+            } else {
+                int selectedWeek = Integer.parseInt(week);
+                return revenueService.getWeeklyRevenue(userId, year, 1, selectedWeek);
+            }
+        } else {
+            int selectedMonth = Integer.parseInt(month);
+            if (week == null || "all".equalsIgnoreCase(week)) {
+                return revenueService.getMonthlyRevenue(userId, year, selectedMonth);
+            } else {
+                int selectedWeek = Integer.parseInt(week);
+                return revenueService.getWeeklyRevenue(userId, year, selectedMonth, selectedWeek);
+            }
+        }
     }
 
 
