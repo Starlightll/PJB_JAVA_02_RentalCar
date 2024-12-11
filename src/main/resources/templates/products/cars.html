@@ -480,42 +480,62 @@
             time_24hr: true,
             onOpen: function(selectedDates, dateStr, instance) {
                 adjustMinTime(selectedDates, dateStr, instance);
+                // Prevent typing in hour and minute fields
+                const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
                 const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+                hourInput.setAttribute('readonly', 'readonly');
                 minuteInput.setAttribute('readonly', 'readonly');
             },
             onChange: function(selectedDates, dateStr, instance) {
                 adjustMinTime(selectedDates, dateStr, instance);
             },
-            onClose: function(selectedDates, dateStr, instance) {
-                adjustMinRentTime(selectedDates, dateStr, instance);
-            }
         });
 
 
         function adjustMinTime(selectedDates, dateStr, instance) {
             const now = new Date();
-            const currentHour = now.getHours();
-            // If current time is before 5:00 AM, minTime stays at 5:00 AM
+            let currentHour = now.getHours();
+            let currentMinute = now.getMinutes();
+
             if (currentHour < 5) {
                 instance.set("minTime", "05:00");
             } else {
-                // Else, set minTime to current time + 1 hour
-                const nextHour = currentHour + 1;
-                instance.set("minTime", `${nextHour}:00`);
+
+                let nextHour = currentHour + 1;
+                if (nextHour > 21) nextHour = 21; // Cap minTime at 21:00
+
+                instance.set("minTime", `${String(nextHour).padStart(2, '0')}:00`);
             }
         }
 
-        function adjustMinRentTime(selectedDates, dateStr, instance){
+        const dropDateTime = document.querySelector('#dropDateTime');
+        dropDateTime.addEventListener('change', adjustMinRentTime);
+
+        function adjustMinRentTime() {
             const pickupInfoHelp = document.getElementById('pickupInfoHelp');
             const pickupDateTime = document.querySelector('#pickupDateTime').value;
             const dropDateTime = document.querySelector('#dropDateTime').value;
+
+            if (!pickupDateTime || !dropDateTime) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
+                return;
+            }
+
             const pickupDate = new Date(pickupDateTime);
             const dropDate = new Date(dropDateTime);
+
+            if (isNaN(pickupDate.getTime()) || isNaN(dropDate.getTime())) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Invalid date or time selected</span>';
+                return;
+            }
+
             const diffHours = (dropDate - pickupDate) / 1000 / 60 / 60;
-            if(diffHours < 2){
+
+            if (diffHours < 2) {
                 pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Minimum rent time is 2 hours</span>';
                 return;
             }
+
             pickupInfoHelp.textContent = '';
         }
 
