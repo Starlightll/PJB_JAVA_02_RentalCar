@@ -181,7 +181,7 @@ public class MyProfileController {
             throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN);
         }
         try {
-            userService.updateProfile(user, drivingLicenseFile);
+            userService.updateProfile(user, drivingLicenseFile, session);
         } catch (Exception e) {
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);

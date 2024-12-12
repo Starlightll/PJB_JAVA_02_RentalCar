@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/cars-layout}"
+>
+<head>
+    <title>My Cars</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <!-- Google Fonts Css-->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <!-- SlickNav Css -->
+    <link href="/cars/css/slicknav.min.css" rel="stylesheet">
+    <!-- Swiper Css -->
+    <link rel="stylesheet" href="/cars/css/swiper-bundle.min.css">
+    <!-- Animated Css -->
+    <link href="/cars/css/animate.css" rel="stylesheet">
+    <!-- Magnific Popup Core Css File -->
+    <link rel="stylesheet" href="/cars/css/magnific-popup.css">
+    <!-- Mouse Cursor Css File -->
+    <link rel="stylesheet" href="/cars/css/mousecursor.css">
+    <!-- Font Awesome Icon Css-->
+    <link href="/cars/css/all.css" rel="stylesheet" media="screen">
+    <!-- Main Custom Css -->
+    <link href="/cars/css/cardetail.css" rel="stylesheet" media="screen">
+    <!-- Flatpickr   -->
+    <!--    <link rel="stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="/webjars/flatpickr/4.6.13/dist/themes/material_green.css">
+    <style>
+        .hero-wrap {
+            height: 200px !important;
+            position: relative;
+            background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 200px !important;
+        }
+
+        .slider-text {
+            height: 200px !important;
+        }
+
+        p {
+            font-size: 0.8rem;
+        }
+
+
+        .pickup-location-fleet h5 {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            /*text-align: center;*/
+            margin: 0;
+            padding: 10px 0;
+        }
+
+
+        #ftco-loader-car {
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        #ftco-loader-car .circular {
+            -webkit-animation: loader-rotate 2s linear infinite;
+            animation: loader-rotate 2s linear infinite;
+            position: absolute;
+            left: calc(50% - 24px);
+            top: calc(50% - 24px);
+            display: block;
+            -webkit-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        #ftco-loader-car .path {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+            -webkit-animation: loader-dash 1.5s ease-in-out infinite;
+            animation: loader-dash 1.5s ease-in-out infinite;
+            stroke-linecap: round;
+        }
+
+        a:focus {
+            text-decoration: none !important;
+            outline: 0 !important;
+            color: #ffffff !important;
+        }
+
+        .fleets-slider-image img {
+            border-radius: 30px;
+            overflow: hidden;
+            aspect-ratio: 1 / 0.67;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .fleets-single-sidebar {
+            position: sticky;
+            top: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 30px;
+            padding: 40px;
+             margin-right: 0px;
+        }
+
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body>
+
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span>MY CARS <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-3 bread">My Cars!</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Feets Single Start -->
+    <div class="page-fleets-single">
+        <div class="container" style="max-width: 1300px;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Feets Single Sidebar Start -->
+                    <div class="fleets-single-sidebar">
+                        <div class="fleets-single-sidebar-box wow fadeInUp">
+                            <!-- Feets Single Sidebar Pricing Start -->
+                            <div class="fleets-single-sidebar-pricing d-flex">
+                                <h2 id="basePrice" th:text="${car.getBasePrice()}" style="font-size: 1.7rem; align-self: end"></h2>
+                                <span style="font-size: 1.3rem;font-weight: 400; align-self: center">/day</span>
+                            </div>
+                            <!-- Feets Single Sidebar Pricing End -->
+
+                            <!-- Feets Single Sidebar List Start -->
+                            <div class="fleets-single-sidebar-list">
+                                <ul>
+                                    <li><img src="/images/icon-fleets-single-sidebar-list-1.svg" alt="">Passengers
+                                        <span th:text="${car.getSeat()}"></span></li>
+                                    <li><img src="/images/icon-fleets-single-sidebar-list-7.svg" alt="">Transmission
+                                        <span th:text="${car.getTransmission()}"></span></li>
+                                    <li><img src="/images/icon-fleets-single-sidebar-list-4.svg" alt="">Fuel
+                                        <span th:text="${car.getFuelType()}"></span></li>
+                                </ul>
+                            </div>
+                            <!-- Feets Single Sidebar List End -->
+
+                            <!-- Feets Single Sidebar Btn Start -->
+                            <div class="fleets-single-sidebar-btn">
+                                <a href="#bookingform" class="btn-default popup-with-form">book</a>
+                                <span>or</span>
+                                <a href="#" class="wp-btn"><i class="fa-brands fa-whatsapp"></i></a>
+                            </div>
+                            <!-- Feets Single Sidebar Btn End -->
+                        </div>
+
+                        <!-- Booking Form Box Start -->
+                        <div class="booking-form-box">
+                            <!-- Booking PopUp Form Start -->
+                            <form id="bookingform" class="white-popup-block mfp-hide booking-form">
+                                <div class="section-title">
+                                    <h2>Reserve your vehicle today!</h2>
+                                    <p>Fill out the form below to reserve your vehicle. Complete the necessary details
+                                        to ensure a smooth rental experience.</p>
+                                </div>
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <input type="text" name="name" class="booking-form-control" id="name"
+                                                   placeholder="Full Name" required>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <input type="email" name="email" class="booking-form-control" id="email"
+                                                   placeholder="Enter Your Email" required>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <input type="text" name="phone" class="booking-form-control" id="phone"
+                                                   placeholder="Enter Your Number" required>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <select name="cartype" class="booking-form-control form-select" id="cartype"
+                                                    required>
+                                                <option value="" disabled selected>Choose Car Type</option>
+                                                <option value="sport_car">sport car</option>
+                                                <option value="convertible_car">convertible car</option>
+                                                <option value="sedan_car">sedan car</option>
+                                                <option value="luxury_car">luxury car</option>
+                                                <option value="electric_car">electric car</option>
+                                                <option value="coupe_car">coupe car</option>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <select name="location" class="booking-form-control form-select"
+                                                    id="pickuplocation" required>
+                                                <option value="" disabled selected>Pick Up Location</option>
+                                                <option value="abu_dhabi">abu dhabi</option>
+                                                <option value="alain">alain</option>
+                                                <option value="dubai">dubai</option>
+                                                <option value="sharjah">sharjah</option>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <input type="text" name="date" placeholder="PickUp Date"
+                                                   class="booking-form-control datepicker" id="pickupdate" required>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <select name="droplocation" class="booking-form-control form-select"
+                                                    id="droplocation" required>
+                                                <option value="" disabled selected>Drop Off Location</option>
+                                                <option value="abu_dhabi">abu dhabi</option>
+                                                <option value="alain">alain</option>
+                                                <option value="sharjah">sharjah</option>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <input type="text" name="date" class="booking-form-control datepicker"
+                                                   id="returndate" placeholder="Return Date" required>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-12 mb-4">
+                                            <textarea name="msg" class="booking-form-control" id="msg" rows="3"
+                                                      placeholder="Write Your Message" required></textarea>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="col-md-12 booking-form-group">
+                                            <button type="submit" class="btn-default">rent now</button>
+                                            <div id="msgSubmit" class="h3 hidden"></div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                            <!-- Booking PopUp Form End -->
+                        </div>
+                        <!-- Booking Form Box End -->
+                    </div>
+                    <!-- Feets Single Sidebar End -->
+                </div>
+
+                <div class="col-lg-8">
+                    <!-- Feets Single Content Start -->
+                    <div class="fleets-single-content">
+                        <!-- Feets Single Slider Start -->
+                        <div class="fleets-single-slider">
+                            <div class="swiper">
+                                <div class="swiper-wrapper">
+                                    <!-- Fleets Image Slide Start -->
+                                    <div class="swiper-slide">
+                                        <div class="fleets-slider-image">
+                                            <figure class="image-anime">
+                                                <img th:src="${'/' + car.getFrontImage()}" alt="">
+                                            </figure>
+                                        </div>
+                                    </div>
+                                    <!-- Fleets Image Slide End -->
+
+                                    <!-- Fleets Image Slide Start -->
+                                    <div class="swiper-slide">
+                                        <div class="fleets-slider-image">
+                                            <figure class="image-anime">
+                                                <img th:src="${'/' + car.getLeftImage()}" alt="">
+                                            </figure>
+                                        </div>
+                                    </div>
+                                    <!-- Fleets Image Slide End -->
+
+                                    <!-- Fleets Image Slide Start -->
+                                    <div class="swiper-slide">
+                                        <div class="fleets-slider-image">
+                                            <figure class="image-anime">
+                                                <img th:src="${'/' + car.getBackImage()}" alt="">
+                                            </figure>
+                                        </div>
+                                    </div>
+                                    <!-- Fleets Image Slide End -->
+
+                                    <!-- Fleets Image Slide Start -->
+                                    <div class="swiper-slide">
+                                        <div class="fleets-slider-image">
+                                            <figure class="image-anime">
+                                                <img th:src="${'/' + car.getRightImage()}" alt="">
+                                            </figure>
+                                        </div>
+                                    </div>
+                                    <!-- Fleets Image Slide End -->
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                        <!-- Feets Single Slider End -->
+                        <!-- Feets Benefits Start -->
+                        <div class="fleets-benefits wow fadeInUp">
+                            <!-- Feets Benefits Item Start -->
+                            <div class="fleets-benefits-item">
+                                <div class="icon-box">
+                                    <img src="/images/icon-fleets-benefits-1.svg" alt="">
+                                </div>
+                                <div class="fleets-benefits-content">
+                                    <h3>Unlimi ted KMs</h3>
+                                    <p>Endless Km with no extra charge </p>
+                                </div>
+                            </div>
+                            <!-- Feets Benefits Item End -->
+
+                            <!-- Feets Benefits Item Start -->
+                            <div class="fleets-benefits-item">
+                                <div class="icon-box">
+                                    <img src="/images/icon-fleets-benefits-2.svg" alt="">
+                                </div>
+                                <div class="fleets-benefits-content">
+                                    <h3>Unlimi ted KMs</h3>
+                                    <p>Endless Km with no extra charge </p>
+                                </div>
+                            </div>
+                            <!-- Feets Benefits Item End -->
+                        </div>
+                        <!-- Feets Benefits End -->
+
+                        <!-- Feets Information Start -->
+                        <div class="fleets-information">
+                            <!-- Section Title Start -->
+                            <div class="section-title">
+                                <h3 class="wow fadeInUp">general information</h3>
+                                <h2 class="text-anime-style-3" data-cursor="-opaque">Term of Use</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.25s" th:text="${car.getTerms() == '' ? 'No term of use.':car.getTerms()}"></p>
+                            </div>
+                            <!-- Section Title End -->
+
+                            <!-- Feets Information List Start -->
+                            <div class="fleets-information-list wow fadeInUp" data-wow-delay="0.5s">
+                                <ul>
+                                    <li>24/7 Roadside Assistance</li>
+                                    <li>Free Cancellation & Return</li>
+                                    <li>Rent Now Pay When You Arrive</li>
+                                </ul>
+                            </div>
+                            <!-- Feets Information List End -->
+                        </div>
+                        <!-- Feets Information End -->
+
+                        <!-- Feets Amenities Start -->
+                        <div class="fleets-amenities">
+                            <!-- Section Title Start -->
+                            <div class="section-title">
+                                <h3 class="wow fadeInUp">amenities</h3>
+                                <h2 class="text-anime-style-3" data-cursor="-opaque">Premium amenities and features</h2>
+                            </div>
+                            <!-- Section Title End -->
+
+                            <!-- Feets Amenities List Start -->
+                            <div class="fleets-amenities-list wow fadeInUp" data-wow-delay="0.25s">
+                                <ul>
+                                    <th:block th:each="function : ${car.getAdditionalFunctions()}">
+                                        <li th:text="${function.functionName()}"></li>
+                                    </th:block>
+                                </ul>
+                            </div>
+                            <!-- Feets Amenities List End -->
+                        </div>
+                        <!-- Feets Amenities End -->
+
+
+                    </div>
+                    <!-- Feets Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Feets Single End -->
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen">
+        <svg class="circular" width="48px" height="48px">
+            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+                    stroke="#03ffa2"/>
+        </svg>
+    </div>
+
+    <!-- Jquery Library File -->
+    <script src="/cars/js/jquery-3.7.1.min.js"></script>
+    <!-- Jquery Ui Js File -->
+    <script src="/cars/js/jquery-ui.js"></script>
+    <!-- Bootstrap js file -->
+    <script src="/cars/js/bootstrap.min.js"></script>
+    <!-- Validator js file -->
+    <script src="/cars/js/validator.min.js"></script>
+    <!-- SlickNav js file -->
+    <script src="/cars/js/jquery.slicknav.js"></script>
+    <!-- Swiper js file -->
+    <script src="/cars/js/swiper-bundle.min.js"></script>
+    <!-- Counter js file -->
+    <script src="/cars/js/jquery.waypoints.min.js"></script>
+    <script src="/cars/js/jquery.counterup.min.js"></script>
+    <!-- Magnific js file -->
+    <script src="/cars/js/jquery.magnific-popup.min.js"></script>
+    <!-- SmoothScroll -->
+    <script src="/cars/js/SmoothScroll.js"></script>
+    <!-- Parallax js -->
+    <script src="/cars/js/parallaxie.js"></script>
+    <!-- MagicCursor js file -->
+    <script src="/cars/js/gsap.min.js"></script>
+    <script src="/cars/js/magiccursor.js"></script>
+    <!-- Text Effect js file -->
+    <script src="/cars/js/SplitText.js"></script>
+    <script src="/cars/js/ScrollTrigger.min.js"></script>
+    <!-- YTPlayer js File -->
+    <script src="/cars/js/jquery.mb.YTPlayer.min.js"></script>
+    <!-- Wow js file -->
+    <script src="/cars/js/wow.js"></script>
+    <!-- Main Custom js file -->
+    <script src="/cars/js/function.js"></script>
+    <!-- Flatpickr -->
+    <script src="/webjars/flatpickr/4.6.13/dist/flatpickr.min.js"></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+            formatMoney();
+        });
+
+        function formatMoney() {
+            const priceElements = document.getElementById('basePrice');
+            const price = parseFloat(priceElements.textContent);
+            priceElements.textContent = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+    </script>
+    <script>
+
+    </script>
+    </body>
+</th:block>
+</body>
+</html>

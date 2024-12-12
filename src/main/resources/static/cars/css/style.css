@@ -159,10 +159,10 @@ a {
     background-color: transparent;
 }
 
-a:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
+/*a:hover {*/
+/*    color: #0056b3;*/
+/*    text-decoration: underline;*/
+/*}*/
 
 a:not([href]):not([tabindex]) {
     color: inherit;
@@ -11531,18 +11531,18 @@ body.menu-show {
     width: 100%;
 }
 
-a {
-    -webkit-transition: .3s all ease;
-    -o-transition: .3s all ease;
-    transition: .3s all ease;
-    color: #1089ff;
-}
+/*a {*/
+/*    -webkit-transition: .3s all ease;*/
+/*    -o-transition: .3s all ease;*/
+/*    transition: .3s all ease;*/
+/*    color: #1089ff;*/
+/*}*/
 
-a:hover, a:focus {
-    text-decoration: none;
-    color: #1089ff;
-    outline: none !important;
-}
+/*a:hover, a:focus {*/
+/*    text-decoration: none;*/
+/*    color: #1089ff;*/
+/*    outline: none !important;*/
+/*}*/
 
 h1, h2, h3, h4, h5,
 .h1, .h2, .h3, .h4, .h5 {
@@ -11670,10 +11670,10 @@ h1, h2, h3, h4, h5,
     color: #fff;
 }
 
-.ftco-navbar-light .navbar-nav > .nav-item.cta > a:hover {
-    background: #1089ff;
-    border: 1px solid #1089ff;
-}
+/*.ftco-navbar-light .navbar-nav > .nav-item.cta > a:hover {*/
+/*    background: #1089ff;*/
+/*    border: 1px solid #1089ff;*/
+/*}*/
 
 .ftco-navbar-light .navbar-nav > .nav-item.cta.cta-colored a {
     border: 1px solid #01d28e;
@@ -11941,13 +11941,13 @@ h1, h2, h3, h4, h5,
     color: rgba(255, 255, 255, 0.7);
 }
 
-.slider-text .breadcrumbs span a:hover, .slider-text .breadcrumbs span a:focus {
-    color: #1089ff;
-}
+/*.slider-text .breadcrumbs span a:hover, .slider-text .breadcrumbs span a:focus {*/
+/*    color: #1089ff;*/
+/*}*/
 
-.slider-text .breadcrumbs span a:hover i, .slider-text .breadcrumbs span a:focus i {
-    color: #1089ff;
-}
+/*.slider-text .breadcrumbs span a:hover i, .slider-text .breadcrumbs span a:focus i {*/
+/*    color: #1089ff;*/
+/*}*/
 
 .slider-text .bread {
     font-weight: 400 !important;
@@ -13077,9 +13077,9 @@ textarea.form-control {
     margin: 0 10px 10px 0;
 }
 
-.footer-small-nav > li a:hover, .footer-small-nav > li a:focus {
-    color: #1089ff;
-}
+/*.footer-small-nav > li a:hover, .footer-small-nav > li a:focus {*/
+/*    color: #1089ff;*/
+/*}*/
 
 .media .ftco-icon {
     width: 100px;
@@ -13487,9 +13487,9 @@ textarea.form-control {
     color: #000000;
 }
 
-.blog-entry .text .heading a:hover, .blog-entry .text .heading a:focus, .blog-entry .text .heading a:active {
-    color: #1089ff;
-}
+/*.blog-entry .text .heading a:hover, .blog-entry .text .heading a:focus, .blog-entry .text .heading a:active {*/
+/*    color: #1089ff;*/
+/*}*/
 
 .blog-entry .meta > div {
     display: inline-block;
@@ -13641,9 +13641,9 @@ textarea.form-control {
     color: #000000;
 }
 
-.block-21 .text .heading a:hover, .block-21 .text .heading a:active, .block-21 .text .heading a:focus {
-    color: #1089ff;
-}
+/*.block-21 .text .heading a:hover, .block-21 .text .heading a:active, .block-21 .text .heading a:focus {*/
+/*    color: #1089ff;*/
+/*}*/
 
 .block-21 .text .meta > div {
     display: inline-block;
