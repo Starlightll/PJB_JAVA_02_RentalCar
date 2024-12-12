@@ -186,7 +186,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public void updateProfile(User user, MultipartFile drivingLicenseFile) {
+    public void updateProfile(User user, MultipartFile drivingLicenseFile, HttpSession session) {
         try{
             User updateUser = userRepo.findById(user.getId()).orElse(null);
             if(updateUser == null){
@@ -210,6 +210,8 @@ public class UserService implements IUserService {
                 }
             }
             userRepo.save(updateUser);
+            //Update session
+            session.setAttribute("user", updateUser);
         }catch (Exception e){
             throw new UserException("Something went wrong");
         }

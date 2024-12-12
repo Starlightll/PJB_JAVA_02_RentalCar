@@ -117,9 +117,9 @@ body{
 	overflow-x: clip;
 }
 
-.container{
-	/*max-width: 1300px;*/
-}
+/*.container{*/
+/*	max-width: 1300px;*/
+/*}*/
 
 .container,
 .container-fluid,

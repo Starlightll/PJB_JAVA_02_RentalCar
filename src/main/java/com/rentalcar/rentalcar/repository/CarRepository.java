@@ -79,5 +79,8 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
             "ORDER BY averageRating DESC", nativeQuery = true)
     List<Object[]> findTop5CarsWithHighestRating();
 
+    //Get rateAvg of car by carId
+    @Query(value = "SELECT ROUND(AVG(CAST(f.rating AS FLOAT)), 2) AS averageRating FROM [RentalCar].[dbo].[Car] c LEFT JOIN [dbo].[BookingCar] bc ON bc.carId = c.carId LEFT JOIN [dbo].[Feedback] f ON f.bookingId = bc.bookingId WHERE c.carId = :carId GROUP BY c.carId", nativeQuery = true)
+    Double getRateAvgByCarId(@Param("carId") Integer carId);
 
 }

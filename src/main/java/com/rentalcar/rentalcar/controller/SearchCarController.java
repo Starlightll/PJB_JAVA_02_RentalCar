@@ -1,6 +1,8 @@
 package com.rentalcar.rentalcar.controller;
 
+import com.rentalcar.rentalcar.dto.CarDto1;
 import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class SearchCarController {
@@ -35,6 +39,8 @@ public class SearchCarController {
     private BrandRepository brandRepository;
     @Autowired
     private CarStatusRepository carStatusRepository;
+    @Autowired
+    private CarMapper carMapper;
 
     @GetMapping("/searchCar")
     public String searchCar(Model model,
@@ -209,6 +215,34 @@ public class SearchCarController {
         List<Car> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds);
         model.addAttribute("cars", cars);
         return "products/cars";
+    }
+
+    @GetMapping("/api/searchCar")
+    public ResponseEntity<List<CarDto1>> searchCars(
+            @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
+            @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
+            @RequestParam(value = "dropDateTime", required = false) String dropDateTime
+    ) {
+
+        List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
+        List<CarDto1> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds).stream().map(carMapper::toDto).collect(Collectors.toList());
+        if(pickupLocation != null && !pickupLocation.isEmpty()) {
+            cars = cars.stream().filter(car -> (car.getAddress().province()+" "+car.getAddress().district()+" "+car.getAddress().ward()).toLowerCase().contains(pickupLocation.toLowerCase().trim())).collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(cars);
+    }
+
+    @GetMapping("/api/searchCar/{id}")
+    public String carDetail(
+            @PathVariable("id") Integer id,
+            Model model
+    ) {
+        Car car = carRepository.getCarByCarId(id);
+        if(car == null){
+            return "redirect:/api/searchCar";
+        }
+        model.addAttribute("car", carMapper.toDto(car));
+        return "products/CarDetail";
     }
 
 }
