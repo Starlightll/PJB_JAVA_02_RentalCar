@@ -625,10 +625,9 @@
                 .then(data => {
                     loader.style.opacity = '0';
                     if (data.length === 0) {
-                        carContainer.innerHTML = '<div style="margin: auto"><h1 data-cursor="-opaque">No car found!</h1></div>';
+                        carContainer.innerHTML = '<div style="margin: auto"><h3 data-cursor="-opaque" style="color: grey">There\'re no cars that are available for you!</h3></div>';
                         return;
                     }
-
                     data.forEach(car => {
                         // Determine status style based on statusId
                         let statusStyle = '';
@@ -666,6 +665,10 @@
                                 <div class="perfect-fleet-title">
                                     <div style="display: flex;justify-content: space-between;flex-flow: wrap;"><h3 style="${statusStyle}">${car.carStatus.name}</h3><span style="color: #ffb825"><i class="fa fa-star" style="margin-right: 3px"></i>${car.rateAverage}</span></div>
                                     <h2>${car.carName}</h2>
+                                    <div class="mt-3 d-flex ">
+                                     <i class="fa fa-location-arrow mr-1" style="margin-top: 5px;"></i>
+                                     <span style="font-size: 0.9rem">${car.address.province}, ${car.address.district}</span>
+                                    </div>
                                 </div>
 
                                 <div class="perfect-fleet-body">
