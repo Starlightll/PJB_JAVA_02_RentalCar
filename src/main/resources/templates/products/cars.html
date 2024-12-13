@@ -28,6 +28,8 @@
     <link href="/cars/css/all.css" rel="stylesheet" media="screen">
     <!-- Main Custom Css -->
     <link href="/cars/css/custom.css" rel="stylesheet" media="screen">
+    <!-- Flatpickr   -->
+    <link rel="stylesheet" href="/webjars/flatpickr/4.6.13/dist/themes/material_green.css">
     <style>
         .hero-wrap {
             height: 200px !important;
@@ -48,12 +50,119 @@
         .slider-text {
             height: 200px !important;
         }
+
+        p {
+            font-size: 0.8rem;
+        }
+
+        .basePrice {
+            font-size: 1.4rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .pickup-location-fleet {
+            margin: 0 auto;
+            background-color: #1b1b1b;
+        }
+
+        .pickup-location-fleet h5 {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            /*text-align: center;*/
+            margin: 0;
+            padding: 10px 0;
+        }
+
+        .location-search {
+            width: 100%;
+            padding: 10px 20px;
+            background: var(--white-color);
+            color: var(--text-color);
+            font-weight: 500;
+            border: none;
+            /*border-radius: 30px;*/
+            box-shadow: none;
+        }
+
+        .fleets-search-box {
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .fleets-sidebar-list {
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+
+        #ftco-loader-car {
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        #ftco-loader-car .circular {
+            -webkit-animation: loader-rotate 2s linear infinite;
+            animation: loader-rotate 2s linear infinite;
+            position: absolute;
+            left: calc(50% - 24px);
+            top: calc(50% - 24px);
+            display: block;
+            -webkit-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        #ftco-loader-car .path {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+            -webkit-animation: loader-dash 1.5s ease-in-out infinite;
+            animation: loader-dash 1.5s ease-in-out infinite;
+            stroke-linecap: round;
+        }
+
+        .perfect-fleet-title .available {
+            color: #2c8b00;
+            background-color: #e2ffde;
+        }
+
+        .perfect-fleet-title .booked {
+            color: #7300ff;
+            background-color: #f3edff
+        }
+
+        .perfect-fleet-title .stopped {
+            color: #ff0000;
+            background-color: #ffdede
+        }
+
+        .perfect-fleet-title .maintenance {
+            color: #3d3d3d;
+            background-color: #e4e4e4
+        }
+
+        .perfect-fleet-title .rented {
+            color: #ff8c00;
+            background-color: #ffedde
+        }
+
+        .perfect-fleet-title .in-progress {
+            color: #00c4ff;
+            background-color: #defbff
+        }
+
+
     </style>
 </head>
 
 <body>
 <th:block layout:fragment="content">
-    <body>
+    <body onload="fetchCars('', '', '')">
 
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
@@ -72,6 +181,48 @@
     <div class="page-fleets">
         <div class="container" style="max-width: 1300px;">
             <div class="row">
+                <div class="col-12" style="display: none">
+                    <div class="pickup-location-fleet fleets-sidebar wow fadeInUp mb-3 row"
+                         style="visibility: visible; animation-name: fadeInUp;">
+                        <div class="col-12 col-md-6">
+                            <h5>Pickup location</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h5>Pickup location</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h5>Pickup time</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h5>Drop time</h5>
+                            <div class="form-group">
+                                <input type="text" name="search"
+                                       class="location-search form-control"
+                                       placeholder="Search..."
+                                       required="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-lg-3">
                     <!-- Fleets Sidebar Start -->
                     <div class="fleets-sidebar wow fadeInUp">
@@ -79,14 +230,35 @@
                         <div class="fleets-search-box">
                             <form id="fleetsForm" action="#" method="POST">
                                 <div class="form-group">
-                                    <input type="text" name="search" class="form-control"  id="search" placeholder="Search..." required>
-                                    <button type="submit" class="section-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    <input type="text" name="pickupLocation" class="form-control" id="pickupLocation"
+                                           placeholder="Pickup location" required>
+                                    <button type="submit" class="section-icon-btn"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button>
                                 </div>
+                                <div>
+                                    <p class="mb-0 pl-2">Pickup date time</p>
+                                    <div class="form-group">
+                                        <input type="text" name="pickupDateTime" id="pickupDateTime"
+                                               class="form-control flatpickr-validate"
+                                               placeholder="Days for rent" required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="mb-0 pl-2">Drop date time</p>
+                                    <div class="form-group">
+                                        <input type="text" name="dropDateTime" id="dropDateTime"
+                                               class="form-control flatpickr-validate"
+                                               placeholder="Pickup date time" required>
+                                    </div>
+                                </div>
+                                <small id="pickupInfoHelp" style="color: rgb(255,150,0); gap: 3px"></small>
+                                <!-- Fleets Sidebar List End -->
                             </form>
                         </div>
                         <!-- Fleets Search Box End -->
 
                         <div class="fleets-sidebar-list-box">
+
                             <!-- Fleets Sidebar List Start -->
                             <div class="fleets-sidebar-list">
                                 <div class="fleets-list-title">
@@ -97,35 +269,10 @@
                                     <li>
                                         <p>Waiting for update</p>
                                     </li>
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox1">-->
-<!--                                        <label class="form-check-label" for="checkbox1">sport cars</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox2">-->
-<!--                                        <label class="form-check-label" for="checkbox2">electric car</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox3">-->
-<!--                                        <label class="form-check-label" for="checkbox3">Convertible</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox4">-->
-<!--                                        <label class="form-check-label" for="checkbox4">luxury cars</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox5">-->
-<!--                                        <label class="form-check-label" for="checkbox5">sedan</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox6">-->
-<!--                                        <label class="form-check-label" for="checkbox6">coupe cars</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox1">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox1">sport cars</label>-->
+                                    <!--                                    </li>-->
                                 </ul>
                             </div>
                             <!-- Fleets Sidebar List End -->
@@ -140,25 +287,11 @@
                                     <li>
                                         <p>Waiting for update</p>
                                     </li>
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox7">-->
-<!--                                        <label class="form-check-label" for="checkbox7">abu dhabi</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox7">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox7">abu dhabi</label>-->
+                                    <!--                                    </li>-->
 
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox8">-->
-<!--                                        <label class="form-check-label" for="checkbox8">alain</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox9">-->
-<!--                                        <label class="form-check-label" for="checkbox9">dubai</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox10">-->
-<!--                                        <label class="form-check-label" for="checkbox10">sharjah</label>-->
-<!--                                    </li>-->
                                 </ul>
                             </div>
                             <!-- Fleets Sidebar List End -->
@@ -173,20 +306,10 @@
                                     <li>
                                         <p>Waiting for update</p>
                                     </li>
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox11">-->
-<!--                                        <label class="form-check-label" for="checkbox11">abu dhabi</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox12">-->
-<!--                                        <label class="form-check-label" for="checkbox12">alain</label>-->
-<!--                                    </li>-->
-
-<!--                                    <li class="form-check">-->
-<!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox13">-->
-<!--                                        <label class="form-check-label" for="checkbox13">dubai</label>-->
-<!--                                    </li>-->
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox11">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox11">abu dhabi</label>-->
+                                    <!--                                    </li>-->
                                 </ul>
                             </div>
                             <!-- Fleets Sidebar List End -->
@@ -198,82 +321,128 @@
                 <div class="col-lg-9">
                     <!-- Fleets Collection Box Start -->
                     <div class="fleets-collection-box">
-                        <div class="row">
-                            <div th:if="${cars == null}" style="margin: auto">
-                                <h1 data-cursor="-opaque">No car found!</h1>
-                            </div>
-                            <th:block th:each="car, iterStat: ${cars}">
-                            <div class="col-lg-4 col-md-6">
-                                <!-- Perfect Fleets Item Start -->
-                                <div class="perfect-fleet-item fleets-collection-item wow fadeInUp" style="display: flex; flex-direction: column">
-                                    <!-- Image Box Start -->
-                                    <div class="image-box" style="	border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
-                                        <img th:src="${car.getFrontImage()}"   style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;" alt="">
-                                    </div>
-                                    <!-- Image Box End -->
+                        <div class="row" id="carContainer">
 
-                                    <!-- Perfect Fleets Content Start -->
-                                    <div class="perfect-fleet-content">
-                                        <!-- Perfect Fleets Title Start -->
-                                        <div class="perfect-fleet-title">
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 1}" th:text="${car.getCarStatus().getName()}" style="color: #2c8b00; background-color: #e2ffde">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 2}" th:text="${car.getCarStatus().getName()}" style="color: #7300ff; background-color: #f3edff">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 3}" th:text="${car.getCarStatus().getName()}" style="color: #ff0000; background-color: #ffdede">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 5}" th:text="${car.getCarStatus().getName()}" style="color: #3d3d3d; background-color: #e4e4e4">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 6}" th:text="${car.getCarStatus().getName()}" style="color: #ff8c00; background-color: #ffedde">Undefined</h3>
-                                            <h3 th:if="${car.getCarStatus().getStatusId() == 10}" th:text="${car.getCarStatus().getName()}" style="color: #00c4ff; background-color: #defbff">Undefined</h3>
-                                            <h2 th:text="${car.getCarName()}">Undefined</h2>
-                                        </div>
-                                        <!-- Perfect Fleets Content End -->
-
-                                        <!-- Perfect Fleets Body Start -->
-                                        <div class="perfect-fleet-body">
-                                            <ul>
-                                                <li><i class="fa fa-user"></i><p th:text="${car.getSeat()+' passenger'}" class="m-0"></p></li>
-                                                <li><i class="fa fa-sliders"></i><p th:text="${car.getTransmission()}" class="m-0"></p></li>
-                                                <li><i class="fa fa-gas-pump"></i><p th:text="${car.getFuelType()}" class="m-0"></p></li>
-                                            </ul>
-                                        </div>
-                                        <!-- Perfect Fleets Body End -->
-
-                                        <!-- Perfect Fleets Footer End -->
-                                    </div>
-                                    <!-- Perfect Fleets Footer Start -->
-                                    <div class="perfect-fleet-footer">
-                                        <!-- Perfect Fleets Pricing Start -->
-                                        <div class="perfect-fleet-pricing d-flex">
-                                            <h2 data-cursor="-opaque" class="basePrice" th:text="${car.getBasePrice()}"></h2><span style="font-size: 14px;font-weight: 400; align-self: center">/day</span>
-                                        </div>
-                                        <!-- Perfect Fleets Pricing End -->
-
-                                        <!-- Perfect Fleets Btn Start -->
-                                        <div class="perfect-fleet-btn">
-                                            <a href="#" class="section-icon-btn"><img src="images/arrow-white.svg" alt=""></a>
-                                        </div>
-                                        <!-- Perfect Fleets Btn End -->
-                                    </div>
-                                    <!-- Perfect Fleets Content End -->
-                                </div>
-                                <!-- Perfect Fleets Item End -->
-                            </div>
-                            </th:block>
-                            <div class="col-lg-12">
-                                <!-- Fleets Pagination Start -->
-                                <div class="fleets-pagination wow fadeInUp" data-wow-delay="0.5s">
-                                    <ul class="pagination">
-                                        <li><a href="#"><i class="fa-solid fa-arrow-left-long"></i></a></li>
-                                        <li class="active"><a href="#">1</a></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#"><i class="fa-solid fa-arrow-right-long"></i></a></li>
-                                    </ul>
-                                </div>
-                                <!-- Fleets Pagination End -->
-                            </div>
+                        </div>
+                        <!-- loader -->
+                        <div id="ftco-loader-car" class="show fullscreen">
+                            <svg class="circular" width="48px" height="48px">
+                                <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4"
+                                        stroke="#eeeeee"/>
+                                <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4"
+                                        stroke-miterlimit="10"
+                                        stroke="#03ffa2"/>
+                            </svg>
                         </div>
                     </div>
                     <!-- Fleets Collection Box End -->
                 </div>
+
+                <!--                <div class="col-lg-9">-->
+                <!--                    &lt;!&ndash; Fleets Collection Box Start &ndash;&gt;-->
+                <!--                    <div class="fleets-collection-box">-->
+                <!--                        <div class="row">-->
+                <!--                            <div th:if="${cars == null}" style="margin: auto">-->
+                <!--                                <h1 data-cursor="-opaque">No car found!</h1>-->
+                <!--                            </div>-->
+                <!--                            <th:block th:each="car, iterStat: ${cars}">-->
+                <!--                                <div class="col-lg-4 col-md-6">-->
+                <!--                                    &lt;!&ndash; Perfect Fleets Item Start &ndash;&gt;-->
+                <!--                                    <div class="perfect-fleet-item fleets-collection-item wow fadeInUp"-->
+                <!--                                         style="display: flex; flex-direction: column">-->
+                <!--                                        &lt;!&ndash; Image Box Start &ndash;&gt;-->
+                <!--                                        <div class="image-box"-->
+                <!--                                             style="	border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">-->
+                <!--                                            <img th:src="${car.getFrontImage()}"-->
+                <!--                                                 style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;"-->
+                <!--                                                 alt="">-->
+                <!--                                        </div>-->
+                <!--                                        &lt;!&ndash; Image Box End &ndash;&gt;-->
+
+                <!--                                        &lt;!&ndash; Perfect Fleets Content Start &ndash;&gt;-->
+                <!--                                        <div class="perfect-fleet-content">-->
+                <!--                                            &lt;!&ndash; Perfect Fleets Title Start &ndash;&gt;-->
+                <!--                                            <div class="perfect-fleet-title">-->
+                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 1}"-->
+                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
+                <!--                                                    style="color: #2c8b00; background-color: #e2ffde">Undefined</h3>-->
+                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 2}"-->
+                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
+                <!--                                                    style="color: #7300ff; background-color: #f3edff">Undefined</h3>-->
+                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 3}"-->
+                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
+                <!--                                                    style="color: #ff0000; background-color: #ffdede">Undefined</h3>-->
+                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 5}"-->
+                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
+                <!--                                                    style="color: #3d3d3d; background-color: #e4e4e4">Undefined</h3>-->
+                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 6}"-->
+                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
+                <!--                                                    style="color: #ff8c00; background-color: #ffedde">Undefined</h3>-->
+                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 10}"-->
+                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
+                <!--                                                    style="color: #00c4ff; background-color: #defbff">Undefined</h3>-->
+                <!--                                                <h2 th:text="${car.getCarName()}">Undefined</h2>-->
+                <!--                                            </div>-->
+                <!--                                            &lt;!&ndash; Perfect Fleets Content End &ndash;&gt;-->
+
+                <!--                                            &lt;!&ndash; Perfect Fleets Body Start &ndash;&gt;-->
+                <!--                                            <div class="perfect-fleet-body">-->
+                <!--                                                <ul>-->
+                <!--                                                    <li><i class="fa fa-user"></i>-->
+                <!--                                                        <p th:text="${car.getSeat()+' passenger'}" class="m-0"></p></li>-->
+                <!--                                                    <li><i class="fa fa-sliders"></i>-->
+                <!--                                                        <p th:text="${car.getTransmission()}" class="m-0"></p></li>-->
+                <!--                                                    <li><i class="fa fa-gas-pump"></i>-->
+                <!--                                                        <p th:text="${car.getFuelType()}" class="m-0"></p></li>-->
+                <!--                                                </ul>-->
+                <!--                                            </div>-->
+                <!--                                            &lt;!&ndash; Perfect Fleets Body End &ndash;&gt;-->
+
+                <!--                                            &lt;!&ndash; Perfect Fleets Footer End &ndash;&gt;-->
+                <!--                                        </div>-->
+                <!--                                        &lt;!&ndash; Perfect Fleets Footer Start &ndash;&gt;-->
+                <!--                                        <div class="perfect-fleet-footer">-->
+                <!--                                            &lt;!&ndash; Perfect Fleets Pricing Start &ndash;&gt;-->
+                <!--                                            <div class="perfect-fleet-pricing d-flex">-->
+                <!--                                                <h2 data-cursor="-opaque" class="basePrice"-->
+                <!--                                                    th:title="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')}"-->
+                <!--                                                    th:text="${car.getBasePrice()}"-->
+                <!--                                                    data-bs-toggle="tooltip"-->
+                <!--                                                    data-bs-placement="top">-->
+                <!--                                                </h2>-->
+                <!--                                                <span style="font-size: 14px;font-weight: 400; align-self: center">/day</span>-->
+                <!--                                            </div>-->
+                <!--                                            &lt;!&ndash; Perfect Fleets Pricing End &ndash;&gt;-->
+
+                <!--                                            &lt;!&ndash; Perfect Fleets Btn Start &ndash;&gt;-->
+                <!--                                            <div class="perfect-fleet-btn">-->
+                <!--                                                <a href="#" class="section-icon-btn"><img src="images/arrow-white.svg"-->
+                <!--                                                                                          alt=""></a>-->
+                <!--                                            </div>-->
+                <!--                                            &lt;!&ndash; Perfect Fleets Btn End &ndash;&gt;-->
+                <!--                                        </div>-->
+                <!--                                        &lt;!&ndash; Perfect Fleets Content End &ndash;&gt;-->
+                <!--                                    </div>-->
+                <!--                                    &lt;!&ndash; Perfect Fleets Item End &ndash;&gt;-->
+                <!--                                </div>-->
+                <!--                            </th:block>-->
+                <!--                            &lt;!&ndash;                            <div class="col-lg-12">&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                &lt;!&ndash; Fleets Pagination Start &ndash;&gt;&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                <div class="fleets-pagination wow fadeInUp" data-wow-delay="0.5s">&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                    <ul class="pagination">&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                        <li><a href="#"><i class="fa-solid fa-arrow-left-long"></i></a></li>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                        <li class="active"><a href="#">1</a></li>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                        <li><a href="#">2</a></li>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                        <li><a href="#">3</a></li>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                        <li><a href="#"><i class="fa-solid fa-arrow-right-long"></i></a></li>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                    </ul>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                </div>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                                &lt;!&ndash; Fleets Pagination End &ndash;&gt;&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                            </div>&ndash;&gt;-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                    &lt;!&ndash; Fleets Collection Box End &ndash;&gt;-->
+                <!--                </div>-->
             </div>
         </div>
     </div>
@@ -284,7 +453,7 @@
         <svg class="circular" width="48px" height="48px">
             <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
             <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
-                    stroke="#F96D00"/>
+                    stroke="#03ffa2"/>
         </svg>
     </div>
 
@@ -321,16 +490,365 @@
     <script src="/cars/js/wow.js"></script>
     <!-- Main Custom js file -->
     <script src="/cars/js/function.js"></script>
+    <!-- Flatpickr -->
+    <script src="/webjars/flatpickr/4.6.13/dist/flatpickr.min.js"></script>
     <script defer>
-        const priceElements = document.querySelectorAll('.basePrice');
 
-        priceElements.forEach(priceElement => {
-            const price = parseFloat(priceElement.textContent);
-            priceElement.textContent = new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            }).format(price);
+        // // Flatpickr
+        // flatpickr('.flatpickr-validate', {
+        //     allowInput: false,
+        //     minDate: "today",
+        //     defaultDate: getDefaultDateTime(),
+        //     enableTime: true,
+        //     minTime: "05:00",
+        //     maxTime: "21:00",
+        //     minuteIncrement: 30,
+        //     time_24hr: true,
+        //     onOpen: function (selectedDates, dateStr, instance) {
+        //         adjustMinTime(selectedDates, dateStr, instance);
+        //         // Prevent typing in hour and minute fields
+        //         const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
+        //         const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+        //         hourInput.setAttribute('readonly', 'readonly');
+        //         minuteInput.setAttribute('readonly', 'readonly');
+        //     },
+        //     onChange: function (selectedDates, dateStr, instance) {
+        //         adjustMinTime(selectedDates, dateStr, instance);
+        //     },
+        //     onReady: function (selectedDates, dateStr, instance) {
+        //         adjustMinTime(selectedDates, dateStr, instance);
+        //     }
+        // });
+
+        // Initialize pickup datetime picker
+        const pickupDatePicker = flatpickr('#pickupDateTime', {
+            allowInput: false,
+            minDate: "today",
+            enableTime: true,
+            minTime: "05:00",
+            maxTime: "21:00",
+            minuteIncrement: 30,
+            time_24hr: true,
+            defaultDate: getDefaultDateTime(),
+                onOpen: function (selectedDates, dateStr, instance) {
+                    adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
+                    adjustMinTimeForDropDate();
+                    // Prevent typing in hour and minute fields
+                    const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
+                    const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+                    hourInput.setAttribute('readonly', 'readonly');
+                    minuteInput.setAttribute('readonly', 'readonly');
+                    //set min date for drop date picker to be the same as pickup date picker + 2 hours
+                    dropDatePicker.set("minDate", new Date(`${dateStr} ${String(instance.selectedDates[0].getHours() + 2).padStart(2, '0')}:${String(instance.selectedDates[0].getMinutes()).padStart(2, '0')}`));
+                },
+                onChange: function (selectedDates, dateStr, instance) {
+                    adjustMinTimeForDropDate();
+                    adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
+                    dropDatePicker.set("minDate", new Date(`${dateStr} ${String(instance.selectedDates[0].getHours() + 2).padStart(2, '0')}:${String(instance.selectedDates[0].getMinutes()).padStart(2, '0')}`));
+                },
+                onReady: function (selectedDates, dateStr, instance) {
+                    adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
+                    dropDatePicker.set("minDate", new Date(`${dateStr} ${String(instance.selectedDates[0].getHours() + 2).padStart(2, '0')}:${String(instance.selectedDates[0].getMinutes()).padStart(2, '0')}`));
+                }
         });
+
+        // Initialize drop datetime picker
+        const dropDatePicker = flatpickr('#dropDateTime', {
+            allowInput: false,
+            minDate: "today",
+            enableTime: true,
+            minTime: "05:00",
+            maxTime: "21:00",
+            minuteIncrement: 30,
+            time_24hr: true,
+            defaultDate: getDefaultDateTime(2),
+            onOpen: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForDropDate();
+                // Prevent typing in hour and minute fields
+                const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
+                const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+                hourInput.setAttribute('readonly', 'readonly');
+                minuteInput.setAttribute('readonly', 'readonly');
+            },
+        });
+
+        function adjustMinTimeForPickupDate(selectedDates, dateStr, instance) {
+            const now = new Date();
+            let currentHour = now.getHours();
+            let currentMinute = now.getMinutes();
+            if (currentHour < 5) {
+                instance.set("minTime", "05:00");
+                instance.setDate(new Date(`${dateStr} 05:00`));
+            } else {
+                let nextHour = currentHour + 1;
+                if (nextHour > 21) nextHour = 21; // Cap minTime at 21:00
+                instance.set("minTime", `${String(nextHour).padStart(2, '0')}:00`);
+                instance.set("defaultDate", new Date(`${dateStr} ${String(nextHour).padStart(2, '0')}:00`));
+            }
+        }
+
+        function adjustMinTimeForDropDate(){
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            const dropDateTime = document.querySelector('#dropDateTime').value;
+            const pickupDate = new Date(pickupDateTime);
+            const dropDate = new Date(dropDateTime);
+            if(pickupDate.getHours() === 21){
+                const nextDay = new Date(pickupDate);
+                dropDatePicker.set("minDate", nextDay.setDate(nextDay.getDate() + 1));
+                dropDatePicker.set("minTime", "05:00");
+            }
+            //check if drop date is before pickup date + 2 hours
+            else{
+                if(dropDate < new Date(pickupDate).setHours(pickupDate.getHours() + 2)){
+                    dropDatePicker.setDate(dropDate.setHours(pickupDate.getHours() + 2));
+                }
+                dropDatePicker.set("minDate", pickupDate);
+                dropDatePicker.set("minTime", `${String(pickupDate.getHours() + 2).padStart(2, '0')}:00`);
+            }
+        }
+
+
+        function getDefaultDateTime(timePlus) {
+            const now = new Date();
+            const currentHour = now.getHours();
+            if (!timePlus) {
+                timePlus = 0;
+            }
+
+            if (currentHour < 5) {
+                // If it's before 5 AM, set to 5 AM today
+                const defaultDate = new Date(now);
+                defaultDate.setHours(5 + timePlus, 0, 0, 0);
+                return defaultDate;
+            } else {
+                // Set to current time + 1 hour
+                const defaultDate = new Date(now);
+                defaultDate.setHours(currentHour + 1 + timePlus, 0, 0, 0);
+
+                // If the calculated time would be after 21:00, set to 21:00
+                if (defaultDate.getHours() > 21) {
+                    defaultDate.setHours(21, 0, 0, 0);
+                }
+
+                return defaultDate;
+            }
+        }
+
+        const dropDateTime = document.querySelector('#dropDateTime');
+        dropDateTime.addEventListener('change', adjustMinRentTime);
+
+        function adjustMinRentTime() {
+            const pickupInfoHelp = document.getElementById('pickupInfoHelp');
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            const dropDateTime = document.querySelector('#dropDateTime').value;
+
+            if (!pickupDateTime || !dropDateTime) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
+                return false;
+            }
+
+            const pickupDate = new Date(pickupDateTime);
+            const dropDate = new Date(dropDateTime);
+
+            if (isNaN(pickupDate.getTime()) || isNaN(dropDate.getTime())) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Invalid date or time selected</span>';
+                return false;
+            }
+
+            const diffHours = (dropDate - pickupDate) / 1000 / 60 / 60;
+
+            if (diffHours < 2) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Minimum rent time is 2 hours</span>';
+                return false;
+            }
+
+            pickupInfoHelp.textContent = '';
+        }
+
+        function validateTimeInput() {
+            const pickupInfoHelp = document.getElementById('pickupInfoHelp');
+            const pickupDateTime = document.getElementById('pickupDateTime').value;
+            const dropDateTime = document.getElementById('dropDateTime').value;
+            const pickupDate = new Date(pickupDateTime);
+            const dropDate = new Date(dropDateTime);
+            if (pickupDateTime === '' || dropDateTime === '') {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
+                return false;
+            }
+            if (isNaN(pickupDate.getTime()) || isNaN(dropDate.getTime())) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Invalid date or time selected</span>';
+                return false;
+            }
+            if(pickupDate < new Date()) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Pickup time must be in the future</span>';
+                return false;
+            }
+            if(dropDate < new Date()) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Drop time must be in the future</span>';
+                return false;
+            }
+            if(pickupDate > dropDate) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Drop time must be after pickup time</span>';
+                return false;
+            }
+            //Check if pickupDate or dropDate is not in range of 5:00 - 21:00
+            if (pickupDate.getHours() < 5 || pickupDate.getHours() > 21) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Pickup time must be in range of 5:00 - 21:00</span>';
+                return false;
+            }
+            if (dropDate.getHours() < 5 || dropDate.getHours() > 21) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Drop time must be in range of 5:00 - 21:00</span>';
+                return false;
+            }
+            const diffHours = (dropDate - pickupDate) / 1000 / 60 / 60;
+            if (diffHours < 2) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Minimum rent time is 2 hours</span>';
+                return false;
+            }
+
+
+            return adjustMinRentTime() !== false;
+
+        }
+
+    </script>
+    <script>
+        function fetchCars(pickupLocation, pickupDateTime, dropDateTime) {
+            const loader = document.getElementById("ftco-loader-car");
+            const carContainer = document.getElementById("carContainer");
+
+            loader.style.opacity = '1';
+            carContainer.innerHTML = "";
+
+            fetch(`/api/searchCar?pickupLocation=${pickupLocation}&pickupDateTime=${pickupDateTime}&dropDateTime=${dropDateTime}`)
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.opacity = '0';
+                    if (data.length === 0) {
+                        carContainer.innerHTML = '<div style="margin: auto"><h3 data-cursor="-opaque" style="color: grey">There\'re no cars that are available for you!</h3></div>';
+                        return;
+                    }
+                    data.forEach(car => {
+                        // Determine status style based on statusId
+                        let statusStyle = '';
+                        switch (car.carStatus.statusId) {
+                            case 1:
+                                statusStyle = 'color: #2c8b00; background-color: #e2ffde';
+                                break;
+                            case 2:
+                                statusStyle = 'color: #7300ff; background-color: #f3edff';
+                                break;
+                            case 3:
+                                statusStyle = 'color: #ff0000; background-color: #ffdede';
+                                break;
+                            case 5:
+                                statusStyle = 'color: #3d3d3d; background-color: #e4e4e4';
+                                break;
+                            case 6:
+                                statusStyle = 'color: #ff8c00; background-color: #ffedde';
+                                break;
+                            case 10:
+                                statusStyle = 'color: #00c4ff; background-color: #defbff';
+                                break;
+                        }
+
+                        carContainer.innerHTML += `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="perfect-fleet-item fleets-collection-item wow fadeInUp" style="display: flex; flex-direction: column">
+                                <div class="image-box" style="border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
+                                    <img src="${car.frontImage}"
+                                     style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover; height: 100%;"
+                                     alt="">
+                                </div>
+
+                            <div class="perfect-fleet-content">
+                                <div class="perfect-fleet-title">
+                                    <div style="display: flex;justify-content: space-between;flex-flow: wrap;"><h3 style="${statusStyle}">${car.carStatus.name}</h3><span style="color: #ffb825"><i class="fa fa-star" style="margin-right: 3px"></i>${car.rateAverage}</span></div>
+                                    <h2>${car.carName}</h2>
+                                    <div class="mt-3 d-flex ">
+                                     <i class="fa fa-location-arrow mr-1" style="margin-top: 5px;"></i>
+                                     <span style="font-size: 0.9rem">${car.address.province}, ${car.address.district}</span>
+                                    </div>
+                                </div>
+
+                                <div class="perfect-fleet-body">
+                                    <ul>
+                                        <li>
+                                            <i class="fa fa-user"></i>
+                                            <p class="m-0">${car.seat} passenger</p>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-sliders"></i>
+                                            <p class="m-0">${car.transmission}</p>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-gas-pump"></i>
+                                            <p class="m-0">${car.fuelType}</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="perfect-fleet-footer">
+                                <div class="perfect-fleet-pricing d-flex">
+                                    <h2 data-cursor="-opaque"
+                                        class="basePrice"
+                                        title="${new Intl.NumberFormat().format(car.basePrice)}"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top">
+                                        ${car.basePrice}
+                                    </h2>
+                                    <span style="font-size: 14px;font-weight: 400; align-self: center">/day</span>
+                                </div>
+
+                                    <div class="perfect-fleet-btn">
+                                        <a href="/api/searchCar/${car.carId}" class="section-icon-btn">
+                                            <img src="images/arrow-white.svg" alt="">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    formatMoney();
+                })
+                .catch(error => {
+                    console.error("Error fetching cars:", error);
+                    loader.style.opacity = '0';
+                    carContainer.innerHTML = "<h1>Error loading cars!</h1>";
+                });
+        }
+
+        function formatMoney() {
+            const priceElements = document.querySelectorAll('.basePrice');
+
+            priceElements.forEach(priceElement => {
+                const price = parseFloat(priceElement.textContent);
+                priceElement.textContent = new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                }).format(price);
+            });
+        }
+
+        document.getElementById('fleetsForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const pickupLocation = document.getElementById('pickupLocation').value;
+            const pickupDateTime = document.getElementById('pickupDateTime').value;
+            const dropDateTime = document.getElementById('dropDateTime').value;
+
+            if(pickupLocation === '' || pickupDateTime === '' || dropDateTime === '') {
+                const pickupInfoHelp = document.getElementById('pickupInfoHelp');
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
+                return;
+            }
+            if(validateTimeInput() === false) {
+                return;
+            }
+            console.log(pickupLocation, pickupDateTime, dropDateTime);
+            fetchCars(pickupLocation, pickupDateTime, dropDateTime);
+        });
+
 
     </script>
     </body>

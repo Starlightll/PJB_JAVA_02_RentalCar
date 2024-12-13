@@ -50,7 +50,7 @@ public class WebConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         // Các URL công khai, không yêu cầu xác thực
                         .requestMatchers("/", "/homepage-guest", "/error/**", "/faq", "/contacts", "/privacy").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**", "/assets/**", "/cars/**", "/uploads/**", "/webjars/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/vendor/**", "/fonts/**", "/images/**", "/assets/**", "/cars/**", "/uploads/**", "/webjars/**", "/api/searchCar").permitAll()
                         .requestMatchers("/login/**", "/register/**", "/forgot-password", "/reset-password/**", "/send-activation", "/agree-term-service").permitAll()
                         .requestMatchers("/myProfile", "/change-password").hasAnyAuthority("Customer", "Car Owner", "Admin")
                         .requestMatchers("/homepage-customer").hasAnyAuthority("Customer", "Admin")

@@ -24,6 +24,10 @@ import java.util.regex.Pattern;
 
 import static com.rentalcar.rentalcar.common.Regex.*;
 
+/**
+ * CarDraftController is responsible for handling requests related to car draft operations.
+ * It interacts with the CarDraftService to check, save, or delete car drafts for users.
+ */
 @Controller
 @RequestMapping("car-draft")
 public class CarDraftController {

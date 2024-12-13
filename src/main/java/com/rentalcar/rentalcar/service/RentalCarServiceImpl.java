@@ -576,6 +576,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             BookingStatus confirmedStatus = confirmedStatusOptional.get();
             booking.setBookingStatus(confirmedStatus);
             booking.setLastModified(new Date());
+
             bookingRepository.save(booking);
         } else {
             System.out.println("Confirmed status not found.");
@@ -588,6 +589,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         if (bookedStatusOptional.isPresent()) {
             CarStatus bookedStatus = bookedStatusOptional.get();
             car.setCarStatus(bookedStatus);
+            car.setLastModified(new Date());
             carRepository.save(car);
         } else {
             System.out.println("Booked status not found.");
@@ -836,6 +838,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             }
             CarStatus availableStatus = availableStatusOptional.get();
             car.setCarStatus(availableStatus);
+            car.setLastModified(new Date());
             carRepository.save(car);
 
             Optional<BookingStatus> completedStatusOptional = bookingStatusRepository.findById(4L);
@@ -961,6 +964,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         if (bookedStatusOptional.isPresent()) {
             CarStatus bookedStatus = bookedStatusOptional.get();
             car.setCarStatus(bookedStatus);
+            car.setLastModified(new Date());
             carRepository.save(car);
         } else {
             System.out.println("Booked status not found.");

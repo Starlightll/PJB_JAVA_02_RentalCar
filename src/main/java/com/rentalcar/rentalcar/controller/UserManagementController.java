@@ -21,6 +21,14 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The UserManagementController class provides RESTful endpoints for managing user accounts within the admin section.
+ * It supports operations like viewing user details, adding, updating, deleting, and suspending users.
+ * The class is annotated with @Controller to mark it as a Spring MVC controller and uses @RequestMapping to map all HTTP requests
+ * with the path "/admin" onto methods in this controller. Cross-origin resource sharing (CORS) is configured
+ * using the @CrossOrigin annotation.
+ */
+
 @Controller
 @RequestMapping("/admin")
 @CrossOrigin

@@ -29,6 +29,11 @@ import java.util.Map;
 import java.util.Objects;
 
 
+/**
+ * The MyProfileController class provides endpoints to manage user profile related actions
+ * including password change, avatar update, and profile information update.
+ */
+
 @Controller
 public class MyProfileController {
 
@@ -176,7 +181,7 @@ public class MyProfileController {
             throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN);
         }
         try {
-            userService.updateProfile(user, drivingLicenseFile);
+            userService.updateProfile(user, drivingLicenseFile, session);
         } catch (Exception e) {
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);

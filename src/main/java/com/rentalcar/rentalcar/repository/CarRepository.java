@@ -60,4 +60,27 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 
     @Query(value = "SELECT licensePlate FROM Car WHERE userId != :userId GROUP BY licensePlate", nativeQuery = true)
     Set<String> findAllLicensePlateNotOwnedByUserId(@Param("userId") Long userId);
+
+    @Query(value = "SELECT TOP 5 \n" +
+            "    c.carId, \n" +
+            "    c.name,  \n" +
+            "    c.model, \n" +
+            "    c.basePrice, \n" +
+            "    c.front, \n" +
+            "    c.back, \n" +
+            "    c.[left],  \n" +
+            "    c.[right], \n" +
+            "    ROUND(AVG(CAST(f.rating AS FLOAT)), 2) AS averageRating \n" +
+            "FROM [RentalCar].[dbo].[Car] c\n" +
+            "LEFT JOIN [dbo].[BookingCar] bc ON bc.carId = c.carId\n" +
+            "LEFT JOIN [dbo].[Feedback] f ON f.bookingId = bc.bookingId\n" +
+            "WHERE c.statusId = 1\n" +
+            "GROUP BY c.carId, c.name, c.model, c.basePrice, c.front, c.back,  c.[left],  c.[right]\n" +
+            "ORDER BY averageRating DESC", nativeQuery = true)
+    List<Object[]> findTop5CarsWithHighestRating();
+
+    //Get rateAvg of car by carId
+    @Query(value = "SELECT ROUND(AVG(CAST(f.rating AS FLOAT)), 2) AS averageRating FROM [RentalCar].[dbo].[Car] c LEFT JOIN [dbo].[BookingCar] bc ON bc.carId = c.carId LEFT JOIN [dbo].[Feedback] f ON f.bookingId = bc.bookingId WHERE c.carId = :carId GROUP BY c.carId", nativeQuery = true)
+    Double getRateAvgByCarId(@Param("carId") Integer carId);
+
 }
