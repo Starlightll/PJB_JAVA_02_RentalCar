@@ -335,19 +335,37 @@ async function fetchWards(districtCode, defaultWard) {
     });
 }
 
-// Event listeners to load data on selection
-document.getElementById('province').addEventListener('change', function () {
-    fetchDistricts(this.value);
-    document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
-    document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
-    document.getElementById('district').value = ""; // Reset district value
-    document.getElementById('ward').disabled = true; // Disable ward selection
+// Select 2 library
+$('#province').on('select2:select', function (e) {
+    console.log("Province selected");
+    const selectedProvince = $(this).val();
+    fetchDistricts(selectedProvince);
+    $('#ward').html('<option value="">Select Ward</option>').prop('disabled', true);
+    $('#district').val("").prop('disabled', selectedProvince === "");
 });
 
-document.getElementById('district').addEventListener('change', function () {
-    fetchWards(this.value);
-    document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
+
+// Select 2 library
+$('#district').on('select2:select', function (e) {
+    console.log("District selected");
+    const selectedDistrict = $(this).val();
+    fetchWards(selectedDistrict);
+    $('#ward').prop('disabled', selectedDistrict === "");
 });
+
+// Event listeners to load data on selection
+// document.getElementById('province').addEventListener('change', function () {
+//     fetchDistricts(this.value);
+//     document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
+//     document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
+//     document.getElementById('district').value = ""; // Reset district value
+//     document.getElementById('ward').disabled = true; // Disable ward selection
+// });
+//
+// document.getElementById('district').addEventListener('change', function () {
+//     fetchWards(this.value);
+//     document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
+// });
 
 
 // Load provinces on page load with default values

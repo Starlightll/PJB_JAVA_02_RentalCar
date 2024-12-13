@@ -42,8 +42,8 @@ function fetchDriverDetailsAjax() {
         $('#provinceDriver').empty();
         $('#districtDriver').empty();
         $('#wardDriver').empty();
-        $('#salaryDriver').empty();
-        $('#descriptionDriver').empty();
+        $('#salaryDriver').val(''); 
+        $('#descriptionDriver').val('');
         return;
     }
 
