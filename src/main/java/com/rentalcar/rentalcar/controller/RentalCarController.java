@@ -38,6 +38,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,8 +138,11 @@ public class RentalCarController {
     @GetMapping("/customer/booking-car")
 
     public String bookingDetail(@RequestParam Integer CarId,
-                                @RequestParam String startDate, @RequestParam String enDate
-                                 , @RequestParam String address, @RequestParam String beforeNavigate, Model model, HttpSession session) {
+                                @RequestParam(value = "startDate", required = false) String startDate,
+                                @RequestParam(value = "enDate", required = false) String enDate,
+                                @RequestParam(value = "address", required = false) String address,
+                                @RequestParam(value = "beforeNavigate", required = false) String beforeNavigate,
+                                Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
         CarDto car = rentalCarService.getCarDetails(CarId);
@@ -197,6 +202,72 @@ public class RentalCarController {
         model.addAttribute("user", user);
         model.addAttribute("userRepo", userepo);//Lấy wallet
         model.addAttribute("carAddress", carAddress);//Lấy địa chỉ
+        return "customer/booking";
+    }
+
+    @GetMapping("/customer/booking-car-v2")
+    public String bookingDetailV2(@RequestParam(value = "CarId") Integer CarId,
+                                @RequestParam(value = "startDate", required = false) String startDate,
+                                @RequestParam(value = "endDate", required = false) String endDate,
+                                @RequestParam(value = "address", required = false) String address,
+                                @RequestParam(value = "beforeNavigate", required = false) String beforeNavigate,
+                                Model model, HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+        CarDto car = rentalCarService.getCarDetails(CarId);
+        User userepo = userRepo.getUserById(user.getId());
+
+        if (car.getStatusId() != 1) {
+            return "redirect:/";
+        }
+
+        Car carAddress = carRepository.getCarByCarId(CarId);
+        if (carAddress == null) {
+            return "redirect:/";
+        }
+
+        List<UserDto> driverList = getAllDriverAvailable();
+
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm");
+        DateTimeFormatter dateOutputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeOutputFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        try {
+            if (startDate != null && endDate != null) {
+                LocalDateTime startDateTime = LocalDateTime.parse(startDate, inputFormatter);
+                LocalDateTime endDateTime = LocalDateTime.parse(endDate, inputFormatter);
+
+                String formattedStartDate = startDateTime.format(outputFormatter);
+                String formattedEnDate = endDateTime.format(outputFormatter);
+
+                String pickStartDate = startDateTime.format(dateOutputFormatter);
+                String pickTime = startDateTime.format(timeOutputFormatter);
+
+                String dropDate = endDateTime.format(dateOutputFormatter);
+                String dropTime = endDateTime.format(timeOutputFormatter);
+
+                model.addAttribute("startDate", formattedStartDate);
+                model.addAttribute("enDate", formattedEnDate);
+                model.addAttribute("pickDate", pickStartDate);
+                model.addAttribute("dropDate", dropDate);
+                model.addAttribute("pickTime", pickTime);
+                model.addAttribute("dropTime", dropTime);
+            }
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Invalid date format. Please use 'yyyy-MM-dd HH:mm'.");
+            return "redirect:/";
+        }
+
+        model.addAttribute("lastLink", beforeNavigate);
+        model.addAttribute("users", driverList);
+        model.addAttribute("car", car);
+        model.addAttribute("address", address);
+        model.addAttribute("user", user);
+        model.addAttribute("userRepo", userepo);
+        model.addAttribute("carAddress", carAddress);
+
         return "customer/booking";
     }
 

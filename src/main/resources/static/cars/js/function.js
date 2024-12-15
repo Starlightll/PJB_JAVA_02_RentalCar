@@ -379,40 +379,40 @@
 	}
 	/* Contact form validation end */
 
-	/* Car Booking PopUp form validation */
-	var $bookingform = $("#bookingform");
-	$bookingform.validator({focus: false}).on("submit", function (event) {
-		if (!event.isDefaultPrevented()) {
-			event.preventDefault();
-			submitbookingform();
-		}
-	});
-
-	function submitbookingform(){
-		/* Initiate Variables With Form Content*/
-		var name = $("#name").val();
-		var email = $("#email").val();
-		var phone = $("#phone").val();
-		var phone = $("#cartype").val();
-		var phone = $("#pickuplocation").val();
-		var date = $("#pickupdate").val();
-		var phone = $("#droplocation").val();
-		var date = $("#returndate").val();
-		var message = $("#msg").val();
-
-		$.ajax({
-			type: "POST",
-			url: "form-car-booking.php",
-			data: "name=" + name + "&email=" + email + "&phone=" + phone + "&cartype=" + cartype + "&pickuplocation=" + pickuplocation + "&pickupdate=" + pickupdate + "&droplocation=" + droplocation + "&returndate=" + returndate + "&message=" + message,
-			success : function(text){
-				if (text == "success"){
-					bookingformSuccess();
-				} else {
-					appointmentsubmitMSG(false,text);
-				}
-			}
-		});
-	}
+	// /* Car Booking PopUp form validation */
+	// var $bookingform = $("#bookingform");
+	// $bookingform.validator({focus: false}).on("submit", function (event) {
+	// 	if (!event.isDefaultPrevented()) {
+	// 		event.preventDefault();
+	// 		submitbookingform();
+	// 	}
+	// });
+	//
+	// function submitbookingform(){
+	// 	/* Initiate Variables With Form Content*/
+	// 	var name = $("#name").val();
+	// 	var email = $("#email").val();
+	// 	var phone = $("#phone").val();
+	// 	var phone = $("#cartype").val();
+	// 	var phone = $("#pickuplocation").val();
+	// 	var date = $("#pickupdate").val();
+	// 	var phone = $("#droplocation").val();
+	// 	var date = $("#returndate").val();
+	// 	var message = $("#msg").val();
+	//
+	// 	$.ajax({
+	// 		type: "POST",
+	// 		url: "form-car-booking.php",
+	// 		data: "name=" + name + "&email=" + email + "&phone=" + phone + "&cartype=" + cartype + "&pickuplocation=" + pickuplocation + "&pickupdate=" + pickupdate + "&droplocation=" + droplocation + "&returndate=" + returndate + "&message=" + message,
+	// 		success : function(text){
+	// 			if (text == "success"){
+	// 				bookingformSuccess();
+	// 			} else {
+	// 				appointmentsubmitMSG(false,text);
+	// 			}
+	// 		}
+	// 	});
+	// }
 
 	function bookingformSuccess(){
 		$bookingform[0].reset();

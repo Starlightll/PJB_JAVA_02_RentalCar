@@ -235,6 +235,9 @@ public class SearchCarController {
     @GetMapping("/api/searchCar/{id}")
     public String carDetail(
             @PathVariable("id") Integer id,
+            @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
+            @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
+            @RequestParam(value = "dropDateTime", required = false) String dropDateTime,
             Model model
     ) {
         Car car = carRepository.getCarByCarId(id);
@@ -242,6 +245,9 @@ public class SearchCarController {
             return "redirect:/api/searchCar";
         }
         model.addAttribute("car", carMapper.toDto(car));
+        model.addAttribute("pickupLocation", pickupLocation);
+        model.addAttribute("pickupDateTime", pickupDateTime);
+        model.addAttribute("dropDateTime", dropDateTime);
         return "products/CarDetail";
     }
 

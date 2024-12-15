@@ -116,7 +116,46 @@
             background-color: var(--secondary-color);
             border-radius: 30px;
             padding: 40px;
-             margin-right: 0px;
+            margin-right: 0px;
+        }
+
+        /*  Flatpickr*/
+
+        :root {
+            --flatpickr-color-header: #19cf91;
+            --flatpickr-color-dropdown: #1e6b52;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-weekdays {
+            background: var(--flatpickr-color-header);
+        }
+
+        span.flatpickr-weekday {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+            background-color: var(--flatpickr-color-dropdown);
+        }
+
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+            background: var(--flatpickr-color-header) !important;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            color: #fff;
+            border-color: var(--flatpickr-color-header) !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: var(--flatpickr-color-header);
         }
 
     </style>
@@ -149,7 +188,8 @@
                         <div class="fleets-single-sidebar-box wow fadeInUp">
                             <!-- Feets Single Sidebar Pricing Start -->
                             <div class="fleets-single-sidebar-pricing d-flex">
-                                <h2 id="basePrice" th:text="${car.getBasePrice()}" style="font-size: 1.7rem; align-self: end"></h2>
+                                <h2 id="basePrice" th:text="${car.getBasePrice()}"
+                                    style="font-size: 1.7rem; align-self: end"></h2>
                                 <span style="font-size: 1.3rem;font-weight: 400; align-self: center">/day</span>
                             </div>
                             <!-- Feets Single Sidebar Pricing End -->
@@ -180,6 +220,7 @@
                         <div class="booking-form-box">
                             <!-- Booking PopUp Form Start -->
                             <form id="bookingform" class="white-popup-block mfp-hide booking-form">
+                                <input type="hidden" id="carId" th:value="${car.getCarId()}" readonly>
                                 <div class="section-title">
                                     <h2>Reserve your vehicle today!</h2>
                                     <p>Fill out the form below to reserve your vehicle. Complete the necessary details
@@ -187,76 +228,25 @@
                                 </div>
                                 <fieldset>
                                     <div class="row">
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <input type="text" name="name" class="booking-form-control" id="name"
-                                                   placeholder="Full Name" required>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <input type="email" name="email" class="booking-form-control" id="email"
-                                                   placeholder="Enter Your Email" required>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <input type="text" name="phone" class="booking-form-control" id="phone"
-                                                   placeholder="Enter Your Number" required>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <select name="cartype" class="booking-form-control form-select" id="cartype"
-                                                    required>
-                                                <option value="" disabled selected>Choose Car Type</option>
-                                                <option value="sport_car">sport car</option>
-                                                <option value="convertible_car">convertible car</option>
-                                                <option value="sedan_car">sedan car</option>
-                                                <option value="luxury_car">luxury car</option>
-                                                <option value="electric_car">electric car</option>
-                                                <option value="coupe_car">coupe car</option>
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <select name="location" class="booking-form-control form-select"
-                                                    id="pickuplocation" required>
-                                                <option value="" disabled selected>Pick Up Location</option>
-                                                <option value="abu_dhabi">abu dhabi</option>
-                                                <option value="alain">alain</option>
-                                                <option value="dubai">dubai</option>
-                                                <option value="sharjah">sharjah</option>
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <input type="text" name="date" placeholder="PickUp Date"
-                                                   class="booking-form-control datepicker" id="pickupdate" required>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <select name="droplocation" class="booking-form-control form-select"
-                                                    id="droplocation" required>
-                                                <option value="" disabled selected>Drop Off Location</option>
-                                                <option value="abu_dhabi">abu dhabi</option>
-                                                <option value="alain">alain</option>
-                                                <option value="sharjah">sharjah</option>
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="booking-form-group col-md-6 mb-4">
-                                            <input type="text" name="date" class="booking-form-control datepicker"
-                                                   id="returndate" placeholder="Return Date" required>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
                                         <div class="booking-form-group col-md-12 mb-4">
-                                            <textarea name="msg" class="booking-form-control" id="msg" rows="3"
-                                                      placeholder="Write Your Message" required></textarea>
+                                            <input type="text" name="location" class="booking-form-control"
+                                                   id="pickupLocation"
+                                                   th:value="${car.getAddress().province() + ', ' + car.getAddress().district() + ', ' + car.getAddress().ward()}"
+                                                   placeholder="Location" required readonly>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <input type="email" name="pickupDateTime" class="booking-form-control"
+                                                   id="pickupDateTime" th:value="${pickupDateTime}"
+                                                   placeholder="Choose pick up date" required>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="booking-form-group col-md-6 mb-4">
+                                            <input type="email" name="dropDateTime" class="booking-form-control"
+                                                   id="dropDateTime" th:value="${dropDateTime}"
+                                                   placeholder="Choose pick up date" required>
                                             <div class="help-block with-errors"></div>
                                         </div>
 
@@ -264,6 +254,7 @@
                                             <button type="submit" class="btn-default">rent now</button>
                                             <div id="msgSubmit" class="h3 hidden"></div>
                                         </div>
+                                        <small id="pickupInfoHelp" style="color: rgb(255,150,0); gap: 3px"></small>
                                     </div>
                                 </fieldset>
                             </form>
@@ -359,7 +350,8 @@
                             <div class="section-title">
                                 <h3 class="wow fadeInUp">general information</h3>
                                 <h2 class="text-anime-style-3" data-cursor="-opaque">Term of Use</h2>
-                                <p class="wow fadeInUp" data-wow-delay="0.25s" th:text="${car.getTerms() == '' ? 'No term of use.':car.getTerms()}"></p>
+                                <p class="wow fadeInUp" data-wow-delay="0.25s"
+                                   th:text="${car.getTerms() == '' ? 'No term of use.':car.getTerms()}"></p>
                             </div>
                             <!-- Section Title End -->
 
@@ -464,6 +456,296 @@
         }
     </script>
     <script>
+
+        // Initialize pickup datetime picker
+        const pickupDatePicker = flatpickr('#pickupDateTime', {
+            allowInput: false,
+            minDate: "today",
+            enableTime: true,
+            minTime: "05:00",
+            maxTime: "23:00",
+            minuteIncrement: 30,
+            time_24hr: true,
+            defaultDate: getDefaultDateForPickup(),
+            onOpen: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
+                // Prevent typing in hour and minute fields
+                const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
+                const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+                hourInput.setAttribute('readonly', 'readonly');
+                minuteInput.setAttribute('readonly', 'readonly');
+            },
+            onChange: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForDropDate(true);
+            }
+        });
+
+        // Initialize drop datetime picker
+        const dropDatePicker = flatpickr('#dropDateTime', {
+            allowInput: false,
+            minDate: "today",
+            enableTime: true,
+            minTime: "05:00",
+            maxTime: "23:00",
+            minuteIncrement: 30,
+            time_24hr: true,
+            defaultDate: getDefaultDateForDrop(true),
+            onOpen: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForDropDate();
+                // Prevent typing in hour and minute fields
+                const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
+                const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+                hourInput.setAttribute('readonly', 'readonly');
+                minuteInput.setAttribute('readonly', 'readonly');
+            },
+            onChange: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForDropDate();
+            }
+        });
+
+
+        function adjustMinTimeForPickupDate(selectedDates, dateStr, instance) {
+            let now = new Date();
+            if(now.getHours() < 5){
+                instance.set("minTime", "05:00");
+                now.setHours(5, 0, 0, 0);
+                instance.set("minDate", now);
+                // instance.setDate(now);
+            }else{
+                now.setTime(now.getTime() + 60 * 60 * 1000);
+                if(now.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    console.log("New time test:", tomorrow);
+                    instance.set("minTime", "05:00");
+                    instance.set("minDate", tomorrow);
+                    instance.setDate(tomorrow);
+                }else{
+                    let minTime = "";
+                    if(now.getMinutes() < 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(0);
+                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+                        console.log(minTime)
+                        instance.set("minTime", `${minTime}`);
+                        instance.set("minDate", now);
+                        // instance.setDate(now);
+                    }
+                    if(now.getMinutes() >= 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(30);
+                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+                        console.log(minTime)
+                        instance.set("minTime", `${minTime}`);
+                        instance.set("minDate", now);
+                        // instance.setDate(now);
+                    }
+                }
+            }
+        }
+
+        function getDefaultDateForPickup() {
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            let now = new Date();
+            if(pickupDateTime){
+                if(now < new Date(pickupDateTime)){
+                    now = new Date(pickupDateTime);
+                    return now;
+                }
+            }
+            let currentTime = now.getHours() + ":" + now.getMinutes();
+            let currentHour = now.getHours();
+            let currentMinute = now.getMinutes();
+            if(now.getHours() < 5){
+                now.setHours(5, 0, 0, 0);
+                return now;
+            }else{
+                now.setTime(now.getTime() + 60 * 60 * 1000);
+                if(now.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    console.log("New time test:", tomorrow);
+                    return tomorrow;
+                }else{
+                    if(now.getMinutes() < 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(0);
+                        return now;
+                    }
+                    if(now.getMinutes() >= 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(30);
+                        return now;
+                    }
+                }
+            }
+            console.log(currentTime);
+        }
+
+
+        function adjustMinTimeForDropDate(haveToSet = false) {
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            const dropDateTime = document.querySelector('#dropDateTime').value;
+            const oldDropDate = new Date(dropDateTime);
+            const pickupDate = new Date(pickupDateTime);
+            pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
+            const dropDate = new Date(pickupDate);
+            console.log("Time for drop:", dropDate);
+            if(dropDate.getHours() < 5){
+                dropDate.setHours(5, 0, 0, 0);
+                dropDatePicker.set("minTime", "05:00");
+                dropDatePicker.set("minDate", dropDate);
+                console.log(" h < 5");
+                console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
+                if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true  && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                    console.log("dropDate < pickupDate");
+                    dropDatePicker.setDate(dropDate);
+                }
+                // dropDatePicker.setDate(dropDate);
+            }else{
+                if(dropDate.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    dropDatePicker.set("minTime", "05:00");
+                    dropDatePicker.set("minDate", tomorrow);
+                    console.log(" h >= 23");
+                    console.log(tomorrow.getDate() + "-" + pickupDate.getDate() + "=" + (tomorrow.getDate() - pickupDate.getDate()));
+                    if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                        dropDatePicker.setDate(tomorrow);
+                    }
+                    // dropDatePicker.setDate(tomorrow);
+                }else{
+                    let minTime = "";
+                    console.log(" h < 23 và h >= 5");
+                    if(dropDate.getMinutes() < 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(0);
+                        minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
+                        console.log(minTime)
+                        dropDatePicker.set("minTime", `${minTime}`);
+                        dropDatePicker.set("minDate", dropDate);
+                        console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                            dropDatePicker.setDate(dropDate);
+                        }
+                        // dropDatePicker.setDate(dropDate);
+                    }
+                    if(dropDate.getMinutes() >= 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(30);
+                        minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
+                        console.log(minTime)
+                        dropDatePicker.set("minTime", `${minTime}`);
+                        dropDatePicker.set("minDate", dropDate);
+                        console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                            dropDatePicker.setDate(dropDate);
+                        }
+                        // dropDatePicker.setDate(dropDate);
+                    }
+                }
+            }
+            if(oldDropDate.getDate() - pickupDate.getDate() >= 1){
+                dropDatePicker.set("minTime", "05:00");
+            }
+        }
+
+        function getDefaultDateForDrop(haveToSet = false) {
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            const dropDateTime = document.querySelector('#dropDateTime').value;
+            const oldDropDate = new Date(dropDateTime);
+            const pickupDate = new Date(pickupDateTime);
+            if(haveToSet === true) {
+                if(oldDropDate.getTime() - pickupDate.getTime() >= 2 * 60 * 60 * 1000){
+                    return oldDropDate;
+                }
+            }
+            pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
+            const dropDate = new Date(pickupDate);
+            console.log("Time for drop:", dropDate);
+            if(dropDate.getHours() < 5){
+                dropDate.setHours(5, 0, 0, 0);
+                return dropDate;
+            }else{
+                if(dropDate.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    return tomorrow;
+                }else{
+                    console.log(" h < 23 và h >= 5");
+                    if(dropDate.getMinutes() < 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(0);
+                        return dropDate;
+                    }
+                    if(dropDate.getMinutes() >= 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(30);
+                        return dropDate;
+                    }
+                }
+            }
+        }
+
+        const dropDateTime = document.querySelector('#dropDateTime');
+        dropDateTime.addEventListener('change', adjustMinRentTime);
+
+        function adjustMinRentTime() {
+            const pickupInfoHelp = document.getElementById('pickupInfoHelp');
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            const dropDateTime = document.querySelector('#dropDateTime').value;
+
+            if (!pickupDateTime || !dropDateTime) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
+                return false;
+            }
+
+            const pickupDate = new Date(pickupDateTime);
+            const dropDate = new Date(dropDateTime);
+
+            if (isNaN(pickupDate.getTime()) || isNaN(dropDate.getTime())) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Invalid date or time selected</span>';
+                return false;
+            }
+
+            const diffHours = (dropDate - pickupDate) / 1000 / 60 / 60;
+
+            if (diffHours < 2) {
+                pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Minimum rent time is 2 hours</span>';
+                return false;
+            }
+
+            pickupInfoHelp.textContent = '';
+        }
+
+        document.getElementById('bookingform').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const pickupLocation = document.getElementById('pickupLocation').value;
+            const pickupDateTime = document.getElementById('pickupDateTime').value;
+            const dropDateTime = document.getElementById('dropDateTime').value;
+
+            if (!pickupLocation || !pickupDateTime || !dropDateTime) {
+                Swal.fire({
+                    title: 'Please fill in all required fields',
+                    icon: 'warning',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'custom-confirm-btn'
+                    }
+                });
+                return false;
+            }
+
+
+            // let formattedPickupDateTime = pickupDateTime.replaceAll(" ", " - ");
+            // let formattedDropDateTime = dropDateTime.replaceAll(" ", " - ");
+            const carId = document.getElementById('carId').value;
+            window.location.href = `/customer/booking-car-v2?CarId=${carId}&startDate=${pickupDateTime}&endDate=${dropDateTime}&address=${pickupLocation}&beforeNavigate=search`;
+        });
 
     </script>
     </body>

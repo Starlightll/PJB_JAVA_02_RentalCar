@@ -156,6 +156,45 @@
             background-color: #defbff
         }
 
+        /*  Flatpickr*/
+
+        :root {
+            --flatpickr-color-header: #19cf91;
+            --flatpickr-color-dropdown: #1e6b52;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-weekdays {
+            background: var(--flatpickr-color-header);
+        }
+
+        span.flatpickr-weekday {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+            background-color: var(--flatpickr-color-dropdown);
+        }
+
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+            background: var(--flatpickr-color-header) !important;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            color: #fff;
+            border-color: var(--flatpickr-color-header) !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: var(--flatpickr-color-header);
+        }
+
 
     </style>
 </head>
@@ -181,47 +220,7 @@
     <div class="page-fleets">
         <div class="container" style="max-width: 1300px;">
             <div class="row">
-                <div class="col-12" style="display: none">
-                    <div class="pickup-location-fleet fleets-sidebar wow fadeInUp mb-3 row"
-                         style="visibility: visible; animation-name: fadeInUp;">
-                        <div class="col-12 col-md-6">
-                            <h5>Pickup location</h5>
-                            <div class="form-group">
-                                <input type="text" name="search"
-                                       class="location-search form-control"
-                                       placeholder="Search..."
-                                       required="">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <h5>Pickup location</h5>
-                            <div class="form-group">
-                                <input type="text" name="search"
-                                       class="location-search form-control"
-                                       placeholder="Search..."
-                                       required="">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <h5>Pickup time</h5>
-                            <div class="form-group">
-                                <input type="text" name="search"
-                                       class="location-search form-control"
-                                       placeholder="Search..."
-                                       required="">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <h5>Drop time</h5>
-                            <div class="form-group">
-                                <input type="text" name="search"
-                                       class="location-search form-control"
-                                       placeholder="Search..."
-                                       required="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class="col-lg-3">
                     <!-- Fleets Sidebar Start -->
@@ -231,7 +230,7 @@
                             <form id="fleetsForm" action="#" method="POST">
                                 <div class="form-group">
                                     <input type="text" name="pickupLocation" class="form-control" id="pickupLocation"
-                                           placeholder="Pickup location" required>
+                                           placeholder="Pickup location">
                                     <button type="submit" class="section-icon-btn"><i
                                             class="fa-solid fa-magnifying-glass"></i></button>
                                 </div>
@@ -337,112 +336,6 @@
                     </div>
                     <!-- Fleets Collection Box End -->
                 </div>
-
-                <!--                <div class="col-lg-9">-->
-                <!--                    &lt;!&ndash; Fleets Collection Box Start &ndash;&gt;-->
-                <!--                    <div class="fleets-collection-box">-->
-                <!--                        <div class="row">-->
-                <!--                            <div th:if="${cars == null}" style="margin: auto">-->
-                <!--                                <h1 data-cursor="-opaque">No car found!</h1>-->
-                <!--                            </div>-->
-                <!--                            <th:block th:each="car, iterStat: ${cars}">-->
-                <!--                                <div class="col-lg-4 col-md-6">-->
-                <!--                                    &lt;!&ndash; Perfect Fleets Item Start &ndash;&gt;-->
-                <!--                                    <div class="perfect-fleet-item fleets-collection-item wow fadeInUp"-->
-                <!--                                         style="display: flex; flex-direction: column">-->
-                <!--                                        &lt;!&ndash; Image Box Start &ndash;&gt;-->
-                <!--                                        <div class="image-box"-->
-                <!--                                             style="	border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">-->
-                <!--                                            <img th:src="${car.getFrontImage()}"-->
-                <!--                                                 style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover;height: 100%;"-->
-                <!--                                                 alt="">-->
-                <!--                                        </div>-->
-                <!--                                        &lt;!&ndash; Image Box End &ndash;&gt;-->
-
-                <!--                                        &lt;!&ndash; Perfect Fleets Content Start &ndash;&gt;-->
-                <!--                                        <div class="perfect-fleet-content">-->
-                <!--                                            &lt;!&ndash; Perfect Fleets Title Start &ndash;&gt;-->
-                <!--                                            <div class="perfect-fleet-title">-->
-                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 1}"-->
-                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
-                <!--                                                    style="color: #2c8b00; background-color: #e2ffde">Undefined</h3>-->
-                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 2}"-->
-                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
-                <!--                                                    style="color: #7300ff; background-color: #f3edff">Undefined</h3>-->
-                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 3}"-->
-                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
-                <!--                                                    style="color: #ff0000; background-color: #ffdede">Undefined</h3>-->
-                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 5}"-->
-                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
-                <!--                                                    style="color: #3d3d3d; background-color: #e4e4e4">Undefined</h3>-->
-                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 6}"-->
-                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
-                <!--                                                    style="color: #ff8c00; background-color: #ffedde">Undefined</h3>-->
-                <!--                                                <h3 th:if="${car.getCarStatus().getStatusId() == 10}"-->
-                <!--                                                    th:text="${car.getCarStatus().getName()}"-->
-                <!--                                                    style="color: #00c4ff; background-color: #defbff">Undefined</h3>-->
-                <!--                                                <h2 th:text="${car.getCarName()}">Undefined</h2>-->
-                <!--                                            </div>-->
-                <!--                                            &lt;!&ndash; Perfect Fleets Content End &ndash;&gt;-->
-
-                <!--                                            &lt;!&ndash; Perfect Fleets Body Start &ndash;&gt;-->
-                <!--                                            <div class="perfect-fleet-body">-->
-                <!--                                                <ul>-->
-                <!--                                                    <li><i class="fa fa-user"></i>-->
-                <!--                                                        <p th:text="${car.getSeat()+' passenger'}" class="m-0"></p></li>-->
-                <!--                                                    <li><i class="fa fa-sliders"></i>-->
-                <!--                                                        <p th:text="${car.getTransmission()}" class="m-0"></p></li>-->
-                <!--                                                    <li><i class="fa fa-gas-pump"></i>-->
-                <!--                                                        <p th:text="${car.getFuelType()}" class="m-0"></p></li>-->
-                <!--                                                </ul>-->
-                <!--                                            </div>-->
-                <!--                                            &lt;!&ndash; Perfect Fleets Body End &ndash;&gt;-->
-
-                <!--                                            &lt;!&ndash; Perfect Fleets Footer End &ndash;&gt;-->
-                <!--                                        </div>-->
-                <!--                                        &lt;!&ndash; Perfect Fleets Footer Start &ndash;&gt;-->
-                <!--                                        <div class="perfect-fleet-footer">-->
-                <!--                                            &lt;!&ndash; Perfect Fleets Pricing Start &ndash;&gt;-->
-                <!--                                            <div class="perfect-fleet-pricing d-flex">-->
-                <!--                                                <h2 data-cursor="-opaque" class="basePrice"-->
-                <!--                                                    th:title="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')}"-->
-                <!--                                                    th:text="${car.getBasePrice()}"-->
-                <!--                                                    data-bs-toggle="tooltip"-->
-                <!--                                                    data-bs-placement="top">-->
-                <!--                                                </h2>-->
-                <!--                                                <span style="font-size: 14px;font-weight: 400; align-self: center">/day</span>-->
-                <!--                                            </div>-->
-                <!--                                            &lt;!&ndash; Perfect Fleets Pricing End &ndash;&gt;-->
-
-                <!--                                            &lt;!&ndash; Perfect Fleets Btn Start &ndash;&gt;-->
-                <!--                                            <div class="perfect-fleet-btn">-->
-                <!--                                                <a href="#" class="section-icon-btn"><img src="images/arrow-white.svg"-->
-                <!--                                                                                          alt=""></a>-->
-                <!--                                            </div>-->
-                <!--                                            &lt;!&ndash; Perfect Fleets Btn End &ndash;&gt;-->
-                <!--                                        </div>-->
-                <!--                                        &lt;!&ndash; Perfect Fleets Content End &ndash;&gt;-->
-                <!--                                    </div>-->
-                <!--                                    &lt;!&ndash; Perfect Fleets Item End &ndash;&gt;-->
-                <!--                                </div>-->
-                <!--                            </th:block>-->
-                <!--                            &lt;!&ndash;                            <div class="col-lg-12">&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                &lt;!&ndash; Fleets Pagination Start &ndash;&gt;&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                <div class="fleets-pagination wow fadeInUp" data-wow-delay="0.5s">&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                    <ul class="pagination">&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                        <li><a href="#"><i class="fa-solid fa-arrow-left-long"></i></a></li>&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                        <li class="active"><a href="#">1</a></li>&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                        <li><a href="#">2</a></li>&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                        <li><a href="#">3</a></li>&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                        <li><a href="#"><i class="fa-solid fa-arrow-right-long"></i></a></li>&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                    </ul>&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                </div>&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                                &lt;!&ndash; Fleets Pagination End &ndash;&gt;&ndash;&gt;-->
-                <!--                            &lt;!&ndash;                            </div>&ndash;&gt;-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                    &lt;!&ndash; Fleets Collection Box End &ndash;&gt;-->
-                <!--                </div>-->
             </div>
         </div>
     </div>
@@ -513,7 +406,7 @@
                 minuteInput.setAttribute('readonly', 'readonly');
             },
             onChange: function (selectedDates, dateStr, instance) {
-                adjustMinTimeForDropDate();
+                adjustMinTimeForDropDate(true);
             }
         });
 
@@ -554,17 +447,16 @@
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
-                    console.log("Thời gian mới:", tomorrow);
+                    console.log("New time test:", tomorrow);
                     instance.set("minTime", "05:00");
                     instance.set("minDate", tomorrow);
                     instance.setDate(tomorrow);
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 23h:", now);
                     let minTime = "";
                     if(now.getMinutes() < 30){
                         now.setHours(now.getHours());
                         now.setMinutes(0);
-                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;w
+                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
                         console.log(minTime)
                         instance.set("minTime", `${minTime}`);
                         instance.set("minDate", now);
@@ -597,10 +489,9 @@
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
-                    console.log("Thời gian mới:", tomorrow);
+                    console.log("New time test:", tomorrow);
                     return tomorrow;
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 22h:", now);
                     if(now.getMinutes() < 30){
                         now.setHours(now.getHours());
                         now.setMinutes(0);
@@ -617,21 +508,21 @@
         }
 
 
-        function adjustMinTimeForDropDate(){
+        function adjustMinTimeForDropDate(haveToSet = false) {
             const pickupDateTime = document.querySelector('#pickupDateTime').value;
             const dropDateTime = document.querySelector('#dropDateTime').value;
             const oldDropDate = new Date(dropDateTime);
             const pickupDate = new Date(pickupDateTime);
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
-            console.log("Thời gian drop:", dropDate);
+            console.log("Time for drop:", dropDate);
             if(dropDate.getHours() < 5){
                 dropDate.setHours(5, 0, 0, 0);
                 dropDatePicker.set("minTime", "05:00");
                 dropDatePicker.set("minDate", dropDate);
                 console.log(" h < 5");
                 console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                     console.log("dropDate < pickupDate");
                     dropDatePicker.setDate(dropDate);
                 }
@@ -645,12 +536,11 @@
                     dropDatePicker.set("minDate", tomorrow);
                     console.log(" h >= 23");
                     console.log(tomorrow.getDate() + "-" + pickupDate.getDate() + "=" + (tomorrow.getDate() - pickupDate.getDate()));
-                    if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                    if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                         dropDatePicker.setDate(tomorrow);
                     }
                     // dropDatePicker.setDate(tomorrow);
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 23h:", dropDate);
                     let minTime = "";
                     console.log(" h < 23 và h >= 5");
                     if(dropDate.getMinutes() < 30){
@@ -661,7 +551,7 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
@@ -674,7 +564,7 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
@@ -723,7 +613,7 @@
             const pickupDate = new Date(pickupDateTime);
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
-            console.log("Thời gian drop:", dropDate);
+            console.log("Time for drop:", dropDate);
             if(dropDate.getHours() < 5){
                 dropDate.setHours(5, 0, 0, 0);
                 return dropDate;
@@ -734,7 +624,6 @@
                     tomorrow.setHours(5, 0, 0, 0);
                     return tomorrow;
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 23h:", dropDate);
                     console.log(" h < 23 và h >= 5");
                     if(dropDate.getMinutes() < 30){
                         dropDate.setHours(dropDate.getHours());
@@ -918,7 +807,7 @@
                                 </div>
 
                                     <div class="perfect-fleet-btn">
-                                        <a href="/api/searchCar/${car.carId}" class="section-icon-btn">
+                                        <a href="#" class="section-icon-btn" onclick="viewCarDetail(${car.carId})">
                                             <img src="images/arrow-white.svg" alt="">
                                         </a>
                                     </div>
@@ -953,7 +842,7 @@
             const pickupDateTime = document.getElementById('pickupDateTime').value;
             const dropDateTime = document.getElementById('dropDateTime').value;
 
-            if(pickupLocation === '' || pickupDateTime === '' || dropDateTime === '') {
+            if(pickupDateTime === '' || dropDateTime === '') {
                 const pickupInfoHelp = document.getElementById('pickupInfoHelp');
                 pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
                 return;
@@ -964,6 +853,13 @@
             console.log(pickupLocation, pickupDateTime, dropDateTime);
             fetchCars(pickupLocation, pickupDateTime, dropDateTime);
         });
+
+        function viewCarDetail(carId) {
+            const pickupLocation = document.getElementById('pickupLocation').value;
+            const pickupDateTime = document.getElementById('pickupDateTime').value;
+            const dropDateTime = document.getElementById('dropDateTime').value;
+            window.location.href = `/api/searchCar/${carId}?pickupLocation=${pickupLocation}&pickupDateTime=${pickupDateTime}&dropDateTime=${dropDateTime}`;
+        }
 
 
     </script>
