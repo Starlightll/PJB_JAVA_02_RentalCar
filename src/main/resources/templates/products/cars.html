@@ -494,62 +494,27 @@
     <script src="/webjars/flatpickr/4.6.13/dist/flatpickr.min.js"></script>
     <script defer>
 
-        // // Flatpickr
-        // flatpickr('.flatpickr-validate', {
-        //     allowInput: false,
-        //     minDate: "today",
-        //     defaultDate: getDefaultDateTime(),
-        //     enableTime: true,
-        //     minTime: "05:00",
-        //     maxTime: "21:00",
-        //     minuteIncrement: 30,
-        //     time_24hr: true,
-        //     onOpen: function (selectedDates, dateStr, instance) {
-        //         adjustMinTime(selectedDates, dateStr, instance);
-        //         // Prevent typing in hour and minute fields
-        //         const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
-        //         const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
-        //         hourInput.setAttribute('readonly', 'readonly');
-        //         minuteInput.setAttribute('readonly', 'readonly');
-        //     },
-        //     onChange: function (selectedDates, dateStr, instance) {
-        //         adjustMinTime(selectedDates, dateStr, instance);
-        //     },
-        //     onReady: function (selectedDates, dateStr, instance) {
-        //         adjustMinTime(selectedDates, dateStr, instance);
-        //     }
-        // });
-
         // Initialize pickup datetime picker
         const pickupDatePicker = flatpickr('#pickupDateTime', {
             allowInput: false,
             minDate: "today",
             enableTime: true,
             minTime: "05:00",
-            maxTime: "21:00",
+            maxTime: "23:00",
             minuteIncrement: 30,
             time_24hr: true,
-            defaultDate: getDefaultDateTime(),
-                onOpen: function (selectedDates, dateStr, instance) {
-                    adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
-                    adjustMinTimeForDropDate();
-                    // Prevent typing in hour and minute fields
-                    const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
-                    const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
-                    hourInput.setAttribute('readonly', 'readonly');
-                    minuteInput.setAttribute('readonly', 'readonly');
-                    //set min date for drop date picker to be the same as pickup date picker + 2 hours
-                    dropDatePicker.set("minDate", new Date(`${dateStr} ${String(instance.selectedDates[0].getHours() + 2).padStart(2, '0')}:${String(instance.selectedDates[0].getMinutes()).padStart(2, '0')}`));
-                },
-                onChange: function (selectedDates, dateStr, instance) {
-                    adjustMinTimeForDropDate();
-                    adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
-                    dropDatePicker.set("minDate", new Date(`${dateStr} ${String(instance.selectedDates[0].getHours() + 2).padStart(2, '0')}:${String(instance.selectedDates[0].getMinutes()).padStart(2, '0')}`));
-                },
-                onReady: function (selectedDates, dateStr, instance) {
-                    adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
-                    dropDatePicker.set("minDate", new Date(`${dateStr} ${String(instance.selectedDates[0].getHours() + 2).padStart(2, '0')}:${String(instance.selectedDates[0].getMinutes()).padStart(2, '0')}`));
-                }
+            defaultDate: getDefaultDateForPickup(),
+            onOpen: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForPickupDate(selectedDates, dateStr, instance);
+                // Prevent typing in hour and minute fields
+                const hourInput = instance.timeContainer.querySelector('.flatpickr-hour');
+                const minuteInput = instance.timeContainer.querySelector('.flatpickr-minute');
+                hourInput.setAttribute('readonly', 'readonly');
+                minuteInput.setAttribute('readonly', 'readonly');
+            },
+            onChange: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForDropDate();
+            }
         });
 
         // Initialize drop datetime picker
@@ -558,10 +523,10 @@
             minDate: "today",
             enableTime: true,
             minTime: "05:00",
-            maxTime: "21:00",
+            maxTime: "23:00",
             minuteIncrement: 30,
             time_24hr: true,
-            defaultDate: getDefaultDateTime(2),
+            defaultDate: getDefaultDateForDrop(),
             onOpen: function (selectedDates, dateStr, instance) {
                 adjustMinTimeForDropDate();
                 // Prevent typing in hour and minute fields
@@ -570,42 +535,157 @@
                 hourInput.setAttribute('readonly', 'readonly');
                 minuteInput.setAttribute('readonly', 'readonly');
             },
+            onChange: function (selectedDates, dateStr, instance) {
+                adjustMinTimeForDropDate();
+            }
         });
 
+
         function adjustMinTimeForPickupDate(selectedDates, dateStr, instance) {
-            const now = new Date();
-            let currentHour = now.getHours();
-            let currentMinute = now.getMinutes();
-            if (currentHour < 5) {
+            let now = new Date();
+            if(now.getHours() < 5){
                 instance.set("minTime", "05:00");
-                instance.setDate(new Date(`${dateStr} 05:00`));
-            } else {
-                let nextHour = currentHour + 1;
-                if (nextHour > 21) nextHour = 21; // Cap minTime at 21:00
-                instance.set("minTime", `${String(nextHour).padStart(2, '0')}:00`);
-                instance.set("defaultDate", new Date(`${dateStr} ${String(nextHour).padStart(2, '0')}:00`));
+                now.setHours(5, 0, 0, 0);
+                instance.set("minDate", now);
+                // instance.setDate(now);
+            }else{
+                now.setTime(now.getTime() + 60 * 60 * 1000);
+                if(now.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    console.log("Thời gian mới:", tomorrow);
+                    instance.set("minTime", "05:00");
+                    instance.set("minDate", tomorrow);
+                    instance.setDate(tomorrow);
+                }else{
+                    console.log("Thời gian hiện tại không nằm sau 23h:", now);
+                    let minTime = "";
+                    if(now.getMinutes() < 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(0);
+                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;w
+                        console.log(minTime)
+                        instance.set("minTime", `${minTime}`);
+                        instance.set("minDate", now);
+                        // instance.setDate(now);
+                    }
+                    if(now.getMinutes() >= 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(30);
+                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+                        console.log(minTime)
+                        instance.set("minTime", `${minTime}`);
+                        instance.set("minDate", now);
+                        // instance.setDate(now);
+                    }
+                }
             }
         }
+
+        function getDefaultDateForPickup() {
+            let now = new Date();
+            let currentTime = now.getHours() + ":" + now.getMinutes();
+            let currentHour = now.getHours();
+            let currentMinute = now.getMinutes();
+            if(now.getHours() < 5){
+                now.setHours(5, 0, 0, 0);
+                return now;
+            }else{
+                now.setTime(now.getTime() + 60 * 60 * 1000);
+                if(now.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    console.log("Thời gian mới:", tomorrow);
+                    return tomorrow;
+                }else{
+                    console.log("Thời gian hiện tại không nằm sau 22h:", now);
+                    if(now.getMinutes() < 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(0);
+                        return now;
+                    }
+                    if(now.getMinutes() >= 30){
+                        now.setHours(now.getHours());
+                        now.setMinutes(30);
+                        return now;
+                    }
+                }
+            }
+            console.log(currentTime);
+        }
+
 
         function adjustMinTimeForDropDate(){
             const pickupDateTime = document.querySelector('#pickupDateTime').value;
             const dropDateTime = document.querySelector('#dropDateTime').value;
+            const oldDropDate = new Date(dropDateTime);
             const pickupDate = new Date(pickupDateTime);
-            const dropDate = new Date(dropDateTime);
-            if(pickupDate.getHours() === 21){
-                const nextDay = new Date(pickupDate);
-                dropDatePicker.set("minDate", nextDay.setDate(nextDay.getDate() + 1));
+            pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
+            const dropDate = new Date(pickupDate);
+            console.log("Thời gian drop:", dropDate);
+            if(dropDate.getHours() < 5){
+                dropDate.setHours(5, 0, 0, 0);
+                dropDatePicker.set("minTime", "05:00");
+                dropDatePicker.set("minDate", dropDate);
+                console.log(" h < 5");
+                console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
+                if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                    console.log("dropDate < pickupDate");
+                    dropDatePicker.setDate(dropDate);
+                }
+                // dropDatePicker.setDate(dropDate);
+            }else{
+                if(dropDate.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    dropDatePicker.set("minTime", "05:00");
+                    dropDatePicker.set("minDate", tomorrow);
+                    console.log(" h >= 23");
+                    console.log(tomorrow.getDate() + "-" + pickupDate.getDate() + "=" + (tomorrow.getDate() - pickupDate.getDate()));
+                    if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                        dropDatePicker.setDate(tomorrow);
+                    }
+                    // dropDatePicker.setDate(tomorrow);
+                }else{
+                    console.log("Thời gian hiện tại không nằm sau 23h:", dropDate);
+                    let minTime = "";
+                    console.log(" h < 23 và h >= 5");
+                    if(dropDate.getMinutes() < 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(0);
+                        minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
+                        console.log(minTime)
+                        dropDatePicker.set("minTime", `${minTime}`);
+                        dropDatePicker.set("minDate", dropDate);
+                        console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                            dropDatePicker.setDate(dropDate);
+                        }
+                        // dropDatePicker.setDate(dropDate);
+                    }
+                    if(dropDate.getMinutes() >= 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(30);
+                        minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
+                        console.log(minTime)
+                        dropDatePicker.set("minTime", `${minTime}`);
+                        dropDatePicker.set("minDate", dropDate);
+                        console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1){
+                            dropDatePicker.setDate(dropDate);
+                        }
+                        // dropDatePicker.setDate(dropDate);
+                    }
+                }
+            }
+            if(oldDropDate.getDate() - pickupDate.getDate() >= 1){
                 dropDatePicker.set("minTime", "05:00");
             }
-            //check if drop date is before pickup date + 2 hours
-            else{
-                if(dropDate < new Date(pickupDate).setHours(pickupDate.getHours() + 2)){
-                    dropDatePicker.setDate(dropDate.setHours(pickupDate.getHours() + 2));
-                }
-                dropDatePicker.set("minDate", pickupDate);
-                dropDatePicker.set("minTime", `${String(pickupDate.getHours() + 2).padStart(2, '0')}:00`);
-            }
         }
+
 
 
         function getDefaultDateTime(timePlus) {
@@ -627,10 +707,46 @@
 
                 // If the calculated time would be after 21:00, set to 21:00
                 if (defaultDate.getHours() > 21) {
-                    defaultDate.setHours(21, 0, 0, 0);
+                        defaultDate.setDate(defaultDate.getDate() + 1);
+                        defaultDate.setHours(5, 0, 0, 0);
                 }
-
                 return defaultDate;
+            }
+        }
+
+
+
+        function getDefaultDateForDrop() {
+            const pickupDateTime = document.querySelector('#pickupDateTime').value;
+            const dropDateTime = document.querySelector('#dropDateTime').value;
+            const oldDropDate = new Date(dropDateTime);
+            const pickupDate = new Date(pickupDateTime);
+            pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
+            const dropDate = new Date(pickupDate);
+            console.log("Thời gian drop:", dropDate);
+            if(dropDate.getHours() < 5){
+                dropDate.setHours(5, 0, 0, 0);
+                return dropDate;
+            }else{
+                if(dropDate.getHours() >= 23){
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(5, 0, 0, 0);
+                    return tomorrow;
+                }else{
+                    console.log("Thời gian hiện tại không nằm sau 23h:", dropDate);
+                    console.log(" h < 23 và h >= 5");
+                    if(dropDate.getMinutes() < 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(0);
+                        return dropDate;
+                    }
+                    if(dropDate.getMinutes() >= 30){
+                        dropDate.setHours(dropDate.getHours());
+                        dropDate.setMinutes(30);
+                        return dropDate;
+                    }
+                }
             }
         }
 
