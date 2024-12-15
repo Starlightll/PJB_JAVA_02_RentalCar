@@ -447,17 +447,16 @@
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
-                    console.log("Thời gian mới:", tomorrow);
+                    console.log("New time test:", tomorrow);
                     instance.set("minTime", "05:00");
                     instance.set("minDate", tomorrow);
                     instance.setDate(tomorrow);
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 23h:", now);
                     let minTime = "";
                     if(now.getMinutes() < 30){
                         now.setHours(now.getHours());
                         now.setMinutes(0);
-                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;w
+                        minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
                         console.log(minTime)
                         instance.set("minTime", `${minTime}`);
                         instance.set("minDate", now);
@@ -490,10 +489,9 @@
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
-                    console.log("Thời gian mới:", tomorrow);
+                    console.log("New time test:", tomorrow);
                     return tomorrow;
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 22h:", now);
                     if(now.getMinutes() < 30){
                         now.setHours(now.getHours());
                         now.setMinutes(0);
@@ -517,14 +515,14 @@
             const pickupDate = new Date(pickupDateTime);
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
-            console.log("Thời gian drop:", dropDate);
+            console.log("Time for drop:", dropDate);
             if(dropDate.getHours() < 5){
                 dropDate.setHours(5, 0, 0, 0);
                 dropDatePicker.set("minTime", "05:00");
                 dropDatePicker.set("minDate", dropDate);
                 console.log(" h < 5");
                 console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true){
+                if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                     console.log("dropDate < pickupDate");
                     dropDatePicker.setDate(dropDate);
                 }
@@ -538,12 +536,11 @@
                     dropDatePicker.set("minDate", tomorrow);
                     console.log(" h >= 23");
                     console.log(tomorrow.getDate() + "-" + pickupDate.getDate() + "=" + (tomorrow.getDate() - pickupDate.getDate()));
-                    if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true){
+                    if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                         dropDatePicker.setDate(tomorrow);
                     }
                     // dropDatePicker.setDate(tomorrow);
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 23h:", dropDate);
                     let minTime = "";
                     console.log(" h < 23 và h >= 5");
                     if(dropDate.getMinutes() < 30){
@@ -554,7 +551,7 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true){
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
@@ -567,7 +564,7 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true){
+                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
@@ -616,7 +613,7 @@
             const pickupDate = new Date(pickupDateTime);
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
-            console.log("Thời gian drop:", dropDate);
+            console.log("Time for drop:", dropDate);
             if(dropDate.getHours() < 5){
                 dropDate.setHours(5, 0, 0, 0);
                 return dropDate;
@@ -627,7 +624,6 @@
                     tomorrow.setHours(5, 0, 0, 0);
                     return tomorrow;
                 }else{
-                    console.log("Thời gian hiện tại không nằm sau 23h:", dropDate);
                     console.log(" h < 23 và h >= 5");
                     if(dropDate.getMinutes() < 30){
                         dropDate.setHours(dropDate.getHours());
