@@ -11,8 +11,9 @@
     <script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 </head>
+<th:block th:fragment="header">
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar" th:fragment="header">
+<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
         <a class="navbar-brand" href="/">Car<span>Book</span></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,7 +22,7 @@
 
         <div class="collapse navbar-collapse" id="ftco-nav">
             <ul class="navbar-nav ml-auto p-0" style="backdrop-filter: blur(40px);border-radius: 15px; margin-right: 10px;">
-                <li class="nav-item active"><a href="/" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="/about-us" class="nav-link">About</a></li>
                 <li class="nav-item"><a href="/car-search" class="nav-link">Car Search</a></li>
             </ul>
@@ -70,6 +71,24 @@
     </div>
 </nav>
 <script>
+    function setActiveMenu() {
+        const currentPath = window.location.pathname;
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        const activeLink = document.querySelector(`.nav-link[href="${currentPath}"]`);
+        if (activeLink) {
+            const menuItem = activeLink.closest('.nav-item');
+            menuItem.classList.add('active');
+        }
+        console.log(currentPath);
+    }
+
+    document.addEventListener('DOMContentLoaded', setActiveMenu);
+
+    window.addEventListener('popstate', setActiveMenu);
 </script>
 </body>
+</th:block>
 </html>
