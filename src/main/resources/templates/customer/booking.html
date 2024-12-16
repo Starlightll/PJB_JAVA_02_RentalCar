@@ -131,7 +131,7 @@
 <!--                    </button>-->
                 </div>
                 <div class="modal-body" id="rulesContent">
-                    <div id="scrollableContent" style="max-height: 400px; overflow-y: scroll;">
+                    <div id="scrollableContent" style="height: 400px; overflow-y: scroll;">
                         <h2>1. Introduction</h2>
                         <p>Welcome to [Company Name]! These Terms of Service outline the rules and regulations for renting a vehicle from our company. By renting a vehicle from us, you agree to these terms. Please read them carefully.</p>
 
@@ -898,31 +898,51 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Kiểm tra nếu người dùng đã hiểu quy tắc (dựa vào localStorage)
-            if (!localStorage.getItem('rulesAccepted')) {
-                // Mở popup khi lần đầu vào trang
-                $('#rulesPopup').modal('show');
-            }
-
-            // Đảm bảo nút "I've read and understood" chỉ được bật khi người dùng cuộn hết nội dung
             const scrollableContent = document.getElementById('scrollableContent');
             const acceptButton = document.getElementById('acceptRulesBtn');
+            const rulesPopup = $('#rulesPopup');
 
-            scrollableContent.addEventListener('scroll', function () {
-                // Kiểm tra nếu người dùng cuộn đến cuối
-                if (scrollableContent.scrollTop + scrollableContent.clientHeight >= scrollableContent.scrollHeight) {
+            if (!scrollableContent || !acceptButton) {
+                console.error('Required elements not found');
+                return;
+            }
+
+            try {
+                if (!localStorage.getItem('rulesAccepted')) {
+                    rulesPopup.modal('show');
+                }
+            } catch (e) {
+                console.error('Error accessing localStorage:', e);
+                rulesPopup.modal('show');
+            }
+
+            let isAtBottom = false;
+
+            const scrollHandler = function() {
+                const scrollTop = scrollableContent.scrollTop;
+                const scrollHeight = scrollableContent.scrollHeight;
+                const clientHeight = scrollableContent.clientHeight;
+
+                if (!isAtBottom && scrollTop + clientHeight >= scrollHeight - 1) {
+                    isAtBottom = true;
                     acceptButton.disabled = false;
                     acceptButton.classList.add('btn-success');
                     acceptButton.classList.remove('btn-primary');
+                    // Cleanup
+                    scrollableContent.removeEventListener('scroll', scrollHandler);
                 }
-            });
+            };
 
-            // Khi người dùng nhấn nút "I've read and understood"
+            scrollableContent.addEventListener('scroll', scrollHandler);
+
             acceptButton.addEventListener('click', function () {
-                // Lưu trạng thái vào localStorage để không hiển thị lại popup
-                localStorage.setItem('rulesAccepted', 'true');
-                // Đóng popup
-                $('#rulesPopup').modal('hide');
+                try {
+                    localStorage.setItem('rulesAccepted', 'true');
+                    rulesPopup.modal('hide');
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    rulesPopup.modal('hide');
+                }
             });
         });
 
