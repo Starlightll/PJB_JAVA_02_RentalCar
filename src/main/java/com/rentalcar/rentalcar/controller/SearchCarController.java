@@ -1,7 +1,11 @@
 package com.rentalcar.rentalcar.controller;
 
+import com.rentalcar.rentalcar.dto.AdditionalFunctionDto;
+import com.rentalcar.rentalcar.dto.BrandDto;
 import com.rentalcar.rentalcar.dto.CarDto1;
 import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.mappers.AdditionalFunctionMapper;
+import com.rentalcar.rentalcar.mappers.BrandMapper;
 import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
@@ -41,6 +45,10 @@ public class SearchCarController {
     private CarStatusRepository carStatusRepository;
     @Autowired
     private CarMapper carMapper;
+    @Autowired
+    private BrandMapper brandMapper;
+    @Autowired
+    private AdditionalFunctionMapper additionalFunctionMapper;
 
     @GetMapping("/searchCar")
     public String searchCar(Model model,
@@ -223,7 +231,6 @@ public class SearchCarController {
             @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
             @RequestParam(value = "dropDateTime", required = false) String dropDateTime
     ) {
-
         List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
         List<CarDto1> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds).stream().map(carMapper::toDto).collect(Collectors.toList());
         if(pickupLocation != null && !pickupLocation.isEmpty()) {
@@ -249,6 +256,16 @@ public class SearchCarController {
         model.addAttribute("pickupDateTime", pickupDateTime);
         model.addAttribute("dropDateTime", dropDateTime);
         return "products/CarDetail";
+    }
+
+    @GetMapping("/api/brands")
+    public ResponseEntity<List<BrandDto>> getBrands() {
+        return ResponseEntity.ok(brandRepository.findAll().stream().map(brandMapper::toDto).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/api/additionalFunctions")
+    public ResponseEntity<List<AdditionalFunctionDto>> getAdditionalFunctions() {
+        return ResponseEntity.ok(additionalFunctionRepository.findAll().stream().map(additionalFunctionMapper::toDto).collect(Collectors.toList()));
     }
 
 }

@@ -429,8 +429,14 @@
 	}
 	/* Appointment form validation end */
 
-	/* Animated Wow Js */	
-	new WOW().init();
+	/* Animated Wow Js */
+	new WOW({
+		callback: function(box) {
+			if (box.classList.contains('checkbox') || box.classList.contains('no-wow')) {
+				return false;
+			}
+		}
+	}).init();
 
 	/* Popup Video */
 	if ($('.popup-video').length) {

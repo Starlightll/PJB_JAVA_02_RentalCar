@@ -195,13 +195,135 @@
             border-color: var(--flatpickr-color-header);
         }
 
+        .checkbox {
+            --background: #fff;
+            --border: #D1D6EE;
+            --border-hover: #BBC1E1;
+            --border-active: #05d38e;
+            --tick: #fff;
+            position: relative;
+        }
+
+        .checkbox input,
+        .checkbox svg {
+            width: 21px;
+            height: 21px;
+            display: block;
+        }
+
+        .checkbox input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            position: relative;
+            outline: none;
+            background: var(--background);
+            border: none;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: box-shadow 0.3s;
+            box-shadow: inset 0 0 0 var(--s, 1px) var(--b, var(--border));
+        }
+
+        .checkbox input:hover {
+            --s: 2px;
+            --b: var(--border-hover);
+        }
+
+        .checkbox input:checked {
+            --b: var(--border-active);
+        }
+
+        .checkbox svg {
+            pointer-events: none;
+            fill: none;
+            stroke-width: 2px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: var(--stroke, var(--border-active));
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            transform: scale(var(--scale, 1)) translateZ(0);
+        }
+
+        .checkbox.path input:checked {
+            --s: 2px;
+            transition-delay: 0.4s;
+        }
+
+        .checkbox.path input:checked + svg {
+            --a: 16.1 86.12;
+            --o: 102.22;
+        }
+
+        .checkbox.path svg {
+            stroke-dasharray: var(--a, 86.12);
+            stroke-dashoffset: var(--o, 86.12);
+            transition: stroke-dasharray 0.6s, stroke-dashoffset 0.6s;
+        }
+
+        .checkbox.bounce {
+            --stroke: var(--tick);
+        }
+
+        .checkbox.bounce input:checked {
+            --s: 11px;
+        }
+
+        .checkbox.bounce input:checked + svg {
+            animation: bounce 0.4s linear forwards 0.2s;
+        }
+
+        .checkbox.bounce svg {
+            --scale: 0;
+        }
+
+        @keyframes bounce {
+            50% {
+                transform: scale(1.2);
+            }
+            75% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .row {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        .toggle-button {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .toggle-button.rotated {
+            transform: rotate(90deg);
+        }
+
+        .sub-list {
+            height: 0;
+            overflow: auto;
+            transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 500px;
+        }
 
     </style>
 </head>
 
 <body>
 <th:block layout:fragment="content">
-    <body onload="fetchCars('', '', '')">
+    <body onload="fetchCars('', '', ''); fetchBrands(); fetchAdditionalFunction()">
 
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
@@ -218,7 +340,7 @@
 
     <!-- Page Fleets Start -->
     <div class="page-fleets">
-        <div class="container" style="max-width: 1300px;">
+        <div class="container" style="max-width: 1350px;">
             <div class="row">
 
 
@@ -230,7 +352,7 @@
                             <form id="fleetsForm" action="#" method="POST">
                                 <div class="form-group">
                                     <input type="text" name="pickupLocation" class="form-control" id="pickupLocation"
-                                           placeholder="Pickup location">
+                                           placeholder="Pickup location" th:value="${pickupLocation}">
                                     <button type="submit" class="section-icon-btn"><i
                                             class="fa-solid fa-magnifying-glass"></i></button>
                                 </div>
@@ -260,38 +382,48 @@
 
                             <!-- Fleets Sidebar List Start -->
                             <div class="fleets-sidebar-list">
-                                <div class="fleets-list-title">
+                                <div class="fleets-list-title d-flex justify-content-between">
                                     <h3>Brands</h3>
+                                    <a
+                                            class="fa fa-angle-right toggle-button"
+                                            data-target="#brandList"
+                                            aria-expanded="false"
+                                            aria-controls="brandList"
+                                            aria-label="Toggle brands list" style="align-self: center; cursor: pointer">
+                                    </a>
                                 </div>
-
-                                <ul>
-                                    <li>
-                                        <p>Waiting for update</p>
-                                    </li>
-                                    <!--                                    <li class="form-check">-->
-                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox1">-->
-                                    <!--                                        <label class="form-check-label" for="checkbox1">sport cars</label>-->
-                                    <!--                                    </li>-->
-                                </ul>
+                                <div class="row sub-list"
+                                     id="brandList"
+                                     role="region"
+                                     aria-labelledby="brandList-title">
+                                </div>
                             </div>
                             <!-- Fleets Sidebar List End -->
 
                             <!-- Fleets Sidebar List Start -->
                             <div class="fleets-sidebar-list">
-                                <div class="fleets-list-title">
+                                <div class="fleets-list-title d-flex justify-content-between">
                                     <h3>Additional Functions</h3>
+                                    <a
+                                            class="fa fa-angle-right toggle-button"
+                                            data-target="#functionList"
+                                            aria-expanded="false"
+                                            aria-controls="functionList"
+                                            aria-label="Toggle brands list" style="align-self: center; cursor: pointer">
+                                    </a>
                                 </div>
+                                <div class="row sub-list"
+                                     id="functionList"
+                                     role="region"
+                                     aria-labelledby="functionList-title">
+                                    <label class="checkbox bounce col-12 p-0 d-flex" style="align-items: center; column-gap: 6px;"><input type="checkbox" value="1" name="brand">
+                                        <svg viewBox="0 0 21 21">
+                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                        </svg>
+                                        <span>Toyota</span>
+                                    </label>
 
-                                <ul>
-                                    <li>
-                                        <p>Waiting for update</p>
-                                    </li>
-                                    <!--                                    <li class="form-check">-->
-                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox7">-->
-                                    <!--                                        <label class="form-check-label" for="checkbox7">abu dhabi</label>-->
-                                    <!--                                    </li>-->
-
-                                </ul>
+                                </div>
                             </div>
                             <!-- Fleets Sidebar List End -->
 
@@ -317,7 +449,7 @@
                     <!-- Fleets Sidebar End -->
                 </div>
 
-                <div class="col-lg-9">
+                <div class="col-lg-9 p-0">
                     <!-- Fleets Collection Box Start -->
                     <div class="fleets-collection-box">
                         <div class="row" id="carContainer">
@@ -387,6 +519,29 @@
     <script src="/webjars/flatpickr/4.6.13/dist/flatpickr.min.js"></script>
     <script defer>
 
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleButtons = document.querySelectorAll(".toggle-button");
+
+            toggleButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const targetId = button.getAttribute("data-target");
+                    const targetElement = document.querySelector(targetId);
+
+                    const isExpanded = button.getAttribute("aria-expanded") === "true";
+                    button.setAttribute("aria-expanded", !isExpanded);
+
+                    if (!isExpanded) {
+                        const height = targetElement.scrollHeight;
+                        targetElement.style.height = height + "px";
+                    } else {
+                        targetElement.style.height = "0";
+                    }
+                    button.classList.toggle("rotated");
+                });
+            });
+        });
+
         // Initialize pickup datetime picker
         const pickupDatePicker = flatpickr('#pickupDateTime', {
             allowInput: false,
@@ -436,14 +591,14 @@
 
         function adjustMinTimeForPickupDate(selectedDates, dateStr, instance) {
             let now = new Date();
-            if(now.getHours() < 5){
+            if (now.getHours() < 5) {
                 instance.set("minTime", "05:00");
                 now.setHours(5, 0, 0, 0);
                 instance.set("minDate", now);
                 // instance.setDate(now);
-            }else{
+            } else {
                 now.setTime(now.getTime() + 60 * 60 * 1000);
-                if(now.getHours() >= 23){
+                if (now.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
@@ -451,9 +606,9 @@
                     instance.set("minTime", "05:00");
                     instance.set("minDate", tomorrow);
                     instance.setDate(tomorrow);
-                }else{
+                } else {
                     let minTime = "";
-                    if(now.getMinutes() < 30){
+                    if (now.getMinutes() < 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(0);
                         minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
@@ -462,7 +617,7 @@
                         instance.set("minDate", now);
                         // instance.setDate(now);
                     }
-                    if(now.getMinutes() >= 30){
+                    if (now.getMinutes() >= 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(30);
                         minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
@@ -480,24 +635,24 @@
             let currentTime = now.getHours() + ":" + now.getMinutes();
             let currentHour = now.getHours();
             let currentMinute = now.getMinutes();
-            if(now.getHours() < 5){
+            if (now.getHours() < 5) {
                 now.setHours(5, 0, 0, 0);
                 return now;
-            }else{
+            } else {
                 now.setTime(now.getTime() + 60 * 60 * 1000);
-                if(now.getHours() >= 23){
+                if (now.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
                     console.log("New time test:", tomorrow);
                     return tomorrow;
-                }else{
-                    if(now.getMinutes() < 30){
+                } else {
+                    if (now.getMinutes() < 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(0);
                         return now;
                     }
-                    if(now.getMinutes() >= 30){
+                    if (now.getMinutes() >= 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(30);
                         return now;
@@ -516,19 +671,19 @@
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
             console.log("Time for drop:", dropDate);
-            if(dropDate.getHours() < 5){
+            if (dropDate.getHours() < 5) {
                 dropDate.setHours(5, 0, 0, 0);
                 dropDatePicker.set("minTime", "05:00");
                 dropDatePicker.set("minDate", dropDate);
                 console.log(" h < 5");
                 console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                     console.log("dropDate < pickupDate");
                     dropDatePicker.setDate(dropDate);
                 }
                 // dropDatePicker.setDate(dropDate);
-            }else{
-                if(dropDate.getHours() >= 23){
+            } else {
+                if (dropDate.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
@@ -536,14 +691,14 @@
                     dropDatePicker.set("minDate", tomorrow);
                     console.log(" h >= 23");
                     console.log(tomorrow.getDate() + "-" + pickupDate.getDate() + "=" + (tomorrow.getDate() - pickupDate.getDate()));
-                    if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                    if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                         dropDatePicker.setDate(tomorrow);
                     }
                     // dropDatePicker.setDate(tomorrow);
-                }else{
+                } else {
                     let minTime = "";
                     console.log(" h < 23 và h >= 5");
-                    if(dropDate.getMinutes() < 30){
+                    if (dropDate.getMinutes() < 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(0);
                         minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
@@ -551,12 +706,12 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                        if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
                     }
-                    if(dropDate.getMinutes() >= 30){
+                    if (dropDate.getMinutes() >= 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(30);
                         minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
@@ -564,18 +719,17 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                        if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
                     }
                 }
             }
-            if(oldDropDate.getDate() - pickupDate.getDate() >= 1){
+            if (oldDropDate.getDate() - pickupDate.getDate() >= 1) {
                 dropDatePicker.set("minTime", "05:00");
             }
         }
-
 
 
         function getDefaultDateTime(timePlus) {
@@ -597,13 +751,12 @@
 
                 // If the calculated time would be after 21:00, set to 21:00
                 if (defaultDate.getHours() > 21) {
-                        defaultDate.setDate(defaultDate.getDate() + 1);
-                        defaultDate.setHours(5, 0, 0, 0);
+                    defaultDate.setDate(defaultDate.getDate() + 1);
+                    defaultDate.setHours(5, 0, 0, 0);
                 }
                 return defaultDate;
             }
         }
-
 
 
         function getDefaultDateForDrop() {
@@ -614,23 +767,23 @@
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
             console.log("Time for drop:", dropDate);
-            if(dropDate.getHours() < 5){
+            if (dropDate.getHours() < 5) {
                 dropDate.setHours(5, 0, 0, 0);
                 return dropDate;
-            }else{
-                if(dropDate.getHours() >= 23){
+            } else {
+                if (dropDate.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
                     return tomorrow;
-                }else{
+                } else {
                     console.log(" h < 23 và h >= 5");
-                    if(dropDate.getMinutes() < 30){
+                    if (dropDate.getMinutes() < 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(0);
                         return dropDate;
                     }
-                    if(dropDate.getMinutes() >= 30){
+                    if (dropDate.getMinutes() >= 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(30);
                         return dropDate;
@@ -684,15 +837,15 @@
                 pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Invalid date or time selected</span>';
                 return false;
             }
-            if(pickupDate < new Date()) {
+            if (pickupDate < new Date()) {
                 pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Pickup time must be in the future</span>';
                 return false;
             }
-            if(dropDate < new Date()) {
+            if (dropDate < new Date()) {
                 pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Drop time must be in the future</span>';
                 return false;
             }
-            if(pickupDate > dropDate) {
+            if (pickupDate > dropDate) {
                 pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Drop time must be after pickup time</span>';
                 return false;
             }
@@ -758,7 +911,7 @@
                         }
 
                         carContainer.innerHTML += `
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-xl-4 col-lg-6 col-md-6">
                             <div class="perfect-fleet-item fleets-collection-item wow fadeInUp" style="display: flex; flex-direction: column">
                                 <div class="image-box" style="border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
                                     <img src="${car.frontImage}"
@@ -824,6 +977,77 @@
                 });
         }
 
+        function fetchBrands() {
+            const brandList = document.getElementById('brandList');
+
+            fetch(`/api/brands`)
+                .then(response => response.json())
+                .then(data => {
+                    const fragment = document.createDocumentFragment();
+
+                    if (data.length === 0) {
+                        const noData = document.createElement('ul');
+                        noData.innerHTML = '<li><p>No brands found</p></li>';
+                        fragment.appendChild(noData);
+                    } else {
+                        data.forEach(brand => {
+                            const label = document.createElement('label');
+                            label.className = 'checkbox bounce col-12 p-0 d-flex';
+                            label.style.cssText = 'align-items: center; column-gap: 6px;';
+                            label.innerHTML = `<input type="checkbox" value="${brand.brandId}" name="brand">
+                                               <svg viewBox="0 0 21 21">
+                                                  <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                               </svg>
+                                               <span>${brand.brandName}</span>`;
+                            fragment.appendChild(label);
+                        });
+                    }
+
+                    brandList.innerHTML = '';
+                    brandList.appendChild(fragment);
+                })
+                .catch(error => {
+                    console.error("Error fetching brands:", error);
+                    brandList.innerHTML = '<p>Error loading brands</p>';
+                });
+        }
+
+        function fetchAdditionalFunction(){
+            const functionList = document.getElementById('functionList');
+
+            fetch(`/api/additionalFunctions`)
+                .then(response => response.json())
+                .then(data => {
+                    const fragment = document.createDocumentFragment();
+
+                    if (data.length === 0) {
+                        const noData = document.createElement('ul');
+                        noData.innerHTML = '<li><p>No additional functions found</p></li>';
+                        fragment.appendChild(noData);
+                    } else {
+                        data.forEach(additionalFunction => {
+                            const label = document.createElement('label');
+                            label.className = 'checkbox bounce col-12 p-0 d-flex';
+                            label.style.cssText = 'align-items: center; column-gap: 6px;';
+                            label.innerHTML = `<input type="checkbox" value="${additionalFunction.functionId}" name="function">
+                                               <svg viewBox="0 0 21 21">
+                                                  <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                               </svg>
+                                               <span>${additionalFunction.functionName}</span>`;
+                            fragment.appendChild(label);
+                        });
+                    }
+
+                    functionList.innerHTML = '';
+                    functionList.appendChild(fragment);
+                })
+                .catch(error => {
+                    console.error("Error fetching additional functions:", error);
+                    functionList.innerHTML = '<p>Error loading additional functions</p>';
+                });
+        }
+
+
         function formatMoney() {
             const priceElements = document.querySelectorAll('.basePrice');
 
@@ -842,12 +1066,12 @@
             const pickupDateTime = document.getElementById('pickupDateTime').value;
             const dropDateTime = document.getElementById('dropDateTime').value;
 
-            if(pickupDateTime === '' || dropDateTime === '') {
+            if (pickupDateTime === '' || dropDateTime === '') {
                 const pickupInfoHelp = document.getElementById('pickupInfoHelp');
                 pickupInfoHelp.innerHTML = '<i class="fa fa-warning"></i><span> Please select both pickup and drop times</span>';
                 return;
             }
-            if(validateTimeInput() === false) {
+            if (validateTimeInput() === false) {
                 return;
             }
             console.log(pickupLocation, pickupDateTime, dropDateTime);
