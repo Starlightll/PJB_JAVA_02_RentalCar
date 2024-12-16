@@ -16,6 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.DecimalFormat;
 
+/**
+ * Controller that handles various admin-related endpoints for managing
+ * users, cars, and administrative functions.
+ *
+ * This controller provides endpoints to render the admin dashboard, user list,
+ * profile settings, account settings, and car verification and update request
+ * previews, among others.
+ */
 @Controller
 public class AdminController {
 

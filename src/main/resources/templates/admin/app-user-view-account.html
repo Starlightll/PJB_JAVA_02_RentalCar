@@ -24,7 +24,8 @@
     <link rel="stylesheet" href="../../assets/vendor/libs/sweetalert2/sweetalert2.css"/>
     <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css"/>
     <link rel="stylesheet" href="../../assets/vendor/libs/%40form-validation/form-validation.css"/>
-    <link rel="stylesheet" href="../../assets/vendor/libs/dropzone/dropzone.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/dropzone/dropzone.css"/>
+    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css"/>
 
     <!-- Page CSS -->
 
@@ -34,7 +35,16 @@
 
 <th:block layout:fragment="content">
     <body>
-
+    <!-- Modal Documents view -->
+    <div class="modal fade" id="documentViewModal" tabindex="-1" aria-labelledby="exampleModalLabel" style="z-index: 100000 !important;backdrop-filter: brightness(0.5) blur(100px);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body" style="background-color: rgb(0, 0, 0 ,0)">
+                    <img id="modalImage" src="" alt="Full Image" style="width: 100%; height: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar  ">
@@ -59,14 +69,20 @@
                                     <div class="card-body pt-12">
                                         <div class="user-avatar-section">
                                             <div class=" d-flex align-items-center flex-column">
-                                                <img class="img-fluid rounded mb-4" src="../../assets/img/avatars/1.png"
-                                                     height="120" width="120" alt="User avatar"/>
+                                                <img class="img-fluid rounded mb-4" th:src="'\\' + ${user.getAvatar()}" onerror="LoadDefaultAvatar()"
+                                                     height="120" width="120" alt="User avatar" id="userAvatar"/>
+                                                <label for="upload" class="btn btn-secondary mb-3" tabindex="0">
+                                                    <span class="d-none d-sm-block">Change avatar</span>
+                                                    <i class="bx bx-upload d-block d-sm-none"></i>
+                                                    <input type="file" id="upload" class="account-file-input" hidden
+                                                           accept="image/png, image/jpeg"/>
+                                                </label>
                                                 <div class="user-info text-center">
                                                     <h5 th:text="${user.getUsername()}">Violet Mendoza</h5>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Admin'}"
                                                           class="badge bg-label-danger">Admin</span>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Customer'}"
-                                                            class="badge bg-label-success">Customer</span>
+                                                          class="badge bg-label-success">Customer</span>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Car Owner'}"
                                                           class="badge bg-label-warning">Car Owner</span>
                                                     <span th:if="${user.getRoles().get(0).getRoleName() == 'Driver'}"
@@ -75,28 +91,28 @@
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-around flex-wrap my-6 gap-0 gap-md-3 gap-lg-4">
-<!--                                            <div class="d-flex align-items-center me-5 gap-4">-->
-<!--                                                <div class="avatar">-->
-<!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
-<!--                                                        <i class='bx bx-check bx-lg'></i>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                                <div>-->
-<!--                                                    <h5 class="mb-0">1.23k</h5>-->
-<!--                                                    <span>Task Done</span>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="d-flex align-items-center gap-4">-->
-<!--                                                <div class="avatar">-->
-<!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
-<!--                                                        <i class='bx bx-customize bx-lg'></i>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                                <div>-->
-<!--                                                    <h5 class="mb-0">568</h5>-->
-<!--                                                    <span>Project Done</span>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
+                                            <!--                                            <div class="d-flex align-items-center me-5 gap-4">-->
+                                            <!--                                                <div class="avatar">-->
+                                            <!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
+                                            <!--                                                        <i class='bx bx-check bx-lg'></i>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                                <div>-->
+                                            <!--                                                    <h5 class="mb-0">1.23k</h5>-->
+                                            <!--                                                    <span>Task Done</span>-->
+                                            <!--                                                </div>-->
+                                            <!--                                            </div>-->
+                                            <!--                                            <div class="d-flex align-items-center gap-4">-->
+                                            <!--                                                <div class="avatar">-->
+                                            <!--                                                    <div class="avatar-initial bg-label-primary rounded w-px-40 h-px-40">-->
+                                            <!--                                                        <i class='bx bx-customize bx-lg'></i>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                                <div>-->
+                                            <!--                                                    <h5 class="mb-0">568</h5>-->
+                                            <!--                                                    <span>Project Done</span>-->
+                                            <!--                                                </div>-->
+                                            <!--                                            </div>-->
                                         </div>
                                         <h5 class="pb-4 border-bottom mb-4">Details</h5>
                                         <div class="info-container">
@@ -131,46 +147,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- /User Card -->
-                                <!-- Plan Card -->
-                                <div class="card mb-6 border border-2 border-primary rounded primary-shadow">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <span class="badge bg-label-primary">Standard</span>
-                                            <div class="d-flex justify-content-center">
-                                                <sub class="h5 pricing-currency mb-auto mt-1 text-primary">$</sub>
-                                                <h1 class="mb-0 text-primary">99</h1>
-                                                <sub class="h6 pricing-duration mt-auto mb-3 fw-normal">month</sub>
-                                            </div>
-                                        </div>
-                                        <ul class="list-unstyled g-2 my-6">
-                                            <li class="mb-2 d-flex align-items-center"><i
-                                                    class="bx bxs-circle bx-6px text-secondary me-2"></i><span>10 Users</span>
-                                            </li>
-                                            <li class="mb-2 d-flex align-items-center"><i
-                                                    class="bx bxs-circle bx-6px text-secondary me-2"></i><span>Up to 10 GB storage</span>
-                                            </li>
-                                            <li class="mb-2 d-flex align-items-center"><i
-                                                    class="bx bxs-circle bx-6px text-secondary me-2"></i><span>Basic Support</span>
-                                            </li>
-                                        </ul>
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <span class="h6 mb-0">Days</span>
-                                            <span class="h6 mb-0">26 of 30 Days</span>
-                                        </div>
-                                        <div class="progress mb-1">
-                                            <div class="progress-bar" role="progressbar" style="width: 65%;"
-                                                 aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <small>4 days remaining</small>
-                                        <div class="d-grid w-100 mt-6">
-                                            <button class="btn btn-primary" data-bs-target="#upgradePlanModal"
-                                                    data-bs-toggle="modal">Upgrade Plan
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- /Plan Card -->
                             </div>
                             <!--/ User Sidebar -->
 
@@ -184,32 +160,35 @@
                                                 class="bx bx-user bx-sm me-1_5"></i>Account</a></li>
                                         <li class="nav-item"><a class="nav-link" href="app-user-view-security.html"><i
                                                 class="bx bx-lock-alt bx-sm me-1_5"></i>Security</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="app-user-view-billing.html"><i
-                                                class="bx bx-detail bx-sm me-1_5"></i>Billing & Plans</a></li>
                                         <li class="nav-item"><a class="nav-link"
                                                                 href="app-user-view-notifications.html"><i
                                                 class="bx bx-bell bx-sm me-1_5"></i>Notifications</a></li>
-                                        <li class="nav-item"><a class="nav-link"
-                                                                href="app-user-view-connections.html"><i
-                                                class="bx bx-link bx-sm me-1_5"></i>Connections</a></li>
                                     </ul>
                                 </div>
                                 <!--/ User Pills -->
                                 <!-- Car table -->
                                 <th:block th:if="${user.getRoles().get(0).getRoleName() == 'Car Owner'}">
                                     <div class="card mb-6">
-                                        <h5 class="card-header pb-0 text-sm-start text-center">Car List</h5>
-                                        <div class="table-responsive mb-4">
-                                            <table class="table datatable-project">
-                                                <thead class="border-top">
+                                        <div class="card-header pb-0 text-sm-start text-center">
+                                            <h5 class="card-title mb-0">Car List</h5>
+                                            <div class="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0 g-6">
+                                                <div class="col-md-4 user_role"></div>
+                                                <div class="col-md-4 user_plan"></div>
+                                                <div class="col-md-4 user_status"></div>
+                                            </div>
+                                        </div>
+                                        <div class="card-datatable table-responsive">
+                                            <table class="datatables-users table border-top">
+                                                <thead>
                                                 <tr>
                                                     <th></th>
                                                     <th></th>
-                                                    <th>Project</th>
-                                                    <th>Leader</th>
-                                                    <th>Team</th>
-                                                    <th class="w-px-200">Progress</th>
-                                                    <th>Action</th>
+                                                    <th>Car</th>
+                                                    <th>Price</th>
+                                                    <th>License</th>
+                                                    <th>Base price</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -243,7 +222,7 @@
 
                         <!-- Modal -->
                         <!-- Edit User Modal -->
-                        <div class="modal fade" id="editUser" tabindex="-1" aria-hidden="true">
+                        <div class="modal fade" id="editUser" tabindex="-1" >
                             <div class="modal-dialog modal-lg modal-simple modal-edit-user">
                                 <div class="modal-content">
                                     <div class="modal-body">
@@ -253,22 +232,26 @@
                                             <h4 class="mb-2">Edit User Information</h4>
                                             <p>Updating user details will receive a privacy audit.</p>
                                         </div>
-                                        <form class="row g-6" th:action="@{/admin/user-management/edit}" th:object="${user}" th:type="post" onsubmit="false">
-                                            <div class="col-12 col-md-6">
+                                        <form class="row g-6" th:object="${user}" th:id="editUserForm" onsubmit="return false">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                            <input type="hidden" th:field="*{id}"/>
+                                            <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserName">Username</label>
                                                 <input type="text" id="modalEditUserName" th:field="*{username}"
                                                        name="modalEditUserFirstName" class="form-control"
                                                        placeholder="Your user name" value=""/>
                                             </div>
-                                            <div class="col-12 col-md-6">
+                                            <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserFullName">Full Name</label>
                                                 <input type="text" id="modalEditUserFullName" th:field="*{fullName}"
                                                        name="modalEditUserLastName" class="form-control"
                                                        placeholder="Your full name" value=""/>
                                             </div>
-                                            <div class="col-12 col-md-6">
+                                            <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserStatus">Status</label>
-                                                <select id="modalEditUserStatus" name="status" class="form-select select" data-allow-clear="true" th:field="*{status}">
+                                                <select id="modalEditUserStatus" name="status"
+                                                        class="form-select select" data-allow-clear="true"
+                                                        th:field="*{status}">
                                                     <option value="" disabled>Select a status</option>
                                                     <option value="PENDING">Pending</option>
                                                     <option value="ACTIVATED">Activated</option>
@@ -276,73 +259,82 @@
                                                     <option value="DELETED">Deleted</option>
                                                 </select>
                                             </div>
-                                            <div class="col-12 col-md-6">
-                                                <label class="form-label" for="modalEditUserPhone">Phone Number</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text">VN (+84)</span>
-                                                    <input type="text" id="modalEditUserPhone" name="modalEditUserPhone" th:field="*{phone}"
-                                                           class="form-control phone-number-mask"
-                                                           placeholder="1234 567890" value=""/>
-                                                </div>
+                                            <div class="input col-12 col-md-6">
+                                                <label class="form-label" for="modalEditUserPhone">Phone</label>
+                                                <input type="text" id="modalEditUserPhone" class="phone-number-mask form-control" th:field="*{phone}"
+                                                       placeholder="(+84) 12 345 678" name="modalEditUserPhone" autocomplete="on tel"/>
                                             </div>
-                                            <div class="col-12 col-md-12">
-                                                <label class="form-label" for="modalEditUserNationalID">National ID</label>
+                                            <div class="input col-6 col-md-6">
+                                                <label class="form-label" for="modalEditUserNationalID">National
+                                                    ID</label>
                                                 <input type="text" id="modalEditUserNationalID" th:field="*{nationalId}"
                                                        name="modalEditUserNationalID" class="form-control"
                                                        placeholder="Your national ID" value=""/>
                                             </div>
-                                            <div class="col-12 col-md-6">
+                                            <div class="input col-6 col-md-6" style="display: flex;flex-flow: column;">
+                                                <label class="form-label" for="formValidationDob">DOB</label>
+                                                <input type="date" class="form-control flatpickr-validation"
+                                                       th:field="*{dob}"
+                                                       name="formValidationDob" id="formValidationDob"/>
+                                            </div>
+                                            <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserProvince">Province</label>
-                                                <select id="modalEditUserProvince" name="modalEditUserProvince" th:field="*{city}" th:value="*{city}"
-                                                        th:data-default="*{city}"
+                                                <select id="modalEditUserProvince" name="modalEditUserProvince"
+                                                        th:field="*{city}" th:value="${user.city}"
+                                                        th:data-default="${user.city}" data-placeholder="Select Province"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option disabled value="">Select</option>
+                                                    <option value="">Select Province</option>
                                                 </select>
                                             </div>
-                                            <div class="col-12 col-md-6">
+                                            <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserDistrict">District</label>
-                                                <select id="modalEditUserDistrict" name="modalEditUserDistrict" th:field="*{district}" th:value="*{district}"
-                                                        th:data-default="*{district}"
+                                                <select id="modalEditUserDistrict" name="modalEditUserDistrict"
+                                                        th:field="*{district}" th:value="*{district}"
+                                                        th:data-default="*{district}" data-placeholder="Select district"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option disabled value="">Select</option>
+                                                    <option value="">Select</option>
                                                 </select>
                                             </div>
-                                            <div class="col-12 col-md-6">
+                                            <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserWard">Ward</label>
-                                                <select id="modalEditUserWard" name="modalEditUserStatus" th:field="*{ward}" th:value="*{ward}"
-                                                        th:data-default="*{ward}"
+                                                <select id="modalEditUserWard" name="modalEditUserStatus"
+                                                        th:field="*{ward}" th:value="*{ward}"
+                                                        th:data-default="*{ward}" data-placeholder="Select ward"
                                                         class="select2 form-select" aria-label="Default select example">
-                                                    <option disabled value="">Select</option>
+                                                    <option value="">Select</option>
                                                 </select>
                                             </div>
-                                            <div class="col-12 col-md-6">
+                                            <div class="input col-12 col-md-6">
                                                 <label class="form-label" for="modalEditUserStreet">Street</label>
                                                 <input type="text" id="modalEditUserStreet" name="modalEditUserStreet"
-                                                       class="form-control" placeholder="Your street" th:field="*{street}"
+                                                       class="form-control" placeholder="Your street"
+                                                       th:field="*{street}"
                                                        value=""/>
                                             </div>
 
+                                            <div class="col-lg-12">
+                                                <h6>Driving License</h6>
+                                                <a><img th:src="'\\' + ${user.getDrivingLicense()}" onerror="LoadDefaultImage()" alt="" class="image-thumbnail" style="width: 100%;height: 150px;object-fit: cover;"></a>
+                                            </div>
                                             <!-- Basic  -->
-                                            <div class="col-12">
-                                                <div class="card mb-6">
-                                                    <h5 class="card-header">Driving License</h5>
-                                                    <div class="card-body">
-                                                        <div action="/upload" class="dropzone needsclick" id="dropzone-basic">
-                                                            <div class="dz-message needsclick">
-                                                                Drop files here or click to upload
-                                                                <span class="note needsclick">(File types <span class="fw-medium">allow:</span>.jpeg, .png, .jpg, .docx, .pdf  .)</span>
-                                                            </div>
-                                                            <div class="fallback">
-                                                                <input name="file" type="file" />
-                                                            </div>
-                                                        </div>
+                                            <div class="col-lg-12 col-sm-12">
+                                                <p class="required-label">Upload License</p>
+                                                <label for="input-file" class="drop-area"
+                                                       id="drop-area">
+                                                    <input type="file" id="input-file"
+                                                           accept="image/*" class="file-input"
+                                                           hidden>
+                                                    <div class="img-view" id="img-view">
+                                                        <i class="fa-solid fa-file-arrow-up fa-2x"></i>
+                                                        <p>Drag or drop or click here<br>to upload
+                                                            file</p>
+                                                        <span>Upload type: .img, .png, .jpg, .jpeg</span>
                                                     </div>
-                                                </div>
+                                                </label>
                                             </div>
                                             <!-- /Basic  -->
-
                                             <div class="col-12 text-center">
-                                                <button type="submit" class="btn btn-primary me-3">Submit</button>
+                                                <button type="submit" class="btn btn-primary me-3">Save</button>
                                                 <button type="reset" class="btn btn-label-secondary"
                                                         data-bs-dismiss="modal" aria-label="Close">Cancel
                                                 </button>
@@ -355,53 +347,6 @@
                             </div>
                         </div>
                         <!--/ Edit User Modal -->
-
-
-                        <!-- Add New Credit Card Modal -->
-                        <div class="modal fade" id="upgradePlanModal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-simple modal-upgrade-plan">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        <div class="text-center mb-6">
-                                            <h4 class="mb-2">Upgrade Plan</h4>
-                                            <p>Choose the best plan for user.</p>
-                                        </div>
-                                        <form id="upgradePlanForm" class="row g-4" onsubmit="return false">
-                                            <div class="col-sm-9">
-                                                <label class="form-label" for="choosePlan">Choose Plan</label>
-                                                <select id="choosePlan" name="choosePlan" class="form-select"
-                                                        aria-label="Choose Plan">
-                                                    <option selected>Choose Plan</option>
-                                                    <option value="standard">Standard - $99/month</option>
-                                                    <option value="exclusive">Exclusive - $249/month</option>
-                                                    <option value="Enterprise">Enterprise - $499/month</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-3 d-flex align-items-end">
-                                                <button type="submit" class="btn btn-primary">Upgrade</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <hr class="mx-5 my-2">
-                                    <div class="modal-body">
-                                        <p class="mb-0">User current plan is standard plan</p>
-                                        <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                            <div class="d-flex justify-content-center me-2 mt-1">
-                                                <sup class="h6 pricing-currency pt-1 mt-2 mb-0 me-1 text-primary fw-normal">$</sup>
-                                                <h1 class="mb-0 text-primary">99</h1>
-                                                <sub class="pricing-duration mt-auto mb-5 pb-1 small text-body">/month</sub>
-                                            </div>
-                                            <button class="btn btn-label-danger cancel-subscription">Cancel
-                                                Subscription
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--/ Add New Credit Card Modal -->
 
                         <!-- /Modal -->
                     </div>
@@ -416,30 +361,26 @@
 
     </div>
 
-
-    <!-- Vendors JS -->
-    <script defer src="/assets/vendor/libs/dropzone/dropzone.js"></script>
-    <script defer src="/assets/vendor/libs/moment/moment.js"></script>
-    <script defer src="/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
-    <script defer src="/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
-    <script defer src="/assets/vendor/libs/cleavejs/cleave.js"></script>
-    <script defer src="/assets/vendor/libs/cleavejs/cleave-phone.js"></script>
-    <script defer src="/assets/vendor/libs/select2/select2.js"></script>
-    <script defer src="/assets/vendor/libs/%40form-validation/popular.js"></script>
-    <script defer src="/assets/vendor/libs/%40form-validation/bootstrap5.js"></script>
-    <script defer src="/assets/vendor/libs/%40form-validation/auto-focus.js"></script>
-
-
-    <!-- Page JS -->
-    <script defer src="/assets/js/forms-file-upload.js"></script>
-    <script defer src="/assets/js/modal-edit-user.js"></script>
-    <script defer src="/assets/js/app-user-view.js"></script>
-    <script defer src="/assets/js/app-user-view-account.js"></script>
-    <script defer>
-
-        document.getElementById("modalEditUserProvince").addEventListener("change", function () {
-            console.log("change");
-        });
+    <script>
+        function showSwalFire(){
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                }
+            })
+        }
 
         // Fetch provinces and set default city
         async function fetchProvinces(defaultProvince) {
@@ -447,6 +388,7 @@
             const provinces = await response.json();
             const citySelect = document.getElementById('modalEditUserProvince');
 
+            citySelect.innerHTML = '<option value="">Select Province</option>';
             provinces.forEach(province => {
                 const option = document.createElement('option');
                 option.value = province.code;
@@ -468,7 +410,6 @@
             const provinceData = await response.json();
             const districtSelect = document.getElementById('modalEditUserDistrict');
 
-            districtSelect.innerHTML = '<option value="">Select District</option>';
             provinceData.districts.forEach(district => {
                 const option = document.createElement('option');
                 option.value = district.code;
@@ -502,6 +443,7 @@
             });
         }
 
+
         // Select 2 library
         $('#modalEditUserProvince').on('select2:select', function (e) {
             console.log("Province selected");
@@ -520,10 +462,251 @@
             $('#modalEditUserWard').prop('disabled', selectedDistrict === "");
         });
 
+
         // Load provinces on page load with default values
         document.addEventListener('DOMContentLoaded', function () {
-            const defaultProvince = document.getElementById('modalEditUserProvince').getAttribute('data-default');
-            fetchProvinces(defaultProvince);
+            const defaultCity = document.getElementById('modalEditUserProvince').getAttribute('data-default');
+            fetchProvinces(defaultCity);
+        });
+
+        function LoadDefaultImage() {
+            document.querySelector('.image-thumbnail').src = '/images/no-image-available.jpg';
+        }
+
+        function LoadDefaultAvatar() {
+            document.querySelector('#userAvatar').src = '/images/avt.png';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const thumbnails = document.querySelectorAll('.image-thumbnail');
+            const panzoomContainer = document.querySelector('.modal-body');
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function () {
+                    $('#documentViewModal').modal('show');
+                    $('#modalImage').attr('src', this.src);
+                    //Initialize panzoom
+                    // Initialize Panzoom
+                    panzoomInstance = Panzoom(panzoomContainer, {
+                        maxScale: 5,
+                        contain: 'outside',
+                        panOnlyWhenZoomed: true
+                    });
+                    // Allow mouse wheel zoom
+                    panzoomContainer.parentElement.addEventListener('wheel', panzoomInstance.zoomWithWheel);
+
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeDropArea();
+        });
+        const MAX_FILE_MB = 200;
+        const MAX_SIZE_BYTES = MAX_FILE_MB * 1024 * 1024;
+        function initializeDropArea() {
+            const dropArea = document.getElementById(`drop-area`);
+            const inputFile = document.getElementById(`input-file`);
+            const imageView = document.getElementById(`img-view`);
+
+            // Xử lý sự kiện change của input file
+            inputFile.addEventListener("change", function () {
+                uploadfile(imageView, inputFile);
+            });
+
+            // Xử lý sự kiện dragover
+            dropArea.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                dropArea.style.background = "rgba(0, 0, 0, 0.1)";
+            });
+
+            // Xử lý sự kiện dragleave
+            dropArea.addEventListener("dragleave", function (e) {
+                e.preventDefault();
+                if (!dropArea.contains(e.relatedTarget)) {
+                    dropArea.style.background = "#d1d5d9";
+                }
+            });
+
+            // Xử lý sự kiện drop
+            dropArea.addEventListener("drop", function (e) {
+                e.preventDefault();
+                dropArea.style.background = "#d1d5d9";
+
+                const files = e.dataTransfer.files;
+
+                if (files.length > 0) {
+                    const validExtensions = ["jpg", "jpeg", "png"];
+                    const fileExtension = files[0].name.split('.').pop().toLowerCase();
+                    if(files[0].size > MAX_SIZE_BYTES){
+                        alert("File size must be less than 200MB");
+                        return;
+                    }
+                    // Kiểm tra phần mở rộng file
+                    if (!validExtensions.includes(fileExtension)) {
+                        alert("Only accept file type: .jpg, .jpeg, .png");
+                        return;
+                    }
+
+                    inputFile.files = files; // Thiết lập files cho input
+                    uploadfile(imageView, inputFile); // Gọi hàm uploadfile
+                }
+            });
+        }
+
+        function uploadfile(imageView, inputFile) {
+            const file = inputFile.files[0];
+            if (file) {
+                const validExtensions = ["jpg", "jpeg", "png"];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if(file.size > MAX_SIZE_BYTES){
+                    alert("File size must be less than 200MB");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+                // Kiểm tra phần mở rộng file
+                if (!validExtensions.includes(fileExtension)) {
+                    alert("Only accept file type: .jpg, .jpeg, .png");
+                    inputFile.value = ""; // Reset input nếu file không hợp lệ
+                    return;
+                }
+
+                const fileReader = new FileReader();
+                fileReader.onload = function(e) {
+                    imageView.style.backgroundImage = `url(${e.target.result})`;
+                    imageView.style.backgroundSize = "cover";
+                    imageView.style.backgroundPosition = "center";
+                    imageView.innerHTML = "";
+                };
+                fileReader.readAsDataURL(file); // Đọc file dưới dạng URL để hiển thị
+            }
+        }
+    </script>
+
+    <!-- Vendors JS -->
+    <script defer src="/assets/vendor/libs/dropzone/dropzone.js"></script>
+    <script defer src="/assets/vendor/libs/moment/moment.js"></script>
+    <script defer src="/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+    <script defer src="/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+    <script defer src="/assets/vendor/libs/cleavejs/cleave.js"></script>
+    <script defer src="/assets/vendor/libs/cleavejs/cleave-phone.js"></script>
+    <script defer src="/assets/vendor/libs/select2/select2.js"></script>
+    <script defer src="/assets/vendor/libs/%40form-validation/popular.js"></script>
+    <script defer src="/assets/vendor/libs/%40form-validation/bootstrap5.js"></script>
+    <script defer src="/assets/vendor/libs/%40form-validation/auto-focus.js"></script>
+    <script defer src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+    <script src="/webjars/select2/dist/js/select2.min.js"></script>
+    <script src="/webjars/jquery.panzoom/dist/panzoom.min.js"></script>
+
+    <!-- Page JS -->
+    <script defer src="/assets/js/modal-edit-user.js"></script>
+    <script defer src="/assets/js/app-user-view.js"></script>
+    <script defer src="/assets/js/app-user-view-account.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(e) {
+            let a = document.getElementById("userAvatar")
+                , i = document.querySelector(".account-file-input");
+            if(a){
+                let e = a.src;
+                i.onchange = () => {
+                    const file = i.files[0];
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    const validExtensions = ["jpg", "jpeg", "png"];
+                    if(!validExtensions.includes(fileExtension)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Only accept file type: .jpg, .jpeg, .png',
+                            showClass: {
+                                popup: "animate__animated animate__shakeX"
+                            },
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            },
+                            buttonsStyling: !1
+                        });
+                        i.value = "";
+                        return;
+                    }
+                    if(file.size > 2 * 1024 * 1024) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'File size must be less than 5MB',
+                            showClass: {
+                                popup: "animate__animated animate__shakeX"
+                            },
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            },
+                            buttonsStyling: !1
+                        });
+                        i.value = "";
+                        return;
+                    }
+                    //Call api to set avatar
+                    const userId = document.getElementById("editUserForm").elements.namedItem("id").value;
+                    const formData = new FormData();
+                    formData.append("avatar", file);
+                    formData.append("userId", userId);
+                    console.log(file.name);
+                    console.log(userId);
+                    fetch("/api/users/set-user-avatar", {
+                        method: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                        },
+                        body: formData
+                    }).then(response => response.json()).then(data => {
+                        if(data.success) {
+                            console.log("Success");
+                            a.src = window.URL.createObjectURL(i.files[0]);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Avatar updated successfully',
+                                showClass: {
+                                    popup: "animate__animated animate__bounceIn"
+                                },
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                },
+                                buttonsStyling: !1
+                            }).then(() => {
+                                i.files[0] && (a.src = window.URL.createObjectURL(i.files[0]))
+                            });
+                        } else {
+                            console.log("Fail");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong',
+                                showClass: {
+                                    popup: "animate__animated animate__shakeX"
+                                },
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                },
+                                buttonsStyling: !1
+                            });
+                        }
+                    }).catch(error => {
+                        console.log("Error");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong',
+                            showClass: {
+                                popup: "animate__animated animate__shakeX"
+                            },
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            },
+                            buttonsStyling: !1
+                        });
+                    });
+                }
+            }
         });
 
     </script>

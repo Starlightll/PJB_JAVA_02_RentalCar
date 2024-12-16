@@ -368,12 +368,27 @@
                                                         </div>
 
                                                         <div class="col-lg-12 row mt-2"
-                                                             th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'}">
+                                                             th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
+                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
+
+
+                                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <label>Actual End Date:</label>
+                                                            </div>
+                                                            <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+
+                                                        </div>
+
+<!--                                                        Ngược lại-->
+                                                        <div class="col-lg-12 row mt-2"
+                                                             th:if="${(#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
+                                                                    or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'))  or (booking.bookingStatus == 'In-Progress'
+                                                                    or booking.bookingStatus == 'Pending return')}">
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
                                                             </div>
-                                                            <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="actualDate" th:text="${#temporals.format(timeNow, 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
 
@@ -401,16 +416,7 @@
                                                             <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Total: </p>
-                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="previewTotal"
-                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')}  + ' VND'">
-                                                                No</p>
-                                                        </div>
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -418,7 +424,7 @@
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
                                                                id="previewDeposit"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.deposit, 0, 'COMMA', 0, 'POINT')}  + ' VND'">
+                                                               th:text="${#numbers.formatDecimal(booking.getDeposit(), 0, 'COMMA', 0, 'POINT')}  + ' VND'">
                                                                 No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
@@ -444,6 +450,18 @@
                                                                th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Total: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewTotal"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getTotalPayment(), 0, 'COMMA', 0, 'POINT')}  + ' VND'">
+                                                                No</p>
+                                                        </div>
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -794,9 +812,9 @@
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Return car !!!", response);
+                    console.log("Confirm payment booking !!!", response);
                     Swal.fire({
-                        title: 'Return Car!',
+                        title: 'Confirm Payment?',
                         text: response.message,
                         icon: 'question',
                         showCancelButton: true,  // Hiển thị nút "Cancel"
@@ -834,11 +852,11 @@
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Confirm return car response", response);
+                    console.log("Confirm payment car response", response);
 
                     if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Booking Successfully Completed.',
+                            title: 'Payment Successfully Completed.',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
@@ -931,7 +949,7 @@
 
                     if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Booking Successfully Completed.',
+                            title: 'Request Return Successfully!',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
@@ -940,7 +958,7 @@
                         });
                     } else if (response.status === 'success2') {
                         Swal.fire({
-                            title: 'Request Payment Completed',
+                            title: 'Request Send Successfully Completed.',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'

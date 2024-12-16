@@ -1,8 +1,12 @@
 package com.rentalcar.rentalcar.controller;
 
-import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarStatus;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.dto.AdditionalFunctionDto;
+import com.rentalcar.rentalcar.dto.BrandDto;
+import com.rentalcar.rentalcar.dto.CarDto1;
+import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.mappers.AdditionalFunctionMapper;
+import com.rentalcar.rentalcar.mappers.BrandMapper;
+import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class SearchCarController {
@@ -36,6 +43,12 @@ public class SearchCarController {
     private BrandRepository brandRepository;
     @Autowired
     private CarStatusRepository carStatusRepository;
+    @Autowired
+    private CarMapper carMapper;
+    @Autowired
+    private BrandMapper brandMapper;
+    @Autowired
+    private AdditionalFunctionMapper additionalFunctionMapper;
 
     @GetMapping("/searchCar")
     public String searchCar(Model model,
@@ -77,7 +90,43 @@ public class SearchCarController {
 //            model.addAttribute("sendLocation", "Please enter location");
 //
 //        } else
-            if (pickDate == null) {
+        List<Long> listRide = new ArrayList<>();
+        for (Car car : list.getContent()) {
+            listRide.add(searchCarService.countBookingsByCarId((long)car.getCarId()));
+        }
+        List<String> rate = new ArrayList<>();
+
+// Iterate over each Car
+        for (Car car : list.getContent()) {
+            // Get all BookingCar entries for the current Car
+            List<BookingCar> bookingCars = searchCarService.getBookingCarByCarId((long) car.getCarId());
+
+            double totalRating = 0.0;
+            int totalCount = 0;
+
+            // For each BookingCar, get the feedback and calculate total rating
+            for (BookingCar bookingCar : bookingCars) {
+                List<Feedback> feedbackList = searchCarService.getFeedbackByBookingId((long) bookingCar.getBookingId());
+
+                // Calculate the sum of ratings for this BookingCar
+                if (!feedbackList.isEmpty()) {
+                    for (Feedback feedback : feedbackList) {
+                        totalRating += feedback.getRating();
+                        totalCount++;
+                    }
+                }
+            }
+
+            // Calculate the average rating for this car
+            if (totalCount > 0) {
+                double average = totalRating / totalCount;
+                rate.add(String.format("%.1f/5.0", average)); // Add the average to the list
+            } else {
+                rate.add("No ratings"); // No ratings for this Car
+            }
+        }
+        
+        if (pickDate == null) {
             model.addAttribute("sendPickDate", "Please enter pick date");
         } else if (pickTime == null ) {
             model.addAttribute("sendPickTime", "Please enter pick time");
@@ -103,6 +152,9 @@ public class SearchCarController {
                 model.addAttribute("pickTime",pickTime);
                 model.addAttribute("sortBy", sortBy);
                 model.addAttribute("size", list.getTotalElements());
+                model.addAttribute("listRide", listRide);
+                model.addAttribute("rate", rate);
+
             }
         } else if (pickDate.isBefore(today)) {
             model.addAttribute("sendCondition", "Pick-up date must not be in the past");
@@ -121,6 +173,9 @@ public class SearchCarController {
             model.addAttribute("pickTime",pickTime);
             model.addAttribute("sortBy", sortBy);
             model.addAttribute("size", list.getTotalElements());
+            model.addAttribute("listRide", listRide);
+            model.addAttribute("rate", rate);
+
         }
 
         return "products/Search_Car";
@@ -168,6 +223,49 @@ public class SearchCarController {
         List<Car> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds);
         model.addAttribute("cars", cars);
         return "products/cars";
+    }
+
+    @GetMapping("/api/searchCar")
+    public ResponseEntity<List<CarDto1>> searchCars(
+            @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
+            @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
+            @RequestParam(value = "dropDateTime", required = false) String dropDateTime
+    ) {
+        List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
+        List<CarDto1> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds).stream().map(carMapper::toDto).collect(Collectors.toList());
+        if(pickupLocation != null && !pickupLocation.isEmpty()) {
+            cars = cars.stream().filter(car -> (car.getAddress().province()+" "+car.getAddress().district()+" "+car.getAddress().ward()).toLowerCase().contains(pickupLocation.toLowerCase().trim())).collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(cars);
+    }
+
+    @GetMapping("/api/searchCar/{id}")
+    public String carDetail(
+            @PathVariable("id") Integer id,
+            @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
+            @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
+            @RequestParam(value = "dropDateTime", required = false) String dropDateTime,
+            Model model
+    ) {
+        Car car = carRepository.getCarByCarId(id);
+        if(car == null){
+            return "redirect:/api/searchCar";
+        }
+        model.addAttribute("car", carMapper.toDto(car));
+        model.addAttribute("pickupLocation", pickupLocation);
+        model.addAttribute("pickupDateTime", pickupDateTime);
+        model.addAttribute("dropDateTime", dropDateTime);
+        return "products/CarDetail";
+    }
+
+    @GetMapping("/api/brands")
+    public ResponseEntity<List<BrandDto>> getBrands() {
+        return ResponseEntity.ok(brandRepository.findAll().stream().map(brandMapper::toDto).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/api/additionalFunctions")
+    public ResponseEntity<List<AdditionalFunctionDto>> getAdditionalFunctions() {
+        return ResponseEntity.ok(additionalFunctionRepository.findAll().stream().map(additionalFunctionMapper::toDto).collect(Collectors.toList()));
     }
 
 }

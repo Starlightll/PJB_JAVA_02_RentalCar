@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.CarDraft;
 import com.rentalcar.rentalcar.entity.User;
@@ -20,4 +21,7 @@ public interface CarOwnerService {
     boolean requestChangeBasicInformation(CarDraft carDraft, MultipartFile[] files, User user, Integer carId);
     Set<String> getAllLicensePlates(Long userId);
     Set<String> getAllLicensePlatesNotOwnedByUser(Long userId);
+    CarDto getRatingByCarId(Long carId);
+
+
 }

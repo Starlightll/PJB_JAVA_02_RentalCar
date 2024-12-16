@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[Users]
 (
     userId         INT IDENTITY (1,1) NOT NULL,
     username       NVARCHAR(50),
+    avatar         NVARCHAR(MAX),
     dob            DATE,
     email          NVARCHAR(100)      NOT NULL,
     nationalId     NVARCHAR(20),
@@ -24,6 +25,7 @@ CREATE TABLE [dbo].[Users]
     agreeTerms     int                not null,
     status         VARCHAR(10)        NOT NULL CHECK (status IN ('PENDING', 'ACTIVATED', 'LOCKED', 'DELETED', 'RENTED')),
     salaryDriver   DECIMAL(18, 2),
+    descriptionDriver    NVARCHAR(max),
     PRIMARY KEY (userId)
     );
 
@@ -282,7 +284,7 @@ INSERT INTO CarStatus (CarStatusId, name) VALUES (1,'Available'),
                                                  (12, 'Completed'),
                                                  (13,'Cancelled'),
                                                  (14, 'Pending deposit'),
-                                                 (15, 'Pending cancel')
+                                                 (15, 'Pending cancel'),
                                                  (16, 'Pending return')
 
 
@@ -314,22 +316,6 @@ CREATE TABLE [dbo].[Transaction] (
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
     FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
     );
-
-
-
-
-
-
--- ĐÂY LÀ DỮ LIỆU TEST DRIVER, ANH EM TỤ THÊM TRONG BẢNG USER ROLE NHÉ , ROLE LÀ DRIVER(4)
-
-INSERT INTO [dbo].[Users] (username, dob, email, nationalId, phone, drivingLicense, wallet, password, city, district, ward, street, fullName, agreeTerms, status, salaryDriver)
-VALUES
-    (N'john_doe', '1990-01-15', N'johndoe@example.com', N'123456789', N'0123456789', N'DL123456', 5000000.00, N'hashed_password_1', N'1', N'8', N'334', N'Pham Ngoc Thach', N'John Doe', 1, N'ACTIVATED', 500000),
-    (N'jane_smith', '1985-03-10', N'janesmith@example.com', N'987654321', N'0987654321', N'DL987654', 3000000.00, N'hashed_password_2', N'1', N'8', N'334', N'Le Duan', N'Jane Smith', 1, N'ACTIVATED', 499000),
-    (N'mike_brown', '1992-07-22', N'mikebrown@example.com', N'1122334455', N'0912345678', N'DL112233', 10000000.00, N'hashed_password_3', N'1', N'8', N'334', N'Nguyen Hue', N'Mike Brown', 1, N'ACTIVATED', 459000);
-
-INsert into UserRole
-values(1, 4), (2,4),(3,4)
 
 -- SQL to delete all information of carDraft, Car and relative information of Car
 -- DELETE FROM CarDraft WHERE CarDraft.draftId > 0;

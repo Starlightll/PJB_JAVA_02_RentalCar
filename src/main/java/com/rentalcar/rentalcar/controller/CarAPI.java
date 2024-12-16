@@ -23,6 +23,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * CarAPI is a REST controller that provides endpoints to manage car and car updates.
+ *
+ * This controller handles several operations related to cars such as checking the ownership
+ * of a license plate, retrieving cars by their status, approving car entry,
+ * managing car update requests, and sending notifications via email.
+ *
+ * Dependencies are injected using Spring's @Autowired annotation, and it uses a combination
+ * of repositories, mappers, and services to perform operations.
+ */
 @Controller
 @RequestMapping("carAPI")
 public class CarAPI {

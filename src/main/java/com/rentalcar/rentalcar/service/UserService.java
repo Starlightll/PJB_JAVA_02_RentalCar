@@ -6,15 +6,20 @@ import com.rentalcar.rentalcar.dto.UserDto;
 import com.rentalcar.rentalcar.dto.UserInfoDto;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.entity.UserRole;
+import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.repository.UserRoleRepo;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +38,10 @@ public class UserService implements IUserService {
     @Autowired
     PhoneNumberStandardService phoneNumberStandardService;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
+
     @Override
     public void saveUser(UserInfoDto user, HttpSession session ) {
         User users = userRepo.getUserByEmail(user.getEmail());
@@ -47,7 +56,7 @@ public class UserService implements IUserService {
             if (drivingLicenseFile != null && !drivingLicenseFile.isEmpty()) {
                 try {
                     // Define the directory where the file will be saved
-                    String uploadDir = "uploads/DriveLicense/" + users.getId()+ "_" + users.getUsername() +"/"; // Update as needed
+                    String uploadDir = "uploads/User/" + users.getId(); // Update as needed
                     Files.createDirectories(Paths.get(uploadDir)); // Ensure directory exists
 
                     String fileName = drivingLicenseFile.getOriginalFilename();
@@ -88,11 +97,35 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User addUser(User user) {
+    @Transactional
+    public User addUser(User user, Integer role) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        return userRepo.save(user);
+
+        //Normalize phone number
+        String phone = user.getPhone().replaceAll("[^0-9]", "");
+        String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+        user.setPhone(normalizedPhone);
+
+        userRepo.save(user);
+        //Set default role
+        setUserRole(user, role);
+        //Set default avatar
+        String folderName = String.format("%s", user.getId());
+        Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+        try {
+            //Random default avatar
+            int random = (int) (Math.random() * 7 + 1);
+            //Get default avatar src file
+            File file = new File("src/main/resources/static/images/default-avatar"+random+".jpg");
+            String storagePath = fileStorageService.storeFile(file, userFolderPath, "avatar.png");
+            user.setAvatar(storagePath);
+        } catch (Exception e) {
+            user.setAvatar(null);
+        }
+        userRepo.save(user);
+        return user;
     }
 
     @Override
@@ -110,6 +143,136 @@ public class UserService implements IUserService {
         userRepo.save(user);
     }
 
+    @Override
+    public void setUserDefaultAvatar(User user) {
+
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(User user, MultipartFile drivingLicense) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            updateUser.setUsername(user.getUsername());
+            updateUser.setFullName(user.getFullName());
+            updateUser.setDob(user.getDob());
+            updateUser.setNationalId(user.getNationalId());
+            updateUser.setCity(user.getCity());
+            updateUser.setDistrict(user.getDistrict());
+            updateUser.setWard(user.getWard());
+            updateUser.setStreet(user.getStreet());
+            updateUser.setStatus(user.getStatus());
+            if(drivingLicense != null && !drivingLicense.isEmpty()){
+                String folderName = String.format("%s", updateUser.getId());
+                Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(drivingLicense, userFolderPath, "drivingLicense.png");
+                    updateUser.setDrivingLicense(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            String phoneNormalized = phoneNumberStandardService.normalizePhoneNumber(user.getPhone(), Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
+            updateUser.setPhone(phoneNormalized);
+            userRepo.save(updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(User user, MultipartFile drivingLicenseFile, HttpSession session) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            updateUser.setFullName(user.getFullName());
+            updateUser.setDob(user.getDob());
+            updateUser.setNationalId(user.getNationalId());
+            updateUser.setCity(user.getCity());
+            updateUser.setDistrict(user.getDistrict());
+            updateUser.setWard(user.getWard());
+            updateUser.setStreet(user.getStreet());
+            if(drivingLicenseFile != null && !drivingLicenseFile.isEmpty()){
+                String folderName = String.format("%s", updateUser.getId());
+                Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(drivingLicenseFile, userFolderPath, "drivingLicense.png");
+                    updateUser.setDrivingLicense(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            userRepo.save(updateUser);
+            //Update session
+            session.setAttribute("user", updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void setUserAvatar(User user, MultipartFile avatarFile) {
+        try{
+            User updateUser = userRepo.findById(user.getId()).orElse(null);
+            if(updateUser == null){
+                throw new UserException("User not found");
+            }
+            if(avatarFile != null && !avatarFile.isEmpty()){
+                //Set default avatar
+                String folderName = String.format("%s", updateUser.getId());
+                Path userFolderPath = Paths.get("uploads/User/"+ folderName);
+                try {
+                    String storagePath = fileStorageService.storeFile(avatarFile, userFolderPath, "avatar.png");
+                    updateUser.setAvatar(storagePath);
+                } catch (Exception e) {
+                    throw new UserException("Something went wrong");
+                }
+            }
+            userRepo.save(updateUser);
+        }catch (Exception e){
+            throw new UserException("Something went wrong");
+        }
+    }
+
+    @Override
+    public boolean checkNationalId(String nationalId) {
+        return userRepo.existsByNationalId(nationalId);
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(User user, String oldPassword, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(passwordEncoder.matches(oldPassword, user.getPassword())){
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encodedPassword);
+            userRepo.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void logout(HttpSession session) {
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+
+        SecurityContextHolder.clearContext();
+
+        // Clear session
+        session.removeAttribute("user");
+        session.invalidate();
+    }
+
     public boolean checkEmail(String email) {
         return userRepo.getUserByEmail(email) != null;
     }
@@ -121,6 +284,7 @@ public class UserService implements IUserService {
                 .userId(user.getId())
                 .fullName(user.getFullName())
                 .username(user.getUsername())
+                .avatar(user.getAvatar())
                 .dob(user.getDob())
                 .phone(user.getPhone())
                 .email(user.getEmail())
@@ -128,6 +292,8 @@ public class UserService implements IUserService {
                 .status(user.getStatus().getStatus())
                 .build();
     }
+
+
 
 
 

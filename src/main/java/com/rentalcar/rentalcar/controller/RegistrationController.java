@@ -71,6 +71,9 @@ public class RegistrationController {
                 case "Passwords do not match":
                     result.rejectValue("confirmPassword", "error.confirmPassword", "Password and Confirm password don’t match. Please try again.");
                     break;
+                case "Username already exists":
+                    result.rejectValue("username", "error.username", "Username already exists");
+                    break;
             }
             registerDto.setAgreedTerms(false); // Đặt mặc định là false
             redirectAttributes.addFlashAttribute ("hasSignupErrors", true);

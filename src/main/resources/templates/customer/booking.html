@@ -713,6 +713,7 @@
                                                                         <div id="salaryErrorDriver" style="color: red"></div>
                                                                     </div>
 
+
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
                                                                             <div class="input-group-prepend">
@@ -725,7 +726,32 @@
                                                                         </div>
                                                                         <a class="validate-msg">Invalid</a>
                                                                     </div>
+                                                                    <div class="col-lg-6 mb-3 required-label">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend" >
+                                                                                <span class="input-group-text ">Description</span>
+                                                                            </div>
+                                                                            <textarea type="text" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                   disabled id="descriptionDriver"></textarea>
+                                                                        </div>
+                                                                        <div id="descriptionErrorDriver" style="color: red"></div>
+                                                                    </div>
 
+
+                                                                    <div class="col-lg-6 mb-3">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text">Home</span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control"
+                                                                                   aria-label="Sizing example input"
+                                                                                   aria-describedby="inputGroup-sizing-default"
+                                                                                   disabled id="streetDriver">
+                                                                        </div>
+                                                                        <a class="validate-msg">Invalid</a>
+                                                                    </div>
 
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
@@ -756,23 +782,12 @@
                                                                         <input type="hidden" id="currentDrivingLicenseDriver" th:value="${user.getDrivingLicense()}">
                                                                         <div id="drivingLicenseErrorDriver" style="color: red"></div>
                                                                     </div>
-
                                                                     <div class="col-lg-6 mb-3">
-                                                                        <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend">
-                                                                                <span class="input-group-text">Home</span>
-                                                                            </div>
-                                                                            <input type="text" class="form-control"
-                                                                                   aria-label="Sizing example input"
-                                                                                   aria-describedby="inputGroup-sizing-default"
-                                                                                   disabled id="streetDriver">
-                                                                        </div>
-                                                                        <a class="validate-msg">Invalid</a>
-                                                                    </div>
 
+                                                                    </div>
                                                                     <!-- Khung hiển thị ảnh -->
                                                                     <div class="col-lg-6 mb-3" id="previewContainerDriver">
-                                                                        <img id="previewImageDriver" th:src="'/'+${user.getDrivingLicense()}"
+                                                                        <img id="previewImageDriver"
                                                                              alt="Image preview"
                                                                              style="width: 100%; height: 100%; object-fit: cover;">
                                                                     </div>
@@ -979,7 +994,13 @@
 
             console.log("selectedUserId = " ,selectedDriverId)
             if(checked && !selectedDriverId) {
-                alert(`Please fill all required fields`);
+                //alert(`Please fill all required fields`);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please fill all required fields',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
                 return false;
             }
 
@@ -1011,7 +1032,13 @@
                 if (formData[key] === '') {
                     console.log(`Trường ${key} đang bị trống.`);
                     // Nếu bạn muốn hiện cảnh báo cho người dùng, bạn có thể thêm dòng sau:
-                    alert(`Please fill all required fields`);
+                    //alert(`Please fill all required fields`);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please fill all required fields',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                     return false;
 
                 }
@@ -1203,7 +1230,13 @@
 
                                 $('#error-message').html(errorMessage);
                             }
-                            alert(xhr.responseText); // Hiển thị lỗi nếu có
+                            Swal.fire({
+                                title: 'Error!',
+                                text: xhr.responseText,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                            // alert(xhr.responseText); // Hiển thị lỗi nếu có
                         } else {
                             console.log("Other Error:", error);
                         }
@@ -1232,7 +1265,7 @@
         window.onload = function () {
             calculateOnPageLoad();
         };
-        
+
         function calculateOnPageLoad() {
             const pickupLocation = document.getElementById('pickupLocation').innerText;
             const pickupDate = document.getElementById('pickupDate').innerText;
@@ -1707,6 +1740,33 @@
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
         window.addEventListener('pageshow', toggleDriverInfoFields);
 
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDriverList();
+        });
+
+    </script>
+
+    <script>
+        $('#province, #district , #ward').select2({
+            placeholder: "Select a province",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+        $('#district').select2({
+            placeholder: "Select a district",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+        $('#ward').select2({
+            placeholder: "Select a ward",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
     </script>
     <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/customer/book-car.js"></script>

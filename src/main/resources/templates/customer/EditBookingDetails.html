@@ -234,9 +234,11 @@
             display: flex;
             justify-content: center;
             gap: 5px;
+
         }
 
         .star-rating svg {
+            fill: #C0C0C0;
             cursor: pointer;
             transition: fill 0.3s;
             width: 30px;
@@ -245,7 +247,8 @@
 
         .star-rating svg:hover,
         .star-rating svg.active {
-            fill: #FFA500;
+                fill: #32CD32;
+                /*fill: #00d79d;*/
         }
 
         /* Textarea for review */
@@ -337,6 +340,42 @@
             box-sizing: border-box;
         }
 
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* Mặc định ẩn */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;    overflow: auto; /* Đảm bảo hiển thị tốt nếu nội dung dài */
+
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 2200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+
+
     </style>
 </head>
 
@@ -344,7 +383,365 @@
 <th:block layout:fragment="content">
     <body>
 
-    <!-- Popup Overlay -->
+
+    <!-- Modal -->
+    <div id="customModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2>Booking Details</h2>
+            <div id="modal-body">
+                <!-- Nội dung modal sẽ hiển thị ở đây -->
+                <section class="ftco-section p-0" style="min-height: 500px !important;">
+
+                    <div class="container pb-5">
+                        <div class="row mt-5">
+                            <div class="col-md-12">
+                                <div class="table-wrap">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="card align-items-start display-flex-center align-items-center"
+                                             style="">
+                                            <div class="card-body text-left w-100">
+                                                <h5 class="card-title"></h5>
+                                                <div class="row d-flex justify-content-center">
+                                                    <!--                                        <th:block th:object="${booking}">-->
+                                                    <input type="text"  th:value="${contract.getCarId()}"  hidden>
+                                                    <div class="col-lg-12 row p-3" style="border-bottom: solid 3px #01d28e">
+                                                        <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                            <h4 class="col-lg-12 col-md-12 col-sm-12 " style="text-align: center; margin: 10px; color: black">
+                                                                Time on Contract</h4>
+
+                                                            <div class="row justify-content-center align-items-center align-content-center">
+                                                                <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
+                                                                    th:text="${contract.getCarname() == null ? 'NULL' : contract.getCarname()}">
+                                                                    No Name</h4>
+                                                                <div>
+                                                                    <span></span>
+                                                                </div>
+                                                                <!-- From Date and To Date Section -->
+                                                                <div class="col-lg-12 row mt-2">
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                        <label>From Date:</label>
+                                                                    </div>
+                                                                    <p  th:text="${#temporals.format(contract.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                                </div>
+                                                                <div class="col-lg-12 row mt-2">
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                        <label>To Date:</label>
+                                                                    </div>
+                                                                    <p th:text="${#temporals.format(contract.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+
+                                                                </div>
+
+                                                                <input type="hidden"
+                                                                       th:value="${contract.getBookingId()}">
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Number of days: </p>
+                                                                    <p th:text="${contract.getStr_numberOfDays() != null ? contract.getStr_numberOfDays() : 0}"></p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Base price: </p>
+                                                                    <p th:text="${#numbers.formatDecimal(contract.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + ' VND/Day'">0k/Day</p>
+                                                                </div>
+<!--                                                                <div class="col-lg-12 row"-->
+<!--                                                                     style="display: flex; align-items: center">-->
+<!--                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                                        Total: </p>-->
+<!--                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"-->
+<!--                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
+<!--                                                                       th:text="${#numbers.formatDecimal(contract.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">-->
+<!--                                                                        No</p>-->
+<!--                                                                </div>-->
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Fine LateTime: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       th:style="${contract.getFineLateTime() > 0} ? 'color: red;' : 'color: inherit;'"
+                                                                       th:text="${#numbers.formatDecimal(contract.getFineLateTime(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Deposit: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(contract.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Addition payment: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(contract.getTotalMoney(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Return Deposit: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(contract.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Salary Driver: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(contract.getSalaryDriver(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Total: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(contract.getTotalPayment(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking No: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${contract.getBookingId()}">No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking status:
+                                                                    </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       th:text="${contract.bookingStatus}"
+                                                                       th:style="${contract.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
+           : contract.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
+           : contract.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+           : (contract.bookingStatus == 'Pending deposit' or contract.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
+           : contract.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;'
+           : contract.bookingStatus == 'Pending cancel' ? 'color: #000000; font-weight: bold;'
+           : 'font-weight: bold;'}">
+                                                                    </p>
+
+                                                                </div>
+
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 justify-content-center align-items-center">
+                                                            <h4 class="col-lg-12 col-md-12 col-sm-12 " style="text-align: center; margin: 10px; color: black">
+                                                                Time on Actual</h4>
+                                                            <div class="row justify-content-center align-items-center align-content-center">
+                                                                <h4 class="col-lg-12 col-md-12 col-sm-12" style=""
+                                                                    th:text="${actual.getCarname() == null ? 'NULL' : actual.getCarname()}">
+                                                                    No Name</h4>
+                                                                <div>
+                                                                    <span></span>
+                                                                </div>
+                                                                <!-- From Date and To Date Section -->
+                                                                <div class="col-lg-12 row mt-2">
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                        <label>From Date:</label>
+                                                                    </div>
+                                                                    <p id="pickupDateActual" th:text="${#temporals.format(actual.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                                </div>
+                                                                <div class="col-lg-12 row mt-2">
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                        <label>To Date:</label>
+                                                                    </div>
+                                                                    <p id="returnDateActual" th:text="${#temporals.format(actual.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+
+                                                                </div>
+
+                                                                <div class="col-lg-12 row mt-2"
+                                                                     th:if="${actual.bookingStatus == 'Completed' or actual.bookingStatus == 'Pending payment'
+                                                                    or actual.bookingStatus == 'Cancelled' or actual.bookingStatus == 'Pending cancel'}">
+
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                        <label>Actual End Date:</label>
+                                                                    </div>
+                                                                    <p id="actualDateDbActual" th:text="${#temporals.format(actual.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row mt-2"
+                                                                     th:if="${(!(actual.bookingStatus == 'Completed' or actual.bookingStatus == 'Pending payment'
+                                                                    or actual.bookingStatus == 'Cancelled' or actual.bookingStatus == 'Pending cancel'))  or (actual.bookingStatus == 'In-Progress'
+                                                                    or actual.bookingStatus == 'Pending return')}">
+
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                        <label>Actual End Date:</label>
+                                                                    </div>
+                                                                    <p  th:text="${#temporals.format(timNow, 'dd/MM/yyyy HH:mm')}"></p>
+
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Number of days: </p>
+                                                                    <p th:text="${actual.getStr_numberOfDays() != null ? actual.getStr_numberOfDays() : 0}"></p>
+
+                                                                    <p th:if="${actual.getLateTime() != null}"
+                                                                       style="color: red; font-style: italic;">
+                                                                        (
+                                                                        <span th:text="${actual.getLateTime()}"></span>
+                                                                        )
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Base price: </p>
+                                                                    <p th:text="${#numbers.formatDecimal(actual.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + ' VND/Day'"
+                                                                       id="previewBasePriceActual">0k/Day</p>
+                                                                </div>
+<!--                                                                <div class="col-lg-12 row"-->
+<!--                                                                     style="display: flex; align-items: center">-->
+<!--                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                                        Total: </p>-->
+<!--                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"-->
+<!--                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
+<!--                                                                       th:text="${#numbers.formatDecimal(actual.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">-->
+<!--                                                                        No</p>-->
+<!--                                                                </div>-->
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Fine LateTime: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       id="fineLateTimeActual"
+                                                                       th:style="${actual.getFineLateTime() > 0} ? 'color: red;' : 'color: inherit;'"
+                                                                       th:text="${#numbers.formatDecimal(actual.getFineLateTime(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Deposit: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(actual.getDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Addition payment: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       id="totalMoneyActual"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(actual.getTotalMoney(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Return Deposit: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       id="returnDepositActual"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(actual.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Salary Driver: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       id="salaryDriverDisplayActual"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(actual.getSalaryDriver(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Total: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${#numbers.formatDecimal(actual.getTotalPayment(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                        No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking No: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       id="previewBookingNoActual"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${actual.getBookingId()}">No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking status:
+                                                                    </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       th:text="${actual.bookingStatus == 'Completed' ? 'Completed'
+           : #temporals.createNow().isAfter(actual.getEndDate()) ? 'Overdue'
+           : actual.bookingStatus}"
+                                                                       th:style="${actual.bookingStatus == 'Completed' ? 'color: #0000FF; font-weight: bold;'
+           : #temporals.createNow().isAfter(actual.getEndDate()) ? 'color: #FF0000; font-weight: bold;'
+           : actual.bookingStatus == 'Confirmed' ? 'color: #c94b55; font-weight: bold;'
+           : actual.bookingStatus == 'In-Progress' ? 'color: #FFA500; font-weight: bold;'
+           : (actual.bookingStatus == 'Pending deposit' or actual.bookingStatus == 'Pending payment') ? 'color: #FF0000; font-weight: bold;'
+           : actual.bookingStatus == 'Cancelled' ? 'color: #808080; font-weight: bold;'
+           : actual.bookingStatus == 'Pending cancel' ? 'color: #000000; font-weight: bold;'
+           : 'font-weight: bold;'}">
+                                                                    </p>
+
+                                                                </div>
+
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div th:if="${booking.bookingStatus == 'Completed'}" class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
+                                                        <!-- Nút xuất file Excel -->
+                                                        <a th:href="${'/bills/export-pdf?bookingId='+ actual.getBookingId() + '&carId=' +actual.getCarId()+'&userId='+actual.getUserId()}" class="btn btn-success">Export to Pdf</a>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Popup Rating -->
     <div class="popup-overlay" id="ratingPopup">
         <div class="popup-content">
             <h2>Rate your trip</h2>
@@ -568,17 +965,16 @@
                                                             <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + ' VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Total: </p>
-                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="previewTotal"
-                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
-                                                                No</p>
-                                                        </div>
-
+<!--                                                            <div class="col-lg-12 row"-->
+<!--                                                                 style="display: flex; align-items: center">-->
+<!--                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                                    Total: </p>-->
+<!--                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"-->
+<!--                                                                   id="previewTotalPrice"-->
+<!--                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
+<!--                                                                   th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">-->
+<!--                                                                    No</p>-->
+<!--                                                            </div>-->
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -636,7 +1032,19 @@
                                                                th:text="${#numbers.formatDecimal(booking.getSalaryDriver(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
-                                                        <div class="col-lg-12 row"
+
+                                                            <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Total: </p>
+                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                   id="previewTotal"
+                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                   th:text="${#numbers.formatDecimal(booking.getTotalPayment(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                    No</p>
+                                                            </div>
+
+                                                            <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Booking No: </p>
@@ -673,8 +1081,7 @@
                                                 <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
 
                                                     <!-- View Details button: always visible -->
-                                                    <a th:href="'/carDetail/' + ${car.carId}"
-                                                       class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
+                                                    <a class="btn btn-primary mr-1 btn-lg w-100 align-content-center" href="javascript:void(0);" id="openModalButton">View
                                                         Details</a>
 
 <!--                                                    btn for customer-->
@@ -960,7 +1367,9 @@
                                                 <div class="row">
                                                     <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
                                                         <input type="checkbox" id="differentInfoCheckbox"
-                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                               name="additionalFunction" value="true" onclick="toggleDriverInfoFields()"
+                                                               th:checked="${booking.getDriverId() != null}"
+                                                               th:disabled="${booking.getDriverId() != null}">
                                                         <svg viewBox="0 0 21 21">
                                                             <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                                         </svg>
@@ -1047,10 +1456,11 @@
                                                             </div>
                                                             <div id="nationalIdErrorDriver" style="color: red"></div>
                                                         </div>
+
                                                         <div class="col-lg-6 mb-3 ">
                                                             <div class="input-group input-group-sm">
                                                                 <div class="input-group-prepend" style="max-height: 33.5px;">
-                                                                    <span class="input-group-text" id="inputGroupFileAddonDriver" >Driving license</span>
+                                                                    <span class="input-group-text" id="inputGroupFileAddonDriver" >Avatar</span>
                                                                 </div>
                                                                 <div class="custom-file">
                                                                     <!-- Input file -->
@@ -1077,6 +1487,28 @@
                                                             <div id="drivingLicenseErrorDriver" style="color: red"></div>
 
                                                         </div>
+                                                        <div class="col-lg-6 mb-3 ">
+                                                            <div class="input-group input-group-sm">
+                                                                <div class="input-group-prepend">
+                                                                        <span class="input-group-text "
+                                                                        > Description</span>
+                                                                </div>
+                                                                <textarea  type="text" readonly  class="form-control"
+                                                                           aria-label="Sizing example input"
+                                                                           aria-describedby="inputGroup-sizing-default"
+                                                                           id="descriptionDriver" name="emailAddress"
+                                                                ></textarea>
+                                                            </div>
+                                                            <div id="descriptionDriverErrorDriver" style="color: red"></div>
+
+                                                        </div>
+                                                        <!-- Khung hiển thị ảnh -->
+                                                        <div  class="col-lg-6 mb-3 " id="previewContainerDriver">
+                                                            <img id="previewImageDriver" th:src="'/'+${rentUser.getAvatar()}"
+                                                                 alt="Image preview"
+                                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                                        </div>
+                                                        <!--                                                <div class="row" style="width: 100%; overflow: auto">-->
 
                                                         <div class="col-lg-6 mb-3 ">
                                                             <div class="input-group input-group-sm">
@@ -1148,21 +1580,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Khung hiển thị ảnh -->
-                                                        <div  class="col-lg-6 mb-3 " id="previewContainerDriver">
-                                                            <img id="previewImageDriver" th:src="'/'+${rentUser.getDrivingLicense()}"
-                                                                 alt="Image preview"
-                                                                 style="width: 100%; height: 100%; object-fit: cover;">
-                                                        </div>
-                                                        <!--                                                <div class="row" style="width: 100%; overflow: auto">-->
-
-
                                                     </div>
-
-
-
-
-
 
                                                 </div>
 
@@ -1515,6 +1933,24 @@
             theme: 'bootstrap4',
             fontsize: '10px'
         })
+        // Hiển thị modal
+        document.getElementById("openModalButton").addEventListener("click", function() {
+            document.getElementById("customModal").style.display = "flex";
+        });
+
+        // Đóng modal
+        document.getElementById("closeModal").addEventListener("click", function() {
+            document.getElementById("customModal").style.display = "none";
+        });
+
+        // Đóng modal khi bấm ra ngoài
+        window.addEventListener("click", function(event) {
+            var modal = document.getElementById("customModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+
 
     </script>
 
@@ -1605,7 +2041,7 @@
                     console.log("Check payment successfully", response);
 
                     Swal.fire({
-                        title: 'Confirm Payment!',
+                        title: 'Confirm Car Returned!',
                         text: response.message,
                         icon: 'question',
                         showCancelButton: true,
@@ -1657,7 +2093,25 @@
 
                         if (response.status === 'success1') {
                             Swal.fire({
-                                title: 'Booking Successfully Completed.',
+                                title: 'Booking Successfully Completed!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            })
+                        } else if (response.status === 'success2') {
+                            Swal.fire({
+                                title: 'Your Wallet Not Enough Money.',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/booking-detail?bookingId=' + bookingId + '&carId=' + carId + '&userId='+ userId  + '&navigate=' + navigate;
+                            })
+                        } else if (response.status === 'success3') {
+                            Swal.fire({
+                                title: 'Confirm Return Car Successfully.',
                                 text: response.message,
                                 icon: 'success',
                                 confirmButtonText: 'OK'
@@ -1676,7 +2130,6 @@
                         }
                     },
                     error:
-
                         function (error) {
                             console.log("Error confirming return payment", error);
                             Swal.fire({
@@ -1783,9 +2236,9 @@
                 type: 'get',
                 data: {bookingId: bookingId},
                 success: function (response) {
-                    console.log("Return car !!!", response);
+                    console.log("Payment !!!", response);
                     Swal.fire({
-                        title: 'Return Car!',
+                        title: 'Confirm Payment.',
                         text: response.message,
                         icon: 'question',
                         showCancelButton: true,  // Hiển thị nút "Cancel"
@@ -1922,7 +2375,7 @@
 
                     if (response.status === 'success1') {
                         Swal.fire({
-                            title: 'Booking Successfully Completed.',
+                            title: 'Request Return Successfully!',
                             text: response.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
@@ -2441,8 +2894,8 @@
             const checkbox = document.getElementById('differentInfoCheckbox');
             const table = document.getElementById('driverInfoTable');
 
-            // Hiển thị bảng nếu checkbox được chọn
-            table.style.display = checkbox.checked ? 'block' : 'none';
+            // Hiển thị bảng nếu checkbox được chọn hoặc bị vô hiệu hóa (driver đã tồn tại)
+            table.style.display = checkbox.checked || checkbox.disabled ? 'block' : 'none';
         }
         // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
@@ -2512,19 +2965,37 @@
             });
         }
 
-        // Event listeners to load data on selection
-        document.getElementById('province').addEventListener('change', function () {
-            fetchDistricts(this.value);
-            document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
-            document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
-            document.getElementById('district').value = ""; // Reset district value
-            document.getElementById('ward').disabled = true; // Disable ward selection
+        // Select 2 library
+        $('#province').on('select2:select', function (e) {
+            console.log("Province selected");
+            const selectedProvince = $(this).val();
+            fetchDistricts(selectedProvince);
+            $('#ward').html('<option value="">Select Ward</option>').prop('disabled', true);
+            $('#district').val("").prop('disabled', selectedProvince === "");
         });
 
-        document.getElementById('district').addEventListener('change', function () {
-            fetchWards(this.value);
-            document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
+
+        // Select 2 library
+        $('#district').on('select2:select', function (e) {
+            console.log("District selected");
+            const selectedDistrict = $(this).val();
+            fetchWards(selectedDistrict);
+            $('#ward').prop('disabled', selectedDistrict === "");
         });
+
+        // Event listeners to load data on selection
+        // document.getElementById('province').addEventListener('change', function () {
+        //     fetchDistricts(this.value);
+        //     document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
+        //     document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
+        //     document.getElementById('district').value = ""; // Reset district value
+        //     document.getElementById('ward').disabled = true; // Disable ward selection
+        // });
+        //
+        // document.getElementById('district').addEventListener('change', function () {
+        //     fetchWards(this.value);
+        //     document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
+        // });
 
 
         // Load provinces on page load with default values
@@ -2716,6 +3187,33 @@
                 });
             });
         });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUpdateDriverList()
+        });
+
+    </script>
+
+    <script>
+        $('#province, #district , #ward').select2({
+            placeholder: "Select a province",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+        $('#district').select2({
+            placeholder: "Select a district",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
+        $('#ward').select2({
+            placeholder: "Select a ward",
+            allowClear: true,
+            theme: 'bootstrap4',
+            fontsize: '10px'
+        })
     </script>
 
     <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>

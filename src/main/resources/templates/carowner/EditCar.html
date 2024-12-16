@@ -445,7 +445,7 @@
                                 <div class="col-lg-4">
                                     <p>Registration</p>
                                     <label for="input-file1" class="drop-area"
-                                           style="height: 160px; padding: 15px">
+                                           style="height: 160px; padding: 15px; pointer-events: none">
                                         <div class="img-view" id="img-view1-change-preview"
                                              th:data-image-url="${carDraft.getRegistration()}">
                                             <i class="fa-solid fa-file-arrow-up fa-2x"></i>
@@ -459,7 +459,7 @@
                                 <div class="col-lg-4">
                                     <p>certificate</p>
                                     <label for="input-file2" class="drop-area"
-                                           style="height: 160px; padding: 15px">
+                                           style="height: 160px; padding: 15px; pointer-events: none">
                                         <div class="img-view" id="img-view2-change-preview"
                                              th:data-image-url="${carDraft.getCertificate()}">
                                             <i class="fa-solid fa-file-arrow-up fa-2x"></i>
@@ -473,7 +473,7 @@
                                 <div class="col-lg-4">
                                     <p>Insurance</p>
                                     <label for="input-file3" class="drop-area"
-                                           style="height: 160px; padding: 15px">
+                                           style="height: 160px; padding: 15px; pointer-events: none">
                                         <div class="img-view" id="img-view3-change-preview"
                                              th:data-image-url="${carDraft.getInsurance()}">
                                             <i class="fa-solid fa-file-arrow-up fa-2x"></i>
@@ -594,7 +594,8 @@
                                                                 Ratings: </p>
                                                             <div class="rating">
                                                                 <div class="star"
-                                                                     th:style="'width:' + ${T(java.lang.Math).random() * 100} +'%'">
+                                                                     th:style="'width:' + (${carRating} * 20) + '%'">
+
                                                                     <i class="fa fa-star"></i>
                                                                     <i class="fa fa-star"></i>
                                                                     <i class="fa fa-star"></i>
@@ -1425,18 +1426,18 @@
         }
 
 
-        function checkPayment(carId) {
+        function confirmReturn(carId) {
             console.log("checkPayment called with carId:", carId); // Kiểm tra xem hàm có được gọi không
 
             $.ajax({
-                url: '/car-owner/check-payment',
+                url: '/car-owner/check-return',
                 type: 'get',
                 data: {carId: carId},
                 success: function (response) {
-                    console.log("Check payment successfully", response);
+                    console.log("Check return successfully", response);
 
                     Swal.fire({
-                        title: 'Confirm Payment!',
+                        title: 'Confirm Return?',
                         text: response.message,
                         icon: 'question',
                         showCancelButton: true,
@@ -1477,7 +1478,7 @@
 
             console.log(carId);
             $.ajax({
-                    url: '/car-owner/confirm-payment-car',
+                    url: '/car-owner/confirm-return-car',
                     type: 'get',
                     data: {carId: carId},
                     success: function (response) {
@@ -1486,6 +1487,24 @@
                         if (response.status === 'success1') {
                             Swal.fire({
                                 title: 'Booking Successfully Completed.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId;
+                            })
+                        }else if (response.status === 'success2') {
+                            Swal.fire({
+                                title: 'Your Wallet Not Enough Money.',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/car-owner/edit-car/' + carId;
+                            })
+                        } else if (response.status === 'success3') {
+                            Swal.fire({
+                                title: 'Confirm Return Car Successfully.',
                                 text: response.message,
                                 icon: 'success',
                                 confirmButtonText: 'OK'

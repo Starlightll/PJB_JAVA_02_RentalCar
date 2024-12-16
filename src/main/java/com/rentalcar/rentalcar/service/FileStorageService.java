@@ -3,11 +3,13 @@ package com.rentalcar.rentalcar.service;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.nio.file.Path;
 
 public interface FileStorageService {
     String storeFile(MultipartFile file, Path customPath, String fileName) ;
 
+    String storeFile(File file, Path customPath, String fileName);
 
     Path load(String filename);
 
@@ -24,5 +26,6 @@ public interface FileStorageService {
     boolean moveFilesWithOutDelete(Path sourceFolder, Path destinationFolder);
 
     void deleteFile(Path filePath);
+
 
 }

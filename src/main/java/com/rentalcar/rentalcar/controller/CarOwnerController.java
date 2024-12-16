@@ -1,14 +1,14 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rentalcar.rentalcar.entity.Car;
-import com.rentalcar.rentalcar.entity.CarDraft;
-import com.rentalcar.rentalcar.entity.CarStatus;
-import com.rentalcar.rentalcar.entity.User;
+import com.rentalcar.rentalcar.dto.CarDto;
+import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
 import com.rentalcar.rentalcar.service.RentalCarService;
+import com.rentalcar.rentalcar.service.RevenueService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,16 +23,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.temporal.WeekFields;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.rentalcar.rentalcar.common.Regex.*;
 
+/**
+ * The CarOwnerController class provides endpoints for managing car-related operations
+ * for car owners. This includes functionalities to add, edit, update, delete cars,
+ * and handle various car status changes and requests.
+ */
 @Controller
 @RequestMapping("/car-owner")
 public class CarOwnerController {
@@ -53,6 +61,13 @@ public class CarOwnerController {
     @Autowired
     private RentalCarService rentalCarService;
     private CarDraftRepository carDraftRepository;
+
+    @Autowired
+    private RevenueService revenueService ;
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -105,16 +120,23 @@ public class CarOwnerController {
             carPage = carRepository.findAllByCarStatus_StatusIdInAndUserId(statusIds, user.getId(), pageable);
         }
         List<Car> cars = carPage.getContent();
+        List<CarDto> carDTOs = new ArrayList<>();
+        for (Car car : cars) {
+            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
+            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
+        }
+
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
-        } else {
-            model.addAttribute("carList", cars);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", carPage.getTotalPages());
-            model.addAttribute("sortBy", sortBy);
-            model.addAttribute("order", order);
-            model.addAttribute("size", size);
         }
+        model.addAttribute("carList", cars);
+        model.addAttribute("carDTOList", carDTOs);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", carPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("order", order);
+        model.addAttribute("size", size);
+
         return "/carowner/MyCars";
     }
 
@@ -151,6 +173,7 @@ public class CarOwnerController {
     @GetMapping("edit-car/{carId}")
     public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
+        CarDto carRating = carOwnerService.getRatingByCarId(Long.valueOf(carId));
         // Check if car is not found or car is deleted
         if (car == null || car.getCarStatus().getStatusId() == 4) {
             return "redirect:/car-owner/my-cars";
@@ -159,6 +182,7 @@ public class CarOwnerController {
             if (!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())) {
                 throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
+            model.addAttribute("carRating", carRating.getAverageRating());
             model.addAttribute("brands", brandRepository.findAll());
             model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
             model.addAttribute("carStatus", carStatusRepository.findAll());
@@ -318,7 +342,7 @@ public class CarOwnerController {
         if (!Objects.equals(car.getUser().getId(), user.getId()) || !statusIds.contains(car.getCarStatus().getStatusId())) {
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
-        if(licensePlate == null || model == null || color == null || productionYear == null || seatNo == null || transmissionType == null || fuelType == null) {
+        if (licensePlate == null || model == null || color == null || productionYear == null || seatNo == null || transmissionType == null || fuelType == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data");
         }
 
@@ -334,12 +358,11 @@ public class CarOwnerController {
 
         MultipartFile[] files = {registration, certificate, insurance};
         //Create CarDraft and save here - I will do it tomorrow
-        if(carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId)){
+        if (carOwnerService.requestChangeBasicInformation(carDraft, files, user, carId)) {
             return ResponseEntity.ok("Request sent successfully");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Can't send request");
     }
-
 
 
     @GetMapping("/delete-car")
@@ -375,8 +398,8 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-cancel")
     public String confirmCancel(@RequestParam("carId") Long carId,
-                                 HttpSession session,
-                                 Model model) {
+                                HttpSession session,
+                                Model model) {
         boolean isConfirmDeposit = rentalCarService.confirmCancelBookingCar(carId, session);
         if (isConfirmDeposit) {
             model.addAttribute("message_" + carId, "Confirm booking cancellation and refund deposit to customer!");
@@ -442,6 +465,12 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
+        List<CarDto> carDTOs = new ArrayList<>();
+        for (Car car : cars) {
+            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
+            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
+        }
+        model.addAttribute("carDTOList", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
@@ -458,12 +487,12 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-cancel-mycar")
     public String confirmCancelmyCar(@RequestParam("carId") Long carId,
-                                      @RequestParam(defaultValue = "1") int page,
-                                      @RequestParam(defaultValue = "5") int size,
-                                      @RequestParam(defaultValue = "lastModified") String sortBy,
-                                      @RequestParam(defaultValue = "desc") String order,
-                                      HttpSession session,
-                                      Model model) {
+                                     @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "5") int size,
+                                     @RequestParam(defaultValue = "lastModified") String sortBy,
+                                     @RequestParam(defaultValue = "desc") String order,
+                                     HttpSession session,
+                                     Model model) {
         boolean isConfirmDeposit = rentalCarService.confirmCancelBookingCar(carId, session);
         if (isConfirmDeposit) {
             model.addAttribute("message_" + carId, "Confirm booking cancellation and refund deposit to customer!");
@@ -512,6 +541,12 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
+        List<CarDto> carDTOs = new ArrayList<>();
+        for (Car car : cars) {
+            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
+            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
+        }
+        model.addAttribute("carDTOList", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
@@ -528,7 +563,7 @@ public class CarOwnerController {
 
     @GetMapping("/check-return")
     public ResponseEntity<?> checkReturn(@RequestParam("carId") Long carId,
-                                            HttpSession session) {
+                                         HttpSession session) {
         Map<String, String> response = rentalCarService.checkReturnCar(carId, session);
 
         if ("success".equals(response.get("status"))) {
@@ -540,8 +575,8 @@ public class CarOwnerController {
 
     @GetMapping("/confirm-return-car")
     public ResponseEntity<Map<String, Object>> confirmReturnCar(@RequestParam("carId") Long carId,
-                                                                 HttpSession session,
-                                                                 Model model) {
+                                                                HttpSession session,
+                                                                Model model) {
         User user = (User) session.getAttribute("user");
 
         Map<String, Object> response = new HashMap<>();
@@ -555,10 +590,10 @@ public class CarOwnerController {
         // Handle response based on caseReturn value
         if (casePayment == 1) {
             return generateResponse(response, "success1", "Booking has been successfully completed.");
-        } else if(casePayment == -1) {
-            return generateResponse(response, "success1", "Not enough money!");
-        } else if(casePayment == 2) {
-            return generateResponse(response, "success1", "Waiting customer payment!");
+        } else if (casePayment == -1) {
+            return generateResponse(response, "success2", "Not enough money! Please top up your wallet and try again!!!");
+        } else if (casePayment == 2) {
+            return generateResponse(response, "success3", "Waiting customer payment!");
         }
 
         Car car = carRepository.getCarByCarId(carId.intValue());
@@ -608,7 +643,7 @@ public class CarOwnerController {
 
     @GetMapping("/check-payment")
     public ResponseEntity<?> checkPayment(@RequestParam("carId") Long carId,
-                                         HttpSession session) {
+                                          HttpSession session) {
         Map<String, String> response = rentalCarService.checkReturnCar(carId, session);
 
         if ("success".equals(response.get("status"))) {
@@ -622,6 +657,117 @@ public class CarOwnerController {
         response.put("status", status);
         response.put("message", message);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/revenue")
+    public Object getRevenuePage(
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "week", required = false) String week,
+            Model model,
+            HttpSession session,
+            HttpServletRequest request) {
+
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+
+        Long userId = user.getId();
+        year = (year != null) ? year : LocalDate.now().getYear();
+
+        Map<String, Double> revenueData = getRevenueData(userId, year, month, week);
+
+        int thisYear = LocalDate.now().getYear();
+        int thisMonth = LocalDate.now().getMonthValue();
+        int lastMonth = (thisMonth == 1) ? 12 : thisMonth - 1;
+
+        BigDecimal totalRevenueYear = calculateTotalRevenue(revenueService.getYearlyRevenue(userId, thisYear));
+        BigDecimal totalRevenueMonth = calculateTotalRevenue(revenueService.getMonthlyRevenue(userId, thisYear, thisMonth));
+        BigDecimal totalLastRevenueMonth = calculateTotalRevenue(revenueService.getMonthlyRevenue(userId, lastMonth == 12 ? thisYear - 1 : thisYear, lastMonth));
+        BigDecimal rateComparison = calculateComparisonRate(totalRevenueMonth, totalLastRevenueMonth);
+
+        int monthlyBookings = bookingRepository.countBookingsInMonth(thisYear, thisMonth);
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("labels", revenueData.keySet());
+            responseData.put("data", revenueData.values());
+            responseData.put("totalRevenueYear", formatRevenue(totalRevenueYear));
+            responseData.put("totalRevenueMonth", formatRevenue(totalRevenueMonth));
+            responseData.put("revenueComparison", rateComparison.doubleValue());
+            responseData.put("monthlyBookings", monthlyBookings);
+
+            return ResponseEntity.ok(responseData);
+        }
+
+        LocalDateTime startOfThisMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfThisMonth = YearMonth.now().atEndOfMonth().atTime(23, 59, 59);
+
+        Map<String, BigDecimal> pieChartData = new HashMap<>();
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTransactionDateBetween(userId, startOfThisMonth, endOfThisMonth);
+
+        for (Transaction transaction : transactions) {
+            if (!pieChartData.containsKey(transaction.getTransactionType())) {
+                pieChartData.put(transaction.getTransactionType(), transaction.getAmount());
+            } else {
+                BigDecimal currentAmount = pieChartData.get(transaction.getTransactionType());
+                pieChartData.put(transaction.getTransactionType(), currentAmount.add(transaction.getAmount()));
+            }
+        }
+
+
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("monthlyBookings", monthlyBookings);
+        model.addAttribute("totalRevenueYear", formatRevenue(totalRevenueYear));
+        model.addAttribute("totalRevenueMonth", formatRevenue(totalRevenueMonth));
+        model.addAttribute("revenueComparison", rateComparison.doubleValue());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month != null ? month : "all");
+        model.addAttribute("week", week != null ? week : "all");
+        model.addAttribute("labels", revenueData.keySet());
+        model.addAttribute("data", revenueData.values());
+        model.addAttribute("pieLabels", pieChartData.keySet());
+        model.addAttribute("pieData", pieChartData.values());
+
+        return "carowner/revenue";
+    }
+
+
+    private BigDecimal calculateTotalRevenue(Map<String, Double> revenue) {
+        return revenue.values().stream()
+                .map(BigDecimal::valueOf)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal calculateComparisonRate(BigDecimal current, BigDecimal previous) {
+        if (previous.compareTo(BigDecimal.ZERO) != 0) {
+            return current.multiply(BigDecimal.valueOf(100))
+                    .divide(previous, 2, RoundingMode.HALF_UP);
+        }
+        return BigDecimal.valueOf(100);
+    }
+
+    private String formatRevenue(BigDecimal revenue) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
+        return decimalFormat.format(revenue != null ? revenue.intValue() : BigDecimal.ZERO);
+    }
+
+    private Map<String, Double> getRevenueData(Long userId, Integer year, String month, String week) {
+        if (month == null || "all".equalsIgnoreCase(month)) {
+            if (week == null || "all".equalsIgnoreCase(week)) {
+                return revenueService.getYearlyRevenue(userId, year);
+            } else {
+                int selectedWeek = Integer.parseInt(week);
+                return revenueService.getWeeklyRevenue(userId, year, 1, selectedWeek);
+            }
+        } else {
+            int selectedMonth = Integer.parseInt(month);
+            if (week == null || "all".equalsIgnoreCase(week)) {
+                return revenueService.getMonthlyRevenue(userId, year, selectedMonth);
+            } else {
+                int selectedWeek = Integer.parseInt(week);
+                return revenueService.getWeeklyRevenue(userId, year, selectedMonth, selectedWeek);
+            }
+        }
     }
 
 

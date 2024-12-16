@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.service;
 
+import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
@@ -59,7 +60,7 @@ public class CarOwnerServiceImpl implements CarOwnerService {
             }
             // Create folder path
             String folderName = String.format("%s", car.getCarId()+"");
-            Path carFolderPath = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", folderName);
+            Path carFolderPath = Paths.get("uploads/User/"+user.getId()+"/Car/", folderName);
             Path imageFilePath;
             // Store each file if it exists
             //Front image
@@ -243,6 +244,16 @@ public class CarOwnerServiceImpl implements CarOwnerService {
         return licensePlatesOfRequest;
     }
 
+    @Override
+    public CarDto getRatingByCarId(Long carId) {
+        Object[] outerArr = carRepository.getRatingByCarId(carId);
+        Object[] avgRating = (Object[]) outerArr[0];
+        Long car_id = avgRating[0] instanceof Integer ? Long.valueOf((Integer) avgRating[0]) : null;
+        double averageRating = avgRating[1] != null ? (Double) avgRating[1] : 0;
+
+        return new CarDto(car_id, averageRating);
+    }
+
     private void setCarStatus(Car car){
         CarStatus carStatus = new CarStatus();
         carStatus.setStatusId(8);
@@ -324,8 +335,8 @@ public class CarOwnerServiceImpl implements CarOwnerService {
 
     private void setCarFiles(Car car, CarDraft carDraft, User user){
         //Car files
-        Path sourceFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
-        Path targetFolder = Paths.get("uploads/CarOwner/"+user.getId()+"/Car/", car.getCarId()+"");
+        Path sourceFolder = Paths.get("uploads/User/"+user.getId()+"/Draft/", carDraft.getDraftId()+"");
+        Path targetFolder = Paths.get("uploads/User/"+user.getId()+"/Car/", car.getCarId()+"");
         if(fileStorageService.moveFiles(sourceFolder, targetFolder)){
             car.setFrontImage(carDraft.getFrontImage().replace(sourceFolder.toString(), targetFolder.toString()));
             car.setBackImage(carDraft.getBackImage().replace(sourceFolder.toString(), targetFolder.toString()));
