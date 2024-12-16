@@ -53,6 +53,7 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 
     List<Car> findAllByCarStatus_StatusIdIsIn(Collection<Integer> carStatusStatusIds);
 
+
     Page<Car> findAllByCarStatus_StatusIdInAndUserId(Collection<Integer> carStatusStatusIds, Long userId, Pageable pageable);
 
     @Query(value = "SELECT licensePlate FROM Car WHERE userId = :userId GROUP BY licensePlate", nativeQuery = true)

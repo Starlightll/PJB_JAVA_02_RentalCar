@@ -74,6 +74,7 @@ public class WebConfiguration {
                                 "/webjars/**",
                                 "/api/searchCar",
                                 "/api/brands",
+                                "/car-search",
                                 "/api/additionalFunctions").permitAll()
                         .requestMatchers(
                                 "/login/**",
