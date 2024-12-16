@@ -1,6 +1,7 @@
 package com.rentalcar.rentalcar.mappers;
 
 import com.rentalcar.rentalcar.dto.CarDto1;
+import com.rentalcar.rentalcar.entity.Brand;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.service.SearchCarService;
@@ -27,4 +28,5 @@ public abstract class CarMapper {
     }
 
 
+    abstract CarDto1.BrandDto toDto(Brand brand);
 }
