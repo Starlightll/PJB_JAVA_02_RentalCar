@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.DecimalFormat;
@@ -29,6 +30,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -217,26 +220,48 @@ public class SearchCarController {
 
     }
 
-    @GetMapping("/cars")
+    @GetMapping("/car-search")
     public String cars(Model model) {
         List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
         List<Car> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds);
         model.addAttribute("cars", cars);
-        return "products/cars";
+        return "products/CarSearch";
     }
 
     @GetMapping("/api/searchCar")
     public ResponseEntity<List<CarDto1>> searchCars(
             @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
             @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
-            @RequestParam(value = "dropDateTime", required = false) String dropDateTime
+            @RequestParam(value = "dropDateTime", required = false) String dropDateTime,
+            @RequestParam(value = "selectedBrands", required = false) List<Integer> brandCheckList,
+            @RequestParam(value = "selectedFunctions", required = false) List<Integer> additionalFunctionCheckList,
+            @RequestParam(value = "minPrice", required = false) Double minPrice,
+            @RequestParam(value = "maxPrice", required = false) Double maxPrice
     ) {
         List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
         List<CarDto1> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds).stream().map(carMapper::toDto).collect(Collectors.toList());
         if(pickupLocation != null && !pickupLocation.isEmpty()) {
             cars = cars.stream().filter(car -> (car.getAddress().province()+" "+car.getAddress().district()+" "+car.getAddress().ward()).toLowerCase().contains(pickupLocation.toLowerCase().trim())).collect(Collectors.toList());
         }
+        if(pickupDateTime != null && !pickupDateTime.isEmpty()) {
+            cars = cars.stream().filter(car -> car.getCarStatus().getStatusId() == 1).collect(Collectors.toList());
+        }
+        if(dropDateTime != null && !dropDateTime.isEmpty()) {
+            cars = cars.stream().filter(car -> car.getCarStatus().getStatusId() == 1).collect(Collectors.toList());
+        }
+        if(brandCheckList != null && !brandCheckList.isEmpty()) {
+            cars = cars.stream().filter(car -> brandCheckList.contains(car.getBrand().getBrandId())).collect(Collectors.toList());
+        }
+        if(additionalFunctionCheckList != null && !additionalFunctionCheckList.isEmpty()) {
+            Set<AdditionalFunction> additionalFunctionsSelected = additionalFunctionRepository.findAllByFunctionIdIsIn(additionalFunctionCheckList);
+            cars = cars.stream().filter(car -> checkAdditionalFunction(car, additionalFunctionsSelected)).collect(Collectors.toList());
+        }
         return ResponseEntity.ok(cars);
+    }
+
+    public boolean checkAdditionalFunction(CarDto1 car, Set<AdditionalFunction> additionalFunctionsSelected) {
+        Set<AdditionalFunction> additionalFunctionOfCar = car.getAdditionalFunctions().stream().map(additionalFunctionMapper::toEntity).collect(Collectors.toSet());
+        return additionalFunctionOfCar.containsAll(additionalFunctionsSelected);
     }
 
     @GetMapping("/api/searchCar/{id}")
