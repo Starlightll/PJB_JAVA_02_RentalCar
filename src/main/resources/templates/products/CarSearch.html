@@ -25,7 +25,7 @@
     <!-- Mouse Cursor Css File -->
     <link rel="stylesheet" href="/cars/css/mousecursor.css">
     <!-- Font Awesome Icon Css-->
-    <link rel="stylesheet" href="/cars/css/all.css"  media="screen">
+    <link rel="stylesheet" href="/cars/css/all.css" media="screen">
     <!-- Font Ionicons-->
     <link rel="stylesheet" href="/fonts/ionicons/css/ionicons.min.css" media="screen">
     <!-- Main Custom Css -->
@@ -324,6 +324,20 @@
             max-height: 500px;
         }
 
+        .fleets-sort-box{
+            height: 60px;
+            background: #daffdd;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+            /*This is for sticky if needed <3*/
+            /*position: sticky;*/
+            /*top: 20px;*/
+            /*z-index: 100;*/
+        }
+
     </style>
 </head>
 
@@ -348,7 +362,6 @@
     <div class="page-fleets">
         <div class="container" style="max-width: 1350px;">
             <div class="row">
-
 
                 <div class="col-lg-3">
                     <!-- Fleets Sidebar Start -->
@@ -422,7 +435,9 @@
                                      id="functionList"
                                      role="region"
                                      aria-labelledby="functionList-title">
-                                    <label class="checkbox bounce col-12 p-0 d-flex" style="align-items: center; column-gap: 6px;"><input type="checkbox" value="1" name="brand">
+                                    <label class="checkbox bounce col-12 p-0 d-flex"
+                                           style="align-items: center; column-gap: 6px;"><input type="checkbox"
+                                                                                                value="1" name="brand">
                                         <svg viewBox="0 0 21 21">
                                             <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                         </svg>
@@ -458,7 +473,14 @@
                 <div class="col-lg-9 p-0">
                     <!-- Fleets Collection Box Start -->
                     <div class="fleets-collection-box">
-                        <div class="row" id="carContainer">
+
+                        <!-- Box Sort Start -->
+                        <div class="fleets-sort-box wow fadeInUp">
+
+                        </div>
+                        <!-- Box Sort End-->
+
+                        <div class="row" id="carContainer" style="min-height: 1000px">
 
                         </div>
                         <!-- loader -->
@@ -479,14 +501,14 @@
     </div>
     <!-- Page Fleets End -->
 
-<!--    &lt;!&ndash; loader &ndash;&gt;-->
-<!--    <div id="ftco-loader" class="show fullscreen">-->
-<!--        <svg class="circular" width="48px" height="48px">-->
-<!--            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>-->
-<!--            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"-->
-<!--                    stroke="#03ffa2"/>-->
-<!--        </svg>-->
-<!--    </div>-->
+    <!--    &lt;!&ndash; loader &ndash;&gt;-->
+    <!--    <div id="ftco-loader" class="show fullscreen">-->
+    <!--        <svg class="circular" width="48px" height="48px">-->
+    <!--            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>-->
+    <!--            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"-->
+    <!--                    stroke="#03ffa2"/>-->
+    <!--        </svg>-->
+    <!--    </div>-->
 
     <!-- Jquery Library File -->
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>

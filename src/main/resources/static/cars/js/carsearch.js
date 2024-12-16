@@ -351,6 +351,7 @@ function validateTimeInput() {
 
 const _csrf = document.querySelector('meta[name="_csrf"]').content;
 
+
 function fetchCars(pickupLocation, pickupDateTime, dropDateTime) {
     const loader = document.getElementById("ftco-loader-car");
     const carContainer = document.getElementById("carContainer");
@@ -386,6 +387,9 @@ function fetchCars(pickupLocation, pickupDateTime, dropDateTime) {
                 carContainer.innerHTML = '<div style="margin: auto"><h3 data-cursor="-opaque" style="color: grey">There\'re no cars that are available for you!</h3></div>';
                 return;
             }
+            //Store data to local storage
+            localStorage.setItem('cars', JSON.stringify(data));
+            let wowDelay = 0.1;
             data.forEach(car => {
                 // Determine status style based on statusId
                 let statusStyle = '';
@@ -410,9 +414,10 @@ function fetchCars(pickupLocation, pickupDateTime, dropDateTime) {
                         break;
                 }
 
+
                 carContainer.innerHTML += `
-                        <div class="col-xl-4 col-lg-6 col-md-6">
-                            <div class="perfect-fleet-item fleets-collection-item wow fadeInUp" style="display: flex; flex-direction: column">
+                        <div class="col-xl-4 col-lg-6 col-md-6 wow zoomIn" data-wow-delay="${wowDelay += 0.1}s">
+                            <div class="perfect-fleet-item fleets-collection-item" style="display: flex; flex-direction: column">
                                 <div class="image-box" style="border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
                                     <img src="${car.frontImage}"
                                      style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover; height: 100%;"
@@ -476,6 +481,11 @@ function fetchCars(pickupLocation, pickupDateTime, dropDateTime) {
             carContainer.innerHTML = "<h1>Error loading cars!</h1>";
         });
 }
+
+function displayCars() {
+
+}
+
 
 function fetchBrands() {
     const brandList = document.getElementById('brandList');
