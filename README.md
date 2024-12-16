@@ -1,75 +1,166 @@
-# Car Rental System
+# 🚗 Car Rental System
 
-## Project Overview
-The **Car Rental System** is a web application designed for customers to rent cars and car owners to manage their vehicle rentals. The system streamlines the process of searching, booking, and renting cars, while providing features for managing bookings, payments, and feedback.
+## 📋 Project Overview
+The **Car Rental System** is a modern web application that revolutionizes the car rental experience by connecting customers with car owners through a seamless digital platform. Our system emphasizes user experience, security, and efficient booking management.
 
-## Key Features
-- **Customer Account Management**: Users can create an account, log in, and manage their profile details.
-- **Car Search & Booking**: Customers can search for available cars based on location and desired rental periods, view details, and make bookings.
-- **Booking Management**: Users can edit or cancel their bookings and confirm the pick-up or return of the rented cars.
-- **Car Owner Management**: Car owners can list their cars for rent, manage car details, and handle booking confirmations.
-- **Payment & Wallet**: The system provides options for handling deposits, payments, and refunds, with a wallet feature for customers.
-- **Feedback & Ratings**: Customers can provide feedback and rate the cars after the rental period.
+## ✨ Key Features
 
-## System Requirements
-- **Functional Requirements**:
-  - Support customer and car owner roles.
-  - Manage user accounts, car listings, bookings, payments, and ratings.
-  - Display real-time car availability.
-  - Secure login and password recovery options.
-  - Notification system for booking confirmations and status changes.
+### 👤 For Customers
+- **Smart Account Management**
+  - Secure authentication with multi-level password strength
+  - Profile customization with avatar support
+  - Digital wallet integration for seamless transactions
+  - Personalized booking history and preferences
 
-- **Non-Functional Requirements**:
-  - High performance for concurrent users.
-  - Reliable availability and uptime.
-  - Security measures for data privacy and secure transactions.
+- **Intelligent Booking System**
+  - Advanced car search with multiple filters
+  - Smart pickup date/time selection
+  - Real-time availability checking
+  - Interactive map integration for location selection
 
-## Getting Started
+- **Enhanced User Experience**
+  - Drag-enabled car recommendation carousel
+  - Interactive booking calendar
+  - Real-time notifications
+  - Responsive design for all devices
 
-### Prerequisites
-- **Java 17+**
-- **Spring Boot**Navigate to the project directory:
-- **SQL Server** for database
-- **Thymeleaf** for server-side rendering (Optional if using frontend frameworks)
-- **Maven** or **Gradle** for dependency management
+### 🔑 For Car Owners
+- **Comprehensive Vehicle Management**
+  - Detailed car listing dashboard
+  - Real-time booking notifications
+  - Revenue tracking and analytics
+  - Customizable availability calendar
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Starlightll/PJB_JAVA_02_RentalCar.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd car-rental-system
-   ```
-3. Configure the database in the `application.properties`
-   ```properties
-   spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
-   spring.datasource.url= jdbc:sqlserver://localhost:1433;encrypt=true;databaseName=RentalCar;encrypt=false;
-   spring.datasource.username=root
-   spring.datasource.password=yourpassword
-   spring.jpa.hibernate.dialect=org.hibernate.dialect.SQLServer2012Dialect
-   spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-   ```
-4. Run the application:
-   ```bash
-   mvn spring-boot:run
-   ```
-   
-## API Endpoints
-- POST /login: Login to the system.
-- ...
-- UPDATING
+- **Business Tools**
+  - Automated pricing suggestions
+  - Booking management interface
+  - Performance analytics
+  - Customer feedback management
 
-## Usage
-### Customers:
-- Create an account or log in.
-- Search for available cars based on location, pick-up, and drop-off times.
-- View car details and rent a car.
-- Manage bookings, confirm pick-up, and return cars.
+## 🛠 Technical Requirements
 
-### Car Owners:
-- Register as a car owner.
-- List available cars and manage car information.
-- Confirm bookings, deposits, and payments.
+### System Requirements
+- **Backend**: Java 17+
+- **Framework**: Spring Boot
+- **Database**: SQL Server
+- **Template Engine**: Thymeleaf
+- **Build Tool**: Maven/Gradle
 
+### Hardware Requirements
+- **Server**: 
+  - CPU: 4+ cores
+  - RAM: 8GB minimum
+  - Storage: 50GB+ SSD recommended
+
+### Software Dependencies
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <!-- Add other dependencies -->
+</dependencies>
+```
+
+## 🚀 Quick Start Guide
+
+### 1. Environment Setup
+```bash
+# Clone repository
+git clone https://github.com/Starlightll/PJB_JAVA_02_RentalCar.git
+
+# Navigate to project
+cd car-rental-system
+
+# Install dependencies
+mvn install
+```
+
+### 2. Database Configuration
+Create `application.properties`:
+```properties
+# Database Configuration
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.url=jdbc:sqlserver://localhost:1433;encrypt=true;databaseName=RentalCar;encrypt=false;
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+
+# JPA Properties
+spring.jpa.hibernate.dialect=org.hibernate.dialect.SQLServer2012Dialect
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+# Server Configuration
+server.port=8080
+```
+
+### 3. Launch Application
+```bash
+mvn spring-boot:run
+```
+
+## 🔄 API Reference
+
+### Authentication Endpoints
+```
+wating update
+```
+
+### Car Management
+```
+GET    /api/brands            # List all brands
+GET   /api/additionalFunction           # List all functions
+GET    /api/searchCar/{id}       # View car detail
+GET /api/searchCar       # List all cars
+```
+
+### Booking Management
+```
+waiting update
+```
+
+## 💡 Best Practices
+
+### For Customers
+- Always verify car details before booking
+- Complete profile for faster booking process
+- Maintain sufficient wallet balance
+- Review rental terms carefully
+
+### For Car Owners
+- Keep car information updated
+- Respond to bookings promptly
+- Maintain accurate availability calendar
+- Regular price optimization
+
+## 🔍 Monitoring & Analytics
+
+The system provides comprehensive analytics including:
+- Booking trends
+- Revenue analysis
+- Customer satisfaction metrics
+- Performance indicators
+
+## 🔒 Security Features
+
+- Multi-factor authentication
+- Encrypted data transmission
+- Secure payment processing
+- Regular security audits
+
+## 🤝 Support
+
+For technical support:
+- 📧 Email: support@carrentalsystem.com
+- 💬 Live Chat: Available 24/7
+- 📱 Phone: +1-XXX-XXX-XXXX
+
+---
+
+**Version**: 1.1.0  
+**Last Updated**: December 2024  
+**Contributors**: Team PJB_JAVA_02
