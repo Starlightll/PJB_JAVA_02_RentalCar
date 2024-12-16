@@ -233,36 +233,17 @@ public class SearchCarController {
             @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
             @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
             @RequestParam(value = "dropDateTime", required = false) String dropDateTime,
-            @RequestParam(value = "selectedBrands", required = false) List<Integer> brandCheckList,
-            @RequestParam(value = "selectedFunctions", required = false) List<Integer> additionalFunctionCheckList,
+            @RequestParam(value = "selectedBrands", required = false) Set<Integer> brandCheckList,
+            @RequestParam(value = "selectedFunctions", required = false) Set<Integer> additionalFunctionCheckList,
             @RequestParam(value = "minPrice", required = false) Double minPrice,
             @RequestParam(value = "maxPrice", required = false) Double maxPrice
     ) {
         List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
         List<CarDto1> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds).stream().map(carMapper::toDto).collect(Collectors.toList());
-        if(pickupLocation != null && !pickupLocation.isEmpty()) {
-            cars = cars.stream().filter(car -> (car.getAddress().province()+" "+car.getAddress().district()+" "+car.getAddress().ward()).toLowerCase().contains(pickupLocation.toLowerCase().trim())).collect(Collectors.toList());
-        }
-        if(pickupDateTime != null && !pickupDateTime.isEmpty()) {
-            cars = cars.stream().filter(car -> car.getCarStatus().getStatusId() == 1).collect(Collectors.toList());
-        }
-        if(dropDateTime != null && !dropDateTime.isEmpty()) {
-            cars = cars.stream().filter(car -> car.getCarStatus().getStatusId() == 1).collect(Collectors.toList());
-        }
-        if(brandCheckList != null && !brandCheckList.isEmpty()) {
-            cars = cars.stream().filter(car -> brandCheckList.contains(car.getBrand().getBrandId())).collect(Collectors.toList());
-        }
-        if(additionalFunctionCheckList != null && !additionalFunctionCheckList.isEmpty()) {
-            Set<AdditionalFunction> additionalFunctionsSelected = additionalFunctionRepository.findAllByFunctionIdIsIn(additionalFunctionCheckList);
-            cars = cars.stream().filter(car -> checkAdditionalFunction(car, additionalFunctionsSelected)).collect(Collectors.toList());
-        }
+        cars = filterCar(cars, pickupLocation, pickupDateTime, dropDateTime, brandCheckList, additionalFunctionCheckList);
         return ResponseEntity.ok(cars);
     }
 
-    public boolean checkAdditionalFunction(CarDto1 car, Set<AdditionalFunction> additionalFunctionsSelected) {
-        Set<AdditionalFunction> additionalFunctionOfCar = car.getAdditionalFunctions().stream().map(additionalFunctionMapper::toEntity).collect(Collectors.toSet());
-        return additionalFunctionOfCar.containsAll(additionalFunctionsSelected);
-    }
 
     @GetMapping("/api/searchCar/{id}")
     public String carDetail(
@@ -293,4 +274,35 @@ public class SearchCarController {
         return ResponseEntity.ok(additionalFunctionRepository.findAll().stream().map(additionalFunctionMapper::toDto).collect(Collectors.toList()));
     }
 
+
+    //Write functions under this line <3
+
+    public List<CarDto1> filterCar(List<CarDto1> cars, String pickupLocation, String pickupDateTime, String dropDateTime, Set<Integer> brandCheckList, Set<Integer> additionalFunctionCheckList) {
+        if(pickupLocation != null && !pickupLocation.isEmpty()) {
+            cars = cars.stream().filter(car -> (car.getAddress().province()+" "+car.getAddress().district()+" "+car.getAddress().ward()).toLowerCase().contains(pickupLocation.toLowerCase().trim())).collect(Collectors.toList());
+        }
+        if(pickupDateTime != null && !pickupDateTime.isEmpty()) {
+            cars = cars.stream().filter(car -> car.getCarStatus().getStatusId() == 1).collect(Collectors.toList());
+        }
+        if(dropDateTime != null && !dropDateTime.isEmpty()) {
+            cars = cars.stream().filter(car -> car.getCarStatus().getStatusId() == 1).collect(Collectors.toList());
+        }
+        if(brandCheckList != null && !brandCheckList.isEmpty()) {
+            cars = cars.stream().filter(car ->
+                            brandCheckList
+                                    .contains(car.getBrand().getBrandId()))
+                    .collect(Collectors.toList());
+        }
+        if(additionalFunctionCheckList != null && !additionalFunctionCheckList.isEmpty()) {
+            cars = cars.stream().filter(car ->
+                            car.getAdditionalFunctions()
+                                    .stream()
+                                    .map(additionalFunctionMapper::toEntity)
+                                    .map(AdditionalFunction::getFunctionId)
+                                    .collect(Collectors.toSet())
+                                    .containsAll(additionalFunctionCheckList))
+                    .collect(Collectors.toList());
+        }
+        return cars;
+    }
 }

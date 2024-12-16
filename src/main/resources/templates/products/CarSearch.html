@@ -36,7 +36,11 @@
         .hero-wrap {
             height: 200px !important;
             position: relative;
-            background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+            background-image: url(/images/car-16.jpg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
         }
 
         .overlay {
@@ -327,10 +331,10 @@
 <th:block layout:fragment="content">
     <body onload="fetchCars('', '', ''); fetchBrands(); fetchAdditionalFunction()">
 
-    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+    <section class="hero-wrap hero-wrap">
         <div class="overlay"></div>
         <div class="container">
-            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+            <div class="row no-gutters slider-text align-items-end justify-content-start">
                 <div class="col-md-9 wow fadeInUp">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
                         <span>CAR SEARCH <i class="ion-ios-arrow-forward"></i></span></p>
