@@ -99,6 +99,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     console.log('Người dùng đã chọn tiếp tục');
+                    localStorage.clear();
                     window.location.href = '/logout';
                 } else if (result.isDismissed) {
                     console.log('Người dùng đã hủy hành động');

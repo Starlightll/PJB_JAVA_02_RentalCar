@@ -17,7 +17,6 @@
     <!-- JS -->
     <!-- Nạp jQuery -->
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-
     <!-- Nạp các thư viện JavaScript -->
     <script src="/webjars/axios/1.6.7/dist/axios.min.js"></script>
     <script src="/webjars/select2/4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -115,82 +114,323 @@
             font-size: 0.875rem;
         }
 
+
+
+
     </style>
 </head>
 <th:block layout:fragment="content">
     <body>
 
     <!-- Popup HTML -->
-    <div id="rulesPopup" data-backdrop="static" data-keyboard="false" class="modal fade popup-rules" tabindex="-1" role="dialog" aria-labelledby="rulesPopupLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="rulesPopupLabel">Booking Rules</h5>
-<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--                        <span aria-hidden="true">&times;</span>-->
-<!--                    </button>-->
+    <div id="rulesPopup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rulesPopupLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content border-0 shadow-lg">
+
+                <!-- Header -->
+                <div class="modal-header text-white border-bottom-0 py-3">
+                    <h5 class="modal-title fw-bold" id="rulesPopupLabel">
+                        <i class="fas fa-book-open mr-2"></i>Car Rental Terms & Conditions
+                    </h5>
                 </div>
-                <div class="modal-body" id="rulesContent">
-                    <div id="scrollableContent" style="height: 400px; overflow-y: scroll;">
-                        <h2>1. Introduction</h2>
-                        <p>Welcome to [Company Name]! These Terms of Service outline the rules and regulations for renting a vehicle from our company. By renting a vehicle from us, you agree to these terms. Please read them carefully.</p>
 
-                        <h2>2. Eligibility</h2>
-                        <p>To rent a car, you must:</p>
-                        <ul>
-                            <li>Be at least <span class="highlight">18</span> years old (or as specified in the rental agreement).</li>
-                            <li>Hold a valid driver's license for a minimum of <span class="highlight">2 years</span>.</li>
-                            <li>Provide a valid ID or passport and a credit card for security purposes.</li>
-                        </ul>
-
-                        <h2>3. Rental Period</h2>
-                        <p>The rental period begins at the time and date specified in the rental agreement and ends when the vehicle is returned to the designated location. Late returns may incur additional charges as specified in the rental agreement.</p>
-                        <ul>
-                            <li><span class="highlight">Early returns</span>: If you return the car before the rental start date, a penalty of 10% of the deposit will be charged as a travel fee for the car owner.</li>
-                            <li><span class="highlight">Early terminations</span>: If you return the car earlier than the agreed rental period, the remaining balance will be refunded to you.</li>
-                            <li><span class="highlight">Late returns</span>: If you exceed the agreed rental period, you will be charged an additional 20% of the daily rental price for each extra day.</li>
-                        </ul>
-
-                        <h2>4. Vehicle Condition and Responsibility</h2>
-                        <p>The vehicle is provided in good condition, and it is your responsibility to maintain it during the rental period. You agree to:</p>
-                        <ul>
-                            <li>Inspect the vehicle for any pre-existing damage and report it before departure.</li>
-                            <li>Return the vehicle in the same condition it was rented.</li>
-                            <li>Pay for any damages incurred during the rental period, including accidents, wear, tear, or misuse.</li>
-                        </ul>
-
-                        <h2>5. Prohibited Uses</h2>
-                        <p>You agree not to:</p>
-                        <ul>
-                            <li>Use the vehicle for illegal purposes or in an unauthorized or dangerous manner.</li>
-                            <li>Allow unapproved drivers to operate the vehicle.</li>
-                            <li>Use the vehicle outside the specified geographical area (if applicable).</li>
-                            <li>Engage in reckless driving, racing, or towing.</li>
-                        </ul>
-
-                        <h2>6. Insurance and Liability</h2>
-                        <p>[5 Coder Handsome] provides basic insurance coverage as outlined in your rental agreement. Additional insurance options may be available. You are liable for any damages exceeding the insurance coverage or not covered by the policy.</p>
-
-                        <h2>7. Payment and Fees</h2>
-                        <p>All rental charges, including daily rates, insurance, fuel, and other fees, must be paid in full at the time of rental. Additional fees may apply, including:</p>
-                        <ul>
-                            <li><span class="highlight">Late fees</span>: Charged for returns past the agreed rental period.</li>
-                            <li><span class="highlight">Cleaning fees</span>: If the vehicle is returned in an excessively dirty condition.</li>
-                            <li><span class="highlight">Early return penalty</span>: If applicable, as described above.</li>
-                        </ul>
-
-                        <h2>8. Termination</h2>
-                        <p>We reserve the right to terminate the rental agreement if these terms are violated. In case of termination, you must return the vehicle immediately, and additional fees may apply.</p>
-
-                        <h2>9. Changes to Terms</h2>
-                        <p>[5 Coder Handsome] reserves the right to modify these Terms of Service at any time. Any changes will be posted on our website and will apply to rentals made after the effective date of the changes.</p>
-
-                        <p>By renting a vehicle from [5 Coder Handsome], you agree to these Terms of Service. For any questions, please contact us at <span class="highlight">[contact information]</span>.</p>
-
+                <!-- Progress indicator -->
+                <div class="px-3 pt-2">
+                    <div class="progress" style="height: 4px;">
+                        <div id="readingProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" id="acceptRulesBtn" class="btn btn-primary" disabled>I've read and understood</button>
+
+                <!-- Body -->
+                <div class="modal-body px-4 py-4">
+                    <div id="scrollableContent" class="custom-scrollbar" style="height: 70vh; overflow-y: auto;">
+                        <!-- Introduction -->
+                        <div class="mb-4">
+                            <h4 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-info-circle mr-2"></i>1. Introduction
+                            </h4>
+                            <div class="card border-light bg-light">
+                                <div class="card-body">
+                                    <p class="mb-0">Welcome to our premium car rental service! These Terms of Service are designed to ensure a smooth and enjoyable rental experience. By proceeding with a rental, you acknowledge and agree to comply with these comprehensive terms.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Eligibility -->
+                        <div class="mb-4">
+                            <h4 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-user-check mr-2"></i>2. Eligibility Requirements
+                            </h4>
+                            <div class="card border-0">
+                                <div class="card-body">
+                                    <h6 class="fw-bold mb-3">To qualify for our rental service, you must meet the following criteria:</h6>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item bg-transparent">
+                                            <i class="fas fa-check-circle text-success mr-2"></i>
+                                            Age Requirement: Minimum <span class="badge bg-primary">18 years</span> old
+                                        </li>
+                                        <li class="list-group-item bg-transparent">
+                                            <i class="fas fa-check-circle text-success mr-2"></i>
+                                            License Experience: <span class="badge bg-primary">2 years</span> of valid driving history
+                                        </li>
+                                        <li class="list-group-item bg-transparent">
+                                            <i class="fas fa-check-circle text-success mr-2"></i>
+                                            Required Documents:
+                                            <ul class="list-unstyled ms-4 mt-2">
+                                                <li><i class="fas fa-id-card text-secondary mr-2"></i>Valid government-issued ID/passport</li>
+                                                <li><i class="fas fa-credit-card text-secondary mr-2"></i>Credit card for security deposit</li>
+                                                <li><i class="fas fa-car text-secondary mr-2"></i>Valid driver's license</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rental Period -->
+                        <div class="mb-4">
+                            <h4 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-clock mr-2"></i>3. Rental Period Policies
+                            </h4>
+                            <div class="card border-0">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column gap-3">
+                                        <div class="rental-period-info">
+                                            <h6 class="fw-bold text-dark">
+                                                <i class="fas fa-calendar-alt text-primary mr-2"></i>Standard Rental Terms
+                                            </h6>
+                                            <p>The rental period officially begins at the time stated in your rental agreement and concludes upon vehicle return to our designated location.</p>
+                                        </div>
+
+                                        <div class="alert alert-info border-0">
+                                            <h6 class="fw-bold">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>Important Time Policies
+                                            </h6>
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2">
+                                                    <i class="fas fa-arrow-circle-left text-primary mr-2"></i>
+                                                    <strong>Early Returns:</strong> 10% deposit penalty applies
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fas fa-clock text-warning mr-2"></i>
+                                                    <strong>Early Termination:</strong> Prorated refund available
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-exclamation-triangle text-danger mr-2"></i>
+                                                    <strong>Late Returns:</strong> 20% daily rate penalty
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle Condition -->
+                        <div class="mb-4">
+                            <h4 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-car mr-2"></i>4. Vehicle Care & Responsibility
+                            </h4>
+                            <div class="card border-0">
+                                <div class="card-body">
+                                    <div class="vehicle-inspection mb-3">
+                                        <h6 class="fw-bold text-dark mb-3">Pre-Rental Inspection</h6>
+                                        <div class="alert alert-warning border-0">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2">
+                                                    <i class="fas fa-search mr-2"></i>
+                                                    Thoroughly inspect vehicle before departure
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fas fa-camera mr-2"></i>
+                                                    Document any existing damage with photos
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-file-signature mr-2"></i>
+                                                    Sign condition report before leaving
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="maintenance-responsibilities">
+                                        <h6 class="fw-bold text-dark mb-3">Your Responsibilities</h6>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item bg-transparent">
+                                                <i class="fas fa-oil-can text-success mr-2"></i>
+                                                Monitor fluid levels and tire pressure
+                                            </li>
+                                            <li class="list-group-item bg-transparent">
+                                                <i class="fas fa-broom text-success mr-2"></i>
+                                                Maintain vehicle cleanliness
+                                            </li>
+                                            <li class="list-group-item bg-transparent">
+                                                <i class="fas fa-exclamation-circle text-success mr-2"></i>
+                                                Report any mechanical issues immediately
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prohibited Uses -->
+                        <div class="mb-4">
+                            <h4 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-ban mr-2"></i>5. Prohibited Activities
+                            </h4>
+                            <div class="card border-0">
+                                <div class="card-body">
+                                    <div class="alert alert-danger border-0">
+                                        <h6 class="alert-heading fw-bold">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>Strictly Forbidden
+                                        </h6>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2">
+                                                <i class="fas fa-times-circle mr-2"></i>
+                                                Illegal activities or unauthorized use
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-times-circle mr-2"></i>
+                                                Smoking or transportation of hazardous materials
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-times-circle mr-2"></i>
+                                                Off-road driving or racing
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-times-circle mr-2"></i>
+                                                Unauthorized drivers operating the vehicle
+                                            </li>
+                                            <li>
+                                                <i class="fas fa-times-circle mr-2"></i>
+                                                Using vehicle outside agreed geographical area
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Insurance -->
+                        <div class="mb-4">
+                            <h4 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-shield-alt mr-2"></i>6. Insurance Coverage
+                            </h4>
+                            <div class="card border-0">
+                                <div class="card-body">
+                                    <div class="insurance-details">
+                                        <h6 class="fw-bold text-dark mb-3">Basic Coverage Includes:</h6>
+                                        <ul class="list-group list-group-flush mb-3">
+                                            <li class="list-group-item bg-transparent">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                Collision Damage Waiver (CDW)
+                                            </li>
+                                            <li class="list-group-item bg-transparent">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                Third-party liability coverage
+                                            </li>
+                                            <li class="list-group-item bg-transparent">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                24/7 roadside assistance
+                                            </li>
+                                        </ul>
+
+                                        <div class="alert alert-info border-0">
+                                            <h6 class="fw-bold mb-2">Optional Coverage Available:</h6>
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2">
+                                                    <i class="fas fa-plus-circle text-primary mr-2"></i>
+                                                    Personal accident insurance
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fas fa-plus-circle text-primary mr-2"></i>
+                                                    Personal effects coverage
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-plus-circle text-primary mr-2"></i>
+                                                    Additional driver coverage
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment -->
+                        <div class="mb-4">
+                            <h4 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-credit-card mr-2"></i>7. Payment Terms
+                            </h4>
+                            <div class="card border-0">
+                                <div class="card-body">
+                                    <div class="payment-details">
+                                        <h6 class="fw-bold text-dark mb-3">Standard Charges</h6>
+                                        <ul class="list-group list-group-flush mb-3">
+                                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <i class="fas fa-calendar-day text-primary mr-2"></i>
+                                                Daily Rental Rate
+                                            </span>
+                                                <span class="badge bg-secondary">Due at booking</span>
+                                            </li>
+                                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <i class="fas fa-gas-pump text-primary mr-2"></i>
+                                                Fuel Charge
+                                            </span>
+                                                <span class="badge bg-secondary">As per usage</span>
+                                            </li>
+                                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <i class="fas fa-shield-alt text-primary mr-2"></i>
+                                                Insurance
+                                            </span>
+                                                <span class="badge bg-secondary">Due at booking</span>
+                                            </li>
+                                        </ul>
+
+                                        <div class="alert alert-warning border-0">
+                                            <h6 class="fw-bold mb-2">Additional Fees:</h6>
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2">
+                                                    <i class="fas fa-clock text-warning mr-2"></i>
+                                                    <strong>Late Return:</strong> 20% of daily rate
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fas fa-broom text-warning mr-2"></i>
+                                                    <strong>Cleaning Fee:</strong> If returned excessively dirty
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-undo text-warning mr-2"></i>
+                                                    <strong>Early Return:</strong> 10% deposit penalty
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Important Notices -->
+                        <div class="alert alert-warning mt-4">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Important Notice
+                            </h5>
+                            <p class="mb-0">By renting a vehicle from CARBOOK, you agree to these Terms of Service. For any questions, please contact us at <a href="#" class="alert-link">carbookvn@gmail.com</a>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-top bg-light">
+                    <div class="d-flex align-items-center w-100 justify-content-between">
+                        <small class="text-muted">Please scroll to read all terms</small>
+                        <button type="button" id="acceptRulesBtn" class="btn btn-primary px-4" disabled>
+                            <i class="fas fa-check mr-2"></i>I've read and understood
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -206,7 +446,7 @@
                         <span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
                         <th:block th:if="${lastLink == 'search'}">
                             <span class="mr-2"><a
-                            th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">SEARCH CARS <i class="ion-ios-arrow-forward"></i></a></span>
+                                    th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">SEARCH CARS <i class="ion-ios-arrow-forward"></i></a></span>
                         </th:block>
                         <th:block th:if="${lastLink == 'detailCar'}">
                             <span class="mr-2"><a th:href="${'/carDetail/'+ car.getCarId()}">CAR DETAIL <i class="ion-ios-arrow-forward"></i></a></span>
@@ -337,7 +577,7 @@
                                                                     <div class="star"
                                                                          th:style="'width:' + (${car.getAverageRating()} * 20) + '%'">
 
-                                                                    <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
                                                                         <i class="fa fa-star"></i>
@@ -370,7 +610,7 @@
                                                                     Location: </p>
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0 m-0"
                                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                 th:text="${carAddress.getAddress().getWard() +', '+ carAddress.getAddress().getDistrict()  +', ' + carAddress.getAddress().getProvince()}">No</p>
+                                                                   th:text="${carAddress.getAddress().getWard() +', '+ carAddress.getAddress().getDistrict()  +', ' + carAddress.getAddress().getProvince()}">No</p>
                                                             </div>
                                                             <div class="col-lg-12 mb-3"  style="display: flex; justify-content: center">
                                                                 <div class="input-group input-group-sm" >
@@ -452,12 +692,12 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend" >
-                                                                        <span class="input-group-text ">Full name</span>
+                                                                            <span class="input-group-text ">Full name</span>
                                                                         </div>
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                              th:value="${user.getFullName()}" oninput="validateFullName()" id="fullName1">
+                                                                               th:value="${user.getFullName()}" oninput="validateFullName()" id="fullName1">
                                                                     </div>
                                                                     <span id="fullNameError" class="text-danger"></span>
                                                                     <a class="validate-msg" id="fullNameValidate1">Invalid</a>
@@ -599,14 +839,14 @@
                                                         <div>
                                                             <h5 class="card-title">Driver's information</h5>
                                                             <div class="row">
-                                                                        <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
-                                                                            <input type="checkbox" id="differentInfoCheckbox"
-                                                                                   name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
-                                                                            <svg viewBox="0 0 21 21">
-                                                                                <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
-                                                                            </svg>
-                                                                            <span>Different than Renter's information</span>
-                                                                        </label>
+                                                                <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
+                                                                    <input type="checkbox" id="differentInfoCheckbox"
+                                                                           name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                                    <svg viewBox="0 0 21 21">
+                                                                        <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                    </svg>
+                                                                    <span>Different than Renter's information</span>
+                                                                </label>
                                                             </div>
                                                             <div id="driverInfoTable" style="display: none; width: 100%">
                                                                 <div class="row">
@@ -643,7 +883,7 @@
                                                                             <input disabled type="text" class="form-control"
                                                                                    aria-label="Sizing example input"
                                                                                    aria-describedby="inputGroup-sizing-default"
-                                                                                    id="phoneDriver">
+                                                                                   id="phoneDriver">
                                                                         </div>
                                                                         <div id="phoneErrorDriver" style="color: red"></div>
                                                                     </div>
@@ -732,9 +972,9 @@
                                                                                 <span class="input-group-text ">Description</span>
                                                                             </div>
                                                                             <textarea type="text" class="form-control"
-                                                                                   aria-label="Sizing example input"
-                                                                                   aria-describedby="inputGroup-sizing-default"
-                                                                                   disabled id="descriptionDriver"></textarea>
+                                                                                      aria-label="Sizing example input"
+                                                                                      aria-describedby="inputGroup-sizing-default"
+                                                                                      disabled id="descriptionDriver"></textarea>
                                                                         </div>
                                                                         <div id="descriptionErrorDriver" style="color: red"></div>
                                                                     </div>
@@ -772,12 +1012,12 @@
                                                                             </div>
 
                                                                         </div>
-<!--                                                                        &lt;!&ndash; Khung hiển thị ảnh &ndash;&gt;-->
-<!--                                                                        <div id="previewContainerDriver" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">-->
-<!--                                                                            <img id="previewImageDriver" th:src="'/'+${user.getDrivingLicense()}"-->
-<!--                                                                                 alt="Image preview"-->
-<!--                                                                                 style="width: 100%; height: 100%; object-fit: cover;">-->
-<!--                                                                        </div>-->
+                                                                        <!--                                                                        &lt;!&ndash; Khung hiển thị ảnh &ndash;&gt;-->
+                                                                        <!--                                                                        <div id="previewContainerDriver" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">-->
+                                                                        <!--                                                                            <img id="previewImageDriver" th:src="'/'+${user.getDrivingLicense()}"-->
+                                                                        <!--                                                                                 alt="Image preview"-->
+                                                                        <!--                                                                                 style="width: 100%; height: 100%; object-fit: cover;">-->
+                                                                        <!--                                                                        </div>-->
 
                                                                         <input type="hidden" id="currentDrivingLicenseDriver" th:value="${user.getDrivingLicense()}">
                                                                         <div id="drivingLicenseErrorDriver" style="color: red"></div>
@@ -839,11 +1079,11 @@
                                                 </div>
                                             </div>
                                         </div>
-<!--                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"-->
-<!--                                           onclick="window.location.href='/car-owner/my-cars'">Cancel</a>-->
-                                            <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
-                                               onclick="window.history.back()"
-                                            >Cancel</a>
+                                        <!--                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"-->
+                                        <!--                                           onclick="window.location.href='/car-owner/my-cars'">Cancel</a>-->
+                                        <a class="btn-danger btn" style="width: 100px; margin: 10px 0 10px 0"
+                                           onclick="window.history.back()"
+                                        >Cancel</a>
                                         <input type="button" name="previous" class="previous btn-black btn"
                                                value="Previous"/>
                                         <input type="button" name="next" class="next btn-secondary btn"
@@ -886,6 +1126,7 @@
         </div>
     </section>
 
+
     <script>
 
         $('#fullNameDriver').select2({
@@ -901,6 +1142,7 @@
             const scrollableContent = document.getElementById('scrollableContent');
             const acceptButton = document.getElementById('acceptRulesBtn');
             const rulesPopup = $('#rulesPopup');
+            const progressBar = document.getElementById('readingProgress');
 
             if (!scrollableContent || !acceptButton) {
                 console.error('Required elements not found');
@@ -909,11 +1151,17 @@
 
             try {
                 if (!localStorage.getItem('rulesAccepted')) {
-                    rulesPopup.modal('show');
+                    rulesPopup.modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
                 }
             } catch (e) {
                 console.error('Error accessing localStorage:', e);
-                rulesPopup.modal('show');
+                rulesPopup.modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
             }
 
             let isAtBottom = false;
@@ -922,12 +1170,15 @@
                 const scrollTop = scrollableContent.scrollTop;
                 const scrollHeight = scrollableContent.scrollHeight;
                 const clientHeight = scrollableContent.clientHeight;
+                const scrollPercentage = (scrollableContent.scrollTop + scrollableContent.clientHeight) / scrollableContent.scrollHeight * 100;
+                progressBar.style.width = scrollPercentage + '%';
 
                 if (!isAtBottom && scrollTop + clientHeight >= scrollHeight - 1) {
                     isAtBottom = true;
                     acceptButton.disabled = false;
-                    acceptButton.classList.add('btn-success');
-                    acceptButton.classList.remove('btn-primary');
+                    acceptButton.style.backgroundColor = '#00c86f';
+                    acceptButton.style.color = 'white';
+                    acceptButton.style.cursor = 'pointer';
                     // Cleanup
                     scrollableContent.removeEventListener('scroll', scrollHandler);
                 }
@@ -946,16 +1197,14 @@
             });
         });
 
-        // Sửa lỗi aria-hidden và focus
         $('#rulesPopup').on('shown.bs.modal', function () {
-            // Khi modal được mở, xóa aria-hidden và thay bằng inert
-            document.body.setAttribute('aria-hidden', 'true'); // Ẩn toàn bộ body khi modal mở
+            document.body.setAttribute('inert', '');
         });
 
         $('#rulesPopup').on('hidden.bs.modal', function () {
-            // Khi modal đóng, phục hồi lại aria-hidden cho body
-            document.body.removeAttribute('aria-hidden');
+            document.body.removeAttribute('inert');
         });
+
 
     </script>
 
@@ -1067,31 +1316,31 @@
         }
 
 
-            let selectedPaymentMethod = 1;
+        let selectedPaymentMethod = 1;
 
-            // Lắng nghe sự kiện khi người dùng thay đổi tab
-            $('#v-pills-tab button').on('click', function (e) {
-                // Lấy ID của tab đã chọn
-                var selectedTab = $(this).attr('id');
+        // Lắng nghe sự kiện khi người dùng thay đổi tab
+        $('#v-pills-tab button').on('click', function (e) {
+            // Lấy ID của tab đã chọn
+            var selectedTab = $(this).attr('id');
 
-                // Kiểm tra tab được chọn và xử lý
-                if (selectedTab === 'v-pills-home-tab') {
-                    selectedPaymentMethod = 1;
-                    console.log("User selected: My Wallet");
-                    // Xử lý My Wallet
-                } else if (selectedTab === 'v-pills-profile-tab') {
-                    selectedPaymentMethod = 2;
-                    console.log("User selected: Cash");
-                    // Xử lý Cash
-                } else if (selectedTab === 'v-pills-messages-tab') {
-                    selectedPaymentMethod = 3;
-                    console.log("User selected: Bank Transfer");
-                    // Xử lý Bank Transfer
-                }
-            });
+            // Kiểm tra tab được chọn và xử lý
+            if (selectedTab === 'v-pills-home-tab') {
+                selectedPaymentMethod = 1;
+                console.log("User selected: My Wallet");
+                // Xử lý My Wallet
+            } else if (selectedTab === 'v-pills-profile-tab') {
+                selectedPaymentMethod = 2;
+                console.log("User selected: Cash");
+                // Xử lý Cash
+            } else if (selectedTab === 'v-pills-messages-tab') {
+                selectedPaymentMethod = 3;
+                console.log("User selected: Bank Transfer");
+                // Xử lý Bank Transfer
+            }
+        });
 
-            // Hiển thị hoặc sử dụng phương thức thanh toán được chọn
-            console.log("Selected Payment Method:", selectedPaymentMethod);
+        // Hiển thị hoặc sử dụng phương thức thanh toán được chọn
+        console.log("Selected Payment Method:", selectedPaymentMethod);
 
         let depositText = document.getElementById("deposite").textContent;
 
@@ -1791,6 +2040,7 @@
     <script src="/webjars/bootstrap-datepicker/1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/js/customer/book-car.js"></script>
     <script src="/js/customer/driver_Information.js"></script>
+
     </body>
 </th:block>
 </html>
