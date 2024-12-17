@@ -1330,7 +1330,6 @@
             };
 
             scrollableContent.addEventListener('scroll', scrollHandler);
-w
             acceptButton.addEventListener('click', function () {
                 try {
                     localStorage.setItem('rulesAccepted', 'true');
@@ -1681,6 +1680,7 @@ w
                         backdrop: 'static',
                         keyboard: false
                     });
+                    return false;
                 })
             }
         }
