@@ -35,38 +35,39 @@
             color: #a9adb3 !important;
         }
 
-        .btn-danger{
+        .btn-danger {
             color: #fff !important;
             background-color: #dc3545;
             border-color: #dc3545;
         }
-        .btn-danger:hover{
+
+        .btn-danger:hover {
             color: #fff;
             background-color: #c82333 !important;
             border-color: #bd2130;
         }
 
-        .btn-warning{
+        .btn-warning {
             color: #fff !important;
             background-color: #ffc107;
             border-color: #ffc107;
         }
 
-        .btn-warning:hover{
+        .btn-warning:hover {
             color: #fff;
             background-color: #e0a800 !important;
             border-color: #d39e00;
         }
 
-        .table{
+        .table {
             min-width: 100% !important;
         }
 
-        .table tbody tr td{
+        .table tbody tr td {
             padding: 0 !important;
         }
 
-        .button:focus{
+        .button:focus {
             outline: 0 solid !important;
         }
 
@@ -96,22 +97,31 @@
         /* Tùy chỉnh kích thước popup */
 
 
-
-
-
-
-        .select2{
+        .select2 {
             flex: 1
         }
 
-        .select2-selection__rendered{
+        .select2-selection__rendered {
             font-size: 0.875rem;
             overflow: unset;
         }
 
-        .select2-container--bootstrap4 .select2-results__option{
+        .select2-container--bootstrap4 .select2-results__option {
             padding: .30rem .30rem;
             font-size: 0.875rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            color: #ffffff
         }
 
 
@@ -123,7 +133,8 @@
     <body>
 
     <!-- Popup HTML -->
-    <div id="rulesPopup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rulesPopupLabel" aria-hidden="true">
+    <div id="rulesPopup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rulesPopupLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
             <div class="modal-content border-0 shadow-lg">
 
@@ -137,33 +148,39 @@
                 <!-- Progress indicator -->
                 <div class="px-3 pt-2">
                     <div class="progress" style="height: 4px;">
-                        <div id="readingProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                        <div id="readingProgress" class="progress-stacked" role="progressbar"
+                             style="width: 0; background-color: #00c86f"></div>
                     </div>
                 </div>
 
                 <!-- Body -->
                 <div class="modal-body px-4 py-4">
-                    <div id="scrollableContent" class="custom-scrollbar" style="height: 70vh; overflow-y: auto;">
+                    <div id="scrollableContent" class="custom-scrollbar"
+                         style="height: 70vh; overflow-y: auto; padding: 0 10px">
                         <!-- Introduction -->
                         <div class="mb-4">
-                            <h4 class="text-primary fw-bold mb-3">
+                            <h4 class="text-secondary fw-bold mb-3">
                                 <i class="fas fa-info-circle mr-2"></i>1. Introduction
                             </h4>
                             <div class="card border-light bg-light">
                                 <div class="card-body">
-                                    <p class="mb-0">Welcome to our premium car rental service! These Terms of Service are designed to ensure a smooth and enjoyable rental experience. By proceeding with a rental, you acknowledge and agree to comply with these comprehensive terms.</p>
+                                    <p class="mb-0">Welcome to our premium car rental service! These Terms of Service
+                                        are designed to ensure a smooth and enjoyable rental experience. By proceeding
+                                        with a rental, you acknowledge and agree to comply with these comprehensive
+                                        terms.</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Eligibility -->
                         <div class="mb-4">
-                            <h4 class="text-primary fw-bold mb-3">
+                            <h4 class="text-secondary fw-bold mb-3">
                                 <i class="fas fa-user-check mr-2"></i>2. Eligibility Requirements
                             </h4>
                             <div class="card border-0">
                                 <div class="card-body">
-                                    <h6 class="fw-bold mb-3">To qualify for our rental service, you must meet the following criteria:</h6>
+                                    <h6 class="fw-bold mb-3">To qualify for our rental service, you must meet the
+                                        following criteria:</h6>
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item bg-transparent">
                                             <i class="fas fa-check-circle text-success mr-2"></i>
@@ -171,15 +188,21 @@
                                         </li>
                                         <li class="list-group-item bg-transparent">
                                             <i class="fas fa-check-circle text-success mr-2"></i>
-                                            License Experience: <span class="badge bg-primary">2 years</span> of valid driving history
+                                            License Experience: <span class="badge bg-primary">2 years</span> of valid
+                                            driving history
                                         </li>
                                         <li class="list-group-item bg-transparent">
                                             <i class="fas fa-check-circle text-success mr-2"></i>
                                             Required Documents:
                                             <ul class="list-unstyled ms-4 mt-2">
-                                                <li><i class="fas fa-id-card text-secondary mr-2"></i>Valid government-issued ID/passport</li>
-                                                <li><i class="fas fa-credit-card text-secondary mr-2"></i>Credit card for security deposit</li>
-                                                <li><i class="fas fa-car text-secondary mr-2"></i>Valid driver's license</li>
+                                                <li><i class="fas fa-id-card text-secondary mr-2"></i>Valid
+                                                    government-issued ID/passport
+                                                </li>
+                                                <li><i class="fas fa-credit-card text-secondary mr-2"></i>Credit card
+                                                    for security deposit
+                                                </li>
+                                                <li><i class="fas fa-car text-secondary mr-2"></i>Valid driver's license
+                                                </li>
                                             </ul>
                                         </li>
                                     </ul>
@@ -189,7 +212,7 @@
 
                         <!-- Rental Period -->
                         <div class="mb-4">
-                            <h4 class="text-primary fw-bold mb-3">
+                            <h4 class="text-secondary fw-bold mb-3">
                                 <i class="fas fa-clock mr-2"></i>3. Rental Period Policies
                             </h4>
                             <div class="card border-0">
@@ -197,9 +220,12 @@
                                     <div class="d-flex flex-column gap-3">
                                         <div class="rental-period-info">
                                             <h6 class="fw-bold text-dark">
-                                                <i class="fas fa-calendar-alt text-primary mr-2"></i>Standard Rental Terms
+                                                <i class="fas fa-calendar-alt text-primary mr-2"></i>Standard Rental
+                                                Terms
                                             </h6>
-                                            <p>The rental period officially begins at the time stated in your rental agreement and concludes upon vehicle return to our designated location.</p>
+                                            <p>The rental period officially begins at the time stated in your rental
+                                                agreement and concludes upon vehicle return to our designated
+                                                location.</p>
                                         </div>
 
                                         <div class="alert alert-info border-0">
@@ -228,7 +254,7 @@
 
                         <!-- Vehicle Condition -->
                         <div class="mb-4">
-                            <h4 class="text-primary fw-bold mb-3">
+                            <h4 class="text-secondary fw-bold mb-3">
                                 <i class="fas fa-car mr-2"></i>4. Vehicle Care & Responsibility
                             </h4>
                             <div class="card border-0">
@@ -276,7 +302,7 @@
 
                         <!-- Prohibited Uses -->
                         <div class="mb-4">
-                            <h4 class="text-primary fw-bold mb-3">
+                            <h4 class="text-secondary fw-bold mb-3">
                                 <i class="fas fa-ban mr-2"></i>5. Prohibited Activities
                             </h4>
                             <div class="card border-0">
@@ -314,7 +340,7 @@
 
                         <!-- Insurance -->
                         <div class="mb-4">
-                            <h4 class="text-primary fw-bold mb-3">
+                            <h4 class="text-secondary fw-bold mb-3">
                                 <i class="fas fa-shield-alt mr-2"></i>6. Insurance Coverage
                             </h4>
                             <div class="card border-0">
@@ -360,7 +386,7 @@
 
                         <!-- Payment -->
                         <div class="mb-4">
-                            <h4 class="text-primary fw-bold mb-3">
+                            <h4 class="text-secondary fw-bold mb-3">
                                 <i class="fas fa-credit-card mr-2"></i>7. Payment Terms
                             </h4>
                             <div class="card border-0">
@@ -418,7 +444,9 @@
                             <h5 class="alert-heading">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>Important Notice
                             </h5>
-                            <p class="mb-0">By renting a vehicle from CARBOOK, you agree to these Terms of Service. For any questions, please contact us at <a href="#" class="alert-link">carbookvn@gmail.com</a>.</p>
+                            <p class="mb-0">By renting a vehicle from CARBOOK, you agree to these Terms of Service. For
+                                any questions, please contact us at <a href="#"
+                                                                       class="alert-link">carbookvn@gmail.com</a>.</p>
                         </div>
                     </div>
                 </div>
@@ -427,8 +455,8 @@
                 <div class="modal-footer border-top bg-light">
                     <div class="d-flex align-items-center w-100 justify-content-between">
                         <small class="text-muted">Please scroll to read all terms</small>
-                        <button type="button" id="acceptRulesBtn" class="btn btn-primary px-4" disabled>
-                            <i class="fas fa-check mr-2"></i>I've read and understood
+                        <button type="button" id="acceptRulesBtn" class="btn px-4" disabled style="background-color: grey !important; cursor: default !important;">
+                            <i class="fas fa-check mr-2"></i>I understood
                         </button>
                     </div>
                 </div>
@@ -446,10 +474,12 @@
                         <span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
                         <th:block th:if="${lastLink == 'search'}">
                             <span class="mr-2"><a
-                                    th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">SEARCH CARS <i class="ion-ios-arrow-forward"></i></a></span>
+                                    th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">SEARCH CARS <i
+                                    class="ion-ios-arrow-forward"></i></a></span>
                         </th:block>
                         <th:block th:if="${lastLink == 'detailCar'}">
-                            <span class="mr-2"><a th:href="${'/carDetail/'+ car.getCarId()}">CAR DETAIL <i class="ion-ios-arrow-forward"></i></a></span>
+                            <span class="mr-2"><a th:href="${'/carDetail/'+ car.getCarId()}">CAR DETAIL <i
+                                    class="ion-ios-arrow-forward"></i></a></span>
                         </th:block>
                         <span>BOOKING CAR <i class="ion-ios-arrow-forward"></i></span>
                     </p>
@@ -462,15 +492,25 @@
         <div class="container-fluid" id="grad1">
             <div class="row justify-content-center mt-0">
                 <div class="booking-detail col-12 mt-5 d-flex justify-content-center">
-                    <div class="card text-white bg-primary mb-3" id="bookingDetail" style="border: 2px solid #e3e3e3; max-width: 700px">
+                    <div class="card text-white bg-primary mb-3" id="bookingDetail"
+                         style="border: 2px solid #e3e3e3; max-width: 700px">
                         <div class="card-header">
                             Booking Details
                         </div>
                         <div class="card-body">
                             <ul class="pl-2" style="font-size: 15px;color: #01d28e;font-weight: bold;">
-                                <li class="card-text">Pickup location: <span id="pickupLocation" style="color: white; font-weight: normal;"  th:value="${address}"   th:text="${address}"></span></li>
-                                <li class="card-text">Pickup date and time: <span id="pickupDate" style="color: white; font-weight: normal;" th:value="${startDate}"   th:text="${startDate}"></span></li>
-                                <li class="card-text">Return date and time: <span id="returnDate"  style="color: white; font-weight: normal;" th:value="${enDate}"   th:text="${enDate}"></span></li>
+                                <li class="card-text">Pickup location: <span id="pickupLocation"
+                                                                             style="color: white; font-weight: normal;"
+                                                                             th:value="${address}"
+                                                                             th:text="${address}"></span></li>
+                                <li class="card-text">Pickup date and time: <span id="pickupDate"
+                                                                                  style="color: white; font-weight: normal;"
+                                                                                  th:value="${startDate}"
+                                                                                  th:text="${startDate}"></span></li>
+                                <li class="card-text">Return date and time: <span id="returnDate"
+                                                                                  style="color: white; font-weight: normal;"
+                                                                                  th:value="${enDate}"
+                                                                                  th:text="${enDate}"></span></li>
                             </ul>
                             <button href="#" class="btn btn-primary" onclick="changeDetail()">Change details</button>
                         </div>
@@ -503,7 +543,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close">Cancel</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close">Cancel
+                                </button>
                                 <button type="button" class="btn btn-primary" onclick="saveChanges()">Save</button>
                             </div>
                         </div>
@@ -560,12 +601,14 @@
                                                                 <label for="two-1" id="label-two-1" class="two"></label>
                                                                 <label for="three-1" id="label-three-1"
                                                                        class="three"></label>
-                                                                <label for="four-1" id="label-four-1" class="four"></label>
+                                                                <label for="four-1" id="label-four-1"
+                                                                       class="four"></label>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 justify-content-center align-items-center">
-                                                        <div class="row justify-content-center align-items-center align-content-center" style="text-align: start">
+                                                        <div class="row justify-content-center align-items-center align-content-center"
+                                                             style="text-align: start">
                                                             <h1 class="col-lg-12 col-md-12 col-sm-12 text-center"
                                                                 style="font-size: 1.5rem" th:text="${car.getName()}">
                                                             </h1>
@@ -602,7 +645,8 @@
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
                                                                     Price: </p>
-                                                                <p  th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'" class="m-0"></p>
+                                                                <p th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'K/Day'"
+                                                                   class="m-0"></p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -610,10 +654,12 @@
                                                                     Location: </p>
                                                                 <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0 m-0"
                                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${carAddress.getAddress().getWard() +', '+ carAddress.getAddress().getDistrict()  +', ' + carAddress.getAddress().getProvince()}">No</p>
+                                                                   th:text="${carAddress.getAddress().getWard() +', '+ carAddress.getAddress().getDistrict()  +', ' + carAddress.getAddress().getProvince()}">
+                                                                    No</p>
                                                             </div>
-                                                            <div class="col-lg-12 mb-3"  style="display: flex; justify-content: center">
-                                                                <div class="input-group input-group-sm" >
+                                                            <div class="col-lg-12 mb-3"
+                                                                 style="display: flex; justify-content: center">
+                                                                <div class="input-group input-group-sm">
                                                                     <p class="m-0">No Status</p>
                                                                 </div>
 
@@ -627,7 +673,7 @@
                                                                 </th:block>
                                                                 <th:block th:if="${car.getStatusId()  == 3}">
                                                                     <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="color: #ff0000" >Stopped</p>
+                                                                       style="color: #ff0000">Stopped</p>
                                                                 </th:block>
                                                                 <th:block th:if="${car.getStatusId()  == 4}">
                                                                     <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
@@ -665,12 +711,13 @@
                                                 <tr>
                                                     <th scope="row">2</th>
                                                     <td>Price per day</td>
-                                                    <td  th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
+                                                    <td th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">3</th>
                                                     <td>Deposit</td>
-                                                    <td id="deposite" th:text="${#numbers.formatDecimal(car.getDeposit(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
+                                                    <td id="deposite"
+                                                        th:text="${#numbers.formatDecimal(car.getDeposit(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">4</th>
@@ -691,65 +738,76 @@
                                                             <div class="row">
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
+                                                                        <div class="input-group-prepend">
                                                                             <span class="input-group-text ">Full name</span>
                                                                         </div>
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               th:value="${user.getFullName()}" oninput="validateFullName()" id="fullName1">
+                                                                               th:value="${user.getFullName()}"
+                                                                               oninput="validateFullName()"
+                                                                               id="fullName1">
                                                                     </div>
                                                                     <span id="fullNameError" class="text-danger"></span>
                                                                     <a class="validate-msg" id="fullNameValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
+                                                                        <div class="input-group-prepend">
                                                                             <span class="input-group-text ">Date of birth</span>
                                                                         </div>
                                                                         <input type="date" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               th:value="${user.getDob()}" oninput="validateDob()" id="book_pick_date1">
+                                                                               th:value="${user.getDob()}"
+                                                                               oninput="validateDob()"
+                                                                               id="book_pick_date1">
                                                                     </div>
                                                                     <div id="dateError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="dateOfBirthValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
+                                                                        <div class="input-group-prepend">
                                                                             <span class="input-group-text ">Phone</span>
                                                                         </div>
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               th:value="${user.getPhone()}" oninput="validatePhone()" id="phone1">
+                                                                               th:value="${user.getPhone()}"
+                                                                               oninput="validatePhone()" id="phone1">
                                                                     </div>
                                                                     <div id="phoneError1" style="color: red"></div>
-                                                                    <a class="validate-msg" id="phoneValidate1">Invalid</a>
+                                                                    <a class="validate-msg"
+                                                                       id="phoneValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
+                                                                        <div class="input-group-prepend">
                                                                             <span class="input-group-text ">email</span>
                                                                         </div>
-                                                                        <input readonly type="email" class="form-control"
+                                                                        <input readonly type="email"
+                                                                               class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               th:value="${user.getEmail()}" oninput="validateEmail()" id="email1">
+                                                                               th:value="${user.getEmail()}"
+                                                                               oninput="validateEmail()" id="email1">
                                                                     </div>
                                                                     <div id="emailError1" style="color: red"></div>
-                                                                    <a class="validate-msg" id="emailValidate1">Invalid</a>
+                                                                    <a class="validate-msg"
+                                                                       id="emailValidate1">Invalid</a>
                                                                 </div>
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" >
+                                                                        <div class="input-group-prepend">
                                                                             <span class="input-group-text ">National ID</span>
                                                                         </div>
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               th:value="${user.getNationalId()}" oninput="validateNationalId()" id="nationalId1">
+                                                                               th:value="${user.getNationalId()}"
+                                                                               oninput="validateNationalId()"
+                                                                               id="nationalId1">
                                                                     </div>
                                                                     <div id="nationalIdError1" style="color: red"></div>
                                                                     <a class="validate-msg" id="nationalIdValidate1">Invalid</a>
@@ -758,9 +816,12 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="province">Province</label>
+                                                                            <label class="input-group-text"
+                                                                                   for="province">Province</label>
                                                                         </div>
-                                                                        <select class="custom-select" th:data-default="${user.getCity()}"  id="province">
+                                                                        <select class="custom-select"
+                                                                                th:data-default="${user.getCity()}"
+                                                                                id="province">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -769,9 +830,12 @@
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
                                                                         <div class="input-group-prepend">
-                                                                            <label class="input-group-text" for="district">District</label>
+                                                                            <label class="input-group-text"
+                                                                                   for="district">District</label>
                                                                         </div>
-                                                                        <select class="custom-select" th:data-default="${user.getDistrict()}" id="district">
+                                                                        <select class="custom-select"
+                                                                                th:data-default="${user.getDistrict()}"
+                                                                                id="district">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -784,7 +848,9 @@
                                                                             <label class="input-group-text"
                                                                                    for="ward">Ward</label>
                                                                         </div>
-                                                                        <select class="custom-select" th:data-default="${user.getWard()}"  id="ward">
+                                                                        <select class="custom-select"
+                                                                                th:data-default="${user.getWard()}"
+                                                                                id="ward">
                                                                             <option value="">Select</option>
                                                                         </select>
                                                                     </div>
@@ -799,72 +865,93 @@
                                                                         <input type="text" class="form-control"
                                                                                aria-label="Sizing example input"
                                                                                aria-describedby="inputGroup-sizing-default"
-                                                                               th:value="${user.getStreet()}" id="street">
+                                                                               th:value="${user.getStreet()}"
+                                                                               id="street">
                                                                     </div>
                                                                     <a class="validate-msg">Invalid</a>
                                                                 </div>
 
                                                                 <div class="col-lg-6 mb-3 required-label">
                                                                     <div class="input-group input-group-sm">
-                                                                        <div class="input-group-prepend" style="max-height: 33.5px;">
-                                                                            <span class="input-group-text" id="inputGroupFileAddon011" >Driving license</span>
+                                                                        <div class="input-group-prepend"
+                                                                             style="max-height: 33.5px;">
+                                                                            <span class="input-group-text"
+                                                                                  id="inputGroupFileAddon011">Driving license</span>
                                                                         </div>
                                                                         <div class="custom-file">
                                                                             <!-- Input file -->
-                                                                            <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile011"
-                                                                                   aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
+                                                                            <input type="file" accept="image/*"
+                                                                                   class="custom-file-input"
+                                                                                   id="inputGroupFile011"
+                                                                                   aria-describedby="inputGroupFileAddon01"
+                                                                                   onchange="validateDrivingLicense()">
 
                                                                             <!-- Label hiển thị tên file -->
-                                                                            <label class="custom-file-label" id="fileName1" style="font-size: small !important;">
+                                                                            <label class="custom-file-label"
+                                                                                   id="fileName1"
+                                                                                   style="font-size: small !important;">
                                                                                 <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                                <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: '"></span>
+                                                                                <span th:if="${user.getDrivingLicense() != null}"
+                                                                                      th:text="'Current file: '"></span>
                                                                                 <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
                                                                             </label>
                                                                         </div>
 
                                                                     </div>
                                                                     <!-- Khung hiển thị ảnh -->
-                                                                    <div id="previewContainer" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">
-                                                                        <img id="previewImage" th:src="'/'+${user.getDrivingLicense()}"
+                                                                    <div id="previewContainer"
+                                                                         style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">
+                                                                        <img id="previewImage"
+                                                                             th:src="'/'+${user.getDrivingLicense()}"
                                                                              alt="Image preview"
                                                                              style="width: 100%; height: 100%; object-fit: cover;">
                                                                     </div>
 
-                                                                    <input type="hidden" id="currentDrivingLicense" th:value="${user.getDrivingLicense()}">
-                                                                    <div id="drivingLicenseError1" style="color: red"></div>
-                                                                    <a class="validate-msg" id="drivingLicenseValidate1">Invalid</a>
+                                                                    <input type="hidden" id="currentDrivingLicense"
+                                                                           th:value="${user.getDrivingLicense()}">
+                                                                    <div id="drivingLicenseError1"
+                                                                         style="color: red"></div>
+                                                                    <a class="validate-msg"
+                                                                       id="drivingLicenseValidate1">Invalid</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <h5 class="card-title">Driver's information</h5>
                                                             <div class="row">
-                                                                <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
+                                                                <label class="checkbox bounce d-flex pl-3"
+                                                                       style="align-items: center;column-gap: 6px;">
                                                                     <input type="checkbox" id="differentInfoCheckbox"
-                                                                           name="additionalFunction" value="true" onclick="toggleDriverInfoFields()">
+                                                                           name="additionalFunction" value="true"
+                                                                           onclick="toggleDriverInfoFields()">
                                                                     <svg viewBox="0 0 21 21">
-                                                                        <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                                                        <polyline
+                                                                                points="5 10.75 8.5 14.25 16 6"></polyline>
                                                                     </svg>
                                                                     <span>Different than Renter's information</span>
                                                                 </label>
                                                             </div>
-                                                            <div id="driverInfoTable" style="display: none; width: 100%">
+                                                            <div id="driverInfoTable"
+                                                                 style="display: none; width: 100%">
                                                                 <div class="row">
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" >
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">Full name</span>
                                                                             </div>
-                                                                            <select class="custom-select"  onchange="fetchDriverDetailsAjax()"   id="fullNameDriver">
+                                                                            <select class="custom-select"
+                                                                                    onchange="fetchDriverDetailsAjax()"
+                                                                                    id="fullNameDriver">
                                                                                 <option value="">Select</option>
                                                                             </select>
                                                                         </div>
-                                                                        <span id="fullNameErrorDriver" class="text-danger"></span>
+                                                                        <span id="fullNameErrorDriver"
+                                                                              class="text-danger"></span>
 
                                                                     </div>
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" >
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">Date of birth</span>
                                                                             </div>
                                                                             <input type="date" class="form-control"
@@ -872,41 +959,48 @@
                                                                                    aria-describedby="inputGroup-sizing-default"
                                                                                    disabled id="book_pick_dateDriver">
                                                                         </div>
-                                                                        <div id="dateErrorDriver" style="color: red"></div>
+                                                                        <div id="dateErrorDriver"
+                                                                             style="color: red"></div>
 
                                                                     </div>
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" >
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">Phone</span>
                                                                             </div>
-                                                                            <input disabled type="text" class="form-control"
+                                                                            <input disabled type="text"
+                                                                                   class="form-control"
                                                                                    aria-label="Sizing example input"
                                                                                    aria-describedby="inputGroup-sizing-default"
                                                                                    id="phoneDriver">
                                                                         </div>
-                                                                        <div id="phoneErrorDriver" style="color: red"></div>
+                                                                        <div id="phoneErrorDriver"
+                                                                             style="color: red"></div>
                                                                     </div>
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" >
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">email</span>
                                                                             </div>
-                                                                            <input disabled type="email" class="form-control"
+                                                                            <input disabled type="email"
+                                                                                   class="form-control"
                                                                                    aria-label="Sizing example input"
                                                                                    aria-describedby="inputGroup-sizing-default"
                                                                                    id="emailDriver">
                                                                         </div>
-                                                                        <div id="emailErrorDriver" style="color: red"></div>
+                                                                        <div id="emailErrorDriver"
+                                                                             style="color: red"></div>
 
                                                                     </div>
 
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
                                                                             <div class="input-group-prepend">
-                                                                                <label class="input-group-text" for="province">Province</label>
+                                                                                <label class="input-group-text"
+                                                                                       for="province">Province</label>
                                                                             </div>
-                                                                            <select disabled class="custom-select" id="provinceDriver">
+                                                                            <select disabled class="custom-select"
+                                                                                    id="provinceDriver">
                                                                                 <option value="">Select</option>
                                                                             </select>
                                                                         </div>
@@ -915,7 +1009,7 @@
 
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" >
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">National ID</span>
                                                                             </div>
                                                                             <input type="text" class="form-control"
@@ -923,16 +1017,20 @@
                                                                                    aria-describedby="inputGroup-sizing-default"
                                                                                    disabled id="nationalIdDriver">
                                                                         </div>
-                                                                        <div id="nationalIdErrorDriver" style="color: red"></div>
-                                                                        <a class="validate-msg" id="nationalIdValidateDriver">Invalid</a>
+                                                                        <div id="nationalIdErrorDriver"
+                                                                             style="color: red"></div>
+                                                                        <a class="validate-msg"
+                                                                           id="nationalIdValidateDriver">Invalid</a>
                                                                     </div>
 
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
                                                                             <div class="input-group-prepend">
-                                                                                <label class="input-group-text" for="district">District</label>
+                                                                                <label class="input-group-text"
+                                                                                       for="district">District</label>
                                                                             </div>
-                                                                            <select disabled class="custom-select" id="districtDriver">
+                                                                            <select disabled class="custom-select"
+                                                                                    id="districtDriver">
                                                                                 <option value="">Select</option>
                                                                             </select>
                                                                         </div>
@@ -942,7 +1040,7 @@
 
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" >
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">Salary Driver</span>
                                                                             </div>
                                                                             <input type="text" class="form-control"
@@ -950,7 +1048,8 @@
                                                                                    aria-describedby="inputGroup-sizing-default"
                                                                                    disabled id="salaryDriver">
                                                                         </div>
-                                                                        <div id="salaryErrorDriver" style="color: red"></div>
+                                                                        <div id="salaryErrorDriver"
+                                                                             style="color: red"></div>
                                                                     </div>
 
 
@@ -960,7 +1059,8 @@
                                                                                 <label class="input-group-text"
                                                                                        for="ward">Ward</label>
                                                                             </div>
-                                                                            <select class="custom-select" disabled  id="wardDriver">
+                                                                            <select class="custom-select" disabled
+                                                                                    id="wardDriver">
                                                                                 <option value="">Select</option>
                                                                             </select>
                                                                         </div>
@@ -968,15 +1068,17 @@
                                                                     </div>
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" >
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">Description</span>
                                                                             </div>
                                                                             <textarea type="text" class="form-control"
                                                                                       aria-label="Sizing example input"
                                                                                       aria-describedby="inputGroup-sizing-default"
-                                                                                      disabled id="descriptionDriver"></textarea>
+                                                                                      disabled
+                                                                                      id="descriptionDriver"></textarea>
                                                                         </div>
-                                                                        <div id="descriptionErrorDriver" style="color: red"></div>
+                                                                        <div id="descriptionErrorDriver"
+                                                                             style="color: red"></div>
                                                                     </div>
 
 
@@ -995,18 +1097,27 @@
 
                                                                     <div class="col-lg-6 mb-3 required-label">
                                                                         <div class="input-group input-group-sm">
-                                                                            <div class="input-group-prepend" style="max-height: 33.5px;">
-                                                                                <span class="input-group-text" id="inputGroupFileAddonDriver" >Driving license</span>
+                                                                            <div class="input-group-prepend"
+                                                                                 style="max-height: 33.5px;">
+                                                                                <span class="input-group-text"
+                                                                                      id="inputGroupFileAddonDriver">Driving license</span>
                                                                             </div>
                                                                             <div class="custom-file">
                                                                                 <!-- Input file -->
-                                                                                <input disabled type="file" accept="image/*" class="custom-file-input" id="inputGroupFileDriver"
-                                                                                       aria-describedby="inputGroupFileAddon01" onchange="validateDrivingLicense()">
+                                                                                <input disabled type="file"
+                                                                                       accept="image/*"
+                                                                                       class="custom-file-input"
+                                                                                       id="inputGroupFileDriver"
+                                                                                       aria-describedby="inputGroupFileAddon01"
+                                                                                       onchange="validateDrivingLicense()">
 
                                                                                 <!-- Label hiển thị tên file -->
-                                                                                <label class="custom-file-label" id="fileNameDriver" style="font-size: small !important;">
+                                                                                <label class="custom-file-label"
+                                                                                       id="fileNameDriver"
+                                                                                       style="font-size: small !important;">
                                                                                     <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                                    <span th:if="${user.getDrivingLicense() != null}" th:text="'Current file: '"></span>
+                                                                                    <span th:if="${user.getDrivingLicense() != null}"
+                                                                                          th:text="'Current file: '"></span>
                                                                                     <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
                                                                                 </label>
                                                                             </div>
@@ -1019,14 +1130,18 @@
                                                                         <!--                                                                                 style="width: 100%; height: 100%; object-fit: cover;">-->
                                                                         <!--                                                                        </div>-->
 
-                                                                        <input type="hidden" id="currentDrivingLicenseDriver" th:value="${user.getDrivingLicense()}">
-                                                                        <div id="drivingLicenseErrorDriver" style="color: red"></div>
+                                                                        <input type="hidden"
+                                                                               id="currentDrivingLicenseDriver"
+                                                                               th:value="${user.getDrivingLicense()}">
+                                                                        <div id="drivingLicenseErrorDriver"
+                                                                             style="color: red"></div>
                                                                     </div>
                                                                     <div class="col-lg-6 mb-3">
 
                                                                     </div>
                                                                     <!-- Khung hiển thị ảnh -->
-                                                                    <div class="col-lg-6 mb-3" id="previewContainerDriver">
+                                                                    <div class="col-lg-6 mb-3"
+                                                                         id="previewContainerDriver">
                                                                         <img id="previewImageDriver"
                                                                              alt="Image preview"
                                                                              style="width: 100%; height: 100%; object-fit: cover;">
@@ -1053,15 +1168,33 @@
                                                     <h5 class="card-title">Please select your payment method</h5>
                                                     <div class="row">
                                                         <div class="col-12 col-sm-12 col-md-3">
-                                                            <div class="nav nav-pills d-flex flex-row" id="v-pills-tab" role="tablist" aria-orientation="vertical" style="row-gap: 5px; column-gap: 5px">
-                                                                <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">My Wallet</button>
-                                                                <button class="nav-link" id="v-pills-profile-tab" data-toggle="pill" data-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Cash</button>
-                                                                <button class="nav-link" id="v-pills-messages-tab" data-toggle="pill" data-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Bank Transfer</button>
+                                                            <div class="nav nav-pills d-flex flex-row" id="v-pills-tab"
+                                                                 role="tablist" aria-orientation="vertical"
+                                                                 style="row-gap: 5px; column-gap: 5px">
+                                                                <button class="nav-link active" id="v-pills-home-tab"
+                                                                        data-toggle="pill" data-target="#v-pills-home"
+                                                                        type="button" role="tab"
+                                                                        aria-controls="v-pills-home"
+                                                                        aria-selected="true">My Wallet
+                                                                </button>
+                                                                <button class="nav-link" id="v-pills-profile-tab"
+                                                                        data-toggle="pill"
+                                                                        data-target="#v-pills-profile" type="button"
+                                                                        role="tab" aria-controls="v-pills-profile"
+                                                                        aria-selected="false">Cash
+                                                                </button>
+                                                                <button class="nav-link" id="v-pills-messages-tab"
+                                                                        data-toggle="pill"
+                                                                        data-target="#v-pills-messages" type="button"
+                                                                        role="tab" aria-controls="v-pills-messages"
+                                                                        aria-selected="false">Bank Transfer
+                                                                </button>
                                                             </div>
                                                         </div>
                                                         <div class="col-9" style="border-left: 2px #00c86f solid">
                                                             <div class="tab-content" id="v-pills-tabContent">
-                                                                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                                <div class="tab-pane fade show active" id="v-pills-home"
+                                                                     role="tabpanel" aria-labelledby="v-pills-home-tab">
                                                                     <p>
                                                                         Current balance:
                                                                         <span th:classappend="${userRepo.getWallet() < car.getDeposit()} ? 'text-danger' : 'text-success'"
@@ -1069,8 +1202,14 @@
                                                                         </span>
                                                                     </p>
                                                                 </div>
-                                                                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
-                                                                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
+                                                                <div class="tab-pane fade" id="v-pills-profile"
+                                                                     role="tabpanel"
+                                                                     aria-labelledby="v-pills-profile-tab">...
+                                                                </div>
+                                                                <div class="tab-pane fade" id="v-pills-messages"
+                                                                     role="tabpanel"
+                                                                     aria-labelledby="v-pills-messages-tab">...
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1092,7 +1231,8 @@
                                     <fieldset>
                                         <div class="d-flex justify-content-center">
                                             <div class="card align-items-start display-flex-center" style="">
-                                                <div class="card-body text-left w-80" style="align-self: center; color: #5d5d5d">
+                                                <div class="card-body text-left w-80"
+                                                     style="align-self: center; color: #5d5d5d">
                                                     <p>You have successfully booked
                                                         <span style="color: #00c86f" th:text="${car.getName()}"></span>
                                                         from
@@ -1100,7 +1240,9 @@
                                                         to
                                                         <span class="end-date" style="color: #ffb300"></span>
                                                     </p>
-                                                    <p>Your booking number is: <span class="booking-number" style="color: royalblue"></span></p>
+                                                    <p>Your booking number is: <span class="booking-number"
+                                                                                     style="color: royalblue"></span>
+                                                    </p>
                                                     <p>Our operator will contact you soon to guidance you pick up.</p>
                                                     <p>Thank you for choosing our service!</p>
                                                 </div>
@@ -1109,11 +1251,15 @@
                                         <a class="btn-primary btn" style="; margin: 10px 0 10px 0"
                                            onclick="window.location.href='/'">Homepage</a>
                                         <th:block th:if="${lastLink == 'search'}">
-                                            <a class="btn-warning btn" th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">Book another car</a>
+                                            <a class="btn-warning btn"
+                                               th:href="${'/searchCar?name='+ address + '&pickDate=' + pickDate +'&pickTime='+pickTime +'&dropDate=' + dropDate +'&dropTime='+ dropTime}">Book
+                                                another car</a>
                                         </th:block>
 
                                         <th:block th:if="${lastLink == 'detailCar'}">
-                                            <a class="btn-warning btn" th:href="${'/searchCar?name=&pickDate=&pickTime=&dropDate=&dropTime='}">Book another car</a>
+                                            <a class="btn-warning btn"
+                                               th:href="${'/searchCar?name=&pickDate=&pickTime=&dropDate=&dropTime='}">Book
+                                                another car</a>
                                         </th:block>
                                         <a class="btn-secondary btn">View Booking</a>
                                     </fieldset>
@@ -1165,27 +1311,26 @@
             }
 
             let isAtBottom = false;
-
-            const scrollHandler = function() {
+            const scrollHandler = function () {
                 const scrollTop = scrollableContent.scrollTop;
                 const scrollHeight = scrollableContent.scrollHeight;
                 const clientHeight = scrollableContent.clientHeight;
                 const scrollPercentage = (scrollableContent.scrollTop + scrollableContent.clientHeight) / scrollableContent.scrollHeight * 100;
                 progressBar.style.width = scrollPercentage + '%';
 
-                if (!isAtBottom && scrollTop + clientHeight >= scrollHeight - 1) {
+                if (!isAtBottom && scrollTop + clientHeight >= scrollHeight - 1 || scrollPercentage > 98) {
                     isAtBottom = true;
                     acceptButton.disabled = false;
                     acceptButton.style.backgroundColor = '#00c86f';
                     acceptButton.style.color = 'white';
                     acceptButton.style.cursor = 'pointer';
-                    // Cleanup
-                    scrollableContent.removeEventListener('scroll', scrollHandler);
+                    // // Cleanup
+                    // scrollableContent.removeEventListener('scroll', scrollHandler);
                 }
             };
 
             scrollableContent.addEventListener('scroll', scrollHandler);
-
+w
             acceptButton.addEventListener('click', function () {
                 try {
                     localStorage.setItem('rulesAccepted', 'true');
@@ -1246,9 +1391,9 @@
 
             const currentDrivingLicense = document.getElementById("currentDrivingLicense").value // Dữ liệu từ DB
             let drivingLicense = document.getElementById("inputGroupFile011").value;
-            console.log("currentDrivingLicense:",currentDrivingLicense);
+            console.log("currentDrivingLicense:", currentDrivingLicense);
 
-            if(!drivingLicense) {
+            if (!drivingLicense) {
                 drivingLicense = currentDrivingLicense;
             }
 
@@ -1261,8 +1406,8 @@
             const selectedDriverId = document.getElementById("fullNameDriver").value;
             // const selectedId = $('#fullNameDriver').val();
 
-            console.log("selectedUserId = " ,selectedDriverId)
-            if(checked && !selectedDriverId) {
+            console.log("selectedUserId = ", selectedDriverId)
+            if (checked && !selectedDriverId) {
                 //alert(`Please fill all required fields`);
                 Swal.fire({
                     title: 'Error!',
@@ -1272,7 +1417,6 @@
                 });
                 return false;
             }
-
 
 
             // Thu thập dữ liệu cho renter
@@ -1362,7 +1506,8 @@
                 console.log("editReturnDate:", document.getElementById("editReturnDate").value);
                 //==========================================================================
 
-                const pickUpLocation = pickupDateFormatted; document.getElementById("editPickupLocation").value;
+                const pickUpLocation = pickupDateFormatted;
+                document.getElementById("editPickupLocation").value;
                 const pickUpDateTime = pickupDateFormatted;
                 const returnDateTime = returnDateFormatted;
                 const depositValue = depositText.replace(/[^0-9]/g, '');
@@ -1374,15 +1519,14 @@
                 const email = document.getElementById('email1').value;
                 const nationalId = document.getElementById("nationalId1").value;
                 const drivingLicense = document.getElementById("inputGroupFile011").value;
-                const province =  document.getElementById('province').value
-                const district =  document.getElementById('district').value;
-                const ward =  document.getElementById('ward').value;
+                const province = document.getElementById('province').value
+                const district = document.getElementById('district').value;
+                const ward = document.getElementById('ward').value;
                 const street = document.getElementById('street').value;
                 const selectedDriverId = document.getElementById("fullNameDriver").value;
                 const userId = document.getElementById("userId").value;
 
                 // const selectedId = $('#fullNameDriver').val();
-
 
 
                 console.log("Selected User IDs:", selectedDriverId);
@@ -1414,7 +1558,7 @@
                     rentDistrict: district,
                     rentWard: ward,
                     rentStreet: street,
-                    selectedPaymentMethod : selectedPaymentMethod,
+                    selectedPaymentMethod: selectedPaymentMethod,
                     selectedUserId: selectedDriverId,
                 };
 
@@ -1433,7 +1577,7 @@
                     if (input && input.files && input.files[0]) {
                         formData.append(key, input.files[0]);
                     } else {
-                        formData.append(key, new Blob([], { type: 'application/octet-stream' }));
+                        formData.append(key, new Blob([], {type: 'application/octet-stream'}));
                     }
                 }
 
@@ -1452,7 +1596,7 @@
                         // Lấy thông tin từ Map
                         const message = response.message;
 
-                        if(message === "Step 2 validated successfully.") {
+                        if (message === "Step 2 validated successfully.") {
                             const bookingInfo = response.bookingInfo;
                             try {
                                 console.log("Response:", response);
@@ -1480,7 +1624,7 @@
                             }
 
                         }
-                        if(message === "Step 2 validated successfully.") {
+                        if (message === "Step 2 validated successfully.") {
                             const previewSection = document.getElementById('previewSection');
                             const bookingDetail = document.getElementById('bookingDetail');
                             previewSection.style.display = 'none';
@@ -1492,7 +1636,7 @@
                     },
                     error: function (xhr, status, error) {
                         if (xhr.status === 400) {
-                            if(xhr.responseText === "Your current balance is insufficient. Please top up or choose another payment method") {
+                            if (xhr.responseText === "Your current balance is insufficient. Please top up or choose another payment method") {
 
                                 const topUpLink = `<a href="/wallet/my-wallet" style="color: blue; text-decoration: underline;">Top up</a>`;
                                 const errorMessage = `Your wallet doesn't have enough money to book a car. ${topUpLink}  to continue.`;
@@ -1516,8 +1660,6 @@
         }
 
 
-
-
     </script>
     <script th:inline="javascript">
         var car = /*[[${car}]]*/ {};
@@ -1527,8 +1669,20 @@
         const csrfToken = $('meta[name="_csrf"]').attr('content');
     </script>
     <script th:inline="javascript">
-        function confirmBooking(){
-
+        function confirmBooking() {
+            if(!localStorage.getItem('rulesAccepted')) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please read and accept the rules before booking',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#rulesPopup').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                })
+            }
         }
 
         window.onload = function () {
@@ -1566,21 +1720,19 @@
         }
 
 
-
         function changeDetail() {
             // Lấy giá trị hiện tại và định dạng lại cho phù hợp với `datetime-local`
             const pickupDate = document.getElementById('pickupDate').innerText;
             const returnDate = document.getElementById('returnDate').innerText;
 
             document.getElementById('editPickupLocation').value = document.getElementById('pickupLocation').innerText;
-            if(pickupDate && returnDate) {
+            if (pickupDate && returnDate) {
                 document.getElementById('editPickupDate').value = formatToDatetimeDB(pickupDate);
                 document.getElementById('editReturnDate').value = formatToDatetimeDB(returnDate);
             }
             // Hiển thị modal
             $('#confirmModal').modal('show');
         }
-
 
 
         function saveChanges() {
@@ -1646,7 +1798,7 @@
             }
 
             // Tính số ngày và giờ
-            const { days, hours } = calculateNumberOfDays(newPickupDate, newReturnDate);
+            const {days, hours} = calculateNumberOfDays(newPickupDate, newReturnDate);
 
             // Cập nhật lại nội dung của các `span`
             document.getElementById('pickupLocation').innerText = newPickupLocation;
@@ -1673,13 +1825,12 @@
         }
 
 
-
         function LoadSaveChanges(newPickupDatee, newReturnDatee) {
 
             console.log("aa", newPickupDatee)
             console.log("abc", newReturnDatee)
             // Kiểm tra tính hợp lệ của dữ liệu
-            if ( !newPickupDatee || !newReturnDatee) {
+            if (!newPickupDatee || !newReturnDatee) {
                 iziToast.error({
                     title: 'Error',
                     message: 'Please fill in all the information.',
@@ -1738,7 +1889,7 @@
 
 
             // Tính số ngày và giờ
-            const { days, hours } = calculateNumberOfDays(newPickupDatee, newReturnDatee);
+            const {days, hours} = calculateNumberOfDays(newPickupDatee, newReturnDatee);
 
             // Cập nhật lại nội dung của các `span`
             document.getElementById('pickupDate').innerText = formatToDisplay(newPickupDatee);
@@ -1823,16 +1974,15 @@
             const diffTime = end - start;
 
             if (diffTime <= 0) {
-                return { days: 0, hours: 0 }; // Nếu thời gian không hợp lệ
+                return {days: 0, hours: 0}; // Nếu thời gian không hợp lệ
             }
 
             // Tính số ngày và giờ từ sự khác biệt
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Số ngày
             const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Số giờ lẻ
 
-            return { days: diffDays, hours: diffHours };
+            return {days: diffDays, hours: diffHours};
         }
-
 
 
         // Load provinces on page load with default values
@@ -1996,7 +2146,6 @@
         }
 
 
-
         function toggleDriverInfoFields() {
             const checkbox = document.getElementById('differentInfoCheckbox');
             const table = document.getElementById('driverInfoTable');
@@ -2008,7 +2157,6 @@
         // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
         window.addEventListener('pageshow', toggleDriverInfoFields);
-
 
 
         document.addEventListener('DOMContentLoaded', () => {
