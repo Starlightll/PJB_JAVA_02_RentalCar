@@ -189,7 +189,7 @@
                                                th:href="@{'/customer/booking-car?CarId='+ ${car.getCarId()} + '&startDate='  + '&enDate='  + '&address=' + '&beforeNavigate=detailCar'}">Rent
                                                 now</a>
                                             <a class="btn btn-secondary py-2 ml-1"
-                                               th:href="@{/carDetail/{carId}(carId=${car.carId})}">Details</a>
+                                               th:href="@{/api/searchCar/{carId}(carId=${car.getCarId()})}">Details</a>
                                         </p>
                                     </div>
                                 </div>
@@ -463,7 +463,7 @@
 
                 const carId = this.closest('.item').getAttribute('data-car-id');
                 console.log(carId);
-                const url = `/carDetail/${carId}`;
+                const url = `/api/searchCar/${carId}`;
 
                 window.location.href = url;
             });
