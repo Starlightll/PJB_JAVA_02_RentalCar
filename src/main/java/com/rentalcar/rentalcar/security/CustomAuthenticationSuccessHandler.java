@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Objects;
 
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -31,6 +32,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         User user;
         try {
             user = userDetailsService.loadUserByEmail(email);
+            if(Objects.equals(user.getStatus().getStatus(), "DELETED")){
+                response.sendRedirect("/login?error=true&message=Your account has been deleted. Please contact admin for more information.");
+                return;
+            }
         } catch (Exception e) {
             // Xử lý lỗi ở đây, ví dụ như ghi log hoặc chuyển hướng về trang lỗi
             response.sendRedirect("/error");

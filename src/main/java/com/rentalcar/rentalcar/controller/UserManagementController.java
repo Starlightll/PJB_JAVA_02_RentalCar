@@ -100,6 +100,10 @@ public class UserManagementController {
             response.put("errors", result.getAllErrors());
             return ResponseEntity.badRequest().body(response);
         }
+        if(user.getId() == null){
+            response.put("error", "User ID is required");
+            return ResponseEntity.badRequest().body(response);
+        }
         try{
             userService.updateUser(user, drivingLicenseFile);
         }catch (Exception e){

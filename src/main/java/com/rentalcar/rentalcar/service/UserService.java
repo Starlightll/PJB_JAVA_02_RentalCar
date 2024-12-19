@@ -156,6 +156,9 @@ public class UserService implements IUserService {
             if(updateUser == null){
                 throw new UserException("User not found");
             }
+            if(updateUser.getRoles().get(0).getId() == 1 && user.getStatus() == UserStatus.DELETED){
+                throw new UserException("Cannot delete admin user");
+            }
             updateUser.setUsername(user.getUsername());
             updateUser.setFullName(user.getFullName());
             updateUser.setDob(user.getDob());

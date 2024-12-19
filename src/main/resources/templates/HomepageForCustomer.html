@@ -176,7 +176,7 @@
                             <div class="item">
                                 <div class="car-wrap rounded ftco-animate">
                                     <div class="img rounded d-flex align-items-end">
-                                        <img th:src="'/'+${car.front}" alt="Car Image">
+                                        <img th:src="'/'+${car.front}" onerror="this.src='/images/car-placeholder.jpg'" alt="Car Image">
                                     </div>
                                     <div class="text">
                                         <h2 class="mb-0"><a href="#" th:text="${car.name}">Mercedes Grand Sedan</a></h2>
