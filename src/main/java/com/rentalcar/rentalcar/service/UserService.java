@@ -56,7 +56,7 @@ public class UserService implements IUserService {
             if (drivingLicenseFile != null && !drivingLicenseFile.isEmpty()) {
                 try {
                     // Define the directory where the file will be saved
-                    String uploadDir = "uploads/User/" + users.getId(); // Update as needed
+                    String uploadDir = "uploads\\User\\" + users.getId() + '\\'; // Update as needed
                     Files.createDirectories(Paths.get(uploadDir)); // Ensure directory exists
 
                     String fileName = drivingLicenseFile.getOriginalFilename();

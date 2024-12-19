@@ -220,7 +220,7 @@ public class MyProfileController {
                 } else if (drivingLicense.getSize() > 200 * 1024 * 1024) { // 200MB = 200 * 1024 * 1024 bytes
                     bindingResult.rejectValue("drivingLicense", "error.userInfo", "File size exceeds 200MB. Please upload a smaller file.");
                 } else {
-                    String uploadDir = "uploads/User/" + user.getId(); // Specify your upload directory
+                    String uploadDir = "uploads\\User\\" + user.getId() ; // Specify your upload directory
                     Path filePath = Paths.get(uploadDir, fileName);
                     Files.write(filePath, drivingLicense.getBytes());
 
