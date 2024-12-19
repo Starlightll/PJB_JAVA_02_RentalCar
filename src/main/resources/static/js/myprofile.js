@@ -535,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch(`/change-passwordv2`, {
+                        fetch(`/change-password`, {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value

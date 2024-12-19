@@ -13,7 +13,7 @@ public class HomeForCarOwnerController {
     }
 
 
-    @GetMapping("/homepage-carowner/my-profile")
+    @GetMapping("/homepage-carowner/my-profileold")
     public String myProfileHomepage() {
         return "MyProfile_ChangPassword";
     }

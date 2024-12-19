@@ -46,7 +46,7 @@ public class MyProfileController {
     private UserRepo userRepo;
 
 
-    @GetMapping("/change-password")
+    @GetMapping("/change-passwordold")
     public String changePassword(Model model, HttpSession session) {
         model.addAttribute("activeTab", "Security"); // Set active tab to Security
 
@@ -60,7 +60,7 @@ public class MyProfileController {
         return "MyProfile_ChangPassword";
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/change-passwordold")
     @ResponseBody
     public ResponseEntity<Map<String, String>> handleChangePassword(
             @Valid @ModelAttribute("myProfileDto") MyProfileDto myProfileDto,
@@ -93,7 +93,7 @@ public class MyProfileController {
         }
     }
 
-    @PostMapping("/change-passwordv2")
+    @PostMapping("/change-password")
     public ResponseEntity<Map<String, Object>> changePasswordV2(
             @RequestParam(value = "oldPassword") String oldPassword,
             @RequestParam(value = "newPassword") String newPassword,
@@ -125,7 +125,7 @@ public class MyProfileController {
     }
 
 
-    @GetMapping("/my-profile")
+    @GetMapping("/my-profileold")
     public String myProfile(Model model, HttpSession session) {
         model.addAttribute("activeTab", "PersonalInfo"); // Set default tab
         model.addAttribute("myProfileDto", new MyProfileDto());
@@ -135,7 +135,7 @@ public class MyProfileController {
         return "MyProfile_ChangPassword";
     }
 
-    @GetMapping("/my-profilev2")
+    @GetMapping("/my-profile")
     public String myProfileV2(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         User userInfo = userRepo.getUserById(user.getId());
