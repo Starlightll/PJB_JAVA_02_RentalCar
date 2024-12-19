@@ -44,7 +44,7 @@ public class CarDto1 implements Serializable {
     Set<AdditionalFunctionDto> additionalFunctions;
     CarAddressDto address;
     Double rateAverage;
-
+    Long numberOfRides;
     /**
      * DTO for {@link com.rentalcar.rentalcar.entity.User}
      */
