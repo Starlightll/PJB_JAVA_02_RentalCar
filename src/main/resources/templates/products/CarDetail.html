@@ -233,19 +233,6 @@
 
                             <!-- Feets Single Sidebar List Start -->
                             <div class="fleets-single-sidebar-list">
-                                <ul>
-                                    <li><img src="/images/icon-fleets-single-sidebar-list-1.svg" alt="">Passengers
-                                        <span th:text="${car.getSeat()}"></span></li>
-                                    <li><img src="/images/icon-fleets-single-sidebar-list-7.svg" alt="">Transmission
-                                        <span th:text="${car.getTransmission()}"></span></li>
-                                    <li><img src="/images/icon-fleets-single-sidebar-list-4.svg" alt="">Fuel
-                                        <span th:text="${car.getFuelType()}"></span></li>
-                                </ul>
-                            </div>
-                            <!-- Feets Single Sidebar List End -->
-
-                            <!-- Feets Single Sidebar List Start -->
-                            <div class="fleets-single-sidebar-list">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="d-flex"><i class="fa fa-user mr-2" style="align-self: center"></i>
                                         <div>Booked: <span th:text="${car.getBookedTimes()}"></span></div>
@@ -269,6 +256,20 @@
                                 </div>
                             </div>
                             <!-- Feets Single Sidebar List End -->
+
+                            <!-- Feets Single Sidebar List Start -->
+                            <div class="fleets-single-sidebar-list">
+                                <ul>
+                                    <li><img src="/images/icon-fleets-single-sidebar-list-1.svg" alt="">Passengers
+                                        <span th:text="${car.getSeat()}"></span></li>
+                                    <li><img src="/images/icon-fleets-single-sidebar-list-7.svg" alt="">Transmission
+                                        <span th:text="${car.getTransmission()}"></span></li>
+                                    <li><img src="/images/icon-fleets-single-sidebar-list-4.svg" alt="">Fuel
+                                        <span th:text="${car.getFuelType()}"></span></li>
+                                </ul>
+                            </div>
+                            <!-- Feets Single Sidebar List End -->
+
 
                             <!-- Feets Single Sidebar Btn Start -->
                             <div class="fleets-single-sidebar-btn">
