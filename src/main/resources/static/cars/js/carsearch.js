@@ -419,7 +419,7 @@ function fetchCars(pickupLocation, pickupDateTime, dropDateTime) {
                         <div class="col-xl-4 col-lg-6 col-md-6 wow zoomIn" data-wow-delay="${wowDelay += 0.1}s">
                             <div class="perfect-fleet-item fleets-collection-item" style="display: flex; flex-direction: column">
                                 <div class="image-box" style="border-radius: 15px; overflow: hidden; height: 200px; align-content: center;">
-                                    <img src="${car.frontImage}"
+                                    <img src="${car.frontImage}" onerror="this.src='images/car-placeholder.jpg';"
                                      style="width: 100%; max-width: none !important; border-radius: 14px; object-fit: cover; height: 100%;"
                                      alt="">
                                 </div>

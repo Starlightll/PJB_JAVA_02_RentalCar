@@ -1,10 +1,12 @@
 package com.rentalcar.rentalcar.service;
 
 
+import com.rentalcar.rentalcar.common.UserStatus;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +27,9 @@ public class UserDetailsServiceImpl implements UserDetailsService, com.rentalcar
 			System.out.println("User not found with email: " + email);
 			throw new UsernameNotFoundException("Could not find user");
 		}
+		if(user.getStatus() == UserStatus.DELETED){
+			throw new UserException("Could not find user");
+		}
 
 		System.out.println("User found: " + user.getEmail());
 		return new MyUserDetails(user);
@@ -37,6 +42,9 @@ public class UserDetailsServiceImpl implements UserDetailsService, com.rentalcar
 
 		if(user == null) {
 			throw new UserException("Not found");
+		}
+		if(user.getStatus() == UserStatus.DELETED){
+			throw new UserException("Could not find user");
 		}
 		return user;
 	}
