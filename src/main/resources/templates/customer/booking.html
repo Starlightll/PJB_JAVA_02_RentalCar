@@ -135,7 +135,7 @@
     <!-- Popup HTML -->
     <div id="rulesPopup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rulesPopupLabel"
          aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"  role="document">
             <div class="modal-content border-0 shadow-lg">
 
                 <!-- Header -->
@@ -154,9 +154,9 @@
                 </div>
 
                 <!-- Body -->
-                <div class="modal-body px-4 py-4">
-                    <div id="scrollableContent" class="custom-scrollbar"
-                         style="height: 70vh; overflow-y: auto; padding: 0 10px">
+                <div class="modal-body px-4 py-4" id="scrollableContent">
+                    <div  class="custom-scrollbar"
+                         style="">
                         <!-- Introduction -->
                         <div class="mb-4">
                             <h4 class="text-secondary fw-bold mb-3">
@@ -455,7 +455,7 @@
                 <div class="modal-footer border-top bg-light">
                     <div class="d-flex align-items-center w-100 justify-content-between">
                         <small class="text-muted">Please scroll to read all terms</small>
-                        <button type="button" id="acceptRulesBtn" class="btn px-4" disabled style="background-color: grey !important; cursor: default !important;">
+                        <button type="button" id="acceptRulesBtn" class="btn px-2" disabled style="background-color: grey !important; cursor: default !important;">
                             <i class="fas fa-check mr-2"></i>I understood
                         </button>
                     </div>
