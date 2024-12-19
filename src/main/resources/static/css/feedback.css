@@ -35,6 +35,11 @@ body {
     color: gold;
 }
 
+.gray-stars {
+    font-size: 24px;
+    color: #333333;
+}
+
 .filter {
     display: flex;
     justify-content: center;

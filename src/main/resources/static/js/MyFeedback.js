@@ -47,7 +47,7 @@
                             <span style="font-size: 20px"> <i class="material-icons">person</i>${feedback.username}</span>
                         </div>
                        <div>
-                            <div class="stars">${'★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating)}</div>
+                            <div style="display: flex" class="stars">${'★'.repeat(feedback.rating)}<span class="gray-stars">${'★'.repeat(5 - feedback.rating)}</span></div>
                             <span class="date">${formatDate(feedback.dateTime)}</span>
                         </div>
                     </div>
