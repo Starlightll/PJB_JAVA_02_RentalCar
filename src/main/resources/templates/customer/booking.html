@@ -639,7 +639,7 @@
                                                                  style="display: flex; align-items: center">
                                                                 <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2 m-0">
                                                                     No. of rides: </p>
-                                                                <p class="m-0" th:text="${car.getMileage()}"></p>
+                                                                <p class="m-0" th:text="${numberOfRide}"></p>
                                                             </div>
                                                             <div class="col-lg-12 row"
                                                                  style="display: flex; align-items: center">
@@ -891,9 +891,9 @@
                                                                                    id="fileName1"
                                                                                    style="font-size: small !important;">
                                                                                 <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                                <span th:if="${user.getDrivingLicense() != null}"
+                                                                                <span th:if="${userRepo.getDrivingLicense() != null}"
                                                                                       th:text="'Current file: '"></span>
-                                                                                <span th:if="${user.getDrivingLicense() == null}">Choose file</span>
+                                                                                <span th:if="${userRepo.getDrivingLicense() == null}">Choose file</span>
                                                                             </label>
                                                                         </div>
 
@@ -902,13 +902,13 @@
                                                                     <div id="previewContainer"
                                                                          style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">
                                                                         <img id="previewImage"
-                                                                             th:src="'/'+${user.getDrivingLicense()}"
+                                                                             th:src="'/'+${userRepo.getDrivingLicense()}"
                                                                              alt="Image preview"
                                                                              style="width: 100%; height: 100%; object-fit: cover;">
                                                                     </div>
 
                                                                     <input type="hidden" id="currentDrivingLicense"
-                                                                           th:value="${user.getDrivingLicense()}">
+                                                                           th:value="${userRepo.getDrivingLicense()}">
                                                                     <div id="drivingLicenseError1"
                                                                          style="color: red"></div>
                                                                     <a class="validate-msg"
@@ -1100,7 +1100,7 @@
                                                                             <div class="input-group-prepend"
                                                                                  style="max-height: 33.5px;">
                                                                                 <span class="input-group-text"
-                                                                                      id="inputGroupFileAddonDriver">Driving license</span>
+                                                                                      id="inputGroupFileAddonDriver">Avatar</span>
                                                                             </div>
                                                                             <div class="custom-file">
                                                                                 <!-- Input file -->
@@ -1141,11 +1141,13 @@
                                                                     </div>
                                                                     <!-- Khung hiển thị ảnh -->
                                                                     <div class="col-lg-6 mb-3"
+                                                                         style=" width: 100%; aspect-ratio: 2 / 1; "
                                                                          id="previewContainerDriver">
                                                                         <img id="previewImageDriver"
                                                                              alt="Image preview"
                                                                              style="width: 100%; height: 100%; object-fit: cover;">
                                                                     </div>
+
                                                                 </div>
                                                             </div>
 

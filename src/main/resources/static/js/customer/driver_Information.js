@@ -62,7 +62,7 @@ function fetchDriverDetailsAjax() {
             $('#salaryDriver').val(driver.salaryDriver);
             $('#descriptionDriver').val(driver.descriptionDriver);
             // Hiển thị ảnh bằng cách thay đổi src
-             $('#previewImageDriver').attr('src', driver.avatar);
+             $('#previewImageDriver').attr('src', '/'+ driver.avatar);
             // Gọi hàm để hiển thị tên địa điểm
             await displayLocationNames(driver.city, driver.district, driver.ward);
         },
