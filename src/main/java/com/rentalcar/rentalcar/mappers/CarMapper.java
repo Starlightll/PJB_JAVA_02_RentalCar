@@ -20,12 +20,18 @@ public abstract class CarMapper {
     private CarRepository carRepository;
 
     @Mapping(target = "rateAverage", expression = "java(calculateRateAverage(car))")
+    @Mapping(target = "numberOfRides", expression = "java(calculateNumberOfRides(car))")
     public abstract CarDto1 toDto(Car car);
 
     // Helper method to calculate rate average
     Double calculateRateAverage(Car car) {
         Double rateAverage = carRepository.getRateAvgByCarId(car.getCarId());
         return rateAverage != null ? rateAverage : 0.0;
+    }
+
+    // Helper method to calculate number of rides
+    Long calculateNumberOfRides(Car car) {
+        return carRepository.countCompletedBookingsByCarId(car.getCarId());
     }
 
 

@@ -84,4 +84,8 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     @Query(value = "SELECT ROUND(AVG(CAST(f.rating AS FLOAT)), 2) AS averageRating FROM [RentalCar].[dbo].[Car] c LEFT JOIN [dbo].[BookingCar] bc ON bc.carId = c.carId LEFT JOIN [dbo].[Feedback] f ON f.bookingId = bc.bookingId WHERE c.carId = :carId GROUP BY c.carId", nativeQuery = true)
     Double getRateAvgByCarId(@Param("carId") Integer carId);
 
+    //Get number of completed bookings by carId
+    @Query("SELECT COUNT(b) FROM Booking b JOIN b.bookingCars bc WHERE b.bookingStatus.name = 'Completed' AND bc.car.carId = :carId")
+    long countCompletedBookingsByCarId(@Param("carId") Integer carId);
+
 }
