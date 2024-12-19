@@ -223,7 +223,6 @@ public class MyProfileController {
                     String uploadDir = "uploads\\User\\" + user.getId() ; // Specify your upload directory
                     Path filePath = Paths.get(uploadDir, fileName);
                     Files.write(filePath, drivingLicense.getBytes());
-
                     // Set the file path in the new field
                     userInfoRequest.setDrivingLicensePath(filePath.toString());
                 }
