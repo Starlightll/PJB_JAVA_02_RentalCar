@@ -249,9 +249,9 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public boolean changePassword(User user, String oldPassword, String newPassword) {
+    public boolean changePassword(User user, String currentPassword, String newPassword) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if(passwordEncoder.matches(oldPassword, user.getPassword())){
+        if(passwordEncoder.matches(currentPassword, user.getPassword())){
             String encodedPassword = passwordEncoder.encode(newPassword);
             user.setPassword(encodedPassword);
             userRepo.save(user);

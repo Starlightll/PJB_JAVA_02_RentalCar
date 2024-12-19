@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {
+                    console.log("Reset form");
                     reloadForm();
                     i.validate();
                 }
@@ -364,8 +365,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.ok) {
                             response.json().then(data => {
                                 console.log(data);
-                                const img = document.getElementById('avatarImage');
-                                img.src = window.URL.createObjectURL(file);
+                                const profileAvatar = document.getElementById('avatarImage');
+                                const headerAvatar = document.getElementById('avatar');
+                                headerAvatar.src = window.URL.createObjectURL(file);
+                                profileAvatar.src = window.URL.createObjectURL(file);
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Success',
@@ -397,17 +400,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const changePasswordForm = document.getElementById("changePasswordForm");
     const changePasswordValidator = FormValidation.formValidation(changePasswordForm, {
         fields: {
-            oldPassword: {
+            currentPassword: {
                 validators: {
                     notEmpty: {
                         message: "The current password is required"
                     },
                     callback: {
                         callback: function () {
-                            const oldPassword = changePasswordForm.querySelector('[name="oldPassword"]');
-                            const oldPasswordHelp = document.getElementById('oldPasswordHelp');
-                            oldPasswordHelp.innerHTML = '';
-                            oldPassword.classList.remove('is-invalid');
+                            const currentPassword = changePasswordForm.querySelector('[name="current-password"]');
+                            const currentPasswordHelp = document.getElementById('currentPasswordHelp');
+                            currentPasswordHelp.innerHTML = '';
+                            currentPassword.classList.remove('is-invalid');
                             return true;
                         },
                     }
@@ -549,8 +552,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                         icon: 'success',
                                         title: 'Success',
                                         text: data.message,
-                                        showConfirmButton: false,
-                                        timer: 1500
+                                        showConfirmButton: true,
+                                        // timer: 1500
                                     }).then(() => {
                                         changePasswordForm.reset();
                                         const newPassword = document.getElementById('inputNewPassword');
@@ -559,16 +562,17 @@ document.addEventListener('DOMContentLoaded', function () {
                                         passwordStrengthLevel.style.width = '0%';
                                         newPassword.classList.remove('is-valid');
                                         confirmPassword.classList.remove('is-valid');
+                                        window.location.reload();
                                     });
                                 });
                             } else {
                                 response.json().then(data => {
                                     console.log(data);
                                     if (data.wrongPass) {
-                                        const oldPassword = changePasswordForm.querySelector('[name="oldPassword"]');
-                                        const oldPasswordHelp = document.getElementById('oldPasswordHelp');
-                                        oldPasswordHelp.innerHTML = '<span style="color: red;">' + data.wrongPass + '</span>';
-                                        oldPassword.classList.add('is-invalid');
+                                        const currentPassword = changePasswordForm.querySelector('[name="current-password"]');
+                                        const currentPasswordHelp = document.getElementById('currentPasswordHelp');
+                                        currentPasswordHelp.innerHTML = '<span style="color: red;">' + data.wrongPass + '</span>';
+                                        currentPassword.classList.add('is-invalid');
                                     } else {
                                         Swal.fire({
                                             icon: 'warning',

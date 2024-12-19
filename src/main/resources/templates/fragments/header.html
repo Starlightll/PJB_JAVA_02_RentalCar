@@ -34,7 +34,7 @@
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <!-- Hiển thị Avatar -->
                             <img th:src="${session.user.getAvatar() != null ? '/' + session.user.getAvatar() : '/images/avt.png'}" class="rounded-circle"
-                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ffffff; padding: 0" alt="Avatar">
+                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ffffff; padding: 0" alt="Avatar" id="avatar">
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="menu-title">

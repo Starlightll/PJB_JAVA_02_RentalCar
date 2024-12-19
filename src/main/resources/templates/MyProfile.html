@@ -422,7 +422,7 @@
                                                          class="document-image">
                                                 </th:block>
                                             </div>
-                                            <th:block th:unless="${userInfo.getDrivingLicense() != null}">
+                                            <th:block th:if="${userInfo.getDrivingLicense() == null}">
                                                 <p id="drivingLicenseMessage">No license uploaded.</p>
                                             </th:block>
                                             <a>
@@ -436,7 +436,7 @@
                                     </div>
                                     <div class="d-flex justify-content-center mt-5">
                                         <button type="submit" class="save-btn">Save</button>
-                                        <button type="reset" class="reset-btn" id="resetForm">Reset</button>
+                                        <button type="button" class="reset-btn" id="resetForm">Reset</button>
                                     </div>
                                 </form>
                             </div>
@@ -447,13 +447,13 @@
                                     <div class="row mb-2 mt-2">
                                         <div class="form-group col-12 col-md-12">
                                             <div class="input">
-                                                <label for="inputOldpassword">Old password</label>
-                                                <input type="password" class="form-control" id="inputOldpassword"
-                                                       name="oldPassword"
+                                                <label for="current-password">Old password</label>
+                                                <input type="password" class="form-control" id="current-password"
+                                                       name="currentPassword"
                                                        maxlength="32"
                                                        aria-describedby="emailHelp">
                                             </div>
-                                            <small id="oldPasswordHelp" class="form-text text-muted">Enter your current password to confirm your identity.</small>
+                                            <small id="currentPasswordHelp" class="form-text text-muted">Enter your current password to confirm your identity.</small>
                                         </div>
                                         <div class="form-group col-12 col-md-6">
                                             <div class="input">

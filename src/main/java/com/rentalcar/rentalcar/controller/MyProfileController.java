@@ -95,7 +95,7 @@ public class MyProfileController {
 
     @PostMapping("/change-password")
     public ResponseEntity<Map<String, Object>> changePasswordV2(
-            @RequestParam(value = "oldPassword") String oldPassword,
+            @RequestParam(value = "currentPassword") String currentPassword,
             @RequestParam(value = "newPassword") String newPassword,
             HttpSession session) {
         Map<String, Object> response = new HashMap<>();
@@ -106,12 +106,12 @@ public class MyProfileController {
                 return ResponseEntity.badRequest().body(response);
             }
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String encodedPassword = passwordEncoder.encode(oldPassword);
-            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(currentPassword);
+            if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
                 response.put("wrongPass", "Old password is incorrect");
                 return ResponseEntity.badRequest().body(response);
             }
-            if(userService.changePassword(user, oldPassword, newPassword)){
+            if(userService.changePassword(user, currentPassword, newPassword)){
                 //Log out user after changing password
                 userService.logout(session);
                 response.put("success", "Password changed");
@@ -141,7 +141,7 @@ public class MyProfileController {
         User userInfo = userRepo.getUserById(user.getId());
 
         model.addAttribute("userInfo", userInfo);
-        return "MyProfile_ChangPasswordV2";
+        return "MyProfile";
     }
 
     @PostMapping("/update-avatar")
