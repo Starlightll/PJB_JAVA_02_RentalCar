@@ -15,6 +15,7 @@ import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.DriverDetail;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.mail.EmailService;
+import com.rentalcar.rentalcar.repository.BookingRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.PhoneNumberStandardService;
@@ -69,6 +70,9 @@ public class RentalCarController {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    BookingRepository bookingRepository;
 
     @GetMapping({"/customer/my-bookings", "/car-owner/my-bookings"})
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -148,7 +152,6 @@ public class RentalCarController {
         CarDto car = rentalCarService.getCarDetails(CarId);
         User userepo = userRepo.getUserById(user.getId());
 
-
         if(car.getStatusId() != 1) {
             return "redirect:/";
         }
@@ -157,6 +160,8 @@ public class RentalCarController {
         if(carAddress == null) {
             return "redirect:/";
         }
+
+        Long numberOfRide = bookingRepository.countCompletedBookingsByCarId(CarId);
 
         List<UserDto> driverList = getAllDriverAvailable();
         // Định dạng ngày giờ đầu vào và đầu ra
@@ -200,6 +205,7 @@ public class RentalCarController {
         model.addAttribute("car", car);
         model.addAttribute("address", address);
         model.addAttribute("user", user);
+        model.addAttribute("numberOfRide", numberOfRide);
         model.addAttribute("userRepo", userepo);//Lấy wallet
         model.addAttribute("carAddress", carAddress);//Lấy địa chỉ
         return "customer/booking";
