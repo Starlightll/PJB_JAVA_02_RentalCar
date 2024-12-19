@@ -422,7 +422,7 @@
                                                          class="document-image">
                                                 </th:block>
                                             </div>
-                                            <th:block th:unless="${userInfo.getDrivingLicense() != null}">
+                                            <th:block th:if="${userInfo.getDrivingLicense() == null}">
                                                 <p id="drivingLicenseMessage">No license uploaded.</p>
                                             </th:block>
                                             <a>
@@ -436,7 +436,7 @@
                                     </div>
                                     <div class="d-flex justify-content-center mt-5">
                                         <button type="submit" class="save-btn">Save</button>
-                                        <button type="reset" class="reset-btn" id="resetForm">Reset</button>
+                                        <button type="button" class="reset-btn" id="resetForm">Reset</button>
                                     </div>
                                 </form>
                             </div>
@@ -447,13 +447,13 @@
                                     <div class="row mb-2 mt-2">
                                         <div class="form-group col-12 col-md-12">
                                             <div class="input">
-                                                <label for="inputOldpassword">Old password</label>
-                                                <input type="password" class="form-control" id="inputOldpassword"
-                                                       name="oldPassword"
+                                                <label for="current-password">Old password</label>
+                                                <input type="password" class="form-control" id="current-password"
+                                                       name="currentPassword"
                                                        maxlength="32"
                                                        aria-describedby="emailHelp">
                                             </div>
-                                            <small id="oldPasswordHelp" class="form-text text-muted">Enter your current password to confirm your identity.</small>
+                                            <small id="currentPasswordHelp" class="form-text text-muted">Enter your current password to confirm your identity.</small>
                                         </div>
                                         <div class="form-group col-12 col-md-6">
                                             <div class="input">
@@ -664,252 +664,6 @@
             fontsize: '10px',
             width: '100%'
         });
-
-
-        // $(document).ready(function () {
-        //     $('#changePasswordForm').on('submit', function (event) {
-        //         event.preventDefault(); // Ngăn form submit
-        //
-        //         $.ajax({
-        //             type: 'POST',
-        //             url: '/change-password',
-        //             data: $(this).serialize(),
-        //             success: function (response) {
-        //                 // Xóa thông báo lỗi cũ nếu có
-        //                 $('.error').remove();
-        //                 if (response.success) {
-        //                     // Hiển thị thông báo thành công
-        //                     $('#success-text').text(response.success);
-        //                     $('#success-message').show();
-        //                 }
-        //             },
-        //             error: function (xhr) {
-        //                 const errors = xhr.responseJSON;
-        //                 $('.error').remove(); // Xóa thông báo lỗi cũ nếu có
-        //                 $('#success-message').hide();
-        //                 // Check for a general error message
-        //                 if (errors.general) {
-        //                     $('#general-error').text(errors.general).show();
-        //                 } else {
-        //                     $('#general-error').hide();
-        //                 }
-        //
-        //                 // Display errors from validation on each field
-        //                 for (const field in errors) {
-        //                     $(`#${field}`).after(`<span class="error" style="color: red">${errors[field]}</span>`);
-        //                 }
-        //             }
-        //         });
-        //     });
-        // });
-        //
-        //
-        // function openTab(evt, tabName) {
-        //     var i, tabcontent, tablinks;
-        //
-        //     // Ẩn tất cả nội dung tab
-        //     tabcontent = document.getElementsByClassName("tabcontent");
-        //     for (i = 0; i < tabcontent.length; i++) {
-        //         tabcontent[i].style.display = "none";
-        //     }
-        //
-        //     // Loại bỏ lớp active từ tất cả các nút tab
-        //     tablinks = document.getElementsByClassName("tablink");
-        //     for (i = 0; i < tablinks.length; i++) {
-        //         tablinks[i].className = tablinks[i].className.replace(" active", "");
-        //     }
-        //
-        //     // Hiển thị tab hiện tại và thêm lớp active cho nút đã mở tab
-        //     document.getElementById(tabName).style.display = "block";
-        //     evt.currentTarget.className += " active";
-        // }
-        //
-        // // Mở tab mặc định khi tải trang
-        // document.addEventListener("DOMContentLoaded", function () {
-        //     var activeTab = document.getElementById('activeTab').value || 'PersonalInfo';
-        //     console.log('Active Tab:', activeTab);
-        //     if (activeTab) {
-        //         document.querySelector(`button[onclick*='${activeTab}']`).click();
-        //     } else {
-        //         document.getElementById("defaultOpen").click();
-        //     }
-        // });
-        //
-        //
-        // // Fetch provinces and set default city
-        // async function fetchProvinces(defaultCity) {
-        //     const response = await fetch('https://provinces.open-api.vn/api/p/');
-        //     const provinces = await response.json();
-        //     const citySelect = document.getElementById('city');
-        //
-        //     provinces.forEach(province => {
-        //         const option = document.createElement('option');
-        //         option.value = province.code;
-        //         option.textContent = province.name;
-        //         if (province.code == defaultCity) {
-        //             option.selected = true;
-        //         }
-        //         citySelect.appendChild(option);
-        //     });
-        //
-        //     if (defaultCity) {
-        //         fetchDistricts(defaultCity, document.getElementById('district').getAttribute('data-default'));
-        //     }
-        // }
-        //
-        // // Fetch districts based on selected province and set default value
-        // async function fetchDistricts(provinceCode, defaultDistrict) {
-        //     const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-        //     const provinceData = await response.json();
-        //     const districtSelect = document.getElementById('district');
-        //
-        //     districtSelect.innerHTML = '<option value="">Select District</option>';
-        //     provinceData.districts.forEach(district => {
-        //         const option = document.createElement('option');
-        //         option.value = district.code;
-        //         option.textContent = district.name;
-        //         if (district.code == defaultDistrict) {
-        //             option.selected = true;
-        //         }
-        //         districtSelect.appendChild(option);
-        //     });
-        //
-        //     if (defaultDistrict) {
-        //         fetchWards(defaultDistrict, document.getElementById('ward').getAttribute('data-default'));
-        //     }
-        // }
-        //
-        // // Fetch wards based on selected district and set default value
-        // async function fetchWards(districtCode, defaultWard) {
-        //     const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
-        //     const districtData = await response.json();
-        //     const wardSelect = document.getElementById('ward');
-        //
-        //     wardSelect.innerHTML = '<option value="">Select Ward</option>';
-        //     districtData.wards.forEach(ward => {
-        //         const option = document.createElement('option');
-        //         option.value = ward.code;
-        //         option.textContent = ward.name;
-        //         if (ward.code == defaultWard) {
-        //             option.selected = true;
-        //         }
-        //         wardSelect.appendChild(option);
-        //     });
-        // }
-        //
-        // // Event listeners to load data on selection
-        // document.getElementById('city').addEventListener('change', function () {
-        //     fetchDistricts(this.value);
-        //     document.getElementById('ward').innerHTML = '<option value="">Select Ward</option>'; // Reset ward
-        //     document.getElementById('district').disabled = this.value === ""; // Enable/disable district based on city selection
-        //     document.getElementById('district').value = ""; // Reset district value
-        //     document.getElementById('ward').disabled = true; // Disable ward selection
-        // });
-        //
-        // document.getElementById('district').addEventListener('change', function () {
-        //     fetchWards(this.value);
-        //     document.getElementById('ward').disabled = this.value === ""; // Enable/disable ward based on district selection
-        // });
-        //
-        // // Check selections before submitting the form
-        // document.querySelector('form').addEventListener('submit', function (event) {
-        //     const citySelect = document.getElementById('city');
-        //     const districtSelect = document.getElementById('district');
-        //     const wardSelect = document.getElementById('ward');
-        //
-        //     if (!citySelect.value || !districtSelect.value || !wardSelect.value) {
-        //         event.preventDefault(); // Ngăn không cho gửi form
-        //         alert('Please select a valid Province, District, and Ward.'); // Hiển thị thông báo lỗi
-        //     }
-        // });
-        //
-        // // Load provinces on page load with default values
-        // document.addEventListener('DOMContentLoaded', function () {
-        //     const defaultCity = document.getElementById('city').getAttribute('data-default');
-        //     fetchProvinces(defaultCity);
-        // });
-        //
-        // function validateForm() {
-        //     let isValid = true;
-        //
-        //     // Full Name Validation
-        //     const fullName = document.getElementById("fullname").value;
-        //     if (fullName.trim() === "") {
-        //         document.getElementById("fullNameError").innerText = "Full name is required.";
-        //         isValid = false;
-        //     }else if (fullName.length > 50){
-        //         document.getElementById("fullNameError").innerText = "Full name must be less than 50 characters.";
-        //         isValid = false;
-        //     }
-        //
-        //     else {
-        //         document.getElementById("fullNameError").innerText = "";
-        //     }
-        //
-        //     // Date of Birth Validation
-        //     const dobValue = document.getElementById("dob").value;
-        //     if (dobValue === "") {
-        //         document.getElementById("dobError").innerText = "Date of birth is required.";
-        //         isValid = false;
-        //     } else {
-        //         const dob = new Date(dobValue);
-        //         const today = new Date();
-        //
-        //         // Check if DOB is in the past
-        //         if (dob >= today) {
-        //             document.getElementById("dobError").innerText = "Date of birth must be in the past.";
-        //             isValid = false;
-        //         } else {
-        //             // Calculate age and validate it is between 18 and 80
-        //             let age = today.getFullYear() - dob.getFullYear();
-        //             const monthDiff = today.getMonth() - dob.getMonth();
-        //             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-        //                 age--;
-        //             }
-        //             if (age < 18 || age > 80) {
-        //                 document.getElementById("dobError").innerText = "Age must be between 18 and 80 years.";
-        //                 isValid = false;
-        //             } else {
-        //                 document.getElementById("dobError").innerText = "";
-        //             }
-        //         }
-        //     }
-        //
-        //     // Phone Number Validation
-        //     const phone = document.getElementById("phone").value;
-        //     const phoneRegex = /^(0[0-9]{9}|\+84[0-9]{9})$/;
-        //     if (!phoneRegex.test(phone)) {
-        //         document.getElementById("phoneError").innerText = "Phone number must be 10 digits and start with '0'.";
-        //         isValid = false;
-        //     } else {
-        //         document.getElementById("phoneError").innerText = "";
-        //     }
-        //
-        //     // National ID Validation
-        //     const nationalId = document.getElementById("nationalID").value;
-        //     const nationalIdRegex = /^[0-9]{12}$/;  // Regular expression to ensure the ID only contains numbers
-        //     if (nationalId.trim() === "") {
-        //         document.getElementById("nationalIdError").innerText = "National ID is required.";
-        //         isValid = false;
-        //     } else if (!nationalIdRegex.test(nationalId)) {
-        //         document.getElementById("nationalIdError").innerText = "National ID must contain only 12 numbers.";
-        //         isValid = false;
-        //     } else {
-        //         document.getElementById("nationalIdError").innerText = "";
-        //     }
-        //
-        //
-        //     // Street Validation
-        //     const street = document.getElementById("street").value;
-        //     if (street.trim() === "") {
-        //         document.getElementById("streetError").innerText = "Street address is required.";
-        //         isValid = false;
-        //     } else {
-        //         document.getElementById("streetError").innerText = "";
-        //     }
-        //
-        //     return isValid; // Prevents form submission if any field is invalid
-        // }
 
 
     </script>

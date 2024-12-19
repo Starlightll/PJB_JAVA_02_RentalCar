@@ -84,8 +84,8 @@ public class WebConfiguration {
                                 "/send-activation",
                                 "/agree-term-service").permitAll()
                         .requestMatchers(
-                                "/myProfile",
-                                "/change-password").hasAnyAuthority("Customer", "Car Owner", "Admin")
+                                "/my-profile",
+                                "/change-password").hasAnyAuthority("Customer", "Car Owner", "Driver", "Admin")
                         .requestMatchers(
                                 "/homepage-customer").hasAnyAuthority("Customer", "Admin")
                         .requestMatchers(

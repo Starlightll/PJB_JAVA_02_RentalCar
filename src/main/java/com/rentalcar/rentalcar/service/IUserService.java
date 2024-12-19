@@ -22,6 +22,6 @@ public interface IUserService {
     void updateProfile(User user, MultipartFile drivingLicenseFile, HttpSession session);
     void setUserAvatar(User user, MultipartFile avatarFile);
     boolean checkNationalId(String nationalId);
-    boolean changePassword(User user, String oldPassword, String newPassword);
+    boolean changePassword(User user, String currentPassword, String newPassword);
     void logout(HttpSession session);
 }
