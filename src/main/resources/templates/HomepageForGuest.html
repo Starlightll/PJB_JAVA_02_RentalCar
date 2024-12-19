@@ -91,7 +91,7 @@
                                                th:href="@{'/customer/booking-car?CarId='+ ${car.getCarId()} + '&startDate='  + '&enDate='  + '&address=' + '&beforeNavigate=detailCar'}">Rent
                                                 now</a>
                                             <a class="btn btn-secondary py-2 ml-1"
-                                               th:href="@{/carDetail/{carId}(carId=${car.carId})}">Details</a>
+                                               th:href="@{/api/searchCar/{carId}(carId=${car.getCarId()})}">Details</a>
                                         </p>
                                     </div>
                                 </div>
