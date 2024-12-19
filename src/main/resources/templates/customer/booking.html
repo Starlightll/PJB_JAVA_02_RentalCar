@@ -939,10 +939,14 @@
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text ">Full name</span>
                                                                             </div>
-                                                                            <select class="custom-select"
+                                                                            <select class="custom-select" th:data-default="${users}"
                                                                                     onchange="fetchDriverDetailsAjax()"
                                                                                     id="fullNameDriver">
-                                                                                <option value="">Select</option>
+                                                                                <option value="">Select a driver</option>
+                                                                                <option th:each="driver : ${users}"
+                                                                                        th:value="${driver.getUserId()}"
+                                                                                        th:text="${driver.fullName + ' - ' + driver.phone}">
+                                                                                </option>
                                                                             </select>
                                                                         </div>
                                                                         <span id="fullNameErrorDriver"

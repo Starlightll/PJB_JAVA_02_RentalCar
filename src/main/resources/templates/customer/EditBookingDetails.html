@@ -1385,9 +1385,17 @@
                                                                         <span class="input-group-text "
                                                                         >Full Name</span>
                                                                 </div>
-                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver"
+                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver" th:data-default="${users}"
                                                                         th:attr="disabled=${ !isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
-                                                                    <option value="">Select</option>
+                                                                    <option value="">Select a driver</option>
+                                                                    <option th:each="driver : ${users}"
+                                                                            th:value="${driver.getUserId()}"
+                                                                            th:text="${driver.fullName + ' - ' + driver.phone}"
+                                                                            th:attr="value=${driver.getUserId()},
+                                                                            selected=${driver.getUserId() == booking.getDriverId()},
+                                                                            data-selected-driver=${driver.getUserId() == booking.getDriverId()}"
+                                                                          >
+                                                                    </option>
                                                                 </select>
                                                                 <input type="hidden" th:value="${booking.getDriverId()}" id="driverId">
                                                             </div>
@@ -3184,9 +3192,16 @@
         });
 
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUpdateDriverList()
+        document.addEventListener("DOMContentLoaded", function () {
+            const driverDropdown = document.getElementById("fullNameDriver");
+            const selectedOption = driverDropdown.querySelector('option[data-selected-driver="true"]');
+        console.log('aaaaa', selectedOption);
+            if (selectedOption) {
+                // Nếu có option được chọn, gọi hàm fetchDriverDetailsAjax
+                fetchDriverDetailsAjax();
+            }
         });
+
 
     </script>
 

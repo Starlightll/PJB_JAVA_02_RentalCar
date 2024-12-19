@@ -13,8 +13,8 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.email = :email")
     User getUserByEmail(@Param("email") String email);
 
-    @Query(value = "SELECT u.userId, u.fullName, u.dob, u.phone FROM Users u JOIN UserRole ur ON ur.userId = u.userId JOIN Role r ON r.RoleId = ur.roleId WHERE r.RoleId = 4 AND u.status = 'ACTIVATED';", nativeQuery = true)
-    List<Object[]> getAllDriverAvailable();
+    @Query(value = "SELECT u.userId, u.fullName, u.dob, u.phone FROM Users u JOIN UserRole ur ON ur.userId = u.userId JOIN Role r ON r.RoleId = ur.roleId WHERE r.RoleId = 4 AND u.status = 'ACTIVATED' AND u.city = :idLocation;", nativeQuery = true)
+    List<Object[]> getAllDriverAvailable(@Param("idLocation") Integer idLocation);
 
 
     @Query(value = "SELECT\n" +
@@ -30,6 +30,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
             "    [dbo].[Role] r ON r.RoleId = ur.roleId\n" +
             "WHERE\n" +
             "    r.RoleId = 4\n" +
+            "AND u.city = :idLocation" +
             "    AND u.status = 'ACTIVATED'\n" +
             "\n" +
             "UNION\n" +
@@ -50,8 +51,9 @@ public interface UserRepo extends JpaRepository<User, Long> {
             "WHERE\n" +
             "    r.RoleId = 4\n" +
             "    AND u.status = 'RENTED'\n" +
+            "AND u.city = :idLocation" +
             "    AND b.bookingId = :bookingId; \n", nativeQuery = true)
-    List<Object[]> getAllDriver(@Param("bookingId") Integer bookingId);
+    List<Object[]> getAllDriver(@Param("bookingId") Integer bookingId, @Param("idLocation") Integer idLocation);
 
     boolean existsByNationalId(String nationalId);
 
