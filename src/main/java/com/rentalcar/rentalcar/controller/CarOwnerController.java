@@ -1,8 +1,12 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rentalcar.rentalcar.dto.AdditionalFunctionDto;
 import com.rentalcar.rentalcar.dto.CarDto;
+import com.rentalcar.rentalcar.dto.CarDto1;
 import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.mappers.AdditionalFunctionMapper;
+import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
 import com.rentalcar.rentalcar.service.CarOwnerService;
@@ -33,6 +37,7 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.rentalcar.rentalcar.common.Regex.*;
 
@@ -68,6 +73,10 @@ public class CarOwnerController {
     private BookingRepository bookingRepository;
     @Autowired
     private TransactionRepository transactionRepository;
+    @Autowired
+    private CarMapper carMapper;
+    @Autowired
+    private AdditionalFunctionMapper additionalFunctionMapper;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -120,17 +129,14 @@ public class CarOwnerController {
             carPage = carRepository.findAllByCarStatus_StatusIdInAndUserId(statusIds, user.getId(), pageable);
         }
         List<Car> cars = carPage.getContent();
-        List<CarDto> carDTOs = new ArrayList<>();
-        for (Car car : cars) {
-            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
-            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
-        }
+        List<CarDto1> carDTO = cars.stream().map(carMapper::toDto).collect(Collectors.toList());
 
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         }
+
         model.addAttribute("carList", cars);
-        model.addAttribute("carDTOList", carDTOs);
+        model.addAttribute("carDTOs", carDTO);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", carPage.getTotalPages());
         model.addAttribute("sortBy", sortBy);
@@ -174,6 +180,7 @@ public class CarOwnerController {
     public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
         CarDto carRating = carOwnerService.getRatingByCarId(Long.valueOf(carId));
+        CarDto1 carDto = carMapper.toDto(car);
         // Check if car is not found or car is deleted
         if (car == null || car.getCarStatus().getStatusId() == 4) {
             return "redirect:/car-owner/my-cars";
@@ -182,11 +189,6 @@ public class CarOwnerController {
             if (!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())) {
                 throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
-            model.addAttribute("carRating", carRating.getAverageRating());
-            model.addAttribute("brands", brandRepository.findAll());
-            model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
-            model.addAttribute("carStatus", carStatusRepository.findAll());
-            model.addAttribute("car", car);
             DecimalFormat df = new DecimalFormat("#.##");
             String formattedBasePrice = df.format(car.getBasePrice() == null ? 0 : car.getBasePrice());
             String formattedCarPrice = df.format(car.getCarPrice() == null ? 0 : car.getCarPrice());
@@ -207,6 +209,12 @@ public class CarOwnerController {
             List<Integer> statusIds = List.of(1, 2, 3);
             List<CarStatus> carStatus = carStatusRepository.findCarStatusesByStatusIdIsIn(statusIds);
             model.addAttribute("carStatuses", carStatus);
+            model.addAttribute("carRating", carRating.getAverageRating());
+            model.addAttribute("brands", brandRepository.findAll());
+            Set<CarDto1.AdditionalFunctionDto> additionalFunctionSet = additionalFunctionRepository.findAll().stream().map(carMapper::toDto).collect(Collectors.toSet());
+            model.addAttribute("additionalFunction", additionalFunctionSet);
+            model.addAttribute("carStatus", carStatusRepository.findAll());
+            model.addAttribute("car", carDto);
 
             //Check car has requestChangeBasicInformation
             CarDraft carDraft = carDraftService.getDraftOfRequestChangeBasicInformation(car.getUser().getId(), carId, "Pending");
@@ -465,12 +473,8 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
-        List<CarDto> carDTOs = new ArrayList<>();
-        for (Car car : cars) {
-            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
-            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
-        }
-        model.addAttribute("carDTOList", carDTOs);
+        List<CarDto1> carDTOs = cars.stream().map(carMapper::toDto).collect(Collectors.toList());
+        model.addAttribute("carDTOs", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
@@ -541,12 +545,8 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
-        List<CarDto> carDTOs = new ArrayList<>();
-        for (Car car : cars) {
-            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
-            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
-        }
-        model.addAttribute("carDTOList", carDTOs);
+        List<CarDto1> carDTOs = cars.stream().map(carMapper::toDto).collect(Collectors.toList());
+        model.addAttribute("carDTOs", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
