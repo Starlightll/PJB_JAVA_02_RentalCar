@@ -468,12 +468,8 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
-        List<CarDto> carDTOs = new ArrayList<>();
-        for (Car car : cars) {
-            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
-            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
-        }
-        model.addAttribute("carDTOList", carDTOs);
+        List<CarDto1> carDTOs = cars.stream().map(carMapper::toDto).collect(Collectors.toList());
+        model.addAttribute("carDTOs", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
@@ -544,12 +540,8 @@ public class CarOwnerController {
             carPage = carRepository.findAllByUser(user, pageable);
         }
         List<Car> cars = carPage.getContent();
-        List<CarDto> carDTOs = new ArrayList<>();
-        for (Car car : cars) {
-            CarDto car_dto = carOwnerService.getRatingByCarId(Long.valueOf(car.getCarId()));
-            carDTOs.add(new CarDto(car, car_dto.getAverageRating()));
-        }
-        model.addAttribute("carDTOList", carDTOs);
+        List<CarDto1> carDTOs = cars.stream().map(carMapper::toDto).collect(Collectors.toList());
+        model.addAttribute("carDTOs", carDTOs);
         if (cars.isEmpty()) {
             model.addAttribute("message", "You have no cars");
         } else {
