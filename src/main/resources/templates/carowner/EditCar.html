@@ -1066,7 +1066,7 @@
                                                                     <input type="checkbox"
                                                                            th:value="${function.functionId}"
                                                                            name="additionalFunction"
-                                                                           th:checked="${car.getAdditionalFunctions() != null && car.additionalFunctions.contains(function)}">
+                                                                           th:checked="${car.getAdditionalFunctions() != null && car.getAdditionalFunctions().contains(function)}">
                                                                     <svg viewBox="0 0 21 21">
                                                                         <polyline
                                                                                 points="5 10.75 8.5 14.25 16 6"></polyline>
