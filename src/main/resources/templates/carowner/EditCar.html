@@ -594,7 +594,7 @@
                                                                 Ratings: </p>
                                                             <div class="rating">
                                                                 <div class="star"
-                                                                     th:style="'width:' + (${carRating} * 20) + '%'">
+                                                                     th:style="'width:' + (${car.getRateAverage()} / 5 * 100) + '%'">
 
                                                                     <i class="fa fa-star"></i>
                                                                     <i class="fa fa-star"></i>
@@ -615,7 +615,7 @@
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-3 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 No. of rides: </p>
-                                                            <p>0</p>
+                                                            <p th:text="${car.getBookedTimes()}">0</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center; white-space: nowrap;">
@@ -636,7 +636,7 @@
                                                             <p class="col-lg-9 col-md-7 col-sm-7 col-8 p-0"
                                                                id="previewLocation"
                                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${car.getAddress().getProvince()}">No</p>
+                                                               th:text="${car.getAddress().province() + ', ' + car.getAddress().district() }">No</p>
                                                         </div>
                                                         <th:block th:if="${car.getCarStatus().getStatusId()==8}">
                                                             <div class="col-lg-12 row"
@@ -995,8 +995,8 @@
                                                                        for="province">Province</label>
                                                             </div>
                                                             <select class="custom-select" id="province"
-                                                                    th:value="${car.getAddress().getProvince()}"
-                                                                    th:data-default="${car.getAddress().getProvinceId()}">
+                                                                    th:value="${car.getAddress().province()}"
+                                                                    th:data-default="${car.getAddress().provinceId()}">
                                                                 <option value="">Select</option>
                                                             </select>
                                                         </div>
@@ -1010,8 +1010,8 @@
                                                                        for="district">District</label>
                                                             </div>
                                                             <select class="custom-select" id="district"
-                                                                    th:value="${car.getAddress().getDistrict()}"
-                                                                    th:data-default="${car.getAddress().getDistrictId()}">
+                                                                    th:value="${car.getAddress().district()}"
+                                                                    th:data-default="${car.getAddress().districtId()}">
                                                                 <option value="">Select</option>
                                                             </select>
                                                         </div>
@@ -1025,8 +1025,8 @@
                                                                        for="ward">Ward</label>
                                                             </div>
                                                             <select class="custom-select" id="ward"
-                                                                    th:value="${car.getAddress().getWard()}"
-                                                                    th:data-default="${car.getAddress().getWardId()}">
+                                                                    th:value="${car.getAddress().ward()}"
+                                                                    th:data-default="${car.getAddress().wardId()}">
                                                                 <option value="">Select</option>
                                                             </select>
                                                         </div>
@@ -1042,7 +1042,7 @@
                                                                    aria-label="Sizing example input"
                                                                    aria-describedby="inputGroup-sizing-default"
                                                                    id="street"
-                                                                   th:value="${car.getAddress().getStreet()}">
+                                                                   th:value="${car.getAddress().street()}">
                                                         </div>
                                                         <a class="validate-msg">Invalid</a>
                                                     </div>
@@ -2018,7 +2018,10 @@
         const ward = document.getElementById('district');
         const previewLocation = document.getElementById('previewLocation');
         ward.addEventListener('change', function () {
-            previewLocation.textContent = province.options[province.selectedIndex].text + ', ' + district.options[district.selectedIndex].text + ', ' + ward.options[ward.selectedIndex].text;
+            previewLocation.textContent =
+                province.options[province.selectedIndex].text + ', '
+                + district.options[district.selectedIndex].text + ', '
+                // + ward.options[ward.selectedIndex].text;
         });
 
 
