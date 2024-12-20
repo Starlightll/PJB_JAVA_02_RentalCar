@@ -1,9 +1,11 @@
 package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rentalcar.rentalcar.dto.AdditionalFunctionDto;
 import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.dto.CarDto1;
 import com.rentalcar.rentalcar.entity.*;
+import com.rentalcar.rentalcar.mappers.AdditionalFunctionMapper;
 import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
@@ -73,6 +75,8 @@ public class CarOwnerController {
     private TransactionRepository transactionRepository;
     @Autowired
     private CarMapper carMapper;
+    @Autowired
+    private AdditionalFunctionMapper additionalFunctionMapper;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -207,7 +211,8 @@ public class CarOwnerController {
             model.addAttribute("carStatuses", carStatus);
             model.addAttribute("carRating", carRating.getAverageRating());
             model.addAttribute("brands", brandRepository.findAll());
-            model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
+            Set<CarDto1.AdditionalFunctionDto> additionalFunctionSet = additionalFunctionRepository.findAll().stream().map(carMapper::toDto).collect(Collectors.toSet());
+            model.addAttribute("additionalFunction", additionalFunctionSet);
             model.addAttribute("carStatus", carStatusRepository.findAll());
             model.addAttribute("car", carDto);
 
