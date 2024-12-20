@@ -176,6 +176,7 @@ public class CarOwnerController {
     public String editCar(@PathVariable("carId") Integer carId, Model model, HttpSession session) {
         Car car = carRepository.getCarByCarId(carId);
         CarDto carRating = carOwnerService.getRatingByCarId(Long.valueOf(carId));
+        CarDto1 carDto = carMapper.toDto(car);
         // Check if car is not found or car is deleted
         if (car == null || car.getCarStatus().getStatusId() == 4) {
             return "redirect:/car-owner/my-cars";
@@ -184,11 +185,6 @@ public class CarOwnerController {
             if (!Objects.equals(car.getUser().getId(), ((User) session.getAttribute("user")).getId())) {
                 throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
-            model.addAttribute("carRating", carRating.getAverageRating());
-            model.addAttribute("brands", brandRepository.findAll());
-            model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
-            model.addAttribute("carStatus", carStatusRepository.findAll());
-            model.addAttribute("car", car);
             DecimalFormat df = new DecimalFormat("#.##");
             String formattedBasePrice = df.format(car.getBasePrice() == null ? 0 : car.getBasePrice());
             String formattedCarPrice = df.format(car.getCarPrice() == null ? 0 : car.getCarPrice());
@@ -209,6 +205,11 @@ public class CarOwnerController {
             List<Integer> statusIds = List.of(1, 2, 3);
             List<CarStatus> carStatus = carStatusRepository.findCarStatusesByStatusIdIsIn(statusIds);
             model.addAttribute("carStatuses", carStatus);
+            model.addAttribute("carRating", carRating.getAverageRating());
+            model.addAttribute("brands", brandRepository.findAll());
+            model.addAttribute("additionalFunction", additionalFunctionRepository.findAll());
+            model.addAttribute("carStatus", carStatusRepository.findAll());
+            model.addAttribute("car", carDto);
 
             //Check car has requestChangeBasicInformation
             CarDraft carDraft = carDraftService.getDraftOfRequestChangeBasicInformation(car.getUser().getId(), carId, "Pending");
