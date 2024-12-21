@@ -56,13 +56,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public void saveTransactionHistory(User sender, User receiver, TransactionType senderType, TransactionType receiverType, BigDecimal amount, String description) {
+    public void saveTransactionHistory(User sender, User receiver, String senderType, String receiverType, BigDecimal amount, String description) {
         //Save transaction for sender
         Transaction senderTransaction = new Transaction();
         senderTransaction.setUser(sender);
         senderTransaction.setAmount(amount);
         senderTransaction.setTransactionDate(LocalDateTime.now());
-        senderTransaction.setTransactionType("TRANSFER");
+        senderTransaction.setTransactionType(senderType);
         transactionRepository.save(senderTransaction);
 
         //Save transaction for receiver
@@ -70,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
         receiverTransaction.setUser(receiver);
         receiverTransaction.setAmount(amount);
         receiverTransaction.setTransactionDate(LocalDateTime.now());
-        receiverTransaction.setTransactionType("TRANSFER");
+        receiverTransaction.setTransactionType(receiverType);
         transactionRepository.save(receiverTransaction);
     }
 }

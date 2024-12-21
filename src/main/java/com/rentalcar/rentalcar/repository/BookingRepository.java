@@ -76,4 +76,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countCompletedBookingsByCarId(@Param("carId") Integer carId);
 
 
+    Booking findBookingByCar_CarIdAndUser_IdAndBookingStatus_BookingStatusId(Integer car_carId, Long user_id, Long bookingStatus_bookingStatusId);
+
+
 }

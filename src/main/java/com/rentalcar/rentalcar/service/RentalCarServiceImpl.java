@@ -7,13 +7,13 @@ import com.rentalcar.rentalcar.dto.BookingDto;
 import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.dto.MyBookingDto;
 import com.rentalcar.rentalcar.entity.*;
-import com.rentalcar.rentalcar.exception.UserException;
 import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -23,8 +23,6 @@ import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.rentalcar.rentalcar.common.Constants.FINE_COST;
@@ -74,6 +72,9 @@ public class RentalCarServiceImpl implements RentalCarService {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private MyWalletService myWalletService;
+
     @Override
     public Page<MyBookingDto> getBookings(int page, int size, String sortBy, String order, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -108,14 +109,14 @@ public class RentalCarServiceImpl implements RentalCarService {
             double fineLateTime = 0; //phí phạt
             double totalMoney = 0; //tiền phải thánh toán
             double returnDeposit = 0; //tiền phải hoàn trả
-            double fineLateTimePerDay =baseprice +((baseprice * FINE_COST) / 100); //tiền phạt trên ngày
+            double fineLateTimePerDay = baseprice + ((baseprice * FINE_COST) / 100); //tiền phạt trên ngày
             double fineLateTimePerHour = fineLateTimePerDay / 24; //tiền phat trên giờ
             double salaryDriver = 0;
             Long driverId = result[17] != null ? Long.valueOf((Integer) result[17]) : null;
 
             Map<String, Long> map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, LocalDateTime.now());
             if (bookingStatus.equalsIgnoreCase("Cancelled") || bookingStatus.equalsIgnoreCase("Completed") ||
-                bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
+                    bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
 
                 map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
 //            tính late date
@@ -124,7 +125,7 @@ public class RentalCarServiceImpl implements RentalCarService {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
                     fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay, fineLateTimePerHour);
                     Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
-                    totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,baseprice,  hourlyRate);
+                    totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual, baseprice, hourlyRate);
                 }
             } else if (LocalDateTime.now().isAfter(endDate)) {
                 Map<String, Long> numberOfDayDb = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
@@ -132,11 +133,11 @@ public class RentalCarServiceImpl implements RentalCarService {
                 if (CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
                     Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
-                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
+                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay, fineLateTimePerHour);// tổng số tiền phạt
                 }
-            }else if( bookingStatus.equalsIgnoreCase("In-Progress") ||
-                    bookingStatus.equalsIgnoreCase("Pending return")){//Lấy động dữ liệu theo thời gian thực khi đang trong quá trình dùng xe
-                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,baseprice,  hourlyRate);
+            } else if (bookingStatus.equalsIgnoreCase("In-Progress") ||
+                    bookingStatus.equalsIgnoreCase("Pending return")) {//Lấy động dữ liệu theo thời gian thực khi đang trong quá trình dùng xe
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, baseprice, hourlyRate);
 
             } else {
                 map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
@@ -147,12 +148,12 @@ public class RentalCarServiceImpl implements RentalCarService {
             totalMoney = map_amount.get("totalMoney");
             returnDeposit = map_amount.get("returnDeposit");
             String str_numberOfDays = map_numberOfDays.get("days") + " d " + map_numberOfDays.get("hours") + " h ";
-            if(actualEndDate.isAfter(endDate) || LocalDateTime.now().isAfter(endDate)) {
+            if (actualEndDate.isAfter(endDate) || LocalDateTime.now().isAfter(endDate)) {
                 totalPrice += fineLateTime;
             }
             User driver = userRepository.getUserById(driverId);
-            if(driver != null) {
-                salaryDriver = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,driver.getSalaryDriver(),driver.getSalaryDriver() / 24);
+            if (driver != null) {
+                salaryDriver = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, driver.getSalaryDriver(), driver.getSalaryDriver() / 24);
             }
             double totalPayment = salaryDriver + totalMoney;
 
@@ -279,6 +280,27 @@ public class RentalCarServiceImpl implements RentalCarService {
         }
 
         return false;
+    }
+
+    @Override
+    @Transactional
+    public void cancelBooking(Booking booking){
+        if(booking.getBookingStatus().getBookingStatusId() == 1){
+            BookingStatus bookingStatus = bookingStatusRepository.findById(6L).orElseThrow(() -> new RuntimeException("BookingStatus not found"));
+            booking.setBookingStatus(bookingStatus);
+            booking.setLastModified(new Date());
+            bookingRepository.save(booking);
+            BigDecimal deposit = BigDecimal.valueOf(booking.getDeposit());
+            myWalletService.transfer(1L, booking.getUser().getId(), TransactionType.REFUND_DEPOSIT, TransactionType.RECEIVE_DEPOSIT, deposit, "Admin refund deposit");
+        }
+        if(booking.getBookingStatus().getBookingStatusId() == 2){
+            BookingStatus bookingStatus = bookingStatusRepository.findById(7L).orElseThrow(() -> new RuntimeException("BookingStatus not found"));
+            booking.setBookingStatus(bookingStatus);
+            booking.setLastModified(new Date());
+            bookingRepository.save(booking);
+            BigDecimal deposit = BigDecimal.valueOf(booking.getDeposit());
+            myWalletService.transfer(1L, booking.getCarOwner().getId(), TransactionType.REFUND_DEPOSIT, TransactionType.RECEIVE_DEPOSIT, deposit, "Admin refund deposit");
+        }
     }
 
     @Override
@@ -426,6 +448,10 @@ public class RentalCarServiceImpl implements RentalCarService {
             booking.setActualEndDate(bookingDto.getReturnDate());
             booking.setTotalPrice(totalPrice);
             booking.setUser(user);
+            booking.setCar(car);
+            booking.setCarOwner(carOwner);
+            booking.setDeposit(Double.parseDouble(bookingDto.getDeposit()));
+
             // Cập nhật BookingStatus
             BookingStatus bookingStatus = bookingStatusRepository.findById(1L) // 1L là ID của status mà bạn muốn
                     .orElseThrow(() -> new RuntimeException("BookingStatus not found"));
@@ -443,7 +469,8 @@ public class RentalCarServiceImpl implements RentalCarService {
             bookingCar.setCarId(Long.valueOf(bookingDto.getCarID()));
             bookingCarRepository.save(bookingCar);
 
-            calculateAndDeductDeposit(booking, customer, carOwner, myWallet, deposit, session);  //XỬ LÝ TIỀN TRONG CỌC
+//            calculateAndDeductDeposit(booking, customer, carOwner, myWallet, deposit, session);  //XỬ LÝ TIỀN TRONG CỌC
+            payDeposit(customer.getId(), 1L, deposit, "None");
 
 
             //Lưu thông tin người thuê xe
@@ -474,12 +501,12 @@ public class RentalCarServiceImpl implements RentalCarService {
                 }
             }
 
-            //THAY ĐỔI TRẠNG THÁI CHO XE
-            CarStatus notAvailableStatus = carStatusRepository.findById(14)
-                    .orElseThrow(() -> new RuntimeException("Status not found"));
-            car.setCarStatus(notAvailableStatus);
-            car.setLastModified(new Date());
-            carRepository.save(car);
+//            //THAY ĐỔI TRẠNG THÁI CHO XE
+//            CarStatus notAvailableStatus = carStatusRepository.findById(14)
+//                    .orElseThrow(() -> new RuntimeException("Status not found"));
+//            car.setCarStatus(notAvailableStatus);
+//            car.setLastModified(new Date());
+//            carRepository.save(car);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -492,6 +519,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         emailService.sendBookingConfirmationWithDeposit(carOwner, booking, car, Double.parseDouble(bookingDto.getDeposit()));
         return booking;
     }
+
 
     @Override
     public boolean confirmDepositCar(Long carId, HttpSession session) {
@@ -1007,8 +1035,8 @@ public class RentalCarServiceImpl implements RentalCarService {
         LocalDateTime startOfDay = targetDate.atStartOfDay();
         LocalDateTime endOfDay = targetDate.atTime(23, 59, 59);
         List<MyBookingDto> bookingDtos = new ArrayList<>();
-        List<Object[]> results  = bookingRepository.findByEndDateBetween(startOfDay,endOfDay);
-        if(results  == null || results.isEmpty()){
+        List<Object[]> results = bookingRepository.findByEndDateBetween(startOfDay, endOfDay);
+        if (results == null || results.isEmpty()) {
             throw new RuntimeException("No bookings found within the given date range.");
         }
 
@@ -1089,35 +1117,45 @@ public class RentalCarServiceImpl implements RentalCarService {
 
     }
 
-    public Map<String, Double> calculateAmountToPay(LocalDateTime startDate, LocalDateTime endDate,  double totalPrice, double deposit, double fineLateTime) {
+    public Map<String, Double> calculateAmountToPay(LocalDateTime startDate, LocalDateTime endDate, double totalPrice, double deposit, double fineLateTime) {
         Map<String, Double> result = new HashMap<>();
         result.put("totalMoney", 0D);
         result.put("returnDeposit", 0D);
 
-        if(LocalDateTime.now().isBefore(startDate) || LocalDateTime.now().isBefore(endDate)) {
-            if(totalPrice > deposit) {
+        if (LocalDateTime.now().isBefore(startDate) || LocalDateTime.now().isBefore(endDate)) {
+            if (totalPrice > deposit) {
                 result.put("totalMoney", totalPrice - deposit);
                 return result;
             }
-            result.put("returnDeposit",  deposit - totalPrice);
+            result.put("returnDeposit", deposit - totalPrice);
             return result;
         }
-        if(LocalDateTime.now().isAfter(endDate)) {
-            if(totalPrice > deposit) {
+        if (LocalDateTime.now().isAfter(endDate)) {
+            if (totalPrice > deposit) {
                 result.put("totalMoney", (totalPrice - deposit) + fineLateTime);
                 return result;
             }
 
-            double total =  totalPrice + fineLateTime; // số tiền khi tiền phạt mà cộng với total
-            if(total > deposit) {
+            double total = totalPrice + fineLateTime; // số tiền khi tiền phạt mà cộng với total
+            if (total > deposit) {
                 result.put("totalMoney", total - deposit);
                 return result;
             }
-            result.put("returnDeposit",  deposit - total);
+            result.put("returnDeposit", deposit - total);
             return result;
         }
 
         return result;
+    }
+
+    private void payDeposit(
+            Long senderId,
+            Long receiverId,
+            BigDecimal amount,
+            String description) {
+        String senderType = TransactionType.PAY_DEPOSIT;
+        String receiverType = TransactionType.RECEIVE_DEPOSIT;
+        myWalletService.transfer(senderId, receiverId, senderType, receiverType, amount, description);
     }
 }
 

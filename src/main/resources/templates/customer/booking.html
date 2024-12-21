@@ -571,6 +571,7 @@
                                     <div class="row" id="previewSection">
                                         <div class="col-12 col-sm-12 col-md-6 col-lg-6 p-3">
                                             <th:block th:if="${car != null}" th:object="${car}">
+                                                <input type="hidden" id="carDeposit" th:value="${car.getDeposit()}">
                                             </th:block>
                                             <th:block>
                                                 <div class="col-lg-12 row p-0 m-auto">
@@ -705,22 +706,27 @@
                                                 <tbody>
                                                 <tr>
                                                     <th scope="row">1</th>
-                                                    <td>Number of days</td>
+                                                    <td>Rental Period</td>
                                                     <td id="numberOfDays">0</td> <!-- Số ngày thuê -->
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">2</th>
-                                                    <td>Price per day</td>
+                                                    <td>Cost per day</td>
                                                     <td th:text="${#numbers.formatDecimal(car.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">3</th>
+                                                    <td>Cost per hour</td>
+                                                    <td th:text="${#numbers.formatDecimal(car.getBasePrice()/24, 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">5</th>
                                                     <td>Deposit</td>
                                                     <td id="deposite"
                                                         th:text="${#numbers.formatDecimal(car.getDeposit(), 0, 'COMMA', 0, 'POINT')} + 'VND'"></td>
                                                 </tr>
                                                 <tr>
-                                                    <th scope="row">4</th>
+                                                    <th scope="row">5</th>
                                                     <td>Total</td>
                                                     <td id="totalPrice" style="color: #00ff86">0</td>
                                                 </tr>
@@ -1741,11 +1747,13 @@
         }
 
 
+
         function saveChanges() {
             // Lấy giá trị từ các input
             const newPickupLocation = document.getElementById('editPickupLocation').value;
             const newPickupDate = document.getElementById('editPickupDate').value;
             const newReturnDate = document.getElementById('editReturnDate').value;
+            const carDeposit = document.getElementById('carDeposit').value;
 
             // Kiểm tra tính hợp lệ của dữ liệu
             if (!newPickupLocation || !newPickupDate || !newReturnDate) {
@@ -1816,7 +1824,7 @@
 
             // Tính tiền theo ngày và giờ
             const pricePerHour = car.basePrice / 24;
-            const totalPrice = (days * car.basePrice) + (hours * pricePerHour);
+            const totalPrice = (days * car.basePrice) + (hours * pricePerHour) + parseInt(carDeposit);
 
             // Định dạng số để không có phần thập phân
             document.getElementById('totalPrice').innerText = totalPrice.toLocaleString('en-US', {
@@ -1906,7 +1914,7 @@
 
             // Tính tiền theo ngày và giờ
             const pricePerHour = car.basePrice / 24;
-            const totalPrice = (days * car.basePrice) + (hours * pricePerHour);
+            const totalPrice = (days * car.basePrice) + (hours * pricePerHour) + parseInt(carDeposit);
 
             // Định dạng số để không có phần thập phân
             document.getElementById('totalPrice').innerText = totalPrice.toLocaleString('en-US', {

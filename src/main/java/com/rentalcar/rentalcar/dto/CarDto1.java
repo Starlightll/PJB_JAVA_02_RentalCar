@@ -45,6 +45,7 @@ public class CarDto1 implements Serializable {
     CarAddressDto address;
     Double rateAverage;
     Long bookedTimes;
+    Integer currentStatus;
     /**
      * DTO for {@link com.rentalcar.rentalcar.entity.User}
      */

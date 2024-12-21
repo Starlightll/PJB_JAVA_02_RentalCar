@@ -2,10 +2,12 @@ package com.rentalcar.rentalcar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentalcar.rentalcar.dto.AdditionalFunctionDto;
+import com.rentalcar.rentalcar.dto.BookingDto1;
 import com.rentalcar.rentalcar.dto.CarDto;
 import com.rentalcar.rentalcar.dto.CarDto1;
 import com.rentalcar.rentalcar.entity.*;
 import com.rentalcar.rentalcar.mappers.AdditionalFunctionMapper;
+import com.rentalcar.rentalcar.mappers.BookingMapper;
 import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.*;
 import com.rentalcar.rentalcar.service.CarDraftService;
@@ -77,6 +79,8 @@ public class CarOwnerController {
     private CarMapper carMapper;
     @Autowired
     private AdditionalFunctionMapper additionalFunctionMapper;
+    @Autowired
+    private BookingMapper bookingMapper;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -731,6 +735,26 @@ public class CarOwnerController {
         return "carowner/revenue";
     }
 
+
+    //API
+
+//    @GetMapping("/api/car-owner/confirm-booking")
+//    public ResponseEntity<Map<String, Object>> confirmBooking(@RequestParam("carId") Long carId,
+//                                           HttpSession session) {
+//
+//    }
+
+    @GetMapping("/api/booking-list")
+    public ResponseEntity<List<BookingDto1>> bookingList(
+            @RequestParam("carId") Integer carId,
+            HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Car car = carRepository.getCarByCarId(carId);
+        if(car == null || !Objects.equals(car.getUser().getId(), user.getId())) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+        return ResponseEntity.ok(carRepository.findBookingByCarIdAndBookingStatusId(carId, 1).stream().map(bookingMapper::toDto).collect(Collectors.toList()));
+    }
 
     private BigDecimal calculateTotalRevenue(Map<String, Double> revenue) {
         return revenue.values().stream()

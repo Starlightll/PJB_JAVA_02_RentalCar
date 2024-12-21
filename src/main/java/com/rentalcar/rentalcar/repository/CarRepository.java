@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.repository;
 
+import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.User;
 import org.springframework.data.domain.Page;
@@ -87,5 +88,9 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     //Get number of completed bookings by carId
     @Query("SELECT COUNT(b) FROM Booking b JOIN b.bookingCars bc WHERE b.bookingStatus.name = 'Completed' AND bc.car.carId = :carId")
     long countCompletedBookingsByCarId(@Param("carId") Integer carId);
+
+    //Find booking by carId and bookingStatusId
+    @Query("SELECT b FROM Booking b JOIN b.bookingCars bc WHERE bc.car.carId = :carId AND b.bookingStatus.bookingStatusId = :bookingStatusId")
+    List<Booking> findBookingByCarIdAndBookingStatusId(@Param("carId") Integer carId, @Param("bookingStatusId") Integer bookingStatusId);
 
 }

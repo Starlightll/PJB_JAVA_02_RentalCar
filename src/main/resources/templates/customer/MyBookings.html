@@ -220,43 +220,50 @@
                 <span>You have <span th:text="${onGoingBookings}">0</span> on-going bookings</span>
                 <div class="input-group input-group-sm col-lg-4 col-md-4 col-sm-6 col-6 d-flex align-items-center">
                     <th:block th:if="${isCustomer}">
-                    <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
-                        <option value="newestToLatest"
-                                th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to
-                            Latest
-                        </option>
-                        <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
-                            Latest to Newest
-                        </option>
-                        <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
-                        <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
-                        <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price:
-                            Low to High
-                        </option>
-                        <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price:
-                            High to Low
-                        </option>
-                    </select>
+                        <select class="custom-select" id="sortBy" name="sortBy" onchange="navigateToFilteredCars()">
+                            <option value="newestToLatest"
+                                    th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">
+                                Newest to
+                                Latest
+                            </option>
+                            <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
+                                Latest to Newest
+                            </option>
+                            <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
+                            <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
+                            <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">
+                                Price:
+                                Low to High
+                            </option>
+                            <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">
+                                Price:
+                                High to Low
+                            </option>
+                        </select>
                     </th:block>
 
                     <th:block th:if="${!isCustomer}">
-                    <select class="custom-select" id="sortByCarOwner" name="sortBy" onchange="navigateToFilteredCarOwner()">
-                        <option value="newestToLatest"
-                                th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">Newest to
-                            Latest
-                        </option>
-                        <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
-                            Latest to Newest
-                        </option>
-                        <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
-                        <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
-                        <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">Price:
-                            Low to High
-                        </option>
-                        <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">Price:
-                            High to Low
-                        </option>
-                    </select>
+                        <select class="custom-select" id="sortByCarOwner" name="sortBy"
+                                onchange="navigateToFilteredCarOwner()">
+                            <option value="newestToLatest"
+                                    th:selected="${sortBy == null || sortBy == 'lastModified' && order == 'desc'}">
+                                Newest to
+                                Latest
+                            </option>
+                            <option value="latestToNewest" th:selected="${sortBy == 'lastModified' && order == 'asc'}">
+                                Latest to Newest
+                            </option>
+                            <!--                    <option value="available" th:selected="${sortBy == 'available'}">Available</option>-->
+                            <!--                    <option value="booked" th:selected="${sortBy == 'booked'}">Booked</option>-->
+                            <option value="priceLowToHigh" th:selected="${sortBy == 'basePrice' && order == 'asc'}">
+                                Price:
+                                Low to High
+                            </option>
+                            <option value="priceHighToLow" th:selected="${sortBy == 'basePrice' && order == 'desc'}">
+                                Price:
+                                High to Low
+                            </option>
+                        </select>
                     </th:block>
                 </div>
                 <!-- Modal -->
@@ -372,14 +379,14 @@
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
 
 
-                                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
                                                             </div>
                                                             <p th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
 
-<!--                                                        Ngược lại-->
+                                                        <!--                                                        Ngược lại-->
                                                         <div class="col-lg-12 row mt-2"
                                                              th:if="${(#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'))  or (booking.bookingStatus == 'In-Progress'
@@ -388,7 +395,8 @@
                                                             <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
                                                             </div>
-                                                            <p id="actualDate" th:text="${#temporals.format(timeNow, 'dd/MM/yyyy HH:mm')}"></p>
+                                                            <p id="actualDate"
+                                                               th:text="${#temporals.format(timeNow, 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
 
@@ -412,9 +420,17 @@
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Base price: </p>
+                                                                Cost per day: </p>
                                                             <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
+                                                        </div>
+
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Cost per hour: </p>
+                                                            <p th:text="${#numbers.formatDecimal(booking.basePrice/24, 0, 'COMMA', 0, 'POINT')} + 'VND/Hour'"
+                                                               id="previewCostPerHour">0k/Hour</p>
                                                         </div>
 
                                                         <div class="col-lg-12 row"
@@ -439,17 +455,17 @@
                                                                 No</p>
                                                         </div>
 
-                                                        <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center"
-                                                             th:if="${booking.getReturnDeposit() > 0}">
-                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Return Deposit: </p>
-                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="returnDeposit"
-                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
-                                                                No</p>
-                                                        </div>
+                                                        <!--                                                        <div class="col-lg-12 row"-->
+                                                        <!--                                                             style="display: flex; align-items: center"-->
+                                                        <!--                                                             th:if="${booking.getReturnDeposit() > 0}">-->
+                                                        <!--                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+                                                        <!--                                                                Return Deposit: </p>-->
+                                                        <!--                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"-->
+                                                        <!--                                                               id="returnDeposit"-->
+                                                        <!--                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
+                                                        <!--                                                               th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">-->
+                                                        <!--                                                                No</p>-->
+                                                        <!--                                                        </div>-->
 
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
@@ -513,11 +529,12 @@
 
                                                         <!-- Cancel Booking button: visible only if status is Confirmed or Pending deposit and not in the excluded statuses -->
                                                         <a style="background: #e82b46 !important;"
-                                                           th:if="${(booking.bookingStatus == 'Confirmed' or booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Stopped')
-                                                        and booking.bookingStatus != 'Pending payment' and booking.bookingStatus != 'Cancelled' and booking.bookingStatus != 'Completed' and booking.bookingStatus != 'In-Progress'}"
-                                                           th:id="'cancel-booking-btn-' + ${iterStat.index}"
+                                                           th:if="${(booking.bookingStatus == 'Confirmed' or booking.bookingStatus == 'Pending deposit' or booking.bookingStatus == 'Stopped')}"
+                                                           id="cancel-booking-btn"
+                                                           th:onclick="'cancelBooking(' + ${booking.bookingId} + ')'"
                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center">Cancel
-                                                            Booking</a>
+                                                            Booking
+                                                        </a>
 
 
                                                         <!-- Request Return Car button: visible only if status is In-Progress -->
@@ -525,7 +542,8 @@
                                                            th:if="${booking.bookingStatus == 'In-Progress'}"
                                                            th:id="'return-booking-btn-' + ${iterStat.index}"
                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                           th:onclick="'returnCar(' + ${booking.bookingId} + ')'">Request Return
+                                                           th:onclick="'returnCar(' + ${booking.bookingId} + ')'">Request
+                                                            Return
                                                             Car</a>
 
 
@@ -544,11 +562,6 @@
                                                             Details
                                                         </a>
                                                     </th:block>
-
-
-
-
-
 
 
                                                 </div>
@@ -580,103 +593,105 @@
                         </div>
                     </div>
                     <th:block th:if="${isCustomer}">
-                    <nav th:if="${bookingList != null}"
-                         class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
-                         aria-label="Page navigation example" style="column-gap: 10px">
-                        <ul class="pagination m-0">
-                            <!-- Previous button - note currentPage is already 1-based -->
-                            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/customer/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                                   th:classappend="${currentPage <= 1} ? 'disabled'"
-                                   aria-label="Previous">
-                                    <span aria-hidden="true">Previous</span>
-                                </a>
-                            </li>
+                        <nav th:if="${bookingList != null}"
+                             class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
+                             aria-label="Page navigation example" style="column-gap: 10px">
+                            <ul class="pagination m-0">
+                                <!-- Previous button - note currentPage is already 1-based -->
+                                <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/customer/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                       th:classappend="${currentPage <= 1} ? 'disabled'"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">Previous</span>
+                                    </a>
+                                </li>
 
-                            <!-- Page numbers -->
-                            <li class="page-item"
-                                th:each="i : ${#numbers.sequence(1, totalPages)}"
-                                th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link"
-                                   th:href="@{/customer/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                                   th:text="${i}"></a>
-                            </li>
+                                <!-- Page numbers -->
+                                <li class="page-item"
+                                    th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                    th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link"
+                                       th:href="@{/customer/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                       th:text="${i}"></a>
+                                </li>
 
-                            <!-- Next button -->
-                            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/customer/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                                   th:classappend="${currentPage >= totalPages} ? 'disabled'"
-                                   aria-label="Next">
-                                    <span aria-hidden="true">Next</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="input-group input-group-sm" style="width: 100px">
-                            <div class="input-group-prepend" style="max-height: 31px">
-                                <label class="input-group-text"
-                                       for="pageSize">Size</label>
+                                <!-- Next button -->
+                                <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/customer/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                       th:classappend="${currentPage >= totalPages} ? 'disabled'"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">Next</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="input-group input-group-sm" style="width: 100px">
+                                <div class="input-group-prepend" style="max-height: 31px">
+                                    <label class="input-group-text"
+                                           for="pageSize">Size</label>
+                                </div>
+                                <select class="custom-select" id="pageSize" name="size"
+                                        onchange="navigateToFilteredCars()">
+                                    <option value="5" th:selected="${size == null || size == 5}">5</option>
+                                    <option value="10" th:selected="${size == 10}">10</option>
+                                    <option value="15" th:selected="${size == 15}">15</option>
+                                    <option value="20" th:selected="${size == 20}">20</option>
+                                    <option value="30" th:selected="${size == 30}">30</option>
+                                </select>
                             </div>
-                            <select class="custom-select" id="pageSize" name="size" onchange="navigateToFilteredCars()">
-                                <option value="5" th:selected="${size == null || size == 5}">5</option>
-                                <option value="10" th:selected="${size == 10}">10</option>
-                                <option value="15" th:selected="${size == 15}">15</option>
-                                <option value="20" th:selected="${size == 20}">20</option>
-                                <option value="30" th:selected="${size == 30}">30</option>
-                            </select>
-                        </div>
-                    </nav>
+                        </nav>
                     </th:block>
 
                     <th:block th:if="${!isCustomer}">
-                    <nav th:if="${bookingList != null}"
-                         class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
-                         aria-label="Page navigation example" style="column-gap: 10px">
-                        <ul class="pagination m-0">
-                            <!-- Previous button - note currentPage is already 1-based -->
-                            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/car-owner/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                                   th:classappend="${currentPage <= 1} ? 'disabled'"
-                                   aria-label="Previous">
-                                    <span aria-hidden="true">Previous</span>
-                                </a>
-                            </li>
+                        <nav th:if="${bookingList != null}"
+                             class="d-flex col-lg-12 mt-3 justify-content-end justify-content-md-end justify-content-sm-center justify-content--center align-items-center"
+                             aria-label="Page navigation example" style="column-gap: 10px">
+                            <ul class="pagination m-0">
+                                <!-- Previous button - note currentPage is already 1-based -->
+                                <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/car-owner/my-bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                       th:classappend="${currentPage <= 1} ? 'disabled'"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">Previous</span>
+                                    </a>
+                                </li>
 
-                            <!-- Page numbers -->
-                            <li class="page-item"
-                                th:each="i : ${#numbers.sequence(1, totalPages)}"
-                                th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link"
-                                   th:href="@{/car-owner/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                                   th:text="${i}"></a>
-                            </li>
+                                <!-- Page numbers -->
+                                <li class="page-item"
+                                    th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                    th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link"
+                                       th:href="@{/car-owner/my-bookings(page=${i}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                       th:text="${i}"></a>
+                                </li>
 
-                            <!-- Next button -->
-                            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/car-owner/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
-                                   th:classappend="${currentPage >= totalPages} ? 'disabled'"
-                                   aria-label="Next">
-                                    <span aria-hidden="true">Next</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="input-group input-group-sm" style="width: 100px">
-                            <div class="input-group-prepend" style="max-height: 31px">
-                                <label class="input-group-text"
-                                       for="pageSize">Size</label>
+                                <!-- Next button -->
+                                <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/car-owner/my-bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, order=${order})}"
+                                       th:classappend="${currentPage >= totalPages} ? 'disabled'"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">Next</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="input-group input-group-sm" style="width: 100px">
+                                <div class="input-group-prepend" style="max-height: 31px">
+                                    <label class="input-group-text"
+                                           for="pageSize">Size</label>
+                                </div>
+                                <select class="custom-select" id="pageSizeCar" name="size"
+                                        onchange="navigateToFilteredCarOwner()">
+                                    <option value="5" th:selected="${size == null || size == 5}">5</option>
+                                    <option value="10" th:selected="${size == 10}">10</option>
+                                    <option value="15" th:selected="${size == 15}">15</option>
+                                    <option value="20" th:selected="${size == 20}">20</option>
+                                    <option value="30" th:selected="${size == 30}">30</option>
+                                </select>
                             </div>
-                            <select class="custom-select" id="pageSizeCar" name="size" onchange="navigateToFilteredCarOwner()">
-                                <option value="5" th:selected="${size == null || size == 5}">5</option>
-                                <option value="10" th:selected="${size == 10}">10</option>
-                                <option value="15" th:selected="${size == 15}">15</option>
-                                <option value="20" th:selected="${size == 20}">20</option>
-                                <option value="30" th:selected="${size == 30}">30</option>
-                            </select>
-                        </div>
-                    </nav>
+                        </nav>
                     </th:block>
                 </div>
             </div>
@@ -702,6 +717,7 @@
 
             window.location.href = '/customer/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
         }
+
         function navigateToFilteredCarOwner() {
             const sortBy = document.getElementById('sortByCarOwner').value;
             const pageSize = document.getElementById('pageSizeCar').value;
@@ -731,43 +747,98 @@
         });
 
 
-        //cancel button
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log("DOM fully loaded and parsed");
-            const sortBy = document.getElementById('sortBy').value;
-            const pageSize = document.getElementById('pageSize').value;
-
-
-            // Cancel Booking Button Event
-            const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn-"]');
-            cancelBookingBtns.forEach(btn => {
-                btn.addEventListener('click', function (event) {
-                    event.preventDefault();
-
-                    const bookingId = this.closest('.row').querySelector("#bookingId").value;
-
-                    Swal.fire({
-                        title: 'Are you sure you want to cancel this booking?',
-                        icon: 'warning',
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'No',
-                        showCancelButton: true,
-                        customClass: {
-                            confirmButton: 'custom-confirm-btn',
-                            cancelButton: 'custom-cancel-btn'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            console.log('User chose to cancel the booking with ID:', bookingId);
-                            window.location.href = '/cancel-booking?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //Cancel booking function
+        function cancelBooking(bookingId) {
+            console.log(bookingId);
+            Swal.fire({
+                title: 'Are you sure you want to cancel this booking?',
+                icon: 'warning',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                showCancelButton: true,
+                customClass: {
+                    confirmButton: 'custom-confirm-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/cancel-booking?bookingId=' + bookingId, {
+                        method: 'GET',
+                    }).then(response => {
+                        if (response.ok) {
+                            response.json().then(data => {
+                                if (data.message) {
+                                    Swal.fire({
+                                        title: 'Booking Cancelled!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                            });
                         } else {
-                            console.log('User canceled the booking action');
+                            console.error('Error:', response);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
                         }
                     });
-                });
+                } else {
+                    console.log('User canceled the booking action');
+                }
             });
+        }
 
-        });
+
+        //cancel button
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     console.log("DOM fully loaded and parsed");
+        //     const sortBy = document.getElementById('sortBy').value;
+        //     const pageSize = document.getElementById('pageSize').value;
+        //
+        //
+        //     // Cancel Booking Button Event
+        //     const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn"]');
+        //     cancelBookingBtns.forEach(btn => {
+        //         btn.addEventListener('click', function (event) {
+        //             event.preventDefault();
+        //
+        //             const bookingId = this.closest('.row').querySelector("#bookingId").value;
+        //
+        //             Swal.fire({
+        //                 title: 'Are you sure you want to cancel this booking?',
+        //                 icon: 'warning',
+        //                 confirmButtonText: 'Yes',
+        //                 cancelButtonText: 'No',
+        //                 showCancelButton: true,
+        //                 customClass: {
+        //                     confirmButton: 'custom-confirm-btn',
+        //                     cancelButton: 'custom-cancel-btn'
+        //                 }
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     console.log('User chose to cancel the booking with ID:', bookingId);
+        //                     window.location.href = '/cancel-booking?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 } else {
+        //                     console.log('User canceled the booking action');
+        //                 }
+        //             });
+        //         });
+        //     });
+        //
+        // });
 
         document.addEventListener('DOMContentLoaded', function () {
 

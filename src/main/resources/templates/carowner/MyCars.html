@@ -174,6 +174,114 @@
             left: 1px
         }
 
+        .btns {
+            background-color: #00ff95;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            display: flex;
+            height: fit-content;
+            align-items: center;
+
+        }
+
+        /*.btns:hover {*/
+        /*    transform: translateY(-1px);*/
+        /*}*/
+
+        .btn-confirm:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-cancel:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-cancel {
+            background-color: #ff0000;
+        }
+
+        .card-title-booking {
+            font-size: 1.2rem;
+            background: #deffea;
+            padding: 10px;
+            color: #69cdb2;
+            font-weight: 500;
+            border-radius: 15px;
+        }
+
+        .rental-date {
+            font-size: 14px;
+        }
+
+        /* Card hover effect */
+        .hover-shadow {
+            transition: transform 0.3s ease;
+
+        }
+
+        .text-primary{
+            color: #01d28e !important;
+        }
+
+        .hover-shadow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            /*border: 2px solid #01d28e !important;*/
+        }
+
+        /* Booking icon wrapper */
+        .booking-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgb(13 253 98 / 10%);
+            margin-right: 10px;
+        }
+
+        /* Booking info items */
+        .booking-info-item {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Deposit amount styling */
+        .deposit-amount {
+            color: #ffc107;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
+
+            .rental-period {
+                padding: 0.75rem !important;
+            }
+
+            .booking-info-item {
+                font-size: 0.95rem;
+            }
+        }
+
+        .booking-details{
+            margin-bottom: 10px;
+        }
+
     </style>
 </head>
 
@@ -181,21 +289,25 @@
 <th:block layout:fragment="content">
     <body>
 
-    <div th:if="${success}">
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    title: 'Registered successfully!',
-                    text: '\n' +
-                        'We have sent an account activation link to your email, please check your email and activate your account.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    customClass: {
-                        confirmButton: 'my-custom-button'
-                    }
-                });
-            });
-        </script>
+
+    <!-- Modal for confirm booking -->
+    <div class="modal fade" id="confirmBookingModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="confirmBookingModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
@@ -453,15 +565,14 @@
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 d-flex justify-content-center mt-1">
                                                         <a th:href="'/car-owner/edit-car/' + ${car.getCarId()}"
-                                                           class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View
-                                                            Details</a>
+                                                           class="btn btn-primary mr-1 btn-lg w-100 align-content-center">View Details</a>
+
                                                         <a th:href="'#'"
-                                                           th:if="${car.getCarStatus().getStatusId() == 14}"
+                                                           th:if="${car.getCurrentStatus() == 1}"
                                                            class="btn btn-primary ml-1 btn-lg w-100 align-content-center"
-                                                           th:id="'confirm-deposit-btn-' + ${car.getCarId()}"
-                                                           th:attr="data-car-id=${car.getCarId()}"
-                                                           style="background: #da1b1b !important;">
-                                                            Confirm Deposit</a>
+                                                           th:onclick="'showConfirmBookingModal(' + ${car.getCarId()} + ')'"
+                                                           style="background: #000000 !important;">
+                                                            Confirm Booking</a>
 
                                                         <a th:href="'#'"
                                                            th:if="${car.getCarStatus().getStatusId() == 15}"
@@ -548,8 +659,11 @@
         </svg>
     </div>
 
-
+    <script src="/js/carowner/mycar.js"></script>
     <script>
+
+
+
 
         function navigateToFilteredCars() {
             const sortBy = document.getElementById('sortBy').value;

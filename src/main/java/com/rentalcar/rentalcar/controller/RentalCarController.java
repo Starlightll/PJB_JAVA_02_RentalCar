@@ -111,7 +111,7 @@ public class RentalCarController {
         boolean isCustomer = user.getRoles().stream()
                 .anyMatch(role -> "Customer".equals(role.getRoleName()));
         List<MyBookingDto> bookingList = bookingPages.getContent();
-        //check so on-going bookings
+        //check so ongoing bookings
         long onGoingBookings = bookingList.stream()
                 .filter(booking ->
                         booking.getBookingStatus().equals("In-Progress") ||
@@ -152,12 +152,12 @@ public class RentalCarController {
         CarDto car = rentalCarService.getCarDetails(CarId);
         User userepo = userRepo.getUserById(user.getId());
 
-        if(car.getStatusId() != 1) {
+        if (car.getStatusId() != 1) {
             return "redirect:/";
         }
 
         Car carAddress = carRepository.getCarByCarId(CarId);
-        if(carAddress == null) {
+        if (carAddress == null) {
             return "redirect:/";
         }
 
@@ -188,7 +188,6 @@ public class RentalCarController {
             String dropTime = timeOutputFormat.format(end); // Giờ kết thúc
 
 
-
             model.addAttribute("pickDate", pickStartDate);
             model.addAttribute("dropDate", dropDate);
             model.addAttribute("pickTime", pickTime);
@@ -213,11 +212,11 @@ public class RentalCarController {
 
     @GetMapping("/customer/booking-car-v2")
     public String bookingDetailV2(@RequestParam(value = "CarId") Integer CarId,
-                                @RequestParam(value = "startDate", required = false) String startDate,
-                                @RequestParam(value = "endDate", required = false) String endDate,
-                                @RequestParam(value = "address", required = false) String address,
-                                @RequestParam(value = "beforeNavigate", required = false) String beforeNavigate,
-                                Model model, HttpSession session) {
+                                  @RequestParam(value = "startDate", required = false) String startDate,
+                                  @RequestParam(value = "endDate", required = false) String endDate,
+                                  @RequestParam(value = "address", required = false) String address,
+                                  @RequestParam(value = "beforeNavigate", required = false) String beforeNavigate,
+                                  Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
         CarDto car = rentalCarService.getCarDetails(CarId);
@@ -290,7 +289,7 @@ public class RentalCarController {
                 dob = sqlDate.toLocalDate();
             }
             String phone = (String) result[3];
-            UserDto userDto = new UserDto(userId, fullName, null, null ,dob, null, phone, null, null);
+            UserDto userDto = new UserDto(userId, fullName, null, null, dob, null, phone, null, null);
             userDtos.add(userDto);
         }
 
@@ -312,7 +311,6 @@ public class RentalCarController {
     }
 
 
-
     @PostMapping(value = "/booking-car")
     @JsonProperty
     @ResponseBody
@@ -324,7 +322,7 @@ public class RentalCarController {
     ) throws IOException {
 
 
-        // Parse carDraft JSON
+        // Parse booking JSON
         Map<String, Object> response = new HashMap<>();
         User user = (User) session.getAttribute("user");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -353,7 +351,7 @@ public class RentalCarController {
         String normalizedPhone = phoneNumberStandardService.normalizePhoneNumber(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE);
 
 
-        if(!Objects.equals(normalizedPhone, customer.getPhone()) && phoneNumberStandardService.isPhoneNumberExists(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
+        if (!Objects.equals(normalizedPhone, customer.getPhone()) && phoneNumberStandardService.isPhoneNumberExists(phone, Constants.DEFAULT_REGION_CODE, Constants.DEFAULT_COUNTRY_CODE)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already exists");
         }
 
@@ -397,7 +395,7 @@ public class RentalCarController {
         if (endDate.isBefore(LocalDateTime.now()) || startDate.isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date Time cannot be in the past");
         }
-        if(user.getDrivingLicense() == null && rentImage == null) {
+        if (user.getDrivingLicense() == null && rentImage == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a driving license image.");
         }
 
@@ -417,7 +415,7 @@ public class RentalCarController {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your current balance is insufficient. Please top up or choose another payment method");
                     case "Other Pay Method not helps now, please use your wallet":
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Other Pay Method not helps now, please use your wallet");
-                    case "Email already exists" :
+                    case "Email already exists":
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
                     case "Phone number already exists":
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already exists");
@@ -431,25 +429,27 @@ public class RentalCarController {
 
 
     @GetMapping("/cancel-booking")
-    public String cancelBooking(@RequestParam("bookingId") Long bookingId,
-                                HttpSession session,
-                                @RequestParam(defaultValue = "1") int page,
-                                @RequestParam(defaultValue = "5") int size,
-                                @RequestParam(defaultValue = "lastModified") String sortBy,
-                                @RequestParam(defaultValue = "desc") String order,
-                                Model model) {
-        boolean isCancelled = rentalCarService.cancelBooking(bookingId, session);
+    public ResponseEntity<Map<String, Object>> cancelBooking(
+            @RequestParam("bookingId") Long bookingId,
+            HttpSession session
+    ) {
         User user = (User) session.getAttribute("user");
-
-        if (isCancelled) {
-            model.addAttribute("message_" + bookingId, "Waiting CarOwner confirm cancel this booking!");
-        } else {
-            model.addAttribute("error", "Unable to cancel the booking. Please try again.");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not found in session."));
         }
-
-        return myBooking(page, size, sortBy, order, model, session);
-
-
+        Booking booking = bookingRepository.findById(bookingId).orElse(null);
+        if (booking == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Booking not found."));
+        }
+        if (!booking.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "You are not authorized to cancel this booking."));
+        }
+        try{
+            rentalCarService.cancelBooking(booking);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Unable to cancel the booking. Please try again."));
+        }
+        return ResponseEntity.ok(Map.of("message", "Booking has been successfully canceled."));
     }
 
 
@@ -493,11 +493,11 @@ public class RentalCarController {
 
     @GetMapping("/check-payment")
     public ResponseEntity<?> checkPayment(@RequestParam("bookingId") Long bookingId,
-                                       HttpSession session,
-                                       @RequestParam(defaultValue = "1") int page,
-                                       @RequestParam(defaultValue = "5") int size,
-                                       @RequestParam(defaultValue = "lastModified") String sortBy,
-                                       @RequestParam(defaultValue = "desc") String order) {
+                                          HttpSession session,
+                                          @RequestParam(defaultValue = "1") int page,
+                                          @RequestParam(defaultValue = "5") int size,
+                                          @RequestParam(defaultValue = "lastModified") String sortBy,
+                                          @RequestParam(defaultValue = "desc") String order) {
         String responseMessage = returnCarService.checkPayment(bookingId, session);
 
         // Trả về thông điệp JSON với trạng thái "success"
@@ -507,7 +507,6 @@ public class RentalCarController {
         return ResponseEntity.ok(response);
 
     }
-
 
 
     @GetMapping("/confirm-return-car")
@@ -533,7 +532,7 @@ public class RentalCarController {
         int caseReturn = returnCarService.confirmReturnCar(bookingId, session);
 
         // Handle response based on caseReturn value
-        if (caseReturn == 1 ) {
+        if (caseReturn == 1) {
             return generateResponse(response, "success1", "Car return request sent successfully!!");
         } else if (caseReturn == 2) {
             return generateResponse(response, "success2", "Car return request sent. Waiting for Car-Owner to confirm.");
@@ -593,12 +592,12 @@ public class RentalCarController {
 
     @GetMapping("/confirm-payment-car")
     public ResponseEntity<Map<String, Object>> confirmPaymentCar(@RequestParam("bookingId") Long bookingId,
-                                                                HttpSession session,
-                                                                @RequestParam(defaultValue = "1") int page,
-                                                                @RequestParam(defaultValue = "5") int size,
-                                                                @RequestParam(defaultValue = "lastModified") String sortBy,
-                                                                @RequestParam(defaultValue = "desc") String order,
-                                                                Model model) {
+                                                                 HttpSession session,
+                                                                 @RequestParam(defaultValue = "1") int page,
+                                                                 @RequestParam(defaultValue = "5") int size,
+                                                                 @RequestParam(defaultValue = "lastModified") String sortBy,
+                                                                 @RequestParam(defaultValue = "desc") String order,
+                                                                 Model model) {
         // Retrieve user from session
         User user = (User) session.getAttribute("user");
 
@@ -614,9 +613,9 @@ public class RentalCarController {
         int caseReturn = returnCarService.confirmPayment(bookingId, session);
 
         // Handle response based on caseReturn value
-        if (caseReturn == 1 ) {
+        if (caseReturn == 1) {
             return generateResponse(response, "success1", "Payment successfully. Booking successfully completed!");
-        }  else if (caseReturn == -1) {
+        } else if (caseReturn == -1) {
             return generateResponse(response, "error", "Your wallet does’t have enough balance to pay driver salary. Please top-up your wallet and try again");
         }
 

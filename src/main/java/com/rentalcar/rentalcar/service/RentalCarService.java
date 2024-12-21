@@ -23,6 +23,7 @@ public interface RentalCarService {
     int confirmReturnCar(Long carId, HttpSession session);
     boolean confirmCancelBookingCar(Long carId, HttpSession session);
     List<MyBookingDto> getRentalsNearEndDate();
+    void cancelBooking(Booking booking);
 
 
 

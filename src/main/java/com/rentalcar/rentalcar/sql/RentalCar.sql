@@ -231,13 +231,18 @@ CREATE TABLE [dbo].[Booking]
     endDate         DATETIME,
     driverInfo      NVARCHAR(255),
     actualEndDate   DATETIME,
+    deposit         DECIMAL(18, 2),
     totalPrice      DECIMAL(18, 2),
     userId          INT,
+    carOwnerId      INT,
+    carId           INT,
     bookingStatusId INT,
     paymentMethodId INT,
     lastModified    DATETIME DEFAULT CURRENT_TIMESTAMP,
     driverId INT foreign key references [dbo].[Users] (userId) Null,
     FOREIGN KEY (userId) REFERENCES [dbo].[Users] (userId),
+    FOREIGN KEY (carOwnerId) REFERENCES [dbo].[Users] (userId),
+    FOREIGN KEY (carId) REFERENCES [dbo].[Car] (carId),
     FOREIGN KEY (bookingStatusId) REFERENCES [dbo].[BookingStatus] (BookingStatusId),
     FOREIGN KEY (paymentMethodId) REFERENCES [dbo].[PaymentMethod] (PaymentMethodId)
     );

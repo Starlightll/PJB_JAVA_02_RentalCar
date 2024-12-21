@@ -15,5 +15,5 @@ public interface TransactionService {
 
     void saveTransaction(User user, BigDecimal amount, String type, Booking booking);
 
-    void saveTransactionHistory(User sender, User receiver, TransactionType senderType, TransactionType receiverType, BigDecimal amount, String description);
+    void saveTransactionHistory(User sender, User receiver, String senderType, String receiverType, BigDecimal amount, String description);
 }
