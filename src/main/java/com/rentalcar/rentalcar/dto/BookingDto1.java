@@ -11,7 +11,8 @@ import java.util.Date;
 public record BookingDto1(Long bookingId, LocalDateTime startDate, LocalDateTime endDate, String driverInfo,
                           LocalDateTime actualEndDate, Double deposit, Double totalPrice, Date lastModified,
                           UserDto1 user, BookingStatusDto bookingStatus,
-                          PaymentMethodDto paymentMethod) implements Serializable {
+                          PaymentMethodDto paymentMethod, Double basePrice, Double additionalPrice, Double discount,
+                          Double finalPrice) implements Serializable {
     /**
      * DTO for {@link com.rentalcar.rentalcar.entity.User}
      */

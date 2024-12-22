@@ -30,6 +30,14 @@ public class Booking {
 
     private Double deposit;
 
+    private Double basePrice;
+
+    private Double additionalPrice;
+
+    private Double discount;
+
+    private Double finalPrice;
+
     private Double totalPrice;
 
     private Date lastModified;

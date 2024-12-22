@@ -233,6 +233,10 @@ CREATE TABLE [dbo].[Booking]
     actualEndDate   DATETIME,
     deposit         DECIMAL(18, 2),
     totalPrice      DECIMAL(18, 2),
+    basePrice       DECIMAL(18, 2),
+    additionalPrice DECIMAL(18, 2),
+    discount        DECIMAL(18, 2),
+    finalPrice      DECIMAL(18, 2),
     userId          INT,
     carOwnerId      INT,
     carId           INT,
@@ -246,6 +250,17 @@ CREATE TABLE [dbo].[Booking]
     FOREIGN KEY (bookingStatusId) REFERENCES [dbo].[BookingStatus] (BookingStatusId),
     FOREIGN KEY (paymentMethodId) REFERENCES [dbo].[PaymentMethod] (PaymentMethodId)
     );
+
+-- Fine table
+CREATE TABLE [dbo].[Fine]
+(
+    fineId    INT IDENTITY (1,1) PRIMARY KEY,
+    bookingId INT,
+    amount    DECIMAL(18, 2),
+    reason    NVARCHAR(MAX),
+    dateTime  DATETIME,
+    FOREIGN KEY (bookingId) REFERENCES [dbo].[Booking] (bookingId)
+);
 
 
 -- Feedback table

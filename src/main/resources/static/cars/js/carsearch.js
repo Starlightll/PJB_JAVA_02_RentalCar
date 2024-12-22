@@ -593,5 +593,5 @@ function viewCarDetail(carId) {
     const pickupLocation = document.getElementById('pickupLocation').value;
     const pickupDateTime = document.getElementById('pickupDateTime').value;
     const dropDateTime = document.getElementById('dropDateTime').value;
-    window.location.href = `/api/searchCar/${carId}?pickupLocation=${pickupLocation}&pickupDateTime=${pickupDateTime}&dropDateTime=${dropDateTime}`;
+    window.location.href = `/search-car/${carId}?pickupLocation=${pickupLocation}&pickupDateTime=${pickupDateTime}&dropDateTime=${dropDateTime}`;
 }

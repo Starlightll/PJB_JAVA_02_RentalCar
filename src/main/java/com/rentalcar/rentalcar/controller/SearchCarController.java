@@ -11,6 +11,7 @@ import com.rentalcar.rentalcar.repository.AdditionalFunctionRepository;
 import com.rentalcar.rentalcar.repository.BrandRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.CarStatusRepository;
+import com.rentalcar.rentalcar.service.BookingService;
 import com.rentalcar.rentalcar.service.SearchCarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,8 @@ public class SearchCarController {
     private BrandMapper brandMapper;
     @Autowired
     private AdditionalFunctionMapper additionalFunctionMapper;
+    @Autowired
+    private BookingService bookingService;
 
     @GetMapping("/searchCar")
     public String searchCar(Model model,
@@ -245,7 +248,7 @@ public class SearchCarController {
     }
 
 
-    @GetMapping("/api/searchCar/{id}")
+    @GetMapping("/search-car/{id}")
     public String carDetail(
             @PathVariable("id") Integer id,
             @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
@@ -255,7 +258,7 @@ public class SearchCarController {
     ) {
         Car car = carRepository.getCarByCarId(id);
         if(car == null){
-            return "redirect:/api/searchCar";
+            return "redirect:/car-search";
         }
         model.addAttribute("car", carMapper.toDto(car));
         model.addAttribute("pickupLocation", pickupLocation);
@@ -272,6 +275,12 @@ public class SearchCarController {
     @GetMapping("/api/additionalFunctions")
     public ResponseEntity<List<AdditionalFunctionDto>> getAdditionalFunctions() {
         return ResponseEntity.ok(additionalFunctionRepository.findAll().stream().map(additionalFunctionMapper::toDto).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/api/check-car-booked")
+    public ResponseEntity<Boolean> checkCarBooked(@RequestParam("carId") Integer carId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        return ResponseEntity.ok(bookingService.checkAlreadyBookedCar(carId, user.getId()));
     }
 
 

@@ -238,7 +238,8 @@
                                         <div>Booked: <span th:text="${car.getBookedTimes()}"></span></div>
                                     </div>
                                     <div class="rating m-0">
-                                        <div class="star"  th:style="'width: ' + ${car.getRateAverage() / 5.0 * 100} + '%;'">
+                                        <div class="star"
+                                             th:style="'width: ' + ${car.getRateAverage() / 5.0 * 100} + '%;'">
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
@@ -340,7 +341,8 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getFrontImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
+                                                <img th:src="${'/' + car.getFrontImage()}"
+                                                     onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -350,7 +352,8 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getLeftImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
+                                                <img th:src="${'/' + car.getLeftImage()}"
+                                                     onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -360,7 +363,8 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getBackImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
+                                                <img th:src="${'/' + car.getBackImage()}"
+                                                     onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -370,7 +374,8 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getRightImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
+                                                <img th:src="${'/' + car.getRightImage()}"
+                                                     onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -791,6 +796,7 @@
             const pickupLocation = document.getElementById('pickupLocation').value;
             const pickupDateTime = document.getElementById('pickupDateTime').value;
             const dropDateTime = document.getElementById('dropDateTime').value;
+            const carId = document.getElementById('carId').value;
 
             if (!pickupLocation || !pickupDateTime || !dropDateTime) {
                 Swal.fire({
@@ -803,12 +809,31 @@
                 });
                 return false;
             }
-
-
-            // let formattedPickupDateTime = pickupDateTime.replaceAll(" ", " - ");
-            // let formattedDropDateTime = dropDateTime.replaceAll(" ", " - ");
-            const carId = document.getElementById('carId').value;
-            window.location.href = `/customer/booking-car-v2?CarId=${carId}&startDate=${pickupDateTime}&endDate=${dropDateTime}&address=${pickupLocation}&beforeNavigate=search`;
+            fetch(`/api/check-car-booked?carId=${carId}`, {
+                method: 'GET',
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then(data => {
+                console.log('Car booked status:', data);
+                if (data === true) {
+                    Swal.fire({
+                        title: 'The car is already booked',
+                        html: `<a href="/customer/my-bookings">View your bookings</a>`,
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn'
+                        }
+                    });
+                } else {
+                    window.location.href = `/customer/booking-car-v2?CarId=${carId}&startDate=${pickupDateTime}&endDate=${dropDateTime}&address=${pickupLocation}&beforeNavigate=search`;
+                }
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
         });
 
     </script>

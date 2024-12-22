@@ -18,6 +18,7 @@ import com.rentalcar.rentalcar.mail.EmailService;
 import com.rentalcar.rentalcar.repository.BookingRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
+import com.rentalcar.rentalcar.service.BookingService;
 import com.rentalcar.rentalcar.service.PhoneNumberStandardService;
 import com.rentalcar.rentalcar.service.RentalCarService;
 import com.rentalcar.rentalcar.service.ReturnCarService;
@@ -51,28 +52,31 @@ import static com.rentalcar.rentalcar.common.Regex.EMAIL_REGEX;
 public class RentalCarController {
 
     @Autowired
-    RentalCarService rentalCarService;
+    private RentalCarService rentalCarService;
 
     @Autowired
-    UserRepo userRepo;
+    private UserRepo userRepo;
 
     @Autowired
-    ReturnCarService returnCarService;
+    private ReturnCarService returnCarService;
 
     @Autowired
     private CarRepository carRepository;
 
     @Autowired
-    UserRepo userRepository;
+    private UserRepo userRepository;
 
     @Autowired
-    PhoneNumberStandardService phoneNumberStandardService;
+    private PhoneNumberStandardService phoneNumberStandardService;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private BookingService bookingService;
 
     @GetMapping({"/customer/my-bookings", "/car-owner/my-bookings"})
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -221,6 +225,11 @@ public class RentalCarController {
         User user = (User) session.getAttribute("user");
         CarDto car = rentalCarService.getCarDetails(CarId);
         User userepo = userRepo.getUserById(user.getId());
+
+        if(bookingService.checkAlreadyBookedCar(CarId, user.getId())){
+            model.addAttribute("errorMessage", "This car is already booked for the selected date and time.");
+            return "redirect:/search-car/" + CarId;
+        }
 
         if (car.getStatusId() != 1) {
             return "redirect:/";
