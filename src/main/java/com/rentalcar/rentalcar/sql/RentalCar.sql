@@ -231,6 +231,7 @@ CREATE TABLE [dbo].[Booking]
     endDate         DATETIME,
     driverInfo      NVARCHAR(255),
     actualEndDate   DATETIME,
+    deposit         DECIMAL(18, 2),
     totalPrice      DECIMAL(18, 2),
     userId          INT,
     bookingStatusId INT,

@@ -19,7 +19,7 @@ public interface RentalCarRepository extends JpaRepository<Booking, Long> {
             "      ,b.[userId]\n" +
             "      ,[paymentMethodId]\n" +
             "\t  ,c.basePrice\n" +
-            "\t  ,c.deposit\n" +
+            "\t  ,b.deposit\n" +
             "\t  ,bs.name\n" +
             "\t  ,c.front\n" +
             "\t  ,c.back\n" +
@@ -54,7 +54,7 @@ public interface RentalCarRepository extends JpaRepository<Booking, Long> {
             "      ,b.[userId]\n" +
             "      ,[paymentMethodId]\n" +
             "\t  ,c.basePrice\n" +
-            "\t  ,c.deposit\n" +
+            "\t  ,b.deposit\n" +
             "\t  ,bs.name\n" +
             "\t  ,c.front\n" +
             "\t  ,c.back\n" +
@@ -90,7 +90,7 @@ public interface RentalCarRepository extends JpaRepository<Booking, Long> {
             "       b.userId,\n" +
             "       b.paymentMethodId,\n" +
             "       c.basePrice,\n" +
-            "       c.deposit,\n" +
+            "       b.deposit,\n" +
             "       bs.name AS bookingStatusName,\n" +
             "       c.front,\n" +
             "       c.back,\n" +

@@ -28,6 +28,8 @@ public class Booking {
 
     private LocalDateTime actualEndDate;
 
+    private Double deposit;
+
     private Double totalPrice;
 
     private Date lastModified;
