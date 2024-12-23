@@ -424,6 +424,7 @@ public class RentalCarServiceImpl implements RentalCarService {
             booking.setEndDate(bookingDto.getReturnDate());
             booking.setDriverInfo(fullName);
             booking.setActualEndDate(bookingDto.getReturnDate());
+            booking.setDeposit(Double.valueOf(bookingDto.getDeposit()));
             booking.setTotalPrice(totalPrice);
             booking.setUser(user);
             // Cập nhật BookingStatus
