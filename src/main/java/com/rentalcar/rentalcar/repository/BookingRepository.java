@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.repository;
 
+import com.rentalcar.rentalcar.dto.BookingDto1;
 import com.rentalcar.rentalcar.entity.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -79,4 +80,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Booking findBookingByCar_CarIdAndUser_IdAndBookingStatus_BookingStatusId(Integer car_carId, Long user_id, Long bookingStatus_bookingStatusId);
 
 
+    List<Booking> findAllByUser_Id(Long userId);
 }

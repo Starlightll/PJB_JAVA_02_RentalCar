@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"
+>
+<head>
+    <title>My Bookings</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/webjars/toastr/2.1.0/toastr.css">
+
+    <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/node_modules/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="/node_modules/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
+    <link rel="stylesheet" href="/node_modules/datatables.net-select-bs4/css/select.bootstrap4.min.css">
+    <link rel="stylesheet" href="/webjars/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css">
+    <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
+    <style>
+        .hero-wrap {
+            height: 200px !important;
+            position: relative;
+            background-image: url('/images/2024-Skoda-Enyaq-RS-Race-Concept-005-2000.jpg');
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 200px !important;
+        }
+
+        .slider-text {
+            height: 200px !important;
+        }
+
+
+        .sliders label:hover {
+            background: rgb(26, 255, 149);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .table tbody tr td {
+            vertical-align: middle;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+        }
+
+        .dt-type-numeric{
+            text-align: unset !important;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body>
+
+
+    <section class="hero-wrap hero-wrap js-fullheight" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+                <div class="col-md-9 ftco-animate">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span>MY BOOKINGS <i class="ion-ios-arrow-forward"></i></span>
+                    </p>
+                    <h1 class="mb-3 bread">My Bookings!</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ftco-section p-0" style="min-height: 500px !important;">
+        <div class="container">
+            <div class="">
+                <div class="border-bottom">
+                    <div class="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0 g-6 pb-4">
+                        <div class="col-md-4 user_role"></div>
+                        <div class="col-md-4 user_plan"></div>
+                        <div class="col-md-4 user_status"></div>
+                    </div>
+                </div>
+                <div class="card-datatable table-responsive">
+                    <table class="myBookingTable table border-top" id="myBookingTable">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>Car</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen">
+        <svg class="circular" width="48px" height="48px">
+            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+                    stroke="#F96D00"/>
+        </svg>
+    </div>
+
+
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/node_modules/datatables.net/js/dataTables.min.js"></script>
+    <script src="/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/node_modules/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/node_modules/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="/node_modules/datatables.net-select-bs4/js/select.bootstrap4.min.js"></script>
+    <script src="/node_modules/jszip/dist/jszip.min.js"></script>
+    <script src="/node_modules/pdfmake/build/pdfmake.min.js"></script>
+    <script src="/node_modules/pdfmake/build/vfs_fonts.js"></script>
+    <script src="/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="/node_modules/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="/webjars/select2/dist/js/select2.min.js"></script>
+
+    <script src="/js/customer/mybooking.js"></script>
+
+    <script>
+        // function navigateToFilteredCars() {
+        //     const sortBy = document.getElementById('sortBy').value;
+        //     const pageSize = document.getElementById('pageSize').value;
+        //
+        //
+        //     window.location.href = '/customer/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
+        // }
+        //
+        // function navigateToFilteredCarOwner() {
+        //     const sortBy = document.getElementById('sortByCarOwner').value;
+        //     const pageSize = document.getElementById('pageSizeCar').value;
+        //
+        //
+        //     window.location.href = '/car-owner/my-bookings?sortBy=' + sortBy + '&size=' + pageSize;
+        // }
+        //
+        // window.addEventListener('DOMContentLoaded', function () {
+        //     // Get the bookingId from the hidden input field
+        //     const bookingId = document.getElementById('bookingId').value;
+        //
+        //     // Log the bookingId to ensure it's fetched correctly
+        //     console.log('Booking ID from hidden input:', bookingId);
+        //
+        //     if (bookingId) {
+        //         // Find the element with the corresponding ID (e.g., "booking-8")
+        //         const element = document.getElementById("booking-" + bookingId);
+        //         if (element) {
+        //             // Scroll to the element with smooth behavior and center alignment
+        //             element.scrollIntoView({behavior: "smooth", block: "center"});
+        //             console.log('Scrolled to the element with ID:', "booking-" + bookingId);
+        //         } else {
+        //             console.log('Element not found for booking ID:', bookingId);
+        //         }
+        //     }
+        // });
+        //
+        //
+        // //Cancel booking function
+        // function cancelBooking(bookingId) {
+        //     console.log(bookingId);
+        //     Swal.fire({
+        //         title: 'Are you sure you want to cancel this booking?',
+        //         icon: 'warning',
+        //         confirmButtonText: 'Yes',
+        //         cancelButtonText: 'No',
+        //         showCancelButton: true,
+        //         customClass: {
+        //             confirmButton: 'custom-confirm-btn',
+        //             cancelButton: 'custom-cancel-btn'
+        //         }
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             fetch('/cancel-booking?bookingId=' + bookingId, {
+        //                 method: 'GET',
+        //             }).then(response => {
+        //                 if (response.ok) {
+        //                     response.json().then(data => {
+        //                         if (data.message) {
+        //                             Swal.fire({
+        //                                 title: 'Booking Cancelled!',
+        //                                 text: data.message,
+        //                                 icon: 'success',
+        //                                 confirmButtonText: 'OK'
+        //                             }).then(() => {
+        //                                 window.location.reload();
+        //                             });
+        //                         } else {
+        //                             Swal.fire({
+        //                                 title: 'Error!',
+        //                                 text: data.message,
+        //                                 icon: 'error',
+        //                                 confirmButtonText: 'OK'
+        //                             });
+        //                         }
+        //                     });
+        //                 } else {
+        //                     console.error('Error:', response);
+        //                     Swal.fire({
+        //                         title: 'Error!',
+        //                         text: 'An error occurred. Please try again.',
+        //                         icon: 'error',
+        //                         confirmButtonText: 'OK'
+        //                     });
+        //                 }
+        //             });
+        //         } else {
+        //             console.log('User canceled the booking action');
+        //         }
+        //     });
+        // }
+
+
+        //cancel button
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     console.log("DOM fully loaded and parsed");
+        //     const sortBy = document.getElementById('sortBy').value;
+        //     const pageSize = document.getElementById('pageSize').value;
+        //
+        //
+        //     // Cancel Booking Button Event
+        //     const cancelBookingBtns = document.querySelectorAll('[id^="cancel-booking-btn"]');
+        //     cancelBookingBtns.forEach(btn => {
+        //         btn.addEventListener('click', function (event) {
+        //             event.preventDefault();
+        //
+        //             const bookingId = this.closest('.row').querySelector("#bookingId").value;
+        //
+        //             Swal.fire({
+        //                 title: 'Are you sure you want to cancel this booking?',
+        //                 icon: 'warning',
+        //                 confirmButtonText: 'Yes',
+        //                 cancelButtonText: 'No',
+        //                 showCancelButton: true,
+        //                 customClass: {
+        //                     confirmButton: 'custom-confirm-btn',
+        //                     cancelButton: 'custom-cancel-btn'
+        //                 }
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     console.log('User chose to cancel the booking with ID:', bookingId);
+        //                     window.location.href = '/cancel-booking?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 } else {
+        //                     console.log('User canceled the booking action');
+        //                 }
+        //             });
+        //         });
+        //     });
+        //
+        // });
+        //
+        // document.addEventListener('DOMContentLoaded', function () {
+        //
+        //     const sortBy = document.getElementById('sortBy').value;
+        //     const pageSize = document.getElementById('pageSize').value;
+        //     // Confirm Booking Button Event
+        //
+        //     const confirmBookingBtns = document.querySelectorAll('[id^="confirm-booking-btn-"]');
+        //     confirmBookingBtns.forEach(btn => {
+        //         btn.addEventListener('click', function (event) {
+        //             event.preventDefault();
+        //
+        //             const bookingId = this.closest('.row').querySelector("#bookingId").value;
+        //
+        //             Swal.fire({
+        //                 title: 'Are you sure you want to confirm pick-up booking?',
+        //                 icon: 'warning',
+        //                 confirmButtonText: 'Yes',
+        //                 cancelButtonText: 'No',
+        //                 showCancelButton: true,
+        //                 customClass: {
+        //                     confirmButton: 'custom-confirm-btn',
+        //                     cancelButton: 'custom-cancel-btn'
+        //                 }
+        //
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     console.log('User chose to confirm the pick-up with ID:', bookingId);
+        //                     window.location.href = '/confirm-pickup-booking?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 } else {
+        //                     console.log('User canceled the pick-up confirmation');
+        //                 }
+        //             });
+        //         });
+        //     });
+        // });
+        //
+        // function confirmPayment(bookingId) {
+        //     console.log(bookingId);
+        //     $.ajax({
+        //         url: '/check-payment',
+        //         type: 'get',
+        //         data: {bookingId: bookingId},
+        //         success: function (response) {
+        //             console.log("Confirm payment booking !!!", response);
+        //             Swal.fire({
+        //                 title: 'Confirm Payment?',
+        //                 text: response.message,
+        //                 icon: 'question',
+        //                 showCancelButton: true,  // Hiển thị nút "Cancel"
+        //                 confirmButtonText: 'Yes',
+        //                 cancelButtonText: 'No',
+        //                 customClass: {
+        //                     confirmButton: 'my-custom-button'
+        //                 }
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     // Gọi tiếp xác nhận trả xe
+        //                     confirmPaymentCar(bookingId);
+        //                 }
+        //             });
+        //         },
+        //         error: function (error) {
+        //             console.log("Error returning car", error);
+        //             Swal.fire({
+        //                 title: 'Error!',
+        //                 text: 'Failed to return the car.',
+        //                 icon: 'error',
+        //                 confirmButtonText: 'OK'
+        //             });
+        //         }
+        //     });
+        // }
+        //
+        // function confirmPaymentCar(bookingId) {
+        //
+        //     const sortBy = document.getElementById('sortBy').value;
+        //     const pageSize = document.getElementById('pageSize').value;
+        //     console.log(bookingId);
+        //     $.ajax({
+        //         url: '/confirm-payment-car',
+        //         type: 'get',
+        //         data: {bookingId: bookingId},
+        //         success: function (response) {
+        //             console.log("Confirm payment car response", response);
+        //
+        //             if (response.status === 'success1') {
+        //                 Swal.fire({
+        //                     title: 'Payment Successfully Completed.',
+        //                     text: response.message,
+        //                     icon: 'success',
+        //                     confirmButtonText: 'OK'
+        //                 }).then(() => {
+        //                     window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 });
+        //             } else if (response.status === 'success2') {
+        //                 Swal.fire({
+        //                     title: 'Request Payment Completed',
+        //                     text: response.message,
+        //                     icon: 'success',
+        //                     confirmButtonText: 'OK'
+        //                 }).then(() => {
+        //                     window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 });
+        //             } else {
+        //                 Swal.fire({
+        //                     title: 'Error!',
+        //                     text: response.message,
+        //                     icon: 'error',
+        //                     confirmButtonText: 'OK'
+        //                 }).then(() => {
+        //                     window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 });
+        //             }
+        //         },
+        //         error: function (error) {
+        //             console.log("Error confirming return car", error);
+        //             Swal.fire({
+        //                 title: 'Error!',
+        //                 text: 'An error occurred. Please try again.',
+        //                 icon: 'error',
+        //                 confirmButtonText: 'OK'
+        //             }).then(() => {
+        //                 window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //             });
+        //         }
+        //     });
+        // }
+        //
+        //
+        // function returnCar(bookingId) {
+        //     console.log(bookingId);
+        //     $.ajax({
+        //         url: '/return-car',
+        //         type: 'get',
+        //         data: {bookingId: bookingId},
+        //         success: function (response) {
+        //             console.log("Return car !!!", response);
+        //             Swal.fire({
+        //                 title: 'Return Car!',
+        //                 text: response.message,
+        //                 icon: 'question',
+        //                 showCancelButton: true,  // Hiển thị nút "Cancel"
+        //                 confirmButtonText: 'Yes',
+        //                 cancelButtonText: 'No',
+        //                 customClass: {
+        //                     confirmButton: 'my-custom-button'
+        //                 }
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     // Gọi tiếp xác nhận trả xe
+        //                     confirmReturnCar(bookingId);
+        //                 }
+        //             });
+        //         },
+        //         error: function (error) {
+        //             console.log("Error returning car", error);
+        //             Swal.fire({
+        //                 title: 'Error!',
+        //                 text: 'Failed to return the car.',
+        //                 icon: 'error',
+        //                 confirmButtonText: 'OK'
+        //             });
+        //         }
+        //     });
+        // }
+
+        // function confirmReturnCar(bookingId) {
+        //
+        //     const sortBy = document.getElementById('sortBy').value;
+        //     const pageSize = document.getElementById('pageSize').value;
+        //     console.log(bookingId);
+        //     $.ajax({
+        //         url: '/confirm-return-car',
+        //         type: 'get',
+        //         data: {bookingId: bookingId},
+        //         success: function (response) {
+        //             console.log("Confirm return car response", response);
+        //
+        //             if (response.status === 'success1') {
+        //                 Swal.fire({
+        //                     title: 'Request Return Successfully!',
+        //                     text: response.message,
+        //                     icon: 'success',
+        //                     confirmButtonText: 'OK'
+        //                 }).then(() => {
+        //                     window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 });
+        //             } else if (response.status === 'success2') {
+        //                 Swal.fire({
+        //                     title: 'Request Send Successfully Completed.',
+        //                     text: response.message,
+        //                     icon: 'success',
+        //                     confirmButtonText: 'OK'
+        //                 }).then(() => {
+        //                     window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 });
+        //             } else {
+        //                 Swal.fire({
+        //                     title: 'Error!',
+        //                     text: response.message,
+        //                     icon: 'error',
+        //                     confirmButtonText: 'OK'
+        //                 }).then(() => {
+        //                     window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //                 });
+        //             }
+        //         },
+        //         error: function (error) {
+        //             console.log("Error confirming return car", error);
+        //             Swal.fire({
+        //                 title: 'Error!',
+        //                 text: 'An error occurred. Please try again.',
+        //                 icon: 'error',
+        //                 confirmButtonText: 'OK'
+        //             }).then(() => {
+        //                 window.location.href = '/customer/my-bookings?bookingId=' + bookingId + '&sortBy=' + sortBy + '&size=' + pageSize;
+        //             });
+        //         }
+        //     });
+        // }
+
+
+    </script>
+    </body>
+</th:block>
+</body>
+</html>

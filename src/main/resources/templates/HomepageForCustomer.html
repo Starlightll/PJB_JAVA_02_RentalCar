@@ -6,6 +6,8 @@
 <head>
     <title>Homepage for customer</title>
     <link rel="stylesheet" href="/css/customer/homepage-customer.css">
+    <!-- Flatpickr   -->
+    <link rel="stylesheet" href="/webjars/flatpickr/4.6.13/dist/themes/material_green.css">
     <style>
         .carousel-car .img img {
             width: 100%;
@@ -80,42 +82,55 @@
                                 <div id="error-messages" style="color: red;"></div>
 
                                 <div class="form-group">
-                                    <label for="pick-location" class="label">Pick-up location</label>
+                                    <label for="pickupLocation" class="label">Pick-up location</label>
                                     <input name="name" type="text" class="form-control" placeholder="City,District "
-                                           id="pick-location">
+                                           id="pickupLocation">
                                     <small id="pick-location-error" style="color: red;"></small>
                                 </div>
                                 <div class="row" style="width: 100%">
-                                    <div class="col-12 col-md-6 col-lg-7 p-0 pr-md-2 pr-lg-2">
-                                        <label for="book_pick_dates" class="label">Pick-up date</label>
-                                        <input name="pickDate" type="date" class="form-control" placeholder="Date"
-                                               id="book_pick_dates">
-                                        <small id="pick-date-error" style="color: red;"></small>
+                                    <div class="form-group">
+                                        <label for="pickupDateTime" class="label">Pick-up date time</label>
+                                        <input type="text" name="pickupDateTime" id="pickupDateTime"
+                                               class="form-control flatpickr-validate"
+                                               placeholder="Days for rent" required>
                                     </div>
-                                    <div class="col-12 col-md-6 col-lg-5 p-0">
-                                        <label for="time_picks" class="label">Pick-up time</label>
-                                        <input name="pickTime" type="time" class="form-control" placeholder="Time"
-                                               id="time_picks" value="00:00">
-                                        <small id="pick-time-error" style="color: red;"></small>
-                                    </div>
+<!--                                    <div class="col-12 col-md-6 col-lg-7 p-0 pr-md-2 pr-lg-2">-->
+<!--                                        <label for="book_pick_dates" class="label">Pick-up date</label>-->
+<!--                                        <input name="pickDate" type="date" class="form-control" placeholder="Date"-->
+<!--                                               id="book_pick_dates">-->
+<!--                                        <small id="pick-date-error" style="color: red;"></small>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 col-md-6 col-lg-5 p-0">-->
+<!--                                        <label for="time_picks" class="label">Pick-up time</label>-->
+<!--                                        <input name="pickTime" type="time" class="form-control" placeholder="Time"-->
+<!--                                               id="time_picks" value="00:00">-->
+<!--                                        <small id="pick-time-error" style="color: red;"></small>-->
+<!--                                    </div>-->
                                 </div>
 
                                 <div class="row" style="width: 100%">
-                                    <div class="col-12 col-md-6 col-lg-7 p-0 pr-md-2 pr-lg-2">
-                                        <label for="book_drop_dates" class="label">Drop date</label>
-                                        <input name="dropDate" type="date" class="form-control" placeholder="Date"
-                                               id="book_drop_dates">
-                                        <small id="drop-date-error" style="color: red;"></small>
+                                    <div class="form-group">
+                                        <label for="dropDateTime" class="label">Drop date time</label>
+                                        <input type="text" name="dropDateTime" id="dropDateTime"
+                                               class="form-control flatpickr-validate"
+                                               placeholder="Pickup date time" required>
                                     </div>
-                                    <div class="col-12 col-md-6 col-lg-5 p-0">
-                                        <label for="time_drops" class="label">Drop time</label>
-                                        <input name="dropTime" type="time" class="form-control" placeholder="Time"
-                                               id="time_drops" value="00:00">
-                                        <small id="drop-time-error" style="color: red;"></small>
-                                    </div>
+<!--                                    <div class="col-12 col-md-6 col-lg-7 p-0 pr-md-2 pr-lg-2">-->
+<!--                                        <label for="book_drop_dates" class="label">Drop date</label>-->
+<!--                                        <input name="dropDate" type="date" class="form-control" placeholder="Date"-->
+<!--                                               id="book_drop_dates">-->
+<!--                                        <small id="drop-date-error" style="color: red;"></small>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 col-md-6 col-lg-5 p-0">-->
+<!--                                        <label for="time_drops" class="label">Drop time</label>-->
+<!--                                        <input name="dropTime" type="time" class="form-control" placeholder="Time"-->
+<!--                                               id="time_drops" value="00:00">-->
+<!--                                        <small id="drop-time-error" style="color: red;"></small>-->
+<!--                                    </div>-->
                                 </div>
+                                <small id="pickupInfoHelp" style="color: rgb(255,150,0); gap: 3px"></small>
                                 <div class="form-group">
-                                    <input type="submit" value="Rent A Car Now" class="btn btn-secondary py-3 px-4">
+                                    <a class="btn btn-secondary py-3 px-4" onclick="searchCar()">Rent a Car now!</a>
                                 </div>
                             </form>
                         </div>
@@ -393,6 +408,18 @@
         </svg>
     </div>
 
+    <!-- Vendor  -->
+    <!-- Jquery Library File -->
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Jquery Ui Js File -->
+    <script src="/cars/js/jquery-ui.js"></script>
+    <!-- Bootstrap js file -->
+    <script src="/webjars/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <!-- Flatpickr -->
+    <script src="/webjars/flatpickr/4.6.13/dist/flatpickr.min.js"></script>
+
+    <!-- Page js  -->
+    <script src="/js/customer/homepage-customer.js"></script>
 
     <script>
         //search vihicle btn

@@ -6,15 +6,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rentalcar.rentalcar.common.CalculateNumberOfDays;
 import com.rentalcar.rentalcar.common.Constants;
 import com.rentalcar.rentalcar.common.Regex;
-import com.rentalcar.rentalcar.dto.BookingDto;
-import com.rentalcar.rentalcar.dto.CarDto;
-import com.rentalcar.rentalcar.dto.MyBookingDto;
-import com.rentalcar.rentalcar.dto.UserDto;
+import com.rentalcar.rentalcar.dto.*;
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.DriverDetail;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.mail.EmailService;
+import com.rentalcar.rentalcar.mappers.BookingMapper;
 import com.rentalcar.rentalcar.repository.BookingRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
@@ -45,6 +43,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.rentalcar.rentalcar.common.Regex.EMAIL_REGEX;
 
@@ -77,6 +76,8 @@ public class RentalCarController {
 
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private BookingMapper bookingMapper;
 
     @GetMapping({"/customer/my-bookings", "/car-owner/my-bookings"})
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -141,6 +142,19 @@ public class RentalCarController {
         return "customer/MyBookings";
     }
 
+    @GetMapping("/customer/my-bookingsv2")
+    public String myBookingV2(){
+        return "customer/MyBookingsV2";
+    }
+
+    @GetMapping("/api/my-booking")
+    public ResponseEntity<List<BookingDto1>> getMyBooking(
+            HttpSession session
+    ) {
+        User user = (User) session.getAttribute("user");
+        List<BookingDto1> bookingList = bookingRepository.findAllByUser_Id(user.getId()).stream().map(bookingMapper::toDto).toList();
+        return ResponseEntity.ok(bookingList);
+    }
 
     //Add
     @GetMapping("/customer/booking-car")

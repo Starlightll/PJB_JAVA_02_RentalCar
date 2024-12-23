@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/webjars/toastr/2.1.0/toastr.css">
 
     <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+    <link rel="stylesheet" href="/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
     <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
     <style>
         .hero-wrap {
@@ -709,13 +709,14 @@
         </svg>
     </div>
 
-    <script src="/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            $('#myTable').DataTable({
-
-            });
+            $('#myTable').DataTable();
         });
     </script>
 
