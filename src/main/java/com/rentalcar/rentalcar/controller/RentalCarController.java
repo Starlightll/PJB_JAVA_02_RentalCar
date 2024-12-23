@@ -468,7 +468,7 @@ public class RentalCarController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "You are not authorized to cancel this booking."));
         }
         try{
-            rentalCarService.cancelBooking(booking);
+            bookingService.cancelBooking(booking);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Unable to cancel the booking. Please try again."));
         }

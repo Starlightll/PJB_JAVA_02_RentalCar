@@ -1,7 +1,9 @@
 package com.rentalcar.rentalcar.configs;
+import com.rentalcar.rentalcar.interceptor.UserSessionInterceptor;
 import com.rentalcar.rentalcar.security.CustomAuthenticationFailureHandler;
 import com.rentalcar.rentalcar.security.CustomAuthenticationSuccessHandler;
 import com.rentalcar.rentalcar.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -14,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableAsync
 public class WebConfiguration {
+
+
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
@@ -23,7 +27,6 @@ public class WebConfiguration {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -118,5 +121,7 @@ public class WebConfiguration {
 
         return http.build();
     }
+
+
 
 }

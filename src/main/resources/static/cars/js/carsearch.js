@@ -374,6 +374,12 @@ function fetchCars(pickupLocation, pickupDateTime, dropDateTime) {
     const selectedBrands = Array.from(document.querySelectorAll('input[name="brands"]:checked')).map(checkbox => checkbox.value);
     const selectedFunctions = Array.from(document.querySelectorAll('input[name="functions"]:checked')).map(checkbox => checkbox.value);
 
+    if(pickupLocation === '' || pickupDateTime === '' || dropDateTime === ''){
+        pickupLocation = document.getElementById('pickupLocation').value;
+        pickupDateTime = document.getElementById('pickupDateTime').value;
+        dropDateTime = document.getElementById('dropDateTime').value
+    }
+
     const queryParams = new URLSearchParams({
         pickupLocation: pickupLocation,
         pickupDateTime: pickupDateTime,

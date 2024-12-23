@@ -276,6 +276,11 @@ public class UserService implements IUserService {
         session.invalidate();
     }
 
+    @Override
+    public User getUserById(Long userId) {
+        return userRepo.findById(userId).orElse(null);
+    }
+
     public boolean checkEmail(String email) {
         return userRepo.getUserByEmail(email) != null;
     }

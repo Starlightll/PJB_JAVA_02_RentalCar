@@ -8,7 +8,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -79,6 +81,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Booking findBookingByCar_CarIdAndUser_IdAndBookingStatus_BookingStatusId(Integer car_carId, Long user_id, Long bookingStatus_bookingStatusId);
 
+    List<Booking> findBookingsByCar_CarIdAndUser_IdAndBookingStatus_BookingStatusIdIsIn(Integer carCarId, Long userId, List<Long> bookingStatusBookingStatusIds);
 
     List<Booking> findAllByUser_Id(Long userId);
+
+    Booking findBookingByBookingId(Long bookingId);
+
+    Set<Booking> findAllByBookingStatus_BookingStatusIdAndCar_CarId(Long bookingStatusId, Integer carId);
+
+    List<Booking> findAllByBookingStatus_BookingStatusIdIsIn(List<Long> bookingStatusBookingStatusIds);
+
+    @Query("SELECT b FROM Booking b WHERE b.endDate < :now AND b.bookingStatus.bookingStatusId = 1 AND b.bookingStatus.bookingStatusId = 2")
+    List<Booking> findExpiredBookings(LocalDateTime now);
 }

@@ -5,6 +5,7 @@ import com.rentalcar.rentalcar.entity.TransactionType;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.TransactionRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

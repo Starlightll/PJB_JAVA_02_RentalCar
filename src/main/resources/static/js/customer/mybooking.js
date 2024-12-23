@@ -40,6 +40,9 @@ s.length && (e = s.DataTable({
             return ""
         }
     }, {
+       targets: 1,
+        className: 'p-2',
+    }, {
         targets: 2,
         responsivePriority: 1,
         render: function (e, t, a, n) {
@@ -70,16 +73,27 @@ s.length && (e = s.DataTable({
         responsivePriority: 100,
         render: function (e, t, a, n) {
             a = new Date(a.startDate);
-            const startDate = a.getDate() + "-" + (a.getMonth() + 1) + "-" + a.getFullYear();
+            const startDate = a.getDate() + "/" + (a.getMonth() + 1) + "/" + a.getFullYear();
             return '<span class="text-heading">' + startDate + "</span>"
         }
     }, {
         targets: 4,
         responsivePriority: 100,
+        visible: false,
         render: function (e, t, a, n) {
             a = new Date(a.endDate);
-            const endDate = a.getDate() + "-" + (a.getMonth() + 1) + "-" + a.getFullYear();
+            const endDate = a.getDate() + "/" + (a.getMonth() + 1) + "/" + a.getFullYear();
             return '<span class="text-heading">' + endDate + "</span>"
+        }
+    }, {
+        targets: 5,
+        render: function (e, t, a, n) {
+            const totalPrice = a.totalPrice;
+            const formatter = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+            });
+            return '<span class="text-heading" style="color: #00ff80">' + formatter.format(totalPrice) + "</span>"
         }
     }, {
       targets: 6,
@@ -100,15 +114,18 @@ s.length && (e = s.DataTable({
         orderable: !1,
         render: function (e, t, a, n) {
             const bookingStatusId = a.bookingStatus.bookingStatusId;
+            const bookingId = a.bookingId;
             let button = '';
             if (bookingStatusId === 1 || bookingStatusId === 2) {
-                button = '<a class="btn bg-label-danger">Cancel</a>';
+                button = '<a class="btn bg-label-danger" onclick="cancelBooking(' + bookingId + ')"><i class="bx bx-x"></i>Cancel</a>';
             }
-            return '<div class="d-flex align-items-center" style="gap: 10px">'+button+'<a href="" class="btn bg-label-success"></i>Details</a></div></div>'
+            return '<div class="d-flex align-items-center justify-content-end" style="gap: 10px">'+button+'<a href="" class="btn bg-label-success"></i>Details</a></div></div>'
         }
     }],
-    order: [[2, "desc"]],
+    order: [[3, "desc"]],
     dom: '<"row"<"col-md-2"<"ms-n2"l>><"col-md-10"<"dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-6 mb-md-0 mt-n6 mt-md-0 gap-md-4"fB>>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+    displayLength: 5,
+    lengthMenu: [5, 10, 25],
     language: {
         sLengthMenu: "_MENU_",
         search: "",
@@ -184,4 +201,57 @@ s.length && (e = s.DataTable({
 
 function escapeRegex(value) {
     return value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
+//Cancel booking function
+function cancelBooking(bookingId) {
+    console.log(bookingId);
+    Swal.fire({
+        title: 'Are you sure you want to cancel this booking?',
+        icon: 'warning',
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        showCancelButton: true,
+        customClass: {
+            confirmButton: 'custom-confirm-btn',
+            cancelButton: 'custom-cancel-btn'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/cancel-booking?bookingId=' + bookingId, {
+                method: 'GET',
+            }).then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        if (data.message) {
+                            Swal.fire({
+                                title: 'Booking Cancelled!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                            e.ajax.reload();
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                } else {
+                    console.error('Error:', response);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        } else {
+            console.log('User canceled the booking action');
+        }
+    });
 }

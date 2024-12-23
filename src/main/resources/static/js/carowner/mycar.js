@@ -10,7 +10,7 @@ function showConfirmBookingModal(carId) {
 
 
 //Confirm booking
-function confirmBooking() {
+function confirmBooking(bookingId) {
     Swal.fire({
         title: 'Confirm booking and receive deposit from customer!',
         icon: 'question',
@@ -25,15 +25,12 @@ function confirmBooking() {
         if (result.isConfirmed) {
             console.log('User confirmed the booking');
             // Call API to confirm booking
-            fetch('/api/car-owner/confirm-booking', {
-                method: 'POST',
+            fetch(`/car-owner/api/confirm-booking?bookingId=${bookingId}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
                 },
-                body: JSON.stringify({
-                    carId: 1
-                })
             }).then(response => {
                 if (response.ok) {
                     return response.json();
@@ -47,6 +44,7 @@ function confirmBooking() {
                     icon: 'success',
                     confirmButtonText: 'OK'
                 });
+                showConfirmBookingModal(data.carId);
             }).catch(error => {
                 console.error('Error confirming booking', error);
                 Swal.fire({
@@ -185,12 +183,12 @@ function getBookingList(carId) {
             <!-- Action Buttons Section -->
             <div class="col-12 col-lg-12 d-flex justify-content-center justify-content-lg-end" style="height: fit-content;">
                 <div class="d-flex" style="gap: 10px;">
-                    <button class="btns btn-confirm px-4" onclick="confirmBooking()">
+                    <a class="btns btn-confirm px-4" onclick="confirmBooking(${booking.bookingId})">
                         <i class="fas fa-check mr-2"></i>Confirm
-                    </button>
-                    <button class="btns btn-cancel px-4">
+                    </a>
+                    <a class="btns btn-cancel px-4">
                         <i class="fas fa-times mr-2"></i>Cancel
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

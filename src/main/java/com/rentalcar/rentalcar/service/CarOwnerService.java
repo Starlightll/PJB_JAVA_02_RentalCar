@@ -24,4 +24,5 @@ public interface CarOwnerService {
     CarDto getRatingByCarId(Long carId);
 
 
+
 }

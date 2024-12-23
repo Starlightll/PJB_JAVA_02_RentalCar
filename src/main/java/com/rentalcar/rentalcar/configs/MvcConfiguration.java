@@ -1,6 +1,8 @@
 package com.rentalcar.rentalcar.configs;
 
 
+import com.rentalcar.rentalcar.interceptor.UserSessionInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -8,6 +10,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class MvcConfiguration implements WebMvcConfigurer {
+
+    @Autowired
+    private UserSessionInterceptor userSessionInterceptor;
+
+    @Override
+    public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
+        registry.addInterceptor(userSessionInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/login", "/register", "/error", "/403", "/homepage-carowner", "/homepage-customer", "/homepage-guest", "/agree-term-service", "/logout", "/css/**", "/js/**", "/images/**", "/fonts/**", "/vendor/**", "/assets/**", "/uploads/**", "/cars/**", "/webjars/**", "/static/node_modules/**");
+    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

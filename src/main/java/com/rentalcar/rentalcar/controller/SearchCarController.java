@@ -230,12 +230,12 @@ public class SearchCarController {
             @RequestParam(value = "dropDateTime", required = false) String dropDateTime,
             Model model
     ) {
-        List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
-        List<Car> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds);
+//        List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
+//        List<Car> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds);
         model.addAttribute("pickupLocation", pickupLocation);
         model.addAttribute("pickupDateTime", pickupDateTime);
         model.addAttribute("dropDateTime", dropDateTime);
-        model.addAttribute("cars", cars);
+//        model.addAttribute("cars", cars);
         return "products/CarSearch";
     }
 

@@ -282,26 +282,7 @@ public class RentalCarServiceImpl implements RentalCarService {
         return false;
     }
 
-    @Override
-    @Transactional
-    public void cancelBooking(Booking booking){
-        if(booking.getBookingStatus().getBookingStatusId() == 1){
-            BookingStatus bookingStatus = bookingStatusRepository.findById(6L).orElseThrow(() -> new RuntimeException("BookingStatus not found"));
-            booking.setBookingStatus(bookingStatus);
-            booking.setLastModified(new Date());
-            bookingRepository.save(booking);
-            BigDecimal deposit = BigDecimal.valueOf(booking.getDeposit());
-            myWalletService.transfer(1L, booking.getUser().getId(), TransactionType.REFUND_DEPOSIT, TransactionType.RECEIVE_DEPOSIT, deposit, "Admin refund deposit");
-        }
-        if(booking.getBookingStatus().getBookingStatusId() == 2){
-            BookingStatus bookingStatus = bookingStatusRepository.findById(7L).orElseThrow(() -> new RuntimeException("BookingStatus not found"));
-            booking.setBookingStatus(bookingStatus);
-            booking.setLastModified(new Date());
-            bookingRepository.save(booking);
-            BigDecimal deposit = BigDecimal.valueOf(booking.getDeposit());
-            myWalletService.transfer(1L, booking.getCarOwner().getId(), TransactionType.REFUND_DEPOSIT, TransactionType.RECEIVE_DEPOSIT, deposit, "Admin refund deposit");
-        }
-    }
+
 
     @Override
     public boolean confirmPickupBooking(Long bookingId, HttpSession session) {

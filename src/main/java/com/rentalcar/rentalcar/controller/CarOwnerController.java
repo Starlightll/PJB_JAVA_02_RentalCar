@@ -10,10 +10,7 @@ import com.rentalcar.rentalcar.mappers.AdditionalFunctionMapper;
 import com.rentalcar.rentalcar.mappers.BookingMapper;
 import com.rentalcar.rentalcar.mappers.CarMapper;
 import com.rentalcar.rentalcar.repository.*;
-import com.rentalcar.rentalcar.service.CarDraftService;
-import com.rentalcar.rentalcar.service.CarOwnerService;
-import com.rentalcar.rentalcar.service.RentalCarService;
-import com.rentalcar.rentalcar.service.RevenueService;
+import com.rentalcar.rentalcar.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +67,7 @@ public class CarOwnerController {
     private CarDraftRepository carDraftRepository;
 
     @Autowired
-    private RevenueService revenueService ;
+    private RevenueService revenueService;
     @Autowired
     private BookingRepository bookingRepository;
     @Autowired
@@ -81,6 +78,8 @@ public class CarOwnerController {
     private AdditionalFunctionMapper additionalFunctionMapper;
     @Autowired
     private BookingMapper bookingMapper;
+    @Autowired
+    private BookingService bookingService;
 
     @GetMapping("/my-cars")
     public String myCar(
@@ -738,11 +737,32 @@ public class CarOwnerController {
 
     //API
 
-//    @GetMapping("/api/car-owner/confirm-booking")
-//    public ResponseEntity<Map<String, Object>> confirmBooking(@RequestParam("carId") Long carId,
-//                                           HttpSession session) {
-//
-//    }
+    @GetMapping("/api/confirm-booking")
+    public ResponseEntity<Map<String, Object>> confirmBooking(
+            @RequestParam("bookingId") Long bookingId,
+            HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Booking booking = bookingRepository.findBookingByBookingId(bookingId);
+        if (booking == null || !Objects.equals(booking.getCar().getUser().getId(), user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access Denied"));
+        }
+
+        if(booking.getBookingStatus().getBookingStatusId() != 1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Invalid booking status"));
+        }
+
+        if(bookingService.checkOverdueBooking(bookingId)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Booking is overdue"));
+        }
+
+        if(booking.getBookingStatus().getBookingStatusId() == 1) {
+            bookingService.confirmBooking(booking);
+            //put carId to response
+            return ResponseEntity.ok(Map.of("message", "Booking confirmed", "carId", booking.getCar().getCarId()));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Something went wrong"));
+    }
 
     @GetMapping("/api/booking-list")
     public ResponseEntity<List<BookingDto1>> bookingList(
@@ -750,7 +770,7 @@ public class CarOwnerController {
             HttpSession session) {
         User user = (User) session.getAttribute("user");
         Car car = carRepository.getCarByCarId(carId);
-        if(car == null || !Objects.equals(car.getUser().getId(), user.getId())) {
+        if (car == null || !Objects.equals(car.getUser().getId(), user.getId())) {
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
         return ResponseEntity.ok(carRepository.findBookingByCarIdAndBookingStatusId(carId, 1).stream().map(bookingMapper::toDto).collect(Collectors.toList()));

@@ -24,4 +24,5 @@ public interface IUserService {
     boolean checkNationalId(String nationalId);
     boolean changePassword(User user, String currentPassword, String newPassword);
     void logout(HttpSession session);
+    User getUserById(Long userId);
 }
