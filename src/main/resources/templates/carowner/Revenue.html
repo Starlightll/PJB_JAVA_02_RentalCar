@@ -232,12 +232,11 @@
                             or transaction.transactionType == 'Pay final payment'
                             or transaction.transactionType == 'Return remaining deposit'
                             or transaction.transactionType == 'Refund deposit'
-                            or transaction.transactionType == 'Pay for driver rental'
-                            or transaction.transactionType == 'Receive salary'? '-' : '+')
+                            or transaction.transactionType == 'Pay for driver rental' ? '-' : '+')
                             + transaction.getAmount() + ' VND'}"
                     th:class="${transaction.transactionType == 'Withdraw' or transaction.transactionType == 'Pay deposit' or transaction.transactionType == 'Offset final payment'  or transaction.transactionType == 'Pay final payment'
-                            or transaction.transactionType == 'Return remaining deposit' or transaction.transactionType == 'Refund deposit' or transaction.transactionType == 'Receive salary'
-                             or transaction.transactionType == 'Pay for driver rental' ? 'text-danger' : 'text-success'}">
+                            or transaction.transactionType == 'Return remaining deposit' or transaction.transactionType == 'Refund deposit'
+                            or transaction.transactionType == 'Pay for driver rental' ? 'text-danger' : 'text-success'}">
                 </td>
                 <td th:text="${transaction.getTransactionType()}"></td>
                 <td th:text="${#temporals.format(transaction.getTransactionDate(), 'dd/MM/yyyy HH:mm')}"></td>
@@ -262,7 +261,7 @@
 
             <!-- Biểu đồ Pie -->
             <div style="flex: 1; max-width: 60%;">
-              <p style="margin: 0; padding: 0; color: black; font-weight: 550;">Revenue Distribution</p>
+              <p style="margin: 0; padding: 0; color: black; font-weight: 550;">Transaction Distribution</p>
               <canvas id="myPieChart" style="height: 360px; max-width: 100%;"></canvas>
             </div>
 
