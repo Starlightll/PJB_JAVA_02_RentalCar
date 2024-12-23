@@ -30,6 +30,14 @@ public class Booking {
 
     private Double deposit;
 
+    private Double basePrice;
+
+    private Double additionalPrice;
+
+    private Double discount;
+
+    private Double finalPrice;
+
     private Double totalPrice;
 
     private Date lastModified;
@@ -42,6 +50,14 @@ public class Booking {
     @JoinColumn(name = "userId", nullable = false)
     private User user; // Liên kết với entity User
 
+    @ManyToOne
+    @JoinColumn(name = "carOwnerId", nullable = false)
+    private User carOwner;
+
+    //One booking has one car, one car has many bookings
+    @ManyToOne
+    @JoinColumn(name = "carId", nullable = false)
+    private Car car;
 
     @ManyToOne
     @JoinColumn(name = "bookingStatusId", nullable = false)

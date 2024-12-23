@@ -11,4 +11,6 @@ public interface CarStatusRepository extends JpaRepository<CarStatus, Integer> {
     Optional<CarStatus> findByName(String name);
 
     List<CarStatus> findCarStatusesByStatusIdIsIn(Collection<Integer> statusIds);
+
+    CarStatus findCarStatusByStatusId(Integer statusId);
 }
