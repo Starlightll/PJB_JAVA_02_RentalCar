@@ -10,10 +10,13 @@
     <link rel="stylesheet" href="/webjars/toastr/2.1.0/toastr.css">
 
     <link rel="stylesheet" href="/webjars/sweetalert2/11.14.4/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="/node_modules/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="/node_modules/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
-    <link rel="stylesheet" href="/node_modules/datatables.net-select-bs4/css/select.bootstrap4.min.css">
+<!--    <link rel="stylesheet" href="/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css">-->
+<!--    <link rel="stylesheet" href="/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css">-->
+<!--    <link rel="stylesheet" href="/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css">-->
+    <link rel="stylesheet" href="/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.css"/>
+    <link rel="stylesheet" href="/node_modules/datatables.net-responsive-bs5/css/responsive.bootstrap5.css"/>
+    <link rel="stylesheet" href="/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.css"/>
+
     <link rel="stylesheet" href="/webjars/select2/dist/css/select2.min.css">
     <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css">
     <script src="/webjars/sweetalert2/11.14.4/dist/sweetalert2.all.min.js"></script>
@@ -57,6 +60,56 @@
             text-align: unset !important;
         }
 
+        div.table-responsive>div.dt-container>div.row {
+            padding: 20px 10px;
+        }
+
+        div.dt-container div.dt-length select {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+
+        .table {
+            min-width: unset !important;
+        }
+
+        .dt-action-buttons{
+            display: flex;
+            gap: 10px;
+        }
+
+        .dt-button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            border: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            background: #d3ffe1;
+            color: #018300;
+            transition: all 0.3s;
+        }
+
+        .dt-button:hover {
+            background: #018300;
+            color: #d3ffe1;
+            scale: 1.05;
+        }
+
+        #datatables_buttons_info{
+            box-shadow: none !important;
+            border: 2px solid #d8f3ff;
+        }
+
+        .btn:hover{
+            scale: 1.05;
+        }
+
+        .btn{
+            transition: all 0.3s;
+        }
 
     </style>
 </head>
@@ -85,9 +138,9 @@
             <div class="">
                 <div class="border-bottom">
                     <div class="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0 g-6 pb-4">
-                        <div class="col-md-4 user_role"></div>
+                        <div class="col-md-4 car_brand" id="brandFilter"></div>
                         <div class="col-md-4 user_plan"></div>
-                        <div class="col-md-4 user_status"></div>
+                        <div class="col-md-4 booking_status"></div>
                     </div>
                 </div>
                 <div class="card-datatable table-responsive">
@@ -100,6 +153,7 @@
                             <th>Start</th>
                             <th>End</th>
                             <th>Price</th>
+                            <th></th>
                             <th>Status</th>
                         </tr>
                         </thead>
@@ -122,16 +176,16 @@
 
 
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-    <script src="/node_modules/datatables.net/js/dataTables.min.js"></script>
-    <script src="/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="/node_modules/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="/node_modules/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="/node_modules/datatables.net-select-bs4/js/select.bootstrap4.min.js"></script>
-    <script src="/node_modules/jszip/dist/jszip.min.js"></script>
-    <script src="/node_modules/pdfmake/build/pdfmake.min.js"></script>
-    <script src="/node_modules/pdfmake/build/vfs_fonts.js"></script>
-    <script src="/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="/node_modules/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="/node_modules/datatables.net/js/dataTables.js"></script>
+    <script src="/node_modules/datatables.net-dt/js/dataTables.dataTables.min.js"></script>
+    <script src="/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
+    <script src="/node_modules/datatables.net-responsive/js/dataTables.responsive.js"></script>
+    <script src="/node_modules/datatables.net-searchbuilder/js/dataTables.searchBuilder.js"></script>
+    <script src="/node_modules/datatables.net-searchpanes/js/dataTables.searchPanes.js"></script>
+    <script src="/node_modules/datatables.net-select/js/dataTables.select.js"></script>
+    <script src="/node_modules/datatables.net-buttons/js/dataTables.buttons.js"></script>
+    <script src="/node_modules/datatables.net-buttons/js/buttons.html5.js"></script>
+    <script src="/node_modules/datatables.net-buttons/js/buttons.print.js"></script>
     <script src="/webjars/select2/dist/js/select2.min.js"></script>
 
     <script src="/js/customer/mybooking.js"></script>

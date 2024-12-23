@@ -12198,10 +12198,10 @@ h1, h2, h3, h4, h5,
     font-size: 15px;
 }
 
-.btn:hover, .btn:active, .btn:focus {
-    outline: none;
-    background: #13b580 !important;
-}
+/*.btn:hover, .btn:active, .btn:focus {*/
+/*    outline: none;*/
+/*    background: #13b580 !important;*/
+/*}*/
 
 .btn.btn-primary {
     background: #1089ff !important;
