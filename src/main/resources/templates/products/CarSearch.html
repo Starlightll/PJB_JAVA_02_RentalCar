@@ -379,7 +379,7 @@
                                     <p class="mb-0 pl-2">Pickup date time</p>
                                     <div class="form-group">
                                         <input type="text" name="pickupDateTime" id="pickupDateTime"
-                                               class="form-control flatpickr-validate"
+                                               class="form-control flatpickr-validate" th:value="${pickupDateTime == null ? '' : pickupDateTime}"
                                                placeholder="Days for rent" required>
                                     </div>
                                 </div>
@@ -387,7 +387,7 @@
                                     <p class="mb-0 pl-2">Drop date time</p>
                                     <div class="form-group">
                                         <input type="text" name="dropDateTime" id="dropDateTime"
-                                               class="form-control flatpickr-validate"
+                                               class="form-control flatpickr-validate" th:value="${dropDateTime == null ? '' : dropDateTime}"
                                                placeholder="Pickup date time" required>
                                     </div>
                                 </div>

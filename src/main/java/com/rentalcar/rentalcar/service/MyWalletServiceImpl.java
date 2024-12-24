@@ -48,7 +48,7 @@ public class MyWalletServiceImpl implements MyWalletService {
 
     @Override
     @Transactional
-    public void transfer(Long senderId, Long receiverId, TransactionType senderType, TransactionType receiverType, BigDecimal amount, String description) {
+    public void transfer(Long senderId, Long receiverId, String senderType, String receiverType, BigDecimal amount, String description) {
         User sender = userRepository.findById(senderId).orElseThrow(() -> new IllegalArgumentException("Sender not found"));
         User receiver = userRepository.findById(receiverId).orElseThrow(() -> new IllegalArgumentException("Receiver not found"));
 
