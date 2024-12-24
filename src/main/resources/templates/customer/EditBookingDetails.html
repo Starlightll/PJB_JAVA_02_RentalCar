@@ -376,21 +376,6 @@
 
 
 
-
-        #differentInfoCheckbox:checked {
-            --b: none;
-            background-color: #05d38e !important;
-            border: 1px solid #05d38e;
-        }
-
-        #differentInfoCheckbox:disabled {
-            --b: var(--border-active);
-            background-color: #D3D3D3;
-            border: 1px solid #A9A9A9;
-        }
-
-
-
     </style>
 </head>
 
@@ -431,15 +416,6 @@
                                                                     No Name</h4>
                                                                 <div>
                                                                     <span></span>
-                                                                </div>
-
-                                                                <div class="col-lg-12 row"
-                                                                     style="display: flex; align-items: center">
-                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                        Booking No: </p>
-                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                       th:text="${contract.getBookingId()}">No</p>
                                                                 </div>
                                                                 <!-- From Date and To Date Section -->
                                                                 <div class="col-lg-12 row mt-2">
@@ -541,6 +517,14 @@
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking No: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${contract.getBookingId()}">No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                         Booking status:
                                                                     </p>
                                                                     <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -568,15 +552,6 @@
                                                                     No Name</h4>
                                                                 <div>
                                                                     <span></span>
-                                                                </div>
-                                                                <div class="col-lg-12 row"
-                                                                     style="display: flex; align-items: center">
-                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                        Booking No: </p>
-                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                                       id="previewBookingNoActual"
-                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                       th:text="${actual.getBookingId()}">No</p>
                                                                 </div>
                                                                 <!-- From Date and To Date Section -->
                                                                 <div class="col-lg-12 row mt-2">
@@ -705,6 +680,15 @@
                                                                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                        th:text="${#numbers.formatDecimal(actual.getTotalPayment(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                         No</p>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking No: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       id="previewBookingNoActual"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${actual.getBookingId()}">No</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
@@ -923,43 +907,32 @@
                                                         <div>
                                                             <span></span>
                                                         </div>
-
-                                                        <div class="col-lg-12 row"
-                                                                 style="display: flex; align-items: center">
-                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                    Booking No: </p>
-                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                                   id="previewBookingNo"
-                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                   th:text="${booking.getBookingId()}">No</p>
-                                                        </div>
-
                                                         <!-- From Date and To Date Section -->
-                                                        <div class="col-lg-12 row ">
-                                                            <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                        <div class="col-lg-12 row mt-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>From Date:</label>
                                                             </div>
                                                             <p id="pickupDate" th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
                                                         <div class="col-lg-12 row mt-2">
-                                                            <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>To Date:</label>
                                                             </div>
                                                             <p id="returnDate" th:text="${#temporals.format(booking.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
 <!--                                                        In ra actual khi đã hoàn thành và không tự tanăng theo thời gian thực-->
-                                                        <div class="col-lg-12 row"
+                                                        <div class="col-lg-12 row mt-2"
                                                              th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
 
-                                                            <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
                                                                 <label>Actual End Date:</label>
                                                             </div>
                                                             <p id="actualDateDb" th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
 <!--                                                        Ngược lại-->
-                                                        <div class="col-lg-12 row "
+                                                        <div class="col-lg-12 row mt-2"
                                                              th:if="${(#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'))  or (booking.bookingStatus == 'In-Progress'
                                                                     or booking.bookingStatus == 'Pending return')}">
@@ -992,7 +965,16 @@
                                                             <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + ' VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
-
+<!--                                                            <div class="col-lg-12 row"-->
+<!--                                                                 style="display: flex; align-items: center">-->
+<!--                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
+<!--                                                                    Total: </p>-->
+<!--                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"-->
+<!--                                                                   id="previewTotalPrice"-->
+<!--                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
+<!--                                                                   th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">-->
+<!--                                                                    No</p>-->
+<!--                                                            </div>-->
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -1016,7 +998,8 @@
                                                             </div>
 
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
+                                                             style="display: flex; align-items: center"
+                                                        th:if="${booking.getTotalMoney() > 0}">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Addition payment: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -1027,7 +1010,8 @@
                                                         </div>
 
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
+                                                             style="display: flex; align-items: center"
+                                                             th:if="${booking.getReturnDeposit() > 0}">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Return Deposit: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -1038,7 +1022,8 @@
                                                         </div>
 
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
+                                                             style="display: flex; align-items: center"
+                                                             th:if="${haveDriver != null}">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Salary Driver: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -1058,6 +1043,16 @@
                                                                    th:text="${#numbers.formatDecimal(booking.getTotalPayment(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                     No</p>
                                                             </div>
+
+                                                            <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Booking No: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="previewBookingNo"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${booking.getBookingId()}">No</p>
+                                                        </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -1373,9 +1368,8 @@
                                                     <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
                                                         <input type="checkbox" id="differentInfoCheckbox"
                                                                name="additionalFunction" value="true" onclick="toggleDriverInfoFields()"
-                                                               data-has-driver="${booking.getDriverId() != null ? 'true' : 'false'}"
                                                                th:checked="${booking.getDriverId() != null}"
-                                                               th:disabled="${booking.getDriverId() != null || (booking.getDriverId() == null && booking.getBookingStatus() != 'Pending deposit' && booking.getBookingStatus() != 'Confirmed')}">
+                                                               th:disabled="${booking.getDriverId() != null}">
                                                         <svg viewBox="0 0 21 21">
                                                             <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                                         </svg>
@@ -2902,13 +2896,10 @@
         function toggleDriverInfoFields() {
             const checkbox = document.getElementById('differentInfoCheckbox');
             const table = document.getElementById('driverInfoTable');
-            
-            const hasDriver = checkbox.disabled && checkbox.getAttribute('data-has-driver') === 'true';
 
-            // Hiển thị bảng nếu có driver hoặc checkbox được chọn
-            table.style.display = hasDriver || checkbox.checked ? 'block' : 'none';
+            // Hiển thị bảng nếu checkbox được chọn hoặc bị vô hiệu hóa (driver đã tồn tại)
+            table.style.display = checkbox.checked || checkbox.disabled ? 'block' : 'none';
         }
-
         // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
         window.addEventListener('pageshow', toggleDriverInfoFields);
