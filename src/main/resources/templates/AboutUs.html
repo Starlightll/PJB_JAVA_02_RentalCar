@@ -52,7 +52,7 @@
 
                         <th:block th:if="${user.roles[0].getRoleName().equalsIgnoreCase('Customer')}">
                             <p>
-                                <a href="#" id="searchVehicleBtn" class="btn btn-primary py-3 px-4">Search Vehicle</a>
+                                <a href="/car-search" class="btn btn-primary py-3 px-4">Search Vehicle</a>
                             </p>
                         </th:block>
                         <th:block th:if="${user.roles[0].getRoleName().equalsIgnoreCase('Car Owner')}">
