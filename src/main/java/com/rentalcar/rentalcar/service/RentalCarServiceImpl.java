@@ -118,18 +118,18 @@ public class RentalCarServiceImpl implements RentalCarService {
                 bookingStatus.equalsIgnoreCase("Pending payment") || bookingStatus.equalsIgnoreCase("Pending cancel")) {
 
                 map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, actualEndDate);
-//            tính late date
                 Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, actualEndDate);
-                if (CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
-                    lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
-                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay, fineLateTimePerHour);
+                //  kiểm tra xem actual có sau endate hay không
+                if(CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate) != null) {
                     Map<String, Long> numberOfDayActual = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
                     totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayActual,baseprice,  hourlyRate);
+                    lateTime = CalculateNumberOfDays.calculateLateTime(endDate, actualEndDate);
+                    fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);
                 }
             } else if (LocalDateTime.now().isAfter(endDate)) {
                 Map<String, Long> numberOfDayDb = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);// tổng số ngày thực
-                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayDb, baseprice, hourlyRate);
-                if (CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(numberOfDayDb,baseprice,  hourlyRate);
+                if(CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now()) != null) {
                     lateTime = CalculateNumberOfDays.calculateLateTime(endDate, LocalDateTime.now());
                     Map<String, Long> numberOfDaysFine = CalculateNumberOfDays.calculateNumberOfDays(endDate, LocalDateTime.now());// tổng số ngày quá hạn
                     fineLateTime = CalculateNumberOfDays.calculateRentalFee(numberOfDaysFine, fineLateTimePerDay,fineLateTimePerHour);// tổng số tiền phạt
@@ -140,21 +140,19 @@ public class RentalCarServiceImpl implements RentalCarService {
 
             } else {
                 map_numberOfDays = CalculateNumberOfDays.calculateNumberOfDays(startDate, endDate);
-                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays, baseprice, hourlyRate);
+                totalPrice = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,baseprice,  hourlyRate);
             }
 
             Map<String, Double> map_amount = calculateAmountToPay(startDate, endDate, totalPrice, deposit, fineLateTime);
-            totalMoney = map_amount.get("totalMoney");
+            double additionMoney = map_amount.get("totalMoney");
             returnDeposit = map_amount.get("returnDeposit");
-            String str_numberOfDays = map_numberOfDays.get("days") + " d " + map_numberOfDays.get("hours") + " h ";
-            if(actualEndDate.isAfter(endDate) || LocalDateTime.now().isAfter(endDate)) {
-                totalPrice += fineLateTime;
-            }
             User driver = userRepository.getUserById(driverId);
+
             if(driver != null) {
                 salaryDriver = CalculateNumberOfDays.calculateRentalFee(map_numberOfDays,driver.getSalaryDriver(),driver.getSalaryDriver() / 24);
             }
-            double totalPayment = salaryDriver + totalMoney;
+            double totalPayment = salaryDriver + additionMoney;
+            String str_numberOfDays = map_numberOfDays.get("days") + " days " + map_numberOfDays.get("hours") + " h ";
 
             MyBookingDto bookingDto = new MyBookingDto(
                     Long.valueOf((Integer) result[0]),
@@ -175,11 +173,12 @@ public class RentalCarServiceImpl implements RentalCarService {
                     (String) result[14],
                     (String) result[15],
                     (Integer) result[16],
-                    driverId,
+                    result[17] != null ? Long.valueOf((Integer) result[17]) : null,
                     lateTime,
                     fineLateTime,
                     returnDeposit,
-                    totalMoney,
+                    additionMoney,
+                    salaryDriver,
                     totalPayment
             );
             bookingDtos.add(bookingDto);

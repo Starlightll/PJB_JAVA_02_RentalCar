@@ -363,13 +363,13 @@
                                                                th:text="${booking.bookingId}">No</p>
                                                         </div>
                                                         <!-- From Date and To Date Section -->
-                                                        <div class="col-lg-12 row mt-2">
+                                                        <div class="col-lg-12 row">
                                                             <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 <label>From Date:</label>
                                                             </div>
                                                             <p th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
-                                                        <div class="col-lg-12 row mt-2">
+                                                        <div class="col-lg-12 row">
                                                             <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 <label>To Date:</label>
                                                             </div>
@@ -377,7 +377,7 @@
 
                                                         </div>
 
-                                                        <div class="col-lg-12 row mt-2"
+                                                        <div class="col-lg-12 row"
                                                              th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
 
@@ -390,7 +390,7 @@
                                                         </div>
 
 <!--                                                        Ngược lại-->
-                                                        <div class="col-lg-12 row mt-2"
+                                                        <div class="col-lg-12 row"
                                                              th:if="${(#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'))  or (booking.bookingStatus == 'In-Progress'
                                                                     or booking.bookingStatus == 'Pending return')}">
@@ -426,7 +426,16 @@
                                                             <p th:text="${#numbers.formatDecimal(booking.basePrice, 0, 'COMMA', 0, 'POINT')} + 'VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
-
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Fine LateTime: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="fineLateTime"
+                                                               th:style="${booking.getFineLateTime() > 0} ? 'color: red;' : 'color: inherit;'"
+                                                               th:text="${#numbers.formatDecimal(booking.getFineLateTime(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -438,8 +447,7 @@
                                                                 No</p>
                                                         </div>
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center"
-                                                             th:if="${booking.getTotalMoney() > 0}">
+                                                             style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Addition payment: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -450,8 +458,7 @@
                                                         </div>
 
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center"
-                                                             th:if="${booking.getReturnDeposit() > 0}">
+                                                             style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Return Deposit: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -460,7 +467,16 @@
                                                                th:text="${#numbers.formatDecimal(booking.getReturnDeposit(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                 No</p>
                                                         </div>
-
+                                                        <div class="col-lg-12 row"
+                                                             style="display: flex; align-items: center">
+                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                Salary Driver: </p>
+                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                               id="salaryDriverDisplay"
+                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                               th:text="${#numbers.formatDecimal(booking.getSalaryDriver(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                                No</p>
+                                                        </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
