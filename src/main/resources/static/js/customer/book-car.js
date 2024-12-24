@@ -7,6 +7,9 @@ $(document).ready(function () {
 
     $(".next").click(async function () {
         console.log(pageStep);
+        let x = 0;
+        let y = 0;
+
         if (pageStep === 1) {
             console.log('Step1')
             if(!checkStep1()) {
@@ -18,6 +21,10 @@ $(document).ready(function () {
             //     return;
             // }
             // Chờ kết quả từ saveBooking
+            const element = document.getElementById('rentalInformationTitle');
+            const position = element.getBoundingClientRect();
+            x = position.left;
+            y = position.top;
             const success = await saveBooking();
             if (!success) {
                 console.log("Booking save failed, stay at Step 1");
@@ -26,7 +33,10 @@ $(document).ready(function () {
 
             pageStep++;
         }else if (pageStep === 2) {
-
+            const element = document.getElementById('paymentTitle');
+            const position = element.getBoundingClientRect();
+            x = position.left;
+            y = position.top;
             // Chờ kết quả từ saveBooking
             const success = await saveBooking();
             if (!success) {
@@ -46,7 +56,8 @@ $(document).ready(function () {
 
         //show the next fieldset
         next_fs.show();
-        // window.scrollTo(0, 0);
+
+        window.scrollTo(x, y);
         //hide the current fieldset with style
         current_fs.animate({opacity: 0}, {
             step: function (now) {
