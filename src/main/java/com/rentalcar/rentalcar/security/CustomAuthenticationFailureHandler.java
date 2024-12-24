@@ -1,5 +1,6 @@
 package com.rentalcar.rentalcar.security;
 
+import com.rentalcar.rentalcar.exception.UserException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,11 +18,11 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        String errorMessage = "Invalid email or password.";
+        String errorMessage = exception.getMessage();
         boolean showConfirmationLink = false;
         String email = request.getParameter("email");
 
-        if (exception.getCause() instanceof UsernameNotFoundException) {
+        if (exception instanceof UsernameNotFoundException) {
             errorMessage = "No account found with that email.";
         } else if (exception instanceof LockedException) {
             errorMessage = "Your account has been locked. Please contact support.";

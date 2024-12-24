@@ -79,7 +79,9 @@ public class BookingDetailsController {
                     return "redirect:/customer/my-bookings";
             }
         }
-        List<UserDto> listDriver = getAllDriverAvailable(bookingId);
+
+
+        List<UserDto> listDriver = getAllDriverAvailable(bookingId, car.getAddress().getProvinceId());
 
 //        Optional<DriverDetail> optionalDriverDetail  = driverDetailRepository.findDriverByBookingId(Long.valueOf(bookingId));
 //        DriverDetail driverDetail = optionalDriverDetail.orElse(null);
@@ -280,15 +282,15 @@ public class BookingDetailsController {
     }
 
 
-    @GetMapping("/api/update-drivers/{id}")
-    public ResponseEntity<List<UserDto>> getAllDrivers(@PathVariable Integer id) {
-        List<UserDto> drivers = getAllDriverAvailable(id);
-        return ResponseEntity.ok(drivers);
-    }
+//    @GetMapping("/api/update-drivers/{id}")
+//    public ResponseEntity<List<UserDto>> getAllDrivers(@PathVariable Integer id) {
+//        List<UserDto> drivers = getAllDriverAvailable(id);
+//        return ResponseEntity.ok(drivers);
+//    }
 
 
-    public List<UserDto> getAllDriverAvailable(Integer bookingId) {
-        List<Object[]> results = userRepo.getAllDriver(bookingId);
+    public List<UserDto> getAllDriverAvailable(Integer bookingId, Integer provinceId) {
+        List<Object[]> results = userRepo.getAllDriver(bookingId, provinceId);
         List<UserDto> userDtos = new ArrayList<>();
 
         for (Object[] result : results) {

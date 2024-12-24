@@ -32,6 +32,10 @@
             text-overflow: ellipsis;
             height: 178px;
         }
+
+        .request-form .form-control{
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -69,9 +73,9 @@
             <div class="row no-gutters">
                 <div class="col-md-12	featured-top">
                     <div class="row no-gutters">
-                        <div class="col-md-4 d-flex align-items-center justify-content-center">
+                        <div class="col-12 col-lg-4 d-flex align-items-center justify-content-center">
                             <form th:action="@{/searchCar}" class="request-form ftco-animate bg-primary" method="get"
-                                  style="min-height: 550px;align-items: center;align-content: center;gap: 20px;display: flex;flex-flow: column;">
+                                  style="min-height: 550px;align-items: center;align-content: center;gap: 20px;display: flex;flex-flow: column; width: 100%">
                                 <h2>Make your trip</h2>
                                 <div id="error-messages" style="color: red;"></div>
 
@@ -81,14 +85,14 @@
                                            id="pick-location">
                                     <small id="pick-location-error" style="color: red;"></small>
                                 </div>
-                                <div class="d-flex">
-                                    <div class="form-group mr-2">
+                                <div class="row" style="width: 100%">
+                                    <div class="col-12 col-md-6 col-lg-7 p-0 pr-md-2 pr-lg-2">
                                         <label for="book_pick_dates" class="label">Pick-up date</label>
                                         <input name="pickDate" type="date" class="form-control" placeholder="Date"
                                                id="book_pick_dates">
                                         <small id="pick-date-error" style="color: red;"></small>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="col-12 col-md-6 col-lg-5 p-0">
                                         <label for="time_picks" class="label">Pick-up time</label>
                                         <input name="pickTime" type="time" class="form-control" placeholder="Time"
                                                id="time_picks" value="00:00">
@@ -96,14 +100,14 @@
                                     </div>
                                 </div>
 
-                                <div class="d-flex">
-                                    <div class="form-group mr-2">
+                                <div class="row" style="width: 100%">
+                                    <div class="col-12 col-md-6 col-lg-7 p-0 pr-md-2 pr-lg-2">
                                         <label for="book_drop_dates" class="label">Drop date</label>
                                         <input name="dropDate" type="date" class="form-control" placeholder="Date"
                                                id="book_drop_dates">
                                         <small id="drop-date-error" style="color: red;"></small>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="col-12 col-md-6 col-lg-5 p-0">
                                         <label for="time_drops" class="label">Drop time</label>
                                         <input name="dropTime" type="time" class="form-control" placeholder="Time"
                                                id="time_drops" value="00:00">
@@ -115,7 +119,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="col-md-8 d-flex align-items-center">
+                        <div class="col-12 col-lg-8 d-flex align-items-center">
                             <div class="services-wrap rounded-right w-100" style="text-align: center;">
                                 <h3 class="heading-section mb-4">Better Way to Rent Your Perfect Cars</h3>
                                 <div class="row d-flex mb-4">
@@ -147,7 +151,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <p><a href="/cars" class="btn btn-primary py-3 px-4">Reserve Your Perfect Car</a></p>
+                                <p><a href="/car-search" class="btn btn-primary py-3 px-4">Reserve Your Perfect Car</a></p>
                             </div>
                         </div>
                     </div>
@@ -172,7 +176,7 @@
                             <div class="item">
                                 <div class="car-wrap rounded ftco-animate">
                                     <div class="img rounded d-flex align-items-end">
-                                        <img th:src="'/'+${car.front}" alt="Car Image">
+                                        <img th:src="'/'+${car.front}" onerror="this.src='/images/car-placeholder.jpg'" alt="Car Image">
                                     </div>
                                     <div class="text">
                                         <h2 class="mb-0"><a href="#" th:text="${car.name}">Mercedes Grand Sedan</a></h2>
@@ -185,7 +189,7 @@
                                                th:href="@{'/customer/booking-car?CarId='+ ${car.getCarId()} + '&startDate='  + '&enDate='  + '&address=' + '&beforeNavigate=detailCar'}">Rent
                                                 now</a>
                                             <a class="btn btn-secondary py-2 ml-1"
-                                               th:href="@{/carDetail/{carId}(carId=${car.carId})}">Details</a>
+                                               th:href="@{/api/searchCar/{carId}(carId=${car.getCarId()})}">Details</a>
                                         </p>
                                     </div>
                                 </div>
@@ -459,7 +463,7 @@
 
                 const carId = this.closest('.item').getAttribute('data-car-id');
                 console.log(carId);
-                const url = `/carDetail/${carId}`;
+                const url = `/api/searchCar/${carId}`;
 
                 window.location.href = url;
             });

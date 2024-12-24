@@ -78,7 +78,7 @@
                             <div class="item">
                                 <div class="car-wrap rounded ftco-animate">
                                     <div class="img rounded d-flex align-items-end">
-                                        <img th:src="'/'+${car.front}" alt="Car Image">
+                                        <img th:src="'/'+${car.front}" onerror="this.src='/images/car-placeholder.jpg'" alt="Car Image">
                                     </div>
                                     <div class="text">
                                         <h2 class="mb-0"><a href="#" th:text="${car.name}">Mercedes Grand Sedan</a></h2>
@@ -91,7 +91,7 @@
                                                th:href="@{'/customer/booking-car?CarId='+ ${car.getCarId()} + '&startDate='  + '&enDate='  + '&address=' + '&beforeNavigate=detailCar'}">Rent
                                                 now</a>
                                             <a class="btn btn-secondary py-2 ml-1"
-                                               th:href="@{/carDetail/{carId}(carId=${car.carId})}">Details</a>
+                                               th:href="@{/api/searchCar/{carId}(carId=${car.getCarId()})}">Details</a>
                                         </p>
                                     </div>
                                 </div>
@@ -174,7 +174,7 @@
 
                                     <div class="text pt-4">
                                         <p class="mb-4 ellipsis-text" th:text="${feedback.getContent()}">
-                                            Far far away, behind the word mountains, far from the countries Vokalia and
+                                            Far away, behind the word mountains, far from the countries Vokalia and
                                             Consonantia, there live the blind texts.
                                         </p>
 

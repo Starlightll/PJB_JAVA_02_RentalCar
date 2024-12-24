@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/cars-layout}"
+>
+<head>
+    <title>My Cars</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <!-- Google Fonts Css-->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <!-- SlickNav Css -->
+    <link href="/cars/css/slicknav.min.css" rel="stylesheet">
+    <!-- Swiper Css -->
+    <link rel="stylesheet" href="/cars/css/swiper-bundle.min.css">
+    <!-- Animated Css -->
+    <link rel="stylesheet" href="/cars/css/animate.css">
+    <!-- Magnific Popup Core Css File -->
+    <link rel="stylesheet" href="/cars/css/magnific-popup.css">
+    <!-- Mouse Cursor Css File -->
+    <link rel="stylesheet" href="/cars/css/mousecursor.css">
+    <!-- Font Awesome Icon Css-->
+    <link rel="stylesheet" href="/cars/css/all.css" media="screen">
+    <!-- Font Ionicons-->
+    <link rel="stylesheet" href="/fonts/ionicons/css/ionicons.min.css" media="screen">
+    <!-- Main Custom Css -->
+    <link href="/cars/css/custom.css" rel="stylesheet" media="screen">
+    <!-- Flatpickr   -->
+    <link rel="stylesheet" href="/webjars/flatpickr/4.6.13/dist/themes/material_green.css">
+    <style>
+        .hero-wrap {
+            height: 200px !important;
+            position: relative;
+            background-image: url(/images/car-16.jpg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 200px !important;
+        }
+
+        .slider-text {
+            height: 200px !important;
+        }
+
+        p {
+            font-size: 0.8rem;
+        }
+
+        .basePrice {
+            font-size: 1.4rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .pickup-location-fleet {
+            margin: 0 auto;
+            background-color: #1b1b1b;
+        }
+
+        .pickup-location-fleet h5 {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            /*text-align: center;*/
+            margin: 0;
+            padding: 10px 0;
+        }
+
+        .location-search {
+            width: 100%;
+            padding: 10px 20px;
+            background: var(--white-color);
+            color: var(--text-color);
+            font-weight: 500;
+            border: none;
+            /*border-radius: 30px;*/
+            box-shadow: none;
+        }
+
+        .fleets-search-box {
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .fleets-sidebar-list {
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+
+        #ftco-loader-car {
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        #ftco-loader-car .circular {
+            -webkit-animation: loader-rotate 2s linear infinite;
+            animation: loader-rotate 2s linear infinite;
+            position: absolute;
+            left: calc(50% - 24px);
+            top: calc(50% - 24px);
+            display: block;
+            -webkit-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        #ftco-loader-car .path {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+            -webkit-animation: loader-dash 1.5s ease-in-out infinite;
+            animation: loader-dash 1.5s ease-in-out infinite;
+            stroke-linecap: round;
+        }
+
+        .perfect-fleet-title .available {
+            color: #2c8b00;
+            background-color: #e2ffde;
+        }
+
+        .perfect-fleet-title .booked {
+            color: #7300ff;
+            background-color: #f3edff
+        }
+
+        .perfect-fleet-title .stopped {
+            color: #ff0000;
+            background-color: #ffdede
+        }
+
+        .perfect-fleet-title .maintenance {
+            color: #3d3d3d;
+            background-color: #e4e4e4
+        }
+
+        .perfect-fleet-title .rented {
+            color: #ff8c00;
+            background-color: #ffedde
+        }
+
+        .perfect-fleet-title .in-progress {
+            color: #00c4ff;
+            background-color: #defbff
+        }
+
+        /*  Flatpickr*/
+
+        :root {
+            --flatpickr-color-header: #19cf91;
+            --flatpickr-color-dropdown: #1e6b52;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-weekdays {
+            background: var(--flatpickr-color-header);
+        }
+
+        span.flatpickr-weekday {
+            background: var(--flatpickr-color-header);
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+            background-color: var(--flatpickr-color-dropdown);
+        }
+
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+            background: var(--flatpickr-color-header) !important;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            color: #fff;
+            border-color: var(--flatpickr-color-header) !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: var(--flatpickr-color-header);
+        }
+
+        .checkbox {
+            --background: #fff;
+            --border: #D1D6EE;
+            --border-hover: #BBC1E1;
+            --border-active: #05d38e;
+            --tick: #fff;
+            position: relative;
+        }
+
+        .checkbox input,
+        .checkbox svg {
+            width: 21px;
+            height: 21px;
+            display: block;
+        }
+
+        .checkbox input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            position: relative;
+            outline: none;
+            background: var(--background);
+            border: none;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: box-shadow 0.3s;
+            box-shadow: inset 0 0 0 var(--s, 1px) var(--b, var(--border));
+        }
+
+        .checkbox input:hover {
+            --s: 2px;
+            --b: var(--border-hover);
+        }
+
+        .checkbox input:checked {
+            --b: var(--border-active);
+        }
+
+        .checkbox svg {
+            pointer-events: none;
+            fill: none;
+            stroke-width: 2px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: var(--stroke, var(--border-active));
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            transform: scale(var(--scale, 1)) translateZ(0);
+        }
+
+        .checkbox.path input:checked {
+            --s: 2px;
+            transition-delay: 0.4s;
+        }
+
+        .checkbox.path input:checked + svg {
+            --a: 16.1 86.12;
+            --o: 102.22;
+        }
+
+        .checkbox.path svg {
+            stroke-dasharray: var(--a, 86.12);
+            stroke-dashoffset: var(--o, 86.12);
+            transition: stroke-dasharray 0.6s, stroke-dashoffset 0.6s;
+        }
+
+        .checkbox.bounce {
+            --stroke: var(--tick);
+        }
+
+        .checkbox.bounce input:checked {
+            --s: 11px;
+        }
+
+        .checkbox.bounce input:checked + svg {
+            animation: bounce 0.4s linear forwards 0.2s;
+        }
+
+        .checkbox.bounce svg {
+            --scale: 0;
+        }
+
+        @keyframes bounce {
+            50% {
+                transform: scale(1.2);
+            }
+            75% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .row {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        .toggle-button {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .toggle-button.rotated {
+            transform: rotate(90deg);
+        }
+
+        .sub-list {
+            height: 0;
+            overflow: auto;
+            transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 500px;
+        }
+
+        .fleets-sort-box{
+            height: 60px;
+            background: #daffdd;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+            /*This is for sticky if needed <3*/
+            /*position: sticky;*/
+            /*top: 20px;*/
+            /*z-index: 100;*/
+        }
+
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <body onload="fetchCars('', '', ''); fetchBrands(); fetchAdditionalFunction()">
+
+    <section class="hero-wrap hero-wrap">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end justify-content-start">
+                <div class="col-md-9 wow fadeInUp">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span>CAR SEARCH <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-3 bread">CAR SEARCH!</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Fleets Start -->
+    <div class="page-fleets" style="min-height: 1000px">
+        <div class="container" style="max-width: 1350px;">
+            <div class="row">
+
+                <div class="col-lg-3">
+                    <!-- Fleets Sidebar Start -->
+                    <div class="fleets-sidebar wow fadeInUp">
+                        <!-- Fleets Search Box Start -->
+                        <div class="fleets-search-box">
+                            <form id="fleetsForm" action="#" method="POST">
+                                <div class="form-group">
+                                    <input type="text" name="pickupLocation" class="form-control" id="pickupLocation"
+                                           placeholder="Pickup location" th:value="${pickupLocation}">
+                                    <button type="submit" class="section-icon-btn"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                                <div>
+                                    <p class="mb-0 pl-2">Pickup date time</p>
+                                    <div class="form-group">
+                                        <input type="text" name="pickupDateTime" id="pickupDateTime"
+                                               class="form-control flatpickr-validate"
+                                               placeholder="Days for rent" required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="mb-0 pl-2">Drop date time</p>
+                                    <div class="form-group">
+                                        <input type="text" name="dropDateTime" id="dropDateTime"
+                                               class="form-control flatpickr-validate"
+                                               placeholder="Pickup date time" required>
+                                    </div>
+                                </div>
+                                <small id="pickupInfoHelp" style="color: rgb(255,150,0); gap: 3px"></small>
+                                <!-- Fleets Sidebar List End -->
+                            </form>
+                        </div>
+                        <!-- Fleets Search Box End -->
+
+                        <div class="fleets-sidebar-list-box">
+
+                            <!-- Fleets Sidebar List Start -->
+                            <div class="fleets-sidebar-list">
+                                <div class="fleets-list-title d-flex justify-content-between">
+                                    <h3>Brands</h3>
+                                    <a
+                                            class="fa fa-angle-right toggle-button"
+                                            data-target="#brandList"
+                                            aria-expanded="false"
+                                            aria-controls="brandList"
+                                            aria-label="Toggle brands list" style="align-self: center; cursor: pointer">
+                                    </a>
+                                </div>
+                                <div class="row sub-list"
+                                     id="brandList"
+                                     role="region"
+                                     aria-labelledby="brandList-title">
+                                </div>
+                            </div>
+                            <!-- Fleets Sidebar List End -->
+
+                            <!-- Fleets Sidebar List Start -->
+                            <div class="fleets-sidebar-list">
+                                <div class="fleets-list-title d-flex justify-content-between">
+                                    <h3>Additional Functions</h3>
+                                    <a
+                                            class="fa fa-angle-right toggle-button"
+                                            data-target="#functionList"
+                                            aria-expanded="false"
+                                            aria-controls="functionList"
+                                            aria-label="Toggle brands list" style="align-self: center; cursor: pointer">
+                                    </a>
+                                </div>
+                                <div class="row sub-list"
+                                     id="functionList"
+                                     role="region"
+                                     aria-labelledby="functionList-title">
+                                    <label class="checkbox bounce col-12 p-0 d-flex"
+                                           style="align-items: center; column-gap: 6px;"><input type="checkbox"
+                                                                                                value="1" name="brand">
+                                        <svg viewBox="0 0 21 21">
+                                            <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
+                                        </svg>
+                                        <span>Toyota</span>
+                                    </label>
+
+                                </div>
+                            </div>
+                            <!-- Fleets Sidebar List End -->
+
+                            <!-- Fleets Sidebar List Start -->
+                            <div class="fleets-sidebar-list">
+                                <div class="fleets-list-title">
+                                    <h3>Price</h3>
+                                </div>
+
+                                <ul>
+                                    <li>
+                                        <p>Waiting for update</p>
+                                    </li>
+                                    <!--                                    <li class="form-check">-->
+                                    <!--                                        <input class="form-check-input" type="checkbox" value="" id="checkbox11">-->
+                                    <!--                                        <label class="form-check-label" for="checkbox11">abu dhabi</label>-->
+                                    <!--                                    </li>-->
+                                </ul>
+                            </div>
+                            <!-- Fleets Sidebar List End -->
+                        </div>
+                    </div>
+                    <!-- Fleets Sidebar End -->
+                </div>
+
+                <div class="col-lg-9 p-0">
+                    <!-- Fleets Collection Box Start -->
+                    <div class="fleets-collection-box">
+
+                        <!-- Box Sort Start -->
+                        <div class="fleets-sort-box wow fadeInUp">
+
+                        </div>
+                        <!-- Box Sort End-->
+
+                        <div class="row" id="carContainer" style="min-height: 600px;">
+
+                        </div>
+                        <!-- loader -->
+                        <div id="ftco-loader-car" class="show fullscreen">
+                            <svg class="circular" width="48px" height="48px">
+                                <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4"
+                                        stroke="#eeeeee"/>
+                                <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4"
+                                        stroke-miterlimit="10"
+                                        stroke="#03ffa2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Fleets Collection Box End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Fleets End -->
+
+    <!--    &lt;!&ndash; loader &ndash;&gt;-->
+    <!--    <div id="ftco-loader" class="show fullscreen">-->
+    <!--        <svg class="circular" width="48px" height="48px">-->
+    <!--            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>-->
+    <!--            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"-->
+    <!--                    stroke="#03ffa2"/>-->
+    <!--        </svg>-->
+    <!--    </div>-->
+
+    <!-- Jquery Library File -->
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Jquery Ui Js File -->
+    <script src="/cars/js/jquery-ui.js"></script>
+    <!-- Bootstrap js file -->
+    <script src="/webjars/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <!-- Validator js file -->
+    <script src="/cars/js/validator.min.js"></script>
+    <!-- SlickNav js file -->
+    <script src="/cars/js/jquery.slicknav.js"></script>
+    <!-- Swiper js file -->
+    <script src="/cars/js/swiper-bundle.min.js"></script>
+    <!-- Counter js file -->
+    <script src="/cars/js/jquery.waypoints.min.js"></script>
+    <script src="/cars/js/jquery.counterup.min.js"></script>
+    <!-- Magnific js file -->
+    <script src="/cars/js/jquery.magnific-popup.min.js"></script>
+    <!-- SmoothScroll -->
+    <script src="/cars/js/SmoothScroll.js"></script>
+    <!-- Parallax js -->
+    <script src="/cars/js/parallaxie.js"></script>
+    <!-- MagicCursor js file -->
+    <script src="/cars/js/gsap.min.js"></script>
+    <script src="/cars/js/magiccursor.js"></script>
+    <!-- Text Effect js file -->
+    <script src="/cars/js/SplitText.js"></script>
+    <script src="/cars/js/ScrollTrigger.min.js"></script>
+    <!-- YTPlayer js File -->
+    <script src="/cars/js/jquery.mb.YTPlayer.min.js"></script>
+    <!-- Wow js file -->
+    <script src="/cars/js/wow.js"></script>
+    <!-- Main Custom js file -->
+    <script src="/cars/js/function.js"></script>
+    <!-- Flatpickr -->
+    <script src="/webjars/flatpickr/4.6.13/dist/flatpickr.min.js"></script>
+    <!-- Page js  -->
+    <script src="/cars/js/carsearch.js"></script>
+    <script>
+
+
+    </script>
+    </body>
+</th:block>
+</body>
+</html>

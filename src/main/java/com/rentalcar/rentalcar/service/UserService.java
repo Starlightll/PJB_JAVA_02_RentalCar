@@ -156,6 +156,9 @@ public class UserService implements IUserService {
             if(updateUser == null){
                 throw new UserException("User not found");
             }
+            if(updateUser.getRoles().get(0).getId() == 1 && user.getStatus() == UserStatus.DELETED){
+                throw new UserException("Cannot delete admin user");
+            }
             updateUser.setUsername(user.getUsername());
             updateUser.setFullName(user.getFullName());
             updateUser.setDob(user.getDob());
@@ -249,9 +252,9 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public boolean changePassword(User user, String oldPassword, String newPassword) {
+    public boolean changePassword(User user, String currentPassword, String newPassword) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if(passwordEncoder.matches(oldPassword, user.getPassword())){
+        if(passwordEncoder.matches(currentPassword, user.getPassword())){
             String encodedPassword = passwordEncoder.encode(newPassword);
             user.setPassword(encodedPassword);
             userRepo.save(user);

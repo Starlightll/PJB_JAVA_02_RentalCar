@@ -15,6 +15,7 @@ import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.entity.DriverDetail;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.mail.EmailService;
+import com.rentalcar.rentalcar.repository.BookingRepository;
 import com.rentalcar.rentalcar.repository.CarRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import com.rentalcar.rentalcar.service.PhoneNumberStandardService;
@@ -69,6 +70,9 @@ public class RentalCarController {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    BookingRepository bookingRepository;
 
     @GetMapping({"/customer/my-bookings", "/car-owner/my-bookings"})
     public String myBooking(@RequestParam(defaultValue = "1") int page,
@@ -148,7 +152,6 @@ public class RentalCarController {
         CarDto car = rentalCarService.getCarDetails(CarId);
         User userepo = userRepo.getUserById(user.getId());
 
-
         if(car.getStatusId() != 1) {
             return "redirect:/";
         }
@@ -158,7 +161,9 @@ public class RentalCarController {
             return "redirect:/";
         }
 
-        List<UserDto> driverList = getAllDriverAvailable();
+        Long numberOfRide = bookingRepository.countCompletedBookingsByCarId(CarId);
+
+        List<UserDto> driverList = getAllDriverAvailable(carAddress.getAddress().getProvinceId());
         // Định dạng ngày giờ đầu vào và đầu ra
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm");
         startDate = startDate.replaceFirst("(\\d{4})-(\\d{2})-(\\d{2})", "$1/$2/$3");
@@ -200,6 +205,7 @@ public class RentalCarController {
         model.addAttribute("car", car);
         model.addAttribute("address", address);
         model.addAttribute("user", user);
+        model.addAttribute("numberOfRide", numberOfRide);
         model.addAttribute("userRepo", userepo);//Lấy wallet
         model.addAttribute("carAddress", carAddress);//Lấy địa chỉ
         return "customer/booking";
@@ -226,7 +232,7 @@ public class RentalCarController {
             return "redirect:/";
         }
 
-        List<UserDto> driverList = getAllDriverAvailable();
+        List<UserDto> driverList = getAllDriverAvailable(carAddress.getAddress().getProvinceId());
 
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm");
@@ -271,8 +277,8 @@ public class RentalCarController {
         return "customer/booking";
     }
 
-    public List<UserDto> getAllDriverAvailable() {
-        List<Object[]> results = userRepo.getAllDriverAvailable();
+    public List<UserDto> getAllDriverAvailable(Integer idLocation) {
+        List<Object[]> results = userRepo.getAllDriverAvailable(idLocation);
         List<UserDto> userDtos = new ArrayList<>();
 
         for (Object[] result : results) {
@@ -292,11 +298,11 @@ public class RentalCarController {
     }
 
 
-    @GetMapping("/api/drivers")
-    public ResponseEntity<List<UserDto>> getAllDrivers() {
-        List<UserDto> drivers = getAllDriverAvailable();
-        return ResponseEntity.ok(drivers);
-    }
+//    @GetMapping("/api/drivers")
+//    public ResponseEntity<List<UserDto>> getAllDrivers() {
+//        List<UserDto> drivers = getAllDriverAvailable();
+//        return ResponseEntity.ok(drivers);
+//    }
 
     @GetMapping("/api/drivers/{id}")
     public ResponseEntity<User> getDriverById(@PathVariable Long id) {

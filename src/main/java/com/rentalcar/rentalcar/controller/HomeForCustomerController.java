@@ -82,7 +82,7 @@ public class HomeForCustomerController {
 
 
 
-    @GetMapping("/homepage-customer/my-profile")
+    @GetMapping("/homepage-customer/my-profileold")
     public String myProfileHomepage() {
         return "MyProfile_ChangPassword";
      }

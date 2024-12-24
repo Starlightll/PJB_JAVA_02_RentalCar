@@ -1,16 +1,12 @@
 $(function () {
     let t, a, n;
     n = (isDarkStyle ? (t = config.colors_dark.borderColor, a = config.colors_dark.bodyBg, config.colors_dark) : (t = config.colors.borderColor, a = config.colors.bodyBg, config.colors)).headingColor;
-    var e, s = $(".datatables-users"), o = $(".select2"), i = "/admin/user-management/user-detail", r = {
+    var e, s = $(".datatables-users"), i = "/admin/user-management/user-detail", r = {
         'PENDING': {title: "Pending", class: "bg-label-warning"},
         'ACTIVATED': {title: "Active", class: "bg-label-success"},
         'LOCKED': {title: "Locked", class: "bg-label-danger"},
         'DELETED': {title: "Deleted", class: "bg-label-secondary"}
     };
-    o.length && (o = o).wrap('<div class="position-relative"></div>').select2({
-        placeholder: "Select Country",
-        dropdownParent: o.parent()
-    }),
     s.length && (e = s.DataTable({
         ajax: {
             url: "/api/users/",
@@ -387,7 +383,7 @@ $(function () {
                             }
                             fetch(`/admin/user-management/update-user`, {
                                 method: 'POST',
-                                //     headers: {
+                                // headers: {
                                 //         'Accept': 'application/json',
                                 //         'Content-Type': 'application/json',
                                 //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')

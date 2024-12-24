@@ -2,12 +2,14 @@ package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.entity.Booking;
 import com.rentalcar.rentalcar.entity.Transaction;
+import com.rentalcar.rentalcar.entity.TransactionType;
 import com.rentalcar.rentalcar.entity.User;
 import com.rentalcar.rentalcar.repository.TransactionRepository;
 import com.rentalcar.rentalcar.repository.UserRepo;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,5 +52,25 @@ public class TransactionServiceImpl implements TransactionService {
             user.setWallet(updateWallet);
             httpSession.setAttribute("user", user);
         }
+    }
+
+    @Override
+    @Transactional
+    public void saveTransactionHistory(User sender, User receiver, TransactionType senderType, TransactionType receiverType, BigDecimal amount, String description) {
+        //Save transaction for sender
+        Transaction senderTransaction = new Transaction();
+        senderTransaction.setUser(sender);
+        senderTransaction.setAmount(amount);
+        senderTransaction.setTransactionDate(LocalDateTime.now());
+        senderTransaction.setTransactionType("TRANSFER");
+        transactionRepository.save(senderTransaction);
+
+        //Save transaction for receiver
+        Transaction receiverTransaction = new Transaction();
+        receiverTransaction.setUser(receiver);
+        receiverTransaction.setAmount(amount);
+        receiverTransaction.setTransactionDate(LocalDateTime.now());
+        receiverTransaction.setTransactionType("TRANSFER");
+        transactionRepository.save(receiverTransaction);
     }
 }

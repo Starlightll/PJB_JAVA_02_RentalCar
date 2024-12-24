@@ -15,19 +15,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <!-- SlickNav Css -->
-    <link href="/cars/css/slicknav.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/cars/css/slicknav.min.css">
     <!-- Swiper Css -->
     <link rel="stylesheet" href="/cars/css/swiper-bundle.min.css">
     <!-- Animated Css -->
-    <link href="/cars/css/animate.css" rel="stylesheet">
+    <link rel="stylesheet" href="/cars/css/animate.css">
     <!-- Magnific Popup Core Css File -->
     <link rel="stylesheet" href="/cars/css/magnific-popup.css">
     <!-- Mouse Cursor Css File -->
     <link rel="stylesheet" href="/cars/css/mousecursor.css">
     <!-- Font Awesome Icon Css-->
-    <link href="/cars/css/all.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/cars/css/all.css" media="screen">
+    <!-- Font Ionicons-->
+    <link rel="stylesheet" href="/fonts/ionicons/css/ionicons.min.css" media="screen">
     <!-- Main Custom Css -->
-    <link href="/cars/css/cardetail.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/cars/css/cardetail.css" media="screen">
     <!-- Flatpickr   -->
     <!--    <link rel="stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="/webjars/flatpickr/4.6.13/dist/themes/material_green.css">
@@ -158,6 +160,39 @@
             border-color: var(--flatpickr-color-header);
         }
 
+        /*Rating star*/
+
+        .rating {
+            display: flex;
+            align-items: center;
+            height: 0;
+            margin-bottom: 1.2rem;
+            width: 116.05px;
+        }
+
+        .rating i {
+            font-size: 1.2rem;
+        }
+
+        .star {
+            color: #00d79d;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+            width: 20%;
+        }
+
+        .star-base {
+            position: absolute;
+            color: #3d3d3d;
+            overflow: hidden;
+            z-index: 0;
+            display: flex;
+            flex-flow: row;
+            gap: 2px;
+        }
     </style>
 </head>
 
@@ -171,7 +206,8 @@
             <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
                 <div class="col-md-9 wow fadeInUp">
                     <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                        <span class="mr-2"><a href="/cars">CAR SEARCH <i class="ion-ios-arrow-forward"></i></a></span>
+                        <span class="mr-2"><a href="/car-search">CAR SEARCH <i
+                                class="ion-ios-arrow-forward"></i></a></span>
                         <span>CAR DETAIL <i class="ion-ios-arrow-forward"></i></span></p>
                     <h1 class="mb-3 bread">CAR DETAIL</h1>
                 </div>
@@ -197,6 +233,32 @@
 
                             <!-- Feets Single Sidebar List Start -->
                             <div class="fleets-single-sidebar-list">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex"><i class="fa fa-user mr-2" style="align-self: center"></i>
+                                        <div>Booked: <span th:text="${car.getBookedTimes()}"></span></div>
+                                    </div>
+                                    <div class="rating m-0">
+                                        <div class="star"  th:style="'width: ' + ${car.getRateAverage() / 5.0 * 100} + '%;'">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                        <div class="star-base">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Feets Single Sidebar List End -->
+
+                            <!-- Feets Single Sidebar List Start -->
+                            <div class="fleets-single-sidebar-list">
                                 <ul>
                                     <li><img src="/images/icon-fleets-single-sidebar-list-1.svg" alt="">Passengers
                                         <span th:text="${car.getSeat()}"></span></li>
@@ -207,6 +269,7 @@
                                 </ul>
                             </div>
                             <!-- Feets Single Sidebar List End -->
+
 
                             <!-- Feets Single Sidebar Btn Start -->
                             <div class="fleets-single-sidebar-btn">
@@ -277,7 +340,7 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getFrontImage()}" alt="">
+                                                <img th:src="${'/' + car.getFrontImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -287,7 +350,7 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getLeftImage()}" alt="">
+                                                <img th:src="${'/' + car.getLeftImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -297,7 +360,7 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getBackImage()}" alt="">
+                                                <img th:src="${'/' + car.getBackImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -307,7 +370,7 @@
                                     <div class="swiper-slide">
                                         <div class="fleets-slider-image">
                                             <figure class="image-anime">
-                                                <img th:src="${'/' + car.getRightImage()}" alt="">
+                                                <img th:src="${'/' + car.getRightImage()}" onerror="this.src='/images/car-placeholder.jpg'" alt="">
                                             </figure>
                                         </div>
                                     </div>
@@ -507,14 +570,14 @@
 
         function adjustMinTimeForPickupDate(selectedDates, dateStr, instance) {
             let now = new Date();
-            if(now.getHours() < 5){
+            if (now.getHours() < 5) {
                 instance.set("minTime", "05:00");
                 now.setHours(5, 0, 0, 0);
                 instance.set("minDate", now);
                 // instance.setDate(now);
-            }else{
+            } else {
                 now.setTime(now.getTime() + 60 * 60 * 1000);
-                if(now.getHours() >= 23){
+                if (now.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
@@ -522,9 +585,9 @@
                     instance.set("minTime", "05:00");
                     instance.set("minDate", tomorrow);
                     instance.setDate(tomorrow);
-                }else{
+                } else {
                     let minTime = "";
-                    if(now.getMinutes() < 30){
+                    if (now.getMinutes() < 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(0);
                         minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
@@ -533,7 +596,7 @@
                         instance.set("minDate", now);
                         // instance.setDate(now);
                     }
-                    if(now.getMinutes() >= 30){
+                    if (now.getMinutes() >= 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(30);
                         minTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
@@ -549,8 +612,8 @@
         function getDefaultDateForPickup() {
             const pickupDateTime = document.querySelector('#pickupDateTime').value;
             let now = new Date();
-            if(pickupDateTime){
-                if(now < new Date(pickupDateTime)){
+            if (pickupDateTime) {
+                if (now < new Date(pickupDateTime)) {
                     now = new Date(pickupDateTime);
                     return now;
                 }
@@ -558,24 +621,24 @@
             let currentTime = now.getHours() + ":" + now.getMinutes();
             let currentHour = now.getHours();
             let currentMinute = now.getMinutes();
-            if(now.getHours() < 5){
+            if (now.getHours() < 5) {
                 now.setHours(5, 0, 0, 0);
                 return now;
-            }else{
+            } else {
                 now.setTime(now.getTime() + 60 * 60 * 1000);
-                if(now.getHours() >= 23){
+                if (now.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
                     console.log("New time test:", tomorrow);
                     return tomorrow;
-                }else{
-                    if(now.getMinutes() < 30){
+                } else {
+                    if (now.getMinutes() < 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(0);
                         return now;
                     }
-                    if(now.getMinutes() >= 30){
+                    if (now.getMinutes() >= 30) {
                         now.setHours(now.getHours());
                         now.setMinutes(30);
                         return now;
@@ -594,19 +657,19 @@
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
             console.log("Time for drop:", dropDate);
-            if(dropDate.getHours() < 5){
+            if (dropDate.getHours() < 5) {
                 dropDate.setHours(5, 0, 0, 0);
                 dropDatePicker.set("minTime", "05:00");
                 dropDatePicker.set("minDate", dropDate);
                 console.log(" h < 5");
                 console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true  && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                     console.log("dropDate < pickupDate");
                     dropDatePicker.setDate(dropDate);
                 }
                 // dropDatePicker.setDate(dropDate);
-            }else{
-                if(dropDate.getHours() >= 23){
+            } else {
+                if (dropDate.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
@@ -614,14 +677,14 @@
                     dropDatePicker.set("minDate", tomorrow);
                     console.log(" h >= 23");
                     console.log(tomorrow.getDate() + "-" + pickupDate.getDate() + "=" + (tomorrow.getDate() - pickupDate.getDate()));
-                    if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                    if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                         dropDatePicker.setDate(tomorrow);
                     }
                     // dropDatePicker.setDate(tomorrow);
-                }else{
+                } else {
                     let minTime = "";
                     console.log(" h < 23 và h >= 5");
-                    if(dropDate.getMinutes() < 30){
+                    if (dropDate.getMinutes() < 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(0);
                         minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
@@ -629,12 +692,12 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                        if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
                     }
-                    if(dropDate.getMinutes() >= 30){
+                    if (dropDate.getMinutes() >= 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(30);
                         minTime = `${dropDate.getHours().toString().padStart(2, "0")}:${dropDate.getMinutes().toString().padStart(2, "0")}`;
@@ -642,14 +705,14 @@
                         dropDatePicker.set("minTime", `${minTime}`);
                         dropDatePicker.set("minDate", dropDate);
                         console.log(dropDate.getDate() + "-" + pickupDate.getDate() + "=" + (dropDate.getDate() - pickupDate.getDate()));
-                        if(oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000){
+                        if (oldDropDate.getDate() - pickupDate.getDate() < 1 && haveToSet === true && oldDropDate.getTime() - pickupDate.getTime() < 2 * 60 * 60 * 1000) {
                             dropDatePicker.setDate(dropDate);
                         }
                         // dropDatePicker.setDate(dropDate);
                     }
                 }
             }
-            if(oldDropDate.getDate() - pickupDate.getDate() >= 1){
+            if (oldDropDate.getDate() - pickupDate.getDate() >= 1) {
                 dropDatePicker.set("minTime", "05:00");
             }
         }
@@ -659,31 +722,31 @@
             const dropDateTime = document.querySelector('#dropDateTime').value;
             const oldDropDate = new Date(dropDateTime);
             const pickupDate = new Date(pickupDateTime);
-            if(haveToSet === true) {
-                if(oldDropDate.getTime() - pickupDate.getTime() >= 2 * 60 * 60 * 1000){
+            if (haveToSet === true) {
+                if (oldDropDate.getTime() - pickupDate.getTime() >= 2 * 60 * 60 * 1000) {
                     return oldDropDate;
                 }
             }
             pickupDate.setTime(pickupDate.getTime() + 2 * 60 * 60 * 1000);
             const dropDate = new Date(pickupDate);
             console.log("Time for drop:", dropDate);
-            if(dropDate.getHours() < 5){
+            if (dropDate.getHours() < 5) {
                 dropDate.setHours(5, 0, 0, 0);
                 return dropDate;
-            }else{
-                if(dropDate.getHours() >= 23){
+            } else {
+                if (dropDate.getHours() >= 23) {
                     let tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(5, 0, 0, 0);
                     return tomorrow;
-                }else{
+                } else {
                     console.log(" h < 23 và h >= 5");
-                    if(dropDate.getMinutes() < 30){
+                    if (dropDate.getMinutes() < 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(0);
                         return dropDate;
                     }
-                    if(dropDate.getMinutes() >= 30){
+                    if (dropDate.getMinutes() >= 30) {
                         dropDate.setHours(dropDate.getHours());
                         dropDate.setMinutes(30);
                         return dropDate;

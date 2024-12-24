@@ -376,6 +376,21 @@
 
 
 
+
+        #differentInfoCheckbox:checked {
+            --b: none;
+            background-color: #05d38e !important;
+            border: 1px solid #05d38e;
+        }
+
+        #differentInfoCheckbox:disabled {
+            --b: var(--border-active);
+            background-color: #D3D3D3;
+            border: 1px solid #A9A9A9;
+        }
+
+
+
     </style>
 </head>
 
@@ -416,6 +431,15 @@
                                                                     No Name</h4>
                                                                 <div>
                                                                     <span></span>
+                                                                </div>
+
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking No: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${contract.getBookingId()}">No</p>
                                                                 </div>
                                                                 <!-- From Date and To Date Section -->
                                                                 <div class="col-lg-12 row mt-2">
@@ -517,14 +541,6 @@
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
                                                                     <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                        Booking No: </p>
-                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                       th:text="${contract.getBookingId()}">No</p>
-                                                                </div>
-                                                                <div class="col-lg-12 row"
-                                                                     style="display: flex; align-items: center">
-                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                         Booking status:
                                                                     </p>
                                                                     <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -552,6 +568,15 @@
                                                                     No Name</h4>
                                                                 <div>
                                                                     <span></span>
+                                                                </div>
+                                                                <div class="col-lg-12 row"
+                                                                     style="display: flex; align-items: center">
+                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                        Booking No: </p>
+                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                       id="previewBookingNoActual"
+                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                       th:text="${actual.getBookingId()}">No</p>
                                                                 </div>
                                                                 <!-- From Date and To Date Section -->
                                                                 <div class="col-lg-12 row mt-2">
@@ -680,15 +705,6 @@
                                                                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
                                                                        th:text="${#numbers.formatDecimal(actual.getTotalPayment(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                         No</p>
-                                                                </div>
-                                                                <div class="col-lg-12 row"
-                                                                     style="display: flex; align-items: center">
-                                                                    <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                        Booking No: </p>
-                                                                    <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                                       id="previewBookingNoActual"
-                                                                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                                       th:text="${actual.getBookingId()}">No</p>
                                                                 </div>
                                                                 <div class="col-lg-12 row"
                                                                      style="display: flex; align-items: center">
@@ -907,32 +923,43 @@
                                                         <div>
                                                             <span></span>
                                                         </div>
+
+                                                        <div class="col-lg-12 row"
+                                                                 style="display: flex; align-items: center">
+                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
+                                                                    Booking No: </p>
+                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
+                                                                   id="previewBookingNo"
+                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
+                                                                   th:text="${booking.getBookingId()}">No</p>
+                                                        </div>
+
                                                         <!-- From Date and To Date Section -->
-                                                        <div class="col-lg-12 row mt-2">
-                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                        <div class="col-lg-12 row ">
+                                                            <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 <label>From Date:</label>
                                                             </div>
                                                             <p id="pickupDate" th:text="${#temporals.format(booking.getStartDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
                                                         <div class="col-lg-12 row mt-2">
-                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                            <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 <label>To Date:</label>
                                                             </div>
                                                             <p id="returnDate" th:text="${#temporals.format(booking.getEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
 
                                                         </div>
 <!--                                                        In ra actual khi đã hoàn thành và không tự tanăng theo thời gian thực-->
-                                                        <div class="col-lg-12 row mt-2"
+                                                        <div class="col-lg-12 row"
                                                              th:if="${booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'}">
 
-                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                            <div class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 <label>Actual End Date:</label>
                                                             </div>
                                                             <p id="actualDateDb" th:text="${#temporals.format(booking.getActualEndDate(), 'dd/MM/yyyy HH:mm')}"></p>
                                                         </div>
 <!--                                                        Ngược lại-->
-                                                        <div class="col-lg-12 row mt-2"
+                                                        <div class="col-lg-12 row "
                                                              th:if="${(#temporals.createNow().isAfter(booking.getEndDate()) and !(booking.bookingStatus == 'Completed' or booking.bookingStatus == 'Pending payment'
                                                                     or booking.bookingStatus == 'Cancelled' or booking.bookingStatus == 'Pending cancel'))  or (booking.bookingStatus == 'In-Progress'
                                                                     or booking.bookingStatus == 'Pending return')}">
@@ -965,16 +992,7 @@
                                                             <p th:text="${#numbers.formatDecimal(booking.getBasePrice(), 0, 'COMMA', 0, 'POINT')} + ' VND/Day'"
                                                                id="previewBasePrice">0k/Day</p>
                                                         </div>
-<!--                                                            <div class="col-lg-12 row"-->
-<!--                                                                 style="display: flex; align-items: center">-->
-<!--                                                                <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">-->
-<!--                                                                    Total: </p>-->
-<!--                                                                <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"-->
-<!--                                                                   id="previewTotalPrice"-->
-<!--                                                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "-->
-<!--                                                                   th:text="${#numbers.formatDecimal(booking.getTotalPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'">-->
-<!--                                                                    No</p>-->
-<!--                                                            </div>-->
+
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -998,8 +1016,7 @@
                                                             </div>
 
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center"
-                                                        th:if="${booking.getTotalMoney() > 0}">
+                                                             style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Addition payment: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -1010,8 +1027,7 @@
                                                         </div>
 
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center"
-                                                             th:if="${booking.getReturnDeposit() > 0}">
+                                                             style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Return Deposit: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -1022,8 +1038,7 @@
                                                         </div>
 
                                                         <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center"
-                                                             th:if="${haveDriver != null}">
+                                                             style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
                                                                 Salary Driver: </p>
                                                             <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
@@ -1043,16 +1058,6 @@
                                                                    th:text="${#numbers.formatDecimal(booking.getTotalPayment(), 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                                                     No</p>
                                                             </div>
-
-                                                            <div class="col-lg-12 row"
-                                                             style="display: flex; align-items: center">
-                                                            <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
-                                                                Booking No: </p>
-                                                            <p class="col-lg-6 col-md-7 col-sm-7 col-8 p-0"
-                                                               id="previewBookingNo"
-                                                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   '...' "
-                                                               th:text="${booking.getBookingId()}">No</p>
-                                                        </div>
                                                         <div class="col-lg-12 row"
                                                              style="display: flex; align-items: center">
                                                             <p class="col-lg-6 col-md-5 col-sm-5 col-4 p-0 pr-2">
@@ -1368,8 +1373,9 @@
                                                     <label class="checkbox bounce d-flex pl-3" style="align-items: center;column-gap: 6px;">
                                                         <input type="checkbox" id="differentInfoCheckbox"
                                                                name="additionalFunction" value="true" onclick="toggleDriverInfoFields()"
+                                                               data-has-driver="${booking.getDriverId() != null ? 'true' : 'false'}"
                                                                th:checked="${booking.getDriverId() != null}"
-                                                               th:disabled="${booking.getDriverId() != null}">
+                                                               th:disabled="${booking.getDriverId() != null || (booking.getDriverId() == null && booking.getBookingStatus() != 'Pending deposit' && booking.getBookingStatus() != 'Confirmed')}">
                                                         <svg viewBox="0 0 21 21">
                                                             <polyline points="5 10.75 8.5 14.25 16 6"></polyline>
                                                         </svg>
@@ -1385,9 +1391,17 @@
                                                                         <span class="input-group-text "
                                                                         >Full Name</span>
                                                                 </div>
-                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver"
+                                                                <select class="custom-select"  onchange="fetchDriverDetailsAjax()"  id="fullNameDriver" th:data-default="${users}"
                                                                         th:attr="disabled=${ !isCustomer or (booking.getBookingStatus() != 'Confirmed' and booking.getBookingStatus() != 'Pending deposit')}">
-                                                                    <option value="">Select</option>
+                                                                    <option value="">Select a driver</option>
+                                                                    <option th:each="driver : ${users}"
+                                                                            th:value="${driver.getUserId()}"
+                                                                            th:text="${driver.fullName + ' - ' + driver.phone}"
+                                                                            th:attr="value=${driver.getUserId()},
+                                                                            selected=${driver.getUserId() == booking.getDriverId()},
+                                                                            data-selected-driver=${driver.getUserId() == booking.getDriverId()}"
+                                                                          >
+                                                                    </option>
                                                                 </select>
                                                                 <input type="hidden" th:value="${booking.getDriverId()}" id="driverId">
                                                             </div>
@@ -1457,36 +1471,29 @@
                                                             <div id="nationalIdErrorDriver" style="color: red"></div>
                                                         </div>
 
-                                                        <div class="col-lg-6 mb-3 ">
-                                                            <div class="input-group input-group-sm">
-                                                                <div class="input-group-prepend" style="max-height: 33.5px;">
-                                                                    <span class="input-group-text" id="inputGroupFileAddonDriver" >Avatar</span>
-                                                                </div>
-                                                                <div class="custom-file">
-                                                                    <!-- Input file -->
-                                                                    <input disabled type="file" accept="image/*" class="custom-file-input" id="inputGroupFileDriver">
+<!--                                                        <div class="col-lg-6 mb-3 ">-->
+<!--                                                            <div class="input-group input-group-sm">-->
+<!--                                                                <div class="input-group-prepend" style="max-height: 33.5px;">-->
+<!--                                                                    <span class="input-group-text" id="inputGroupFileAddonDriver" >Avatar</span>-->
+<!--                                                                </div>-->
+<!--                                                                <div class="custom-file">-->
+<!--                                                                    &lt;!&ndash; Input file &ndash;&gt;-->
+<!--                                                                    <input disabled type="file" accept="image/*" class="custom-file-input" id="inputGroupFileDriver">-->
 
-                                                                    <!-- Label hiển thị tên file -->
-                                                                    <label class="custom-file-label" id="fileNameDriver" style="font-size: small !important;">
-                                                                        <!-- Sử dụng Thymeleaf để hiển thị file từ DB nếu có -->
-                                                                        <span th:if="${rentUser.getDrivingLicense() != null}" th:text="'Current file: '"></span>
-                                                                        <span th:if="${rentUser.getDrivingLicense() == null}">Choose file</span>
-                                                                    </label>
+<!--                                                                    &lt;!&ndash; Label hiển thị tên file &ndash;&gt;-->
+<!--                                                                    <label class="custom-file-label" id="fileNameDriver" style="font-size: small !important;">-->
+<!--                                                                        &lt;!&ndash; Sử dụng Thymeleaf để hiển thị file từ DB nếu có &ndash;&gt;-->
+<!--                                                                        <span th:if="${rentUser.getDrivingLicense() != null}" th:text="'Current file: '"></span>-->
+<!--                                                                        <span th:if="${rentUser.getDrivingLicense() == null}">Choose file</span>-->
+<!--                                                                    </label>-->
 
-                                                                </div>
-                                                            </div>
+<!--                                                                </div>-->
+<!--                                                            </div>-->
 
-                                                            <!--                                                    &lt;!&ndash; Khung hiển thị ảnh &ndash;&gt;-->
-                                                            <!--                                                    <div id="previewContainer" style="margin-top: 10px; width: 100%; aspect-ratio: 2 / 1; border: 1px solid #ddd; overflow: hidden; background-color: #f5f5f5;">-->
-                                                            <!--                                                        <img id="previewImage" th:src="'/'+${rentUser.getDrivingLicense()}"-->
-                                                            <!--                                                             alt="Image preview"-->
-                                                            <!--                                                             style="width: 100%; height: 100%; object-fit: cover;">-->
-                                                            <!--                                                    </div>-->
+<!--                                                            <input type="hidden" id="currentDrivingLicenseDriver" th:value="${rentUser.getDrivingLicense()}">-->
+<!--                                                            <div id="drivingLicenseErrorDriver" style="color: red"></div>-->
 
-                                                            <input type="hidden" id="currentDrivingLicenseDriver" th:value="${rentUser.getDrivingLicense()}">
-                                                            <div id="drivingLicenseErrorDriver" style="color: red"></div>
-
-                                                        </div>
+<!--                                                        </div>-->
                                                         <div class="col-lg-6 mb-3 ">
                                                             <div class="input-group input-group-sm">
                                                                 <div class="input-group-prepend">
@@ -1502,13 +1509,6 @@
                                                             <div id="descriptionDriverErrorDriver" style="color: red"></div>
 
                                                         </div>
-                                                        <!-- Khung hiển thị ảnh -->
-                                                        <div  class="col-lg-6 mb-3 " id="previewContainerDriver">
-                                                            <img id="previewImageDriver" th:src="'/'+${rentUser.getAvatar()}"
-                                                                 alt="Image preview"
-                                                                 style="width: 100%; height: 100%; object-fit: cover;">
-                                                        </div>
-                                                        <!--                                                <div class="row" style="width: 100%; overflow: auto">-->
 
                                                         <div class="col-lg-6 mb-3 ">
                                                             <div class="input-group input-group-sm">
@@ -1579,8 +1579,17 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <!-- Khung hiển thị ảnh -->
+                                                        <div  class="col-lg-6 mb-3 " id="previewContainerDriver" style=" width: 100%; aspect-ratio: 2 / 1; ">
+                                                            <img id="previewImageDriver" th:src="'/'+${rentUser.getAvatar()}"
+                                                                 alt="Image preview"
+                                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                                        </div>
+                                                        <!--                                                <div class="row" style="width: 100%; overflow: auto">-->
 
                                                     </div>
+
+
 
                                                 </div>
 
@@ -2893,10 +2902,13 @@
         function toggleDriverInfoFields() {
             const checkbox = document.getElementById('differentInfoCheckbox');
             const table = document.getElementById('driverInfoTable');
+            
+            const hasDriver = checkbox.disabled && checkbox.getAttribute('data-has-driver') === 'true';
 
-            // Hiển thị bảng nếu checkbox được chọn hoặc bị vô hiệu hóa (driver đã tồn tại)
-            table.style.display = checkbox.checked || checkbox.disabled ? 'block' : 'none';
+            // Hiển thị bảng nếu có driver hoặc checkbox được chọn
+            table.style.display = hasDriver || checkbox.checked ? 'block' : 'none';
         }
+
         // Gọi hàm khi trang tải hoặc quay lại từ bộ nhớ cache
         document.addEventListener('DOMContentLoaded', toggleDriverInfoFields);
         window.addEventListener('pageshow', toggleDriverInfoFields);
@@ -3189,9 +3201,16 @@
         });
 
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUpdateDriverList()
+        document.addEventListener("DOMContentLoaded", function () {
+            const driverDropdown = document.getElementById("fullNameDriver");
+            const selectedOption = driverDropdown.querySelector('option[data-selected-driver="true"]');
+        console.log('aaaaa', selectedOption);
+            if (selectedOption) {
+                // Nếu có option được chọn, gọi hàm fetchDriverDetailsAjax
+                fetchDriverDetailsAjax();
+            }
         });
+
 
     </script>
 

@@ -1,6 +1,8 @@
 package com.rentalcar.rentalcar.mappers;
 
+import com.rentalcar.rentalcar.dto.AdditionalFunctionDto;
 import com.rentalcar.rentalcar.dto.CarDto1;
+import com.rentalcar.rentalcar.entity.AdditionalFunction;
 import com.rentalcar.rentalcar.entity.Brand;
 import com.rentalcar.rentalcar.entity.Car;
 import com.rentalcar.rentalcar.repository.CarRepository;
@@ -19,6 +21,7 @@ public abstract class CarMapper {
     private CarRepository carRepository;
 
     @Mapping(target = "rateAverage", expression = "java(calculateRateAverage(car))")
+    @Mapping(target = "bookedTimes", expression = "java(calculateNumberOfBooked(car))")
     public abstract CarDto1 toDto(Car car);
 
     // Helper method to calculate rate average
@@ -27,6 +30,17 @@ public abstract class CarMapper {
         return rateAverage != null ? rateAverage : 0.0;
     }
 
+    // Helper method to calculate number of rides
+    Long calculateNumberOfBooked(Car car) {
+        return carRepository.countCompletedBookingsByCarId(car.getCarId());
+    }
 
-    abstract CarDto1.BrandDto toDto(Brand brand);
+
+    public abstract CarDto1.BrandDto toDto(Brand brand);
+
+    public abstract CarDto1.AdditionalFunctionDto toDto(AdditionalFunction additionalFunction);
+
+    public abstract Car toEntity(CarDto1 carDto1);
+
+    abstract AdditionalFunction toEntity(AdditionalFunctionDto additionalFunctionDto);
 }

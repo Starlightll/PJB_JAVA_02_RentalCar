@@ -72,4 +72,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     int countBookingsInMonth(@Param("year") int year, @Param("month") int month);
 
 
+    @Query("SELECT COUNT(b) FROM Booking b JOIN b.bookingCars bc WHERE b.bookingStatus.name = 'Completed' AND bc.car.carId = :carId")
+    long countCompletedBookingsByCarId(@Param("carId") Integer carId);
+
+
 }
