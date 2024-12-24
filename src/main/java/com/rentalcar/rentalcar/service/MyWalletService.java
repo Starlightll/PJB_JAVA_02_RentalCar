@@ -10,6 +10,6 @@ public interface MyWalletService {
 
     void withdraw(Long userId, BigDecimal amount);
 
-    void transfer(Long senderId, Long receiverId, TransactionType senderType, TransactionType receiverType, BigDecimal amount, String description);
+    void transfer(Long senderId, Long receiverId, String senderType, String receiverType, BigDecimal amount, String description);
 
 }

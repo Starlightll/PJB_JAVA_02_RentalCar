@@ -221,9 +221,17 @@ public class SearchCarController {
     }
 
     @GetMapping("/car-search")
-    public String cars(Model model) {
+    public String cars(
+            @RequestParam(value = "pickupLocation" , required = false) String pickupLocation,
+            @RequestParam(value = "pickupDateTime", required = false) String pickupDateTime,
+            @RequestParam(value = "dropDateTime", required = false) String dropDateTime,
+            Model model
+    ) {
         List<Integer> statusIds = List.of(1, 2, 3, 5, 6, 10);
         List<Car> cars = carRepository.findAllByCarStatus_StatusIdIsIn(statusIds);
+        model.addAttribute("pickupLocation", pickupLocation);
+        model.addAttribute("pickupDateTime", pickupDateTime);
+        model.addAttribute("dropDateTime", dropDateTime);
         model.addAttribute("cars", cars);
         return "products/CarSearch";
     }

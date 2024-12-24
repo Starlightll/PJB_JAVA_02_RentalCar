@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -124,6 +125,7 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             user.setAvatar(null);
         }
+        user.setWallet(BigDecimal.valueOf(0));
         userRepo.save(user);
         return user;
     }
