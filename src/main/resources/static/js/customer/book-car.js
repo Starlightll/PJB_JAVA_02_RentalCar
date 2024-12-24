@@ -46,7 +46,7 @@ $(document).ready(function () {
 
         //show the next fieldset
         next_fs.show();
-        // window.scrollTo(0, 0);
+        window.scrollTo(0, 0);
         //hide the current fieldset with style
         current_fs.animate({opacity: 0}, {
             step: function (now) {
